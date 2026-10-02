@@ -1,0 +1,12 @@
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+extend-exclude = ["build", "sources"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP"]
+# E402: scripts put tools/kb on sys.path before importing the KB model
+ignore = ["E402"]

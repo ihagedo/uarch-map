@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+node_modules/
+# local scratch, symlinked into /var/tmp on the lab host
+/sources
+/build
+# local inputs
+*.pdf
+*.tar.gz
+/Annotated Architecture Map*.md
