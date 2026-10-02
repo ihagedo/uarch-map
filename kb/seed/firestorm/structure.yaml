@@ -1,0 +1,84 @@
+# structure.yaml
+# Isaac Hagedorn, 2026-10-02
+# Blocks and links of the Firestorm core.
+isa: aarch64
+
+blocks:
+  - {id: chip,        name: Apple M1,            parent: null,     stage: chip,     level: 0}
+  - {id: pcluster,    name: P-cluster,           parent: chip,     stage: chip,     level: 0}
+  - {id: ecluster,    name: E-cluster (Icestorm), parent: chip,    stage: chip,     level: 0}
+  - {id: slc,         name: System level cache,  parent: chip,     stage: uncore,   level: 0}
+  - {id: memctrl,     name: Memory controllers,  parent: chip,     stage: uncore,   level: 0}
+  - {id: l2,          name: Shared L2,           parent: pcluster, stage: cache,    level: 1}
+  - {id: core,        name: Firestorm core,      parent: pcluster, stage: core,     level: 1}
+
+  - {id: frontend,    name: Frontend,            parent: core,     stage: frontend, level: 1}
+  - {id: backend,     name: Backend,             parent: core,     stage: core,     level: 1}
+  - {id: lsu,         name: Load-store unit,     parent: core,     stage: memory,   level: 1}
+
+  - {id: l1i,         name: L1 instruction cache, parent: frontend, stage: fetch,   level: 2}
+  - {id: itlb,        name: Instruction TLB,     parent: frontend, stage: fetch,    level: 2}
+  - {id: btb,         name: Branch target buffer, parent: frontend, stage: fetch,   level: 2}
+  - {id: dirpred,     name: Direction predictor, parent: frontend, stage: fetch,    level: 2}
+  - {id: ras,         name: Return address stack, parent: frontend, stage: fetch,   level: 2}
+  - {id: indpred,     name: Indirect predictor,  parent: frontend, stage: fetch,    level: 2}
+  - {id: fetch,       name: Fetch,               parent: frontend, stage: fetch,    level: 2}
+  - {id: ftq,         name: Fetch target queue,  parent: frontend, stage: fetch,    level: 2}
+  - {id: decode,      name: Decode,              parent: frontend, stage: decode,   level: 2}
+  - {id: iq,          name: Instruction queue,   parent: frontend, stage: decode,   level: 2}
+
+  - {id: rename,      name: Rename and map,      parent: backend,  stage: rename,   level: 2}
+  - {id: int_prf,     name: Integer register file, parent: backend, stage: rename,  level: 2}
+  - {id: fp_prf,      name: FP/SIMD register file, parent: backend, stage: rename,  level: 2}
+  - {id: flags_prf,   name: Flags register file, parent: backend,  stage: rename,   level: 2}
+  - {id: dispatch,    name: Dispatch buffers,    parent: backend,  stage: dispatch, level: 2}
+  - {id: sched_int,   name: Integer schedulers,  parent: backend,  stage: issue,    level: 2}
+  - {id: sched_fp,    name: FP/SIMD schedulers,  parent: backend,  stage: issue,    level: 2}
+  - {id: sched_ls,    name: Load-store scheduler, parent: backend, stage: issue,    level: 2}
+  - {id: eu_int,      name: Integer units,       parent: backend,  stage: execute,  level: 2}
+  - {id: eu_fp,       name: FP/SIMD units,       parent: backend,  stage: execute,  level: 2}
+  - {id: retire,      name: Retire,              parent: backend,  stage: retire,   level: 2}
+
+  - {id: lq,          name: Load queue,          parent: lsu,      stage: memory,   level: 2}
+  - {id: sq,          name: Store queue,         parent: lsu,      stage: memory,   level: 2}
+  - {id: l1d,         name: L1 data cache,       parent: lsu,      stage: cache,    level: 2}
+  - {id: dtlb,        name: Data TLBs,           parent: lsu,      stage: cache,    level: 2}
+  - {id: prefetch,    name: Prefetchers,         parent: lsu,      stage: cache,    level: 2}
+  - {id: mshr,        name: Miss handling,       parent: lsu,      stage: cache,    level: 2}
+
+links:
+  - {from: l1i,      to: fetch,     kind: instruction}
+  - {from: btb,      to: fetch,     kind: control, label: next fetch address}
+  - {from: dirpred,  to: fetch,     kind: control}
+  - {from: ras,      to: fetch,     kind: control}
+  - {from: indpred,  to: fetch,     kind: control}
+  - {from: fetch,    to: ftq,       kind: control}
+  - {from: fetch,    to: decode,    kind: instruction}
+  - {from: decode,   to: iq,        kind: instruction}
+  - {from: iq,       to: rename,    kind: instruction}
+  - {from: rename,   to: int_prf,   kind: allocation}
+  - {from: rename,   to: fp_prf,    kind: allocation}
+  - {from: rename,   to: flags_prf, kind: allocation}
+  - {from: rename,   to: retire,    kind: allocation, label: retire group and rename entries}
+  - {from: rename,   to: dispatch,  kind: instruction}
+  - {from: dispatch, to: sched_int, kind: instruction}
+  - {from: dispatch, to: sched_fp,  kind: instruction}
+  - {from: dispatch, to: sched_ls,  kind: instruction}
+  - {from: sched_int, to: eu_int,   kind: instruction}
+  - {from: sched_fp,  to: eu_fp,    kind: instruction}
+  - {from: sched_ls,  to: lq,       kind: allocation}
+  - {from: sched_ls,  to: sq,       kind: allocation}
+  - {from: lq,       to: l1d,       kind: data}
+  - {from: sq,       to: l1d,       kind: data}
+  - {from: l1d,      to: dtlb,      kind: control}
+  - {from: l1d,      to: mshr,      kind: data}
+  - {from: mshr,     to: l2,        kind: data}
+  - {from: prefetch, to: l1d,       kind: data}
+  - {from: l2,       to: slc,       kind: data}
+  - {from: slc,      to: memctrl,   kind: data}
+  - {from: eu_int,   to: retire,    kind: control, label: completion}
+  - {from: eu_fp,    to: retire,    kind: control, label: completion}
+  - {from: lq,       to: retire,    kind: control, label: completion}
+  - {from: retire,   to: int_prf,   kind: release}
+  - {from: retire,   to: fp_prf,    kind: release}
+  - {from: retire,   to: sq,        kind: release, label: commit}

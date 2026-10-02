@@ -1,0 +1,480 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "uarch-re/core.schema.json",
+  "title": "Annotated core knowledge base",
+  "description": "One file per core. Structure (blocks, links), facts (params, mechanisms) and evidence (claims, sources) are kept separate so one file drives the map, the simulator and the bibliography.",
+  "type": "object",
+  "required": [
+    "core",
+    "isa",
+    "blocks",
+    "links",
+    "params",
+    "claims",
+    "sources",
+    "mechanisms"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "core": {
+      "type": "string"
+    },
+    "isa": {
+      "type": "string"
+    },
+    "blocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "stage"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_.-]+$"
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "stage": {
+            "enum": [
+              "chip",
+              "core",
+              "frontend",
+              "fetch",
+              "decode",
+              "rename",
+              "dispatch",
+              "issue",
+              "execute",
+              "memory",
+              "retire",
+              "cache",
+              "uncore"
+            ]
+          },
+          "level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "Lowest zoom level at which this block appears"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "from",
+          "to",
+          "kind"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "instruction",
+              "data",
+              "control",
+              "allocation",
+              "release"
+            ]
+          },
+          "label": {
+            "type": "string"
+          },
+          "width": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "items per cycle if known"
+          },
+          "claims": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "params": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+(\\.[a-z0-9_]+)+$": {
+          "type": "object",
+          "required": [
+            "block",
+            "name",
+            "status",
+            "confidence",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "block": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "value": {
+              "type": [
+                "number",
+                "string",
+                "boolean",
+                "null"
+              ]
+            },
+            "unit": {
+              "type": "string"
+            },
+            "approx": {
+              "type": "boolean"
+            },
+            "range": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "status": {
+              "enum": [
+                "measured",
+                "documented",
+                "inferred",
+                "reported",
+                "open"
+              ]
+            },
+            "confidence": {
+              "enum": [
+                "high",
+                "medium",
+                "low",
+                "none"
+              ]
+            },
+            "mechanism": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "disputes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "claims",
+                  "note"
+                ],
+                "properties": {
+                  "claims": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 2
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "resolution": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "resolved_by": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "claim id or PoC id"
+                  }
+                }
+              }
+            },
+            "sim_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "field name in the block simulator config"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "claims": {
+      "type": "object",
+      "patternProperties": {
+        "^c-[a-z0-9]+-[a-z0-9-]+$": {
+          "type": "object",
+          "required": [
+            "text",
+            "source",
+            "loc",
+            "derivation",
+            "supports"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 400
+            },
+            "source": {
+              "type": "string"
+            },
+            "loc": {
+              "type": "string",
+              "description": "page number, URL fragment, patent column, or table id"
+            },
+            "quote": {
+              "type": "string",
+              "description": "short verbatim excerpt when the wording matters"
+            },
+            "method": {
+              "enum": [
+                "wong-probe",
+                "counter",
+                "pointer-chase",
+                "stride-sweep",
+                "branch-sweep",
+                "throughput",
+                "contention",
+                "drain-timing",
+                "patent-reading",
+                "vendor-doc",
+                "secondhand",
+                "simulation",
+                "other"
+              ]
+            },
+            "filler": {
+              "type": "string"
+            },
+            "derivation": {
+              "enum": [
+                "measured",
+                "documented",
+                "inferred",
+                "reported"
+              ]
+            },
+            "value": {
+              "type": [
+                "number",
+                "string",
+                "boolean",
+                "null"
+              ]
+            },
+            "unit": {
+              "type": "string"
+            },
+            "approx": {
+              "type": "boolean"
+            },
+            "hedge": {
+              "type": "string",
+              "description": "author's own hedge, e.g. 'something like', 'I've no idea'"
+            },
+            "supports": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "contradicts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "chip": {
+              "type": "string",
+              "default": "m1",
+              "description": "m1 | m2 | m3 | m4 | a14 | icestorm | generic"
+            },
+            "entered": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            },
+            "range": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2,
+              "description": "the author's range when the value stands for one (value is then the midpoint or the author's pick)"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9-]+$": {
+          "type": "object",
+          "required": [
+            "type",
+            "title"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "web",
+                "pdf",
+                "patent",
+                "paper",
+                "repo",
+                "vendor-doc",
+                "article"
+              ]
+            },
+            "title": {
+              "type": "string"
+            },
+            "author": {
+              "type": "string"
+            },
+            "year": {
+              "type": "integer"
+            },
+            "url": {
+              "type": "string"
+            },
+            "pages": {
+              "type": "integer"
+            },
+            "assignee": {
+              "type": "string"
+            },
+            "number": {
+              "type": "string"
+            },
+            "cited_by": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "claim ids or '<source>:<loc>' pointers"
+            },
+            "notes": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "mechanisms": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "type": "object",
+          "required": [
+            "name",
+            "status",
+            "description",
+            "claims"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "measured",
+                "inferred",
+                "speculative",
+                "absent"
+              ]
+            },
+            "description": {
+              "type": "string"
+            },
+            "claims": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "params": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sim_switch": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "patents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "detection_rule": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

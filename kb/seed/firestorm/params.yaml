@@ -1,0 +1,85 @@
+# params.yaml
+# Isaac Hagedorn, 2026-10-02
+# Every parameter the map shows, with no values, and the mechanisms. Values come only from claims.
+
+params:
+  pcluster.cores:               {block: pcluster, name: Firestorm cores per cluster,     unit: cores}
+  pcluster.clock_max:           {block: pcluster, name: Maximum clock,                   unit: GHz}
+
+  fetch.width:                  {block: fetch,    name: Fetch width,                     unit: instr/cycle, sim_key: fetch_width}
+  decode.width:                 {block: decode,   name: Decode width,                    unit: instr/cycle, sim_key: decode_width}
+  fetch.taken_per_cycle:        {block: fetch,    name: Taken branches per cycle,        unit: branches/cycle, sim_key: taken_per_cycle}
+  l1i.size:                     {block: l1i,      name: L1I capacity,                    unit: KiB,         sim_key: l1i_kib}
+  l1i.line:                     {block: l1i,      name: L1I line size,                   unit: B}
+  itlb.entries:                 {block: itlb,     name: iTLB entries,                    unit: entries}
+  btb.l0_entries:               {block: btb,      name: Zero-bubble BTB entries,         unit: entries,     sim_key: btb_l0}
+  btb.l1_entries:               {block: btb,      name: Second-level BTB entries,        unit: entries,     sim_key: btb_l1}
+  btb.taken_bubble:             {block: btb,      name: Taken-branch bubble (L1 tier),   unit: cycles,      sim_key: btb_bubble}
+  btb.assoc:                    {block: btb,      name: BTB associativity,               unit: ways}
+  dirpred.kind:                 {block: dirpred,  name: Direction predictor type}
+  dirpred.history:              {block: dirpred,  name: Global history length,           unit: branches,    sim_key: dir_history}
+  dirpred.capacity:             {block: dirpred,  name: Direction predictor capacity,    unit: entries}
+  dirpred.mispredict_penalty:   {block: dirpred,  name: Mispredict penalty,              unit: cycles,      sim_key: mispredict_penalty}
+  ras.depth:                    {block: ras,      name: Return stack depth,              unit: entries,     sim_key: ras_depth}
+  indpred.capacity:             {block: indpred,  name: Indirect predictor capacity,     unit: entries}
+  ftq.present:                  {block: ftq,      name: Decoupled fetch present}
+  ftq.depth:                    {block: ftq,      name: Fetch target queue depth,        unit: entries,     sim_key: ftq_depth}
+  ftq.fdip:                     {block: ftq,      name: Fetch-directed prefetch present}
+  iq.depth:                     {block: iq,       name: Fetch-to-decode queue depth,     unit: entries,     sim_key: iq_depth}
+
+  rename.width:                 {block: rename,   name: Rename width,                    unit: uops/cycle,  sim_key: rename_width}
+  rename.mov_elimination:       {block: rename,   name: Register move elimination}
+  rename.zero_idiom:            {block: rename,   name: Zero idiom elimination}
+  rename.mov_imm_limit:         {block: rename,   name: Move-immediate elimination limit, unit: per 8 instr}
+  rename.fusion:                {block: rename,   name: Fusion rules}
+  rename.security_tag:          {block: rename,   name: Register mapping security tag, mechanism: register_security_tag}
+  int_prf.total:                {block: int_prf,  name: Integer physical registers,      unit: registers,   sim_key: int_prf}
+  int_prf.headroom:             {block: int_prf,  name: Integer rename headroom,         unit: registers}
+  fp_prf.total:                 {block: fp_prf,   name: FP/SIMD physical registers,      unit: registers,   sim_key: fp_prf}
+  flags_prf.total:              {block: flags_prf, name: Flags physical registers,       unit: registers,   sim_key: flags_prf}
+  dispatch.int_entries:         {block: dispatch, name: Integer dispatch buffer,         unit: entries,     sim_key: dispatch_int}
+  dispatch.mul_entries:         {block: dispatch, name: Multiply dispatch buffer,        unit: entries}
+  dispatch.ls_entries:          {block: dispatch, name: Load-store dispatch buffer,      unit: entries,     sim_key: dispatch_ls}
+  sched_int.entries_per_queue:  {block: sched_int, name: Integer scheduler queue size,   unit: entries,     sim_key: sched_int}
+  sched_int.queues:             {block: sched_int, name: Integer scheduler queue count,  unit: queues}
+  sched_fp.entries_per_queue:   {block: sched_fp, name: FP scheduler queue size,         unit: entries,     sim_key: sched_fp}
+  sched_ls.entries:             {block: sched_ls, name: Load-store scheduler size,       unit: entries,     sim_key: sched_ls}
+  eu_int.count:                 {block: eu_int,   name: Integer execution units,         unit: units,       sim_key: int_units}
+  eu_int.roles:                 {block: eu_int,   name: Integer unit roles}
+  eu_fp.count:                  {block: eu_fp,    name: FP/SIMD execution units,         unit: units,       sim_key: fp_units}
+  eu_fp.roles:                  {block: eu_fp,    name: FP/SIMD unit roles}
+  retire.model:                 {block: retire,   name: Retire model,                    mechanism: retire_groups}
+  retire.groups:                {block: retire,   name: Coalesced retire queue,          unit: groups,      sim_key: retire_groups, mechanism: retire_groups}
+  retire.group_max_uops:        {block: retire,   name: Max uops per retire group,       unit: uops,        sim_key: retire_group_size, mechanism: retire_groups}
+  retire.group_issuing_uops:    {block: retire,   name: Issuing uops per retire group,   unit: uops,        mechanism: retire_groups}
+  retire.nop_window:            {block: retire,   name: NOP window,                      unit: instructions}
+  retire.issuing_window:        {block: retire,   name: Issuing-uop window,              unit: uops}
+  retire.rename_queue:          {block: retire,   name: Rename retire queue,             unit: entries,     sim_key: rename_retire}
+  retire.rate_groups:           {block: retire,   name: Retire rate,                     unit: groups/cycle, sim_key: retire_rate}
+  retire.rate_renames:          {block: retire,   name: Rename retire rate,              unit: entries/cycle}
+  retire.inflight_branches:     {block: retire,   name: In-flight branches,              unit: branches,    sim_key: branch_window}
+
+  lq.entries:                   {block: lq,       name: Load queue,                      unit: entries,     sim_key: lq}
+  sq.entries:                   {block: sq,       name: Store queue,                     unit: entries,     sim_key: sq}
+  lsu.allocation:               {block: lsu,      name: LSQ allocation point,            mechanism: lsq_at_issue}
+  lsu.ls_units:                 {block: lsu,      name: Load/store units and roles}
+  lsu.forwarding:               {block: lsu,      name: Store-to-load forwarding}
+  lsu.disambiguation:           {block: lsu,      name: Memory disambiguation predictor}
+  l1d.size:                     {block: l1d,      name: L1D capacity,                    unit: KiB,         sim_key: l1d_kib}
+  l1d.line:                     {block: l1d,      name: L1D line size,                   unit: B,           sim_key: l1d_line}
+  l1d.assoc:                    {block: l1d,      name: L1D associativity,               unit: ways}
+  l1d.latency:                  {block: l1d,      name: L1D hit latency (pointer chase), unit: cycles,      sim_key: l1d_latency}
+  l1d.latency_complex:          {block: l1d,      name: L1D hit latency (complex addr),  unit: cycles}
+  l1d.load_bw:                  {block: l1d,      name: L1D load bandwidth,              unit: B/cycle}
+  dtlb.l1_entries:              {block: dtlb,     name: L1 dTLB entries,                 unit: entries,     sim_key: dtlb_l1}
+  dtlb.l1_org:                  {block: dtlb,     name: L1 dTLB organisation}
+  dtlb.l2_entries:              {block: dtlb,     name: L2 TLB entries,                  unit: entries}
+  mshr.outstanding:             {block: mshr,     name: Outstanding L1D misses (MLP),    unit: misses,      sim_key: mlp}
+  prefetch.kinds:               {block: prefetch, name: Prefetcher kinds}
+  l2.size:                      {block: l2,       name: L2 capacity,                     unit: MiB,         sim_key: l2_mib}
+  l2.line:                      {block: l2,       name: L2 line size,                    unit: B}
+  l2.latency:                   {block: l2,       name: L2 hit latency,                  unit: cycles,      sim_key: l2_latency}
+  l2.inner_slice:               {block: l2,       name: Per-core inner L2 slice,         unit: MiB}
+  slc.size:                     {block: slc,      name: SLC capacity,                    unit: MiB}
+  slc.latency:                  {block: slc,      name: SLC hit latency,                 unit: cycles}
+  memctrl.dram_latency:         {block: memctrl,  name: DRAM latency,                    unit: ns,          sim_key: dram_latency_ns}
