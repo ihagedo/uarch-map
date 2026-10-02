@@ -1,0 +1,1251 @@
+{
+  "core": "firestorm",
+  "isa": "aarch64",
+  "blocks": [
+    {
+      "id": "chip",
+      "name": "Apple M1",
+      "parent": null,
+      "stage": "chip",
+      "level": 0
+    },
+    {
+      "id": "pcluster",
+      "name": "P-cluster",
+      "parent": "chip",
+      "stage": "chip",
+      "level": 0
+    },
+    {
+      "id": "ecluster",
+      "name": "E-cluster (Icestorm)",
+      "parent": "chip",
+      "stage": "chip",
+      "level": 0
+    },
+    {
+      "id": "slc",
+      "name": "System level cache",
+      "parent": "chip",
+      "stage": "uncore",
+      "level": 0
+    },
+    {
+      "id": "memctrl",
+      "name": "Memory controllers",
+      "parent": "chip",
+      "stage": "uncore",
+      "level": 0
+    },
+    {
+      "id": "l2",
+      "name": "Shared L2",
+      "parent": "pcluster",
+      "stage": "cache",
+      "level": 1
+    },
+    {
+      "id": "core",
+      "name": "Firestorm core",
+      "parent": "pcluster",
+      "stage": "core",
+      "level": 1
+    },
+    {
+      "id": "frontend",
+      "name": "Frontend",
+      "parent": "core",
+      "stage": "frontend",
+      "level": 1
+    },
+    {
+      "id": "backend",
+      "name": "Backend",
+      "parent": "core",
+      "stage": "core",
+      "level": 1
+    },
+    {
+      "id": "lsu",
+      "name": "Load-store unit",
+      "parent": "core",
+      "stage": "memory",
+      "level": 1
+    },
+    {
+      "id": "l1i",
+      "name": "L1 instruction cache",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "itlb",
+      "name": "Instruction TLB",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "btb",
+      "name": "Branch target buffer",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "dirpred",
+      "name": "Direction predictor",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "ras",
+      "name": "Return address stack",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "indpred",
+      "name": "Indirect predictor",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "fetch",
+      "name": "Fetch",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "ftq",
+      "name": "Fetch target queue",
+      "parent": "frontend",
+      "stage": "fetch",
+      "level": 2
+    },
+    {
+      "id": "decode",
+      "name": "Decode",
+      "parent": "frontend",
+      "stage": "decode",
+      "level": 2
+    },
+    {
+      "id": "iq",
+      "name": "Instruction queue",
+      "parent": "frontend",
+      "stage": "decode",
+      "level": 2
+    },
+    {
+      "id": "rename",
+      "name": "Rename and map",
+      "parent": "backend",
+      "stage": "rename",
+      "level": 2
+    },
+    {
+      "id": "int_prf",
+      "name": "Integer register file",
+      "parent": "backend",
+      "stage": "rename",
+      "level": 2
+    },
+    {
+      "id": "fp_prf",
+      "name": "FP/SIMD register file",
+      "parent": "backend",
+      "stage": "rename",
+      "level": 2
+    },
+    {
+      "id": "flags_prf",
+      "name": "Flags register file",
+      "parent": "backend",
+      "stage": "rename",
+      "level": 2
+    },
+    {
+      "id": "dispatch",
+      "name": "Dispatch buffers",
+      "parent": "backend",
+      "stage": "dispatch",
+      "level": 2
+    },
+    {
+      "id": "sched_int",
+      "name": "Integer schedulers",
+      "parent": "backend",
+      "stage": "issue",
+      "level": 2
+    },
+    {
+      "id": "sched_fp",
+      "name": "FP/SIMD schedulers",
+      "parent": "backend",
+      "stage": "issue",
+      "level": 2
+    },
+    {
+      "id": "sched_ls",
+      "name": "Load-store scheduler",
+      "parent": "backend",
+      "stage": "issue",
+      "level": 2
+    },
+    {
+      "id": "eu_int",
+      "name": "Integer units",
+      "parent": "backend",
+      "stage": "execute",
+      "level": 2
+    },
+    {
+      "id": "eu_fp",
+      "name": "FP/SIMD units",
+      "parent": "backend",
+      "stage": "execute",
+      "level": 2
+    },
+    {
+      "id": "retire",
+      "name": "Retire",
+      "parent": "backend",
+      "stage": "retire",
+      "level": 2
+    },
+    {
+      "id": "lq",
+      "name": "Load queue",
+      "parent": "lsu",
+      "stage": "memory",
+      "level": 2
+    },
+    {
+      "id": "sq",
+      "name": "Store queue",
+      "parent": "lsu",
+      "stage": "memory",
+      "level": 2
+    },
+    {
+      "id": "l1d",
+      "name": "L1 data cache",
+      "parent": "lsu",
+      "stage": "cache",
+      "level": 2
+    },
+    {
+      "id": "dtlb",
+      "name": "Data TLBs",
+      "parent": "lsu",
+      "stage": "cache",
+      "level": 2
+    },
+    {
+      "id": "prefetch",
+      "name": "Prefetchers",
+      "parent": "lsu",
+      "stage": "cache",
+      "level": 2
+    },
+    {
+      "id": "mshr",
+      "name": "Miss handling",
+      "parent": "lsu",
+      "stage": "cache",
+      "level": 2
+    }
+  ],
+  "links": [
+    {
+      "from": "l1i",
+      "to": "fetch",
+      "kind": "instruction"
+    },
+    {
+      "from": "btb",
+      "to": "fetch",
+      "kind": "control",
+      "label": "next fetch address"
+    },
+    {
+      "from": "dirpred",
+      "to": "fetch",
+      "kind": "control"
+    },
+    {
+      "from": "ras",
+      "to": "fetch",
+      "kind": "control"
+    },
+    {
+      "from": "indpred",
+      "to": "fetch",
+      "kind": "control"
+    },
+    {
+      "from": "fetch",
+      "to": "ftq",
+      "kind": "control"
+    },
+    {
+      "from": "fetch",
+      "to": "decode",
+      "kind": "instruction"
+    },
+    {
+      "from": "decode",
+      "to": "iq",
+      "kind": "instruction"
+    },
+    {
+      "from": "iq",
+      "to": "rename",
+      "kind": "instruction"
+    },
+    {
+      "from": "rename",
+      "to": "int_prf",
+      "kind": "allocation"
+    },
+    {
+      "from": "rename",
+      "to": "fp_prf",
+      "kind": "allocation"
+    },
+    {
+      "from": "rename",
+      "to": "flags_prf",
+      "kind": "allocation"
+    },
+    {
+      "from": "rename",
+      "to": "retire",
+      "kind": "allocation",
+      "label": "retire group and rename entries"
+    },
+    {
+      "from": "rename",
+      "to": "dispatch",
+      "kind": "instruction"
+    },
+    {
+      "from": "dispatch",
+      "to": "sched_int",
+      "kind": "instruction"
+    },
+    {
+      "from": "dispatch",
+      "to": "sched_fp",
+      "kind": "instruction"
+    },
+    {
+      "from": "dispatch",
+      "to": "sched_ls",
+      "kind": "instruction"
+    },
+    {
+      "from": "sched_int",
+      "to": "eu_int",
+      "kind": "instruction"
+    },
+    {
+      "from": "sched_fp",
+      "to": "eu_fp",
+      "kind": "instruction"
+    },
+    {
+      "from": "sched_ls",
+      "to": "lq",
+      "kind": "allocation"
+    },
+    {
+      "from": "sched_ls",
+      "to": "sq",
+      "kind": "allocation"
+    },
+    {
+      "from": "lq",
+      "to": "l1d",
+      "kind": "data"
+    },
+    {
+      "from": "sq",
+      "to": "l1d",
+      "kind": "data"
+    },
+    {
+      "from": "l1d",
+      "to": "dtlb",
+      "kind": "control"
+    },
+    {
+      "from": "l1d",
+      "to": "mshr",
+      "kind": "data"
+    },
+    {
+      "from": "mshr",
+      "to": "l2",
+      "kind": "data"
+    },
+    {
+      "from": "prefetch",
+      "to": "l1d",
+      "kind": "data"
+    },
+    {
+      "from": "l2",
+      "to": "slc",
+      "kind": "data"
+    },
+    {
+      "from": "slc",
+      "to": "memctrl",
+      "kind": "data"
+    },
+    {
+      "from": "eu_int",
+      "to": "retire",
+      "kind": "control",
+      "label": "completion"
+    },
+    {
+      "from": "eu_fp",
+      "to": "retire",
+      "kind": "control",
+      "label": "completion"
+    },
+    {
+      "from": "lq",
+      "to": "retire",
+      "kind": "control",
+      "label": "completion"
+    },
+    {
+      "from": "retire",
+      "to": "int_prf",
+      "kind": "release"
+    },
+    {
+      "from": "retire",
+      "to": "fp_prf",
+      "kind": "release"
+    },
+    {
+      "from": "retire",
+      "to": "sq",
+      "kind": "release",
+      "label": "commit"
+    }
+  ],
+  "params": {
+    "pcluster.cores": {
+      "claims": [],
+      "disputes": [],
+      "block": "pcluster",
+      "name": "Firestorm cores per cluster",
+      "unit": "cores",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "pcluster.clock_max": {
+      "claims": [],
+      "disputes": [],
+      "block": "pcluster",
+      "name": "Maximum clock",
+      "unit": "GHz",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "fetch.width": {
+      "claims": [],
+      "disputes": [],
+      "block": "fetch",
+      "name": "Fetch width",
+      "unit": "instr/cycle",
+      "sim_key": "fetch_width",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "decode.width": {
+      "claims": [],
+      "disputes": [],
+      "block": "decode",
+      "name": "Decode width",
+      "unit": "instr/cycle",
+      "sim_key": "decode_width",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "fetch.taken_per_cycle": {
+      "claims": [],
+      "disputes": [],
+      "block": "fetch",
+      "name": "Taken branches per cycle",
+      "unit": "branches/cycle",
+      "sim_key": "taken_per_cycle",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1i.size": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1i",
+      "name": "L1I capacity",
+      "unit": "KiB",
+      "sim_key": "l1i_kib",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1i.line": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1i",
+      "name": "L1I line size",
+      "unit": "B",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "itlb.entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "itlb",
+      "name": "iTLB entries",
+      "unit": "entries",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "btb.l0_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "btb",
+      "name": "Zero-bubble BTB entries",
+      "unit": "entries",
+      "sim_key": "btb_l0",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "btb.l1_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "btb",
+      "name": "Second-level BTB entries",
+      "unit": "entries",
+      "sim_key": "btb_l1",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "btb.taken_bubble": {
+      "claims": [],
+      "disputes": [],
+      "block": "btb",
+      "name": "Taken-branch bubble (L1 tier)",
+      "unit": "cycles",
+      "sim_key": "btb_bubble",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "btb.assoc": {
+      "claims": [],
+      "disputes": [],
+      "block": "btb",
+      "name": "BTB associativity",
+      "unit": "ways",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dirpred.kind": {
+      "claims": [],
+      "disputes": [],
+      "block": "dirpred",
+      "name": "Direction predictor type",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dirpred.history": {
+      "claims": [],
+      "disputes": [],
+      "block": "dirpred",
+      "name": "Global history length",
+      "unit": "branches",
+      "sim_key": "dir_history",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dirpred.capacity": {
+      "claims": [],
+      "disputes": [],
+      "block": "dirpred",
+      "name": "Direction predictor capacity",
+      "unit": "entries",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dirpred.mispredict_penalty": {
+      "claims": [],
+      "disputes": [],
+      "block": "dirpred",
+      "name": "Mispredict penalty",
+      "unit": "cycles",
+      "sim_key": "mispredict_penalty",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "ras.depth": {
+      "claims": [],
+      "disputes": [],
+      "block": "ras",
+      "name": "Return stack depth",
+      "unit": "entries",
+      "sim_key": "ras_depth",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "indpred.capacity": {
+      "claims": [],
+      "disputes": [],
+      "block": "indpred",
+      "name": "Indirect predictor capacity",
+      "unit": "entries",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "ftq.present": {
+      "claims": [],
+      "disputes": [],
+      "block": "ftq",
+      "name": "Decoupled fetch present",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "ftq.depth": {
+      "claims": [],
+      "disputes": [],
+      "block": "ftq",
+      "name": "Fetch target queue depth",
+      "unit": "entries",
+      "sim_key": "ftq_depth",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "ftq.fdip": {
+      "claims": [],
+      "disputes": [],
+      "block": "ftq",
+      "name": "Fetch-directed prefetch present",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "iq.depth": {
+      "claims": [],
+      "disputes": [],
+      "block": "iq",
+      "name": "Fetch-to-decode queue depth",
+      "unit": "entries",
+      "sim_key": "iq_depth",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.width": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Rename width",
+      "unit": "uops/cycle",
+      "sim_key": "rename_width",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.mov_elimination": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Register move elimination",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.zero_idiom": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Zero idiom elimination",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.mov_imm_limit": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Move-immediate elimination limit",
+      "unit": "per 8 instr",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.fusion": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Fusion rules",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "rename.security_tag": {
+      "claims": [],
+      "disputes": [],
+      "block": "rename",
+      "name": "Register mapping security tag",
+      "mechanism": "register_security_tag",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "int_prf.total": {
+      "claims": [],
+      "disputes": [],
+      "block": "int_prf",
+      "name": "Integer physical registers",
+      "unit": "registers",
+      "sim_key": "int_prf",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "int_prf.headroom": {
+      "claims": [],
+      "disputes": [],
+      "block": "int_prf",
+      "name": "Integer rename headroom",
+      "unit": "registers",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "fp_prf.total": {
+      "claims": [],
+      "disputes": [],
+      "block": "fp_prf",
+      "name": "FP/SIMD physical registers",
+      "unit": "registers",
+      "sim_key": "fp_prf",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "flags_prf.total": {
+      "claims": [],
+      "disputes": [],
+      "block": "flags_prf",
+      "name": "Flags physical registers",
+      "unit": "registers",
+      "sim_key": "flags_prf",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dispatch.int_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "dispatch",
+      "name": "Integer dispatch buffer",
+      "unit": "entries",
+      "sim_key": "dispatch_int",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dispatch.mul_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "dispatch",
+      "name": "Multiply dispatch buffer",
+      "unit": "entries",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dispatch.ls_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "dispatch",
+      "name": "Load-store dispatch buffer",
+      "unit": "entries",
+      "sim_key": "dispatch_ls",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "sched_int.entries_per_queue": {
+      "claims": [],
+      "disputes": [],
+      "block": "sched_int",
+      "name": "Integer scheduler queue size",
+      "unit": "entries",
+      "sim_key": "sched_int",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "sched_int.queues": {
+      "claims": [],
+      "disputes": [],
+      "block": "sched_int",
+      "name": "Integer scheduler queue count",
+      "unit": "queues",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "sched_fp.entries_per_queue": {
+      "claims": [],
+      "disputes": [],
+      "block": "sched_fp",
+      "name": "FP scheduler queue size",
+      "unit": "entries",
+      "sim_key": "sched_fp",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "sched_ls.entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "sched_ls",
+      "name": "Load-store scheduler size",
+      "unit": "entries",
+      "sim_key": "sched_ls",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "eu_int.count": {
+      "claims": [],
+      "disputes": [],
+      "block": "eu_int",
+      "name": "Integer execution units",
+      "unit": "units",
+      "sim_key": "int_units",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "eu_int.roles": {
+      "claims": [],
+      "disputes": [],
+      "block": "eu_int",
+      "name": "Integer unit roles",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "eu_fp.count": {
+      "claims": [],
+      "disputes": [],
+      "block": "eu_fp",
+      "name": "FP/SIMD execution units",
+      "unit": "units",
+      "sim_key": "fp_units",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "eu_fp.roles": {
+      "claims": [],
+      "disputes": [],
+      "block": "eu_fp",
+      "name": "FP/SIMD unit roles",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.model": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Retire model",
+      "mechanism": "retire_groups",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.groups": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Coalesced retire queue",
+      "unit": "groups",
+      "sim_key": "retire_groups",
+      "mechanism": "retire_groups",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.group_max_uops": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Max uops per retire group",
+      "unit": "uops",
+      "sim_key": "retire_group_size",
+      "mechanism": "retire_groups",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.group_issuing_uops": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Issuing uops per retire group",
+      "unit": "uops",
+      "mechanism": "retire_groups",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.nop_window": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "NOP window",
+      "unit": "instructions",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.issuing_window": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Issuing-uop window",
+      "unit": "uops",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.rename_queue": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Rename retire queue",
+      "unit": "entries",
+      "sim_key": "rename_retire",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.rate_groups": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Retire rate",
+      "unit": "groups/cycle",
+      "sim_key": "retire_rate",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.rate_renames": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "Rename retire rate",
+      "unit": "entries/cycle",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "retire.inflight_branches": {
+      "claims": [],
+      "disputes": [],
+      "block": "retire",
+      "name": "In-flight branches",
+      "unit": "branches",
+      "sim_key": "branch_window",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "lq.entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "lq",
+      "name": "Load queue",
+      "unit": "entries",
+      "sim_key": "lq",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "sq.entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "sq",
+      "name": "Store queue",
+      "unit": "entries",
+      "sim_key": "sq",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "lsu.allocation": {
+      "claims": [],
+      "disputes": [],
+      "block": "lsu",
+      "name": "LSQ allocation point",
+      "mechanism": "lsq_at_issue",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "lsu.ls_units": {
+      "claims": [],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Load/store units and roles",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "lsu.forwarding": {
+      "claims": [],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Store-to-load forwarding",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "lsu.disambiguation": {
+      "claims": [],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Memory disambiguation predictor",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.size": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D capacity",
+      "unit": "KiB",
+      "sim_key": "l1d_kib",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.line": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D line size",
+      "unit": "B",
+      "sim_key": "l1d_line",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.assoc": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D associativity",
+      "unit": "ways",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.latency": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D hit latency (pointer chase)",
+      "unit": "cycles",
+      "sim_key": "l1d_latency",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.latency_complex": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D hit latency (complex addr)",
+      "unit": "cycles",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.load_bw": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D load bandwidth",
+      "unit": "B/cycle",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dtlb.l1_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L1 dTLB entries",
+      "unit": "entries",
+      "sim_key": "dtlb_l1",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dtlb.l1_org": {
+      "claims": [],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L1 dTLB organisation",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dtlb.l2_entries": {
+      "claims": [],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L2 TLB entries",
+      "unit": "entries",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "mshr.outstanding": {
+      "claims": [],
+      "disputes": [],
+      "block": "mshr",
+      "name": "Outstanding L1D misses (MLP)",
+      "unit": "misses",
+      "sim_key": "mlp",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "prefetch.kinds": {
+      "claims": [],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "Prefetcher kinds",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l2.size": {
+      "claims": [],
+      "disputes": [],
+      "block": "l2",
+      "name": "L2 capacity",
+      "unit": "MiB",
+      "sim_key": "l2_mib",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l2.line": {
+      "claims": [],
+      "disputes": [],
+      "block": "l2",
+      "name": "L2 line size",
+      "unit": "B",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l2.latency": {
+      "claims": [],
+      "disputes": [],
+      "block": "l2",
+      "name": "L2 hit latency",
+      "unit": "cycles",
+      "sim_key": "l2_latency",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l2.inner_slice": {
+      "claims": [],
+      "disputes": [],
+      "block": "l2",
+      "name": "Per-core inner L2 slice",
+      "unit": "MiB",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "slc.size": {
+      "claims": [],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC capacity",
+      "unit": "MiB",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "slc.latency": {
+      "claims": [],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC hit latency",
+      "unit": "cycles",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "memctrl.dram_latency": {
+      "claims": [],
+      "disputes": [],
+      "block": "memctrl",
+      "name": "DRAM latency",
+      "unit": "ns",
+      "sim_key": "dram_latency_ns",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    }
+  },
+  "claims": {},
+  "sources": {},
+  "mechanisms": {}
+}

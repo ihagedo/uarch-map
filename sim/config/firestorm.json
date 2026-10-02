@@ -1,0 +1,192 @@
+{
+  "fetch.width": {
+    "value": null,
+    "sim_key": "fetch_width",
+    "confidence": "none"
+  },
+  "decode.width": {
+    "value": null,
+    "sim_key": "decode_width",
+    "confidence": "none"
+  },
+  "fetch.taken_per_cycle": {
+    "value": null,
+    "sim_key": "taken_per_cycle",
+    "confidence": "none"
+  },
+  "l1i.size": {
+    "value": null,
+    "sim_key": "l1i_kib",
+    "confidence": "none"
+  },
+  "btb.l0_entries": {
+    "value": null,
+    "sim_key": "btb_l0",
+    "confidence": "none"
+  },
+  "btb.l1_entries": {
+    "value": null,
+    "sim_key": "btb_l1",
+    "confidence": "none"
+  },
+  "btb.taken_bubble": {
+    "value": null,
+    "sim_key": "btb_bubble",
+    "confidence": "none"
+  },
+  "dirpred.history": {
+    "value": null,
+    "sim_key": "dir_history",
+    "confidence": "none"
+  },
+  "dirpred.mispredict_penalty": {
+    "value": null,
+    "sim_key": "mispredict_penalty",
+    "confidence": "none"
+  },
+  "ras.depth": {
+    "value": null,
+    "sim_key": "ras_depth",
+    "confidence": "none"
+  },
+  "ftq.depth": {
+    "value": null,
+    "sim_key": "ftq_depth",
+    "confidence": "none"
+  },
+  "iq.depth": {
+    "value": null,
+    "sim_key": "iq_depth",
+    "confidence": "none"
+  },
+  "rename.width": {
+    "value": null,
+    "sim_key": "rename_width",
+    "confidence": "none"
+  },
+  "int_prf.total": {
+    "value": null,
+    "sim_key": "int_prf",
+    "confidence": "none"
+  },
+  "fp_prf.total": {
+    "value": null,
+    "sim_key": "fp_prf",
+    "confidence": "none"
+  },
+  "flags_prf.total": {
+    "value": null,
+    "sim_key": "flags_prf",
+    "confidence": "none"
+  },
+  "dispatch.int_entries": {
+    "value": null,
+    "sim_key": "dispatch_int",
+    "confidence": "none"
+  },
+  "dispatch.ls_entries": {
+    "value": null,
+    "sim_key": "dispatch_ls",
+    "confidence": "none"
+  },
+  "sched_int.entries_per_queue": {
+    "value": null,
+    "sim_key": "sched_int",
+    "confidence": "none"
+  },
+  "sched_fp.entries_per_queue": {
+    "value": null,
+    "sim_key": "sched_fp",
+    "confidence": "none"
+  },
+  "sched_ls.entries": {
+    "value": null,
+    "sim_key": "sched_ls",
+    "confidence": "none"
+  },
+  "eu_int.count": {
+    "value": null,
+    "sim_key": "int_units",
+    "confidence": "none"
+  },
+  "eu_fp.count": {
+    "value": null,
+    "sim_key": "fp_units",
+    "confidence": "none"
+  },
+  "retire.groups": {
+    "value": null,
+    "sim_key": "retire_groups",
+    "confidence": "none"
+  },
+  "retire.group_max_uops": {
+    "value": null,
+    "sim_key": "retire_group_size",
+    "confidence": "none"
+  },
+  "retire.rename_queue": {
+    "value": null,
+    "sim_key": "rename_retire",
+    "confidence": "none"
+  },
+  "retire.rate_groups": {
+    "value": null,
+    "sim_key": "retire_rate",
+    "confidence": "none"
+  },
+  "retire.inflight_branches": {
+    "value": null,
+    "sim_key": "branch_window",
+    "confidence": "none"
+  },
+  "lq.entries": {
+    "value": null,
+    "sim_key": "lq",
+    "confidence": "none"
+  },
+  "sq.entries": {
+    "value": null,
+    "sim_key": "sq",
+    "confidence": "none"
+  },
+  "l1d.size": {
+    "value": null,
+    "sim_key": "l1d_kib",
+    "confidence": "none"
+  },
+  "l1d.line": {
+    "value": null,
+    "sim_key": "l1d_line",
+    "confidence": "none"
+  },
+  "l1d.latency": {
+    "value": null,
+    "sim_key": "l1d_latency",
+    "confidence": "none"
+  },
+  "dtlb.l1_entries": {
+    "value": null,
+    "sim_key": "dtlb_l1",
+    "confidence": "none"
+  },
+  "mshr.outstanding": {
+    "value": null,
+    "sim_key": "mlp",
+    "confidence": "none"
+  },
+  "l2.size": {
+    "value": null,
+    "sim_key": "l2_mib",
+    "confidence": "none"
+  },
+  "l2.latency": {
+    "value": null,
+    "sim_key": "l2_latency",
+    "confidence": "none"
+  },
+  "memctrl.dram_latency": {
+    "value": null,
+    "sim_key": "dram_latency_ns",
+    "confidence": "none"
+  }
+}
