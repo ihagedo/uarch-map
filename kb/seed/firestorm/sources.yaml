@@ -14,3 +14,9 @@ sources:
     author: Johnson, Dougall
     year: 2021
     url: https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/
+  anandtech-m1:
+    type: article
+    title: "Apple Silicon M1: A14 Deep Dive"
+    author: Frumusanu, Andrei
+    year: 2020
+    url: https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive

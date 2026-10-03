@@ -7,7 +7,7 @@
   "decode.width": {
     "value": 8,
     "sim_key": "decode_width",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "fetch.taken_per_cycle": {
     "value": 1,
@@ -112,7 +112,7 @@
   "eu_fp.count": {
     "value": 4,
     "sim_key": "fp_units",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "retire.groups": {
     "value": 330,
@@ -127,7 +127,7 @@
   "retire.rename_queue": {
     "value": 623,
     "sim_key": "rename_retire",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "retire.rate_groups": {
     "value": 8,
@@ -175,9 +175,9 @@
     "confidence": "none"
   },
   "l2.size": {
-    "value": null,
+    "value": 12,
     "sim_key": "l2_mib",
-    "confidence": "none"
+    "confidence": "low"
   },
   "l2.latency": {
     "value": null,

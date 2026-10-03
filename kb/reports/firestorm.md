@@ -1,22 +1,23 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 79, claims 73, sources 2, mechanisms 4
+blocks 37, links 35, params 80, claims 98, sources 3, mechanisms 4
 
 ## By status
 
 - inferred: 4
-- measured: 31
-- open: 44
+- measured: 32
+- open: 42
+- reported: 2
 
 ## By confidence
 
-- low: 4
-- medium: 31
-- none: 44
+- high: 4
+- low: 6
+- medium: 28
+- none: 42
 
-## Holes (44)
+## Holes (42)
 
-- pcluster.cores (pcluster): Firestorm cores per cluster
 - pcluster.clock_max (pcluster): Maximum clock
 - l1i.size (l1i): L1I capacity
 - l1i.line (l1i): L1I line size
@@ -53,7 +54,6 @@ blocks 37, links 35, params 79, claims 73, sources 2, mechanisms 4
 - dtlb.l2_entries (dtlb): L2 TLB entries
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
-- l2.size (l2): L2 capacity
 - l2.line (l2): L2 line size
 - l2.latency (l2): L2 hit latency
 - l2.inner_slice (l2): Per-core inner L2 slice
@@ -61,8 +61,11 @@ blocks 37, links 35, params 79, claims 73, sources 2, mechanisms 4
 - slc.latency (slc): SLC hit latency
 - memctrl.dram_latency (memctrl): DRAM latency
 
-## Open disputes (0)
+## Open disputes (3)
 
+- int_prf.total: measured on the A14  [c-dj-int-prf, c-at-int-prf]
+- fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
+- eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
 
 ## Problems (0)
 

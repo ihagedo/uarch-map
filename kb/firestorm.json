@@ -447,14 +447,16 @@
   ],
   "params": {
     "pcluster.cores": {
-      "claims": [],
+      "claims": [
+        "c-at-m1-cores"
+      ],
       "disputes": [],
       "block": "pcluster",
       "name": "Firestorm cores per cluster",
       "unit": "cores",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 4,
+      "status": "reported",
+      "confidence": "low"
     },
     "pcluster.clock_max": {
       "claims": [],
@@ -481,6 +483,7 @@
     },
     "decode.width": {
       "claims": [
+        "c-at-decode-8",
         "c-dj-width"
       ],
       "disputes": [],
@@ -490,7 +493,7 @@
       "sim_key": "decode_width",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "fetch.taken_per_cycle": {
       "claims": [
@@ -752,9 +755,20 @@
     },
     "int_prf.total": {
       "claims": [
+        "c-at-int-prf",
         "c-dj-int-prf"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-dj-int-prf",
+            "c-at-int-prf"
+          ],
+          "note": "measured on the A14",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "int_prf",
       "name": "Integer physical registers",
       "unit": "registers",
@@ -776,9 +790,20 @@
     },
     "fp_prf.total": {
       "claims": [
+        "c-at-fp-prf",
         "c-dj-fp-prf"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-dj-fp-prf",
+            "c-at-fp-prf"
+          ],
+          "note": "measured on the A14",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "fp_prf",
       "name": "FP/SIMD physical registers",
       "unit": "registers",
@@ -883,9 +908,20 @@
     },
     "eu_int.count": {
       "claims": [
+        "c-at-int-units",
         "c-dj-int-units"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-dj-int-units",
+            "c-at-int-units"
+          ],
+          "note": "measured on the A14",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "eu_int",
       "name": "Integer execution units",
       "unit": "units",
@@ -907,6 +943,7 @@
     },
     "eu_fp.count": {
       "claims": [
+        "c-at-fp-pipes",
         "c-dj-fp-units"
       ],
       "disputes": [],
@@ -916,7 +953,7 @@
       "sim_key": "fp_units",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "eu_fp.roles": {
       "claims": [
@@ -1012,6 +1049,7 @@
     },
     "retire.rename_queue": {
       "claims": [
+        "c-at-rob-630",
         "c-dj-rename-retire"
       ],
       "disputes": [],
@@ -1022,7 +1060,7 @@
       "value": 623,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "retire.rate_groups": {
       "claims": [
@@ -1105,6 +1143,7 @@
     },
     "lsu.ls_units": {
       "claims": [
+        "c-at-ls-ports",
         "c-dj-ls-units"
       ],
       "disputes": [],
@@ -1113,7 +1152,7 @@
       "value": 4,
       "unit": "units",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "lsu.forwarding": {
       "claims": [],
@@ -1251,15 +1290,17 @@
       "value": null
     },
     "l2.size": {
-      "claims": [],
+      "claims": [
+        "c-at-m1-l2-size"
+      ],
       "disputes": [],
       "block": "l2",
       "name": "L2 capacity",
       "unit": "MiB",
       "sim_key": "l2_mib",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 12,
+      "status": "reported",
+      "confidence": "low"
     },
     "l2.line": {
       "claims": [],
@@ -1323,6 +1364,18 @@
       "confidence": "none",
       "value": null
     },
+    "lsu.loads_per_cycle": {
+      "claims": [
+        "c-at-loads-per-cycle"
+      ],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Loads per cycle",
+      "unit": "loads/cycle",
+      "value": 3,
+      "status": "measured",
+      "confidence": "medium"
+    },
     "rename.fusion_read_limit": {
       "claims": [
         "c-dj-fusion-read-limit"
@@ -1349,6 +1402,368 @@
     }
   },
   "claims": {
+    "c-at-m1-cores": {
+      "text": "The M1 has four Firestorm performance cores, four Icestorm efficiency cores and an eight-core GPU",
+      "loc": "p001",
+      "quote": "With four large performance cores, four efficiency cores, and an 8-GPU core GPU",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 4,
+      "unit": "cores",
+      "supports": [
+        "pcluster.cores"
+      ],
+      "notes": "Apple's announcement as relayed by AnandTech",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-transistors": {
+      "text": "The M1 has 16 billion transistors on a 5 nm process, 35% more than the A14",
+      "loc": "p001",
+      "quote": "it features 16 billion transistors on a 5nm process node ... which is 35% more than the A14 inside of the newest iPhones",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 16,
+      "unit": "billion transistors",
+      "supports": [],
+      "notes": "Apple's announcement as relayed by AnandTech",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-die-size": {
+      "text": "AnandTech estimates the M1 die at about 120 mm\u00b2 if its transistor density matches the A14's",
+      "loc": "p001",
+      "quote": "If Apple was able to keep the transistor density between the two chips similar, we should expect a die size of around 120mm\u00b2",
+      "derivation": "inferred",
+      "value": 120,
+      "unit": "mm\u00b2",
+      "approx": true,
+      "hedge": "If Apple was able to keep the transistor density between the two chips similar",
+      "supports": [],
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-dram-package": {
+      "text": "The M1 package carries the DRAM beside the compute die inside the organic package, not stacked on top of it",
+      "loc": "p001",
+      "quote": "This packaging style with DRAM embedded within the organic packaging isn't new for Apple",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "notes": "read from Apple's packaging slide",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-dram-bus": {
+      "text": "AnandTech expects a 128-bit DRAM bus on the M1, as on earlier A-X chips",
+      "loc": "p001",
+      "quote": "we're almost certainly looking at a 128-bit DRAM bus on the new chip",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "bits",
+      "hedge": "almost certainly",
+      "supports": [],
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-l2-size": {
+      "text": "The M1's performance-cluster L2 is 12 MB, shared by the four Firestorm cores",
+      "loc": "p001",
+      "quote": "the 12MB cache was one of the surprise reveals of the event ... it is after all now being used by 4 cores instead of 2",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "notes": "Apple's announcement as relayed by AnandTech; the A14's L2 is 8 MB for two cores",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-l2-blocks": {
+      "text": "On the M1 die shot the 12 MB L2 appears to be split into three large blocks",
+      "loc": "p001",
+      "quote": "The new cache here looks to be portioned into 3 larger blocks",
+      "method": "other",
+      "derivation": "inferred",
+      "value": 3,
+      "unit": "blocks",
+      "hedge": "looks to be",
+      "supports": [],
+      "notes": "die-shot annotation",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-m1-slc-shared": {
+      "text": "The M1's system level cache sits near the Icestorm cores and is shared by all IP blocks on the SoC",
+      "loc": "p001",
+      "quote": "above which we find the SoC's system level cache, which is shared across all IP blocks",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "from AnandTech's die-shot annotation; no M1 SLC size is given in the article",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-a14-l2-size": {
+      "text": "The A14's L2 is an 8 MB cache shared by its two Firestorm cores",
+      "loc": "p002",
+      "quote": "Apple has been employing an 8MB structure that's shared between their two big cores",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "MiB",
+      "chip": "a14",
+      "supports": [],
+      "notes": "A14 counterpart of l2.size (c-at-m1-l2-size)",
+      "source": "anandtech-m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-a14-l2-latency": {
+      "text": "The A14's big-core L2 latency is 16 cycles, up from 14 cycles on the A13",
+      "loc": "p002",
+      "quote": "the A14 saw the L2 of the big cores make a regression in terms of access latency, going back from 14 cycles to 16 cycles",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "cycles",
+      "chip": "a14",
+      "supports": [],
+      "notes": "A14 counterpart of l2.latency",
+      "source": "anandtech-m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-a14-slc": {
+      "text": "The A14's last-level (system level) cache appears to be 16 MB, serving all IP blocks on the SoC",
+      "loc": "p002",
+      "quote": "On the A14 this appears to be again a 16MB cache that is serving all the IP blocks on the SoC",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "MiB",
+      "hedge": "appears to be",
+      "chip": "a14",
+      "supports": [],
+      "notes": "A14 counterpart of slc.size",
+      "source": "anandtech-m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-a14-clock": {
+      "text": "On the A14 a single Firestorm core runs at 2998 MHz, dropping to 2890 MHz with two cores active",
+      "loc": "p002",
+      "quote": "Performance 1 | 2998 | 2890 ... clocking down to 2.89GHz when there's two cores active",
+      "derivation": "measured",
+      "value": 2998,
+      "unit": "MHz",
+      "chip": "a14",
+      "supports": [],
+      "notes": "A14 (iPhone) counterpart of pcluster.clock_max",
+      "source": "anandtech-m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-decode-8": {
+      "text": "Firestorm decodes eight instructions per cycle",
+      "loc": "p002",
+      "quote": "Featuring an 8-wide decode block, Apple's Firestorm is by far the current widest commercialized design in the industry",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [
+        "decode.width"
+      ],
+      "notes": "measured on the A14 (AnandTech's figures are estimated from testing the A14 in the iPhone 12 Pro)",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-rob-630": {
+      "text": "Veedrac's test exposes an out-of-order window of about 630 instructions on Firestorm, which AnandTech calls the ROB while noting it may not be a traditional ROB",
+      "loc": "p002",
+      "quote": "we can seemingly confirm that Firestorm's ROB is in the 630 instruction range deep",
+      "method": "other",
+      "derivation": "measured",
+      "value": 630,
+      "unit": "instructions",
+      "approx": true,
+      "hedge": "seemingly confirm ... in the 630 instruction range",
+      "supports": [
+        "retire.rename_queue"
+      ],
+      "notes": "measured on the A14 with Veedrac's microarchitecturometer test; the filler is not described. The A13 measured 560.",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-int-prf": {
+      "text": "Firestorm's integer in-flight and rename physical register capacity is estimated at about 354 entries",
+      "loc": "p002",
+      "quote": "whose in-flight instructions and renaming physical register file capacity we estimate at around 354 entries",
+      "derivation": "measured",
+      "value": 354,
+      "unit": "registers",
+      "approx": true,
+      "hedge": "we estimate at around",
+      "supports": [],
+      "contradicts": [
+        "int_prf.total"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-int-units": {
+      "text": "Firestorm has at least seven integer execution ports: four simple ALUs, two complex units that also multiply, and what appears to be a dedicated divide unit",
+      "loc": "p002",
+      "quote": "we find at least 7 execution ports for actual arithmetic operations. These include 4 simple ALUs capable of ADD instructions, 2 complex units which feature also MUL (multiply) capabilities",
+      "derivation": "measured",
+      "value": 7,
+      "unit": "units",
+      "hedge": "at least 7 ... what appears to be a dedicated integer division unit",
+      "supports": [],
+      "contradicts": [
+        "eu_int.count"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-branches": {
+      "text": "Firestorm executes two branches per cycle; the author thinks one or two dedicated branch ports do this but could not confirm the layout",
+      "loc": "p002",
+      "quote": "The core is able to handle 2 branches per cycle, which I think is enabled by also one or two dedicated branch forwarding ports",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "branches/cycle",
+      "hedge": "I think ... I wasn't able to 100% confirm the layout of the design here",
+      "supports": [],
+      "notes": "measured on the A14; branch execution rate, not taken branches fetched per cycle",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fp-pipes": {
+      "text": "Firestorm has four 128-bit FP/NEON pipelines, a fourth pipeline added over the A13",
+      "loc": "p002",
+      "quote": "enabled by Apple's addition of a fourth execution pipeline ... The four 128-bit NEON pipelines thus on paper match",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "units",
+      "supports": [
+        "eu_fp.count"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fp-prf": {
+      "text": "Firestorm's FP rename registers appear to number 384",
+      "loc": "p002",
+      "quote": "The FP rename registers here seem to land at 384 entries, which is again comparatively massive",
+      "derivation": "measured",
+      "value": 384,
+      "unit": "registers",
+      "hedge": "seem to land at",
+      "supports": [],
+      "contradicts": [
+        "fp_prf.total"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fp-throughput": {
+      "text": "FP throughput matches the pipe count, so Firestorm sustains four FADDs and four FMULs per cycle",
+      "loc": "p002",
+      "quote": "Floating-point operations throughput here is 1:1 with the pipeline count, meaning Firestorm can do 4 FADDs and 4 FMULs per cycle",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fadd-latency": {
+      "text": "FADD latency on Firestorm is 3 cycles",
+      "loc": "p002",
+      "quote": "Firestorm can do 4 FADDs and 4 FMULs per cycle with respectively 3 and 4 cycles latency",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fmul-latency": {
+      "text": "FMUL latency on Firestorm is 4 cycles",
+      "loc": "p002",
+      "quote": "Firestorm can do 4 FADDs and 4 FMULs per cycle with respectively 3 and 4 cycles latency",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-fp-div-one-pipe": {
+      "text": "The four FP/vector pipes appear identical except that FP divide, reciprocal and square root run on only one of them",
+      "loc": "p002",
+      "quote": "Vector abilities of the 4 pipelines seem to be identical, with the only instructions that see lower throughput being FP divisions, reciprocals and square-root operations that only have an throughput of 1, on one of the four pipes",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "pipes",
+      "hedge": "seem to be identical",
+      "supports": [],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-ls-ports": {
+      "text": "Firestorm appears to have four load-store ports, one load/store, one store-only and two load-only",
+      "loc": "p002",
+      "quote": "we're seeing what appears to be four execution ports: One load/store, one dedicated store and two dedicated load units",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "units",
+      "hedge": "what appears to be",
+      "supports": [
+        "lsu.ls_units"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-loads-per-cycle": {
+      "text": "Firestorm executes at most three loads per cycle, and at most two loads alongside two stores",
+      "loc": "p002",
+      "quote": "The core can do at max 3 loads per cycle and two stores per cycle, but a maximum of only 2 loads and 2 stores concurrently",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "supports": [
+        "lsu.loads_per_cycle"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -2411,6 +2826,13 @@
       "author": "Johnson, Dougall",
       "year": 2021,
       "url": "https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/"
+    },
+    "anandtech-m1": {
+      "type": "article",
+      "title": "Apple Silicon M1: A14 Deep Dive",
+      "author": "Frumusanu, Andrei",
+      "year": 2020,
+      "url": "https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive"
     }
   },
   "mechanisms": {
@@ -2440,6 +2862,7 @@
     },
     "rename_retire_queue": {
       "claims": [
+        "c-at-rob-630",
         "c-dj-reclaim-table",
         "c-dj-rename-retire",
         "c-dj-rename-cost"
