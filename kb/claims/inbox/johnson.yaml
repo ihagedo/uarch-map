@@ -283,7 +283,235 @@ claims:
     quote: "Typically, an instruction is decoded to one or more uops, each uop is mapped and renamed and placed into a dispatch queue. These uops are then dispatched from the queue to a scheduler."
     derivation: inferred
     supports: []
+  - id: c-dj-issue-counters
+    text: >-
+      Issues are counted by the documented SCHEDULE_UOP counter, and three undocumented counters count issues to the
+      integer, load/store and SIMD units separately; uops are counted by RETIRE_UOP
+    loc: "#firestorm-pipeline-overview"
+    quote: "can be measured using the documented SCHEDULE_UOP counter. Three undocumented counters measure issues to the integer, load/store, and simd units separately"
+    method: counter
+    derivation: measured
+    supports: []
+  - id: c-dj-unit-issue-limit
+    text: Each execution unit accepts one issue per cycle
+    loc: "#firestorm-pipeline-overview"
+    quote: "Issues count towards the \"execution unit\" limits (one issue per unit per cycle)"
+    method: counter
+    derivation: measured
+    value: 1
+    unit: issues/cycle per unit
+    supports: []
+  - id: c-dj-fewer-issues
+    text: Most instructions issue once per uop, but nop, ldp and fused instructions have fewer issues than uops
+    loc: "#firestorm-pipeline-overview"
+    quote: "most instructions have the same number of issues as uops, but some have fewer (e.g. nop, ldp, and fused instructions)"
+    method: counter
+    derivation: measured
+    supports: []
+  - id: c-dj-shift-extend-issues
+    text: ALU operations with an optional shift or extend have more issues than uops
+    loc: "#firestorm-pipeline-overview"
+    quote: "some instructions have more issues than uops, e.g ALU operations with an optional shift or extend"
+    method: counter
+    derivation: measured
+    supports: []
+  - id: c-dj-issue-peak
+    text: Because shifted/extended ALU ops issue more than once per uop, Firestorm can sustain 11 issues per cycle in contrived cases
+    loc: "#firestorm-pipeline-overview"
+    quote: "which allows Firestorm to sustain 11 issues per cycle in contrived cases"
+    method: counter
+    derivation: measured
+    value: 11
+    unit: issues/cycle
+    supports: []
+
+  - id: c-dj-int-roles
+    text: >-
+      All six integer units do ALU and ubfm/sbfm; units 1-3 set flags; 1 and 2 take branches, adr and msr/mrs nzcv;
+      1 also mrs; 2 indirect branches and pointer authentication; 3 and 4 probably moves from SIMD/FP; 5 and 6 multiply;
+      5 divide; 6 madd, crc and bfm/extr
+    loc: "#firestorm-units"
+    quote: "1: alu + ubfm/sbfm + flags + branch ... indirect branch + ptrauth ... mov-from-simd/fp? ... 5: alu + ubfm/sbfm + mul + div 6: ... mul + madd + crc + bfm/extr"
+    method: counter
+    derivation: measured
+    value: "1-6 alu, ubfm/sbfm; 1-3 flags; 1-2 branch, adr, msr/mrs nzcv; 1 mrs; 2 indirect branch, ptrauth; 3-4 mov-from-simd/fp?; 5-6 mul; 5 div; 6 madd, crc, bfm/extr"
+    hedge: "mov-from-simd/fp?"
+    supports: [eu_int.roles]
+  - id: c-dj-fp-roles
+    text: >-
+      All four SIMD units do FP/SIMD; units 13 and 14 add fcsel and moves to GPRs; unit 14 alone adds fcmp/fcmpe,
+      fdiv, frecpe, frsqrte, fjcvtzs, ursqrte, urecpe and sha
+    loc: "#firestorm-units"
+    quote: "13: fp/simd + fcsel + to-gpr 14: fp/simd + fcsel + to-gpr + fcmp/e + fdiv + frecpe + frsqrte + fjcvtzs + ursqrte + urecpe + sha"
+    method: counter
+    derivation: measured
+    value: "11-14 fp/simd; 13-14 fcsel, to-gpr; 14 fcmp/e, fdiv, frecpe, frsqrte, fjcvtzs, ursqrte, urecpe, sha"
+    supports: [eu_fp.roles]
+  - id: c-dj-agu-shift
+    text: "Load/store address generation includes register shifts up to LSL #3"
+    loc: "#firestorm-units"
+    quote: "Load/store units (up to 128-bit loads and stores, including address generation with shifts up to LSL #3)"
+    method: counter
+    derivation: measured
+    value: 3
+    unit: max LSL shift
+    supports: []
+
+  - id: c-dj-fusion-read-limit
+    text: >-
+      Flag-setting ALU ops (adds/subs/ands/cmp/tst) fuse with a following b.cc; fusion is complete only when the fused
+      instructions read no more than 4 registers per 6 instructions
+    loc: "#instruction-fusion"
+    quote: "adds/subs/ands/cmp/tst + b.cc (complete fusion when fused instructions read no more than 4 registers per 6 instructions)"
+    method: counter
+    derivation: measured
+    value: 4
+    unit: regs per 6 instr
+    supports: [rename.fusion_read_limit]
+  - id: c-dj-fusion-cbz
+    text: >-
+      ALU ops (add/sub/and/orr/eor/bic etc., including flag-setting variants) usually fuse with a following cbz/cbnz when
+      their destination is the cbz operand
+    loc: "#instruction-fusion"
+    quote: "add/sub/and/orr/eor/bic/etc. + cbnz/cbz (usually fused, if destination matches cbz operand. also works with instruction variants that set flags)"
+    method: counter
+    derivation: measured
+    hedge: "usually"
+    supports: []
+  - id: c-dj-fusion-crypto
+    text: >-
+      aese + aesmc, aesd + aesimc, aese/aesd + eor and pmull + eor usually fuse when the second instruction overwrites
+      the first's destination in a matching operand pattern
+    loc: "#instruction-fusion"
+    quote: "aese + aesmc (usually fused if operands match pattern \"A, B ; A, A\") ... pmull + eor (usually fused if operands match pattern \"A, B, C ; A, A, D\" or \"A, B, C ; A, D, A\")"
+    method: counter
+    derivation: measured
+    hedge: "usually"
+    supports: []
+  - id: c-dj-fusion-amx
+    text: Pairs of AMX instructions fuse, except AMX loads and stores, probably into something like an stp
+    loc: "#instruction-fusion"
+    quote: "amx + amx (excluding loads and stores - probably fuses to something like a stp)"
+    method: counter
+    derivation: measured
+    hedge: "probably"
+    supports: []
+  - id: c-dj-fusion-branch-limits
+    text: Branch fusion does not happen with implicit shift or extend, nor with instructions that read flags such as adc
+    loc: "#instruction-fusion"
+    quote: "Branch fusion does not work with implicit shift or extend, nor instructions that read flags (like adc)"
+    method: counter
+    derivation: measured
+    supports: []
+  - id: c-dj-no-fusion
+    text: adrp + add, mov + movk, mul + umulh and udiv + msub are not fused
+    loc: "#instruction-fusion"
+    quote: "Other tested patterns are not fused, including adrp + add, mov + movk, mul + umulh, and udiv + msub."
+    method: counter
+    derivation: measured
+    supports: []
+
+  - id: c-dj-vec-mov-elim
+    text: Full-width vector register moves (mov v0.16b, v1.16b, also v0.8h etc.) are usually handled by renaming; v0.8b moves are not
+    loc: "#elimination"
+    quote: "mov v0.16b, v1.16b (usually handled by renaming. Includes other full-width types e.g. v0.8h but not v0.8b)"
+    method: counter
+    derivation: measured
+    value: true
+    hedge: "usually"
+    supports: [rename.mov_elimination]
+  - id: c-dj-nop-b-no-issue
+    text: nop and unconditional b never issue
+    loc: "#elimination"
+    quote: "Certain instructions do not need to issue: ... nop (never issues) b (unconditional branch never issues)"
+    method: counter
+    derivation: measured
+    supports: []
+
+  - id: c-dj-load-alu-latency
+    text: When a load is chained with ALU operations instead of feeding another load's base address, its latency is 4 cycles
+    loc: "#complex-latencies"
+    quote: "Loads may be passed to the base address of other loads with 3c latency ... but chaining with ALU operations gives a latency of 4c."
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: [l1d.latency_alu]
+  - id: c-dj-ldp-second-dest
+    text: The second destination register of an LDP always has 4-cycle latency
+    loc: "#complex-latencies"
+    quote: "(Although the second destination register in an LDP always has 4c latency.)"
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: []
+  - id: c-dj-index-shift-penalty
+    text: >-
+      A load takes one extra cycle when its index register comes from a shift-like instruction; addition and bitwise
+      producers carry no penalty
+    loc: "#complex-latencies"
+    quote: "Loads may have an extra 1-cycle of latency when the index register is the output of a shift-like instruction. Addition and bitwise operations do not have this penalty."
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+    notes: Johnson says other latency chains had not been tested.
+  - id: c-dj-madd-acc-latency
+    text: A MADD result feeds the addend of a following MADD with 1-cycle latency, but has 3-cycle latency into other instructions
+    loc: "#complex-latencies"
+    quote: "MADD's output can be passed to its third operand (the addend) with 1c latency, but if it's chained with other instructions it has 3c latency."
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+  - id: c-dj-int-simd-roundtrip
+    text: An integer-to-SIMD/FP-and-back round trip can take as little as 7 cycles, for example when chaining flags operations
+    loc: "#complex-latencies"
+    quote: "Integer to SIMD/FP roundtrip latency can be as low as 7c (e.g. when chaining flags operations)."
+    derivation: measured
+    value: 7
+    unit: cycles
+    hedge: "as low as"
+    supports: []
+
+  - id: c-dj-rob-model
+    text: >-
+      Firestorm's reorder buffer is unconventional: a ~330-entry coalesced retire queue of retire groups plus a
+      ~623-entry rename retire queue
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "Firestorm uses an unconventional reorder buffer, which I described as a ~330 entry \"coalesced retire queue\" and a ~623 \"rename retire queue\""
+    derivation: inferred
+    value: "coalesced retire queue + rename retire queue"
+    supports: [retire.model]
+  - id: c-dj-reclaim-table
+    text: Johnson equates the ~623-entry rename retire queue with a Physical Register Reclaim Table
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "a ~623 \"rename retire queue\" (equivalent to a \"Physical Register Reclaim Table\")"
+    derivation: inferred
+    supports: []
+  - id: c-dj-group-boundaries
+    text: >-
+      Uops that can fail before retiring (such as memory accesses) must start a retire group, and uops that can fail
+      after retiring (such as conditional branches) must end one
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "Uops which can fail before retiring (such as memory accesses) must appear at the start of a group, and uops that can fail after retiring (such as conditional branches) must appear at the end of a group."
+    method: wong-probe
+    derivation: inferred
+    supports: []
+  - id: c-dj-ooo-commit
+    text: >-
+      Non-speculative loads and stores may commit out of order, before retirement; once a store has completed, the
+      architectural state must have advanced past it
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "loads and stores may commit out-of-order if they are non-speculative. This has some interesting implications. In particular, once a store has \"completed\", the architectural state must have advanced past that point."
+    derivation: inferred
+    supports: []
+    notes: Johnson refers to his load/store queue blog post for the evidence.
+
+new_params:
+  rename.fusion_read_limit: {block: rename, name: Compare-branch fusion read limit, unit: regs per 6 instr}
+  l1d.latency_alu: {block: l1d, name: L1D hit latency (to ALU), unit: cycles}
 
 mechanism_claims:
-  retire_groups: [c-dj-retire-groups, c-dj-group-size, c-dj-nop-window, c-dj-issuing-window]
-  rename_retire_queue: [c-dj-rename-retire]
+  retire_groups: [c-dj-rob-model, c-dj-group-boundaries, c-dj-retire-groups, c-dj-group-size, c-dj-nop-window, c-dj-issuing-window]
+  rename_retire_queue: [c-dj-reclaim-table, c-dj-rename-retire]
+  lsq_early_release: [c-dj-ooo-commit]

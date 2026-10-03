@@ -1,20 +1,20 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 77, claims 24, sources 1, mechanisms 2
+blocks 37, links 35, params 79, claims 49, sources 1, mechanisms 3
 
 ## By status
 
-- inferred: 1
-- measured: 24
-- open: 52
+- inferred: 2
+- measured: 28
+- open: 49
 
 ## By confidence
 
-- low: 1
-- medium: 24
-- none: 52
+- low: 2
+- medium: 28
+- none: 49
 
-## Holes (52)
+## Holes (49)
 
 - pcluster.cores (pcluster): Firestorm cores per cluster
 - pcluster.clock_max (pcluster): Maximum clock
@@ -44,9 +44,6 @@ blocks 37, links 35, params 77, claims 24, sources 1, mechanisms 2
 - sched_int.queues (sched_int): Integer scheduler queue count
 - sched_fp.entries_per_queue (sched_fp): FP scheduler queue size
 - sched_ls.entries (sched_ls): Load-store scheduler size
-- eu_int.roles (eu_int): Integer unit roles
-- eu_fp.roles (eu_fp): FP/SIMD unit roles
-- retire.model (retire): Retire model
 - retire.group_issuing_uops (retire): Issuing uops per retire group
 - lsu.allocation (lsu): LSQ allocation point
 - lsu.forwarding (lsu): Store-to-load forwarding

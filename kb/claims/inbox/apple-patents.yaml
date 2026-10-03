@@ -1,0 +1,13 @@
+# apple-patents.yaml
+# Apple; Maynard Handley, 2013-2025
+# Apple patents behind the mechanisms on the map, with Handley's reading of each.
+session: apple-patents
+new_mechanisms:
+  lsq_early_release:
+    name: Early release of load/store queue entries
+    status: inferred
+    description: Loads and non-speculative stores give back their queue entries before retiring.
+    params: [lq.entries, sq.entries]
+    sim_switch: lsq_early_release
+    detection_rule: the same load or store filler gives a larger knee with no older store pending than with one
+
