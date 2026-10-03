@@ -100,3 +100,10 @@ mechanisms:
     params: [retire.rename_queue, retire.rate_renames]
     sim_switch: rename_retire
     detection_rule: register-writing fillers knee far below the NOP knee and above the physical register count
+  lsq_at_issue:
+    name: Load/store queue entries allocated at issue
+    status: speculative
+    description: Load and store queue entries are taken at issue, not at dispatch.
+    params: [lsu.allocation, lq.entries, sq.entries]
+    sim_switch: lsq_alloc_issue
+    detection_rule: same filler gives different knees under a miss delay and an ALU delay

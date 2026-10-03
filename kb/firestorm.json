@@ -824,15 +824,17 @@
       "value": null
     },
     "dispatch.ls_entries": {
-      "claims": [],
+      "claims": [
+        "c-dj-lsq-dispatch-10"
+      ],
       "disputes": [],
       "block": "dispatch",
       "name": "Load-store dispatch buffer",
       "unit": "entries",
       "sim_key": "dispatch_ls",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 10,
+      "status": "measured",
+      "confidence": "medium"
     },
     "sched_int.entries_per_queue": {
       "claims": [],
@@ -867,15 +869,17 @@
       "value": null
     },
     "sched_ls.entries": {
-      "claims": [],
+      "claims": [
+        "c-dj-lsq-sched-48"
+      ],
       "disputes": [],
       "block": "sched_ls",
       "name": "Load-store scheduler size",
       "unit": "entries",
       "sim_key": "sched_ls",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 48,
+      "status": "measured",
+      "confidence": "medium"
     },
     "eu_int.count": {
       "claims": [
@@ -967,15 +971,18 @@
       "confidence": "low"
     },
     "retire.group_issuing_uops": {
-      "claims": [],
+      "claims": [
+        "c-dj-group-issuing"
+      ],
       "disputes": [],
       "block": "retire",
       "name": "Issuing uops per retire group",
       "unit": "uops",
       "mechanism": "retire_groups",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 4,
+      "approx": true,
+      "status": "measured",
+      "confidence": "medium"
     },
     "retire.nop_window": {
       "claims": [
@@ -1058,7 +1065,8 @@
     },
     "lq.entries": {
       "claims": [
-        "c-dj-loads"
+        "c-dj-loads",
+        "c-dj-lsq-lq-130"
       ],
       "disputes": [],
       "block": "lq",
@@ -1066,13 +1074,13 @@
       "unit": "entries",
       "sim_key": "lq",
       "value": 130,
-      "approx": true,
       "status": "measured",
       "confidence": "medium"
     },
     "sq.entries": {
       "claims": [
-        "c-dj-stores"
+        "c-dj-stores",
+        "c-dj-lsq-sq-60"
       ],
       "disputes": [],
       "block": "sq",
@@ -1080,19 +1088,20 @@
       "unit": "entries",
       "sim_key": "sq",
       "value": 60,
-      "approx": true,
       "status": "measured",
       "confidence": "medium"
     },
     "lsu.allocation": {
-      "claims": [],
+      "claims": [
+        "c-dj-lsq-alloc-issue"
+      ],
       "disputes": [],
       "block": "lsu",
       "name": "LSQ allocation point",
       "mechanism": "lsq_at_issue",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": "at issue",
+      "status": "inferred",
+      "confidence": "low"
     },
     "lsu.ls_units": {
       "claims": [
@@ -1116,13 +1125,15 @@
       "value": null
     },
     "lsu.disambiguation": {
-      "claims": [],
+      "claims": [
+        "c-dj-lsq-x29-prediction"
+      ],
       "disputes": [],
       "block": "lsu",
       "name": "Memory disambiguation predictor",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": "suspected X29 special case",
+      "status": "inferred",
+      "confidence": "low"
     },
     "l1d.size": {
       "claims": [],
@@ -2041,6 +2052,349 @@
       "source": "dougall-firestorm",
       "chip": "m1",
       "entered": "johnson"
+    },
+    "c-dj-lsq-alloc-issue": {
+      "source": "dougall-lsq-post",
+      "text": "Load and store queue entries are allocated when the ops issue from the scheduler, not at rename or dispatch",
+      "loc": "p001",
+      "quote": "discovered that load and store queue entries are allocated when the ops issue from the scheduler",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": "at issue",
+      "supports": [
+        "lsu.allocation"
+      ],
+      "notes": "Intro, before the first heading. Reasoning in #final-notes: the 58-instruction gap between loads+loads and fsqrts+loads means loads keep entering the scheduler after the queue is full, \"So I conclude that the resources are allocated late.\"",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-lq-130": {
+      "source": "dougall-lsq-post",
+      "text": "With two cache-missing loads as the delay, 128 loads fit between them before a stall; counting both delay loads, the load queue holds 130 entries",
+      "loc": "#fighting-loads-with-loads",
+      "quote": "Since the first load, 128 other loads, and the last load are in flight at the same time, I'd call this a load queue size of 130",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 130,
+      "unit": "entries",
+      "supports": [
+        "lq.entries"
+      ],
+      "notes": "Delay: two independent cache-missing loads; filler: loads. Johnson: \"I still believe this to be correct\". The FSQRT + dependent-branch probe gives 188 = 130 + 58 (c-dj-lsq-branch-loads-188).",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-store-107": {
+      "source": "dougall-lsq-post",
+      "text": "With cache-missing loads as the delay, 107 stores fit between them before a stall; Johnson withdrew his earlier reading of this as a 107-entry store queue",
+      "loc": "#fighting-loads-with-loads",
+      "quote": "128 loads or 107 stores could run, without stopping the final long-latency load from executing in parallel ... I incorrectly called this a 107 entry store queue.",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 107,
+      "unit": "stores",
+      "supports": [],
+      "notes": "Delay: two cache-missing loads; filler: stores. Explained as 60 store-queue entries plus 47 scheduler entries (c-dj-lsq-scheduler-47); the base-register effect is c-dj-lsq-x29-base.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-sched-48": {
+      "source": "dougall-lsq-post",
+      "text": "The load/store scheduler has 48 entries",
+      "loc": "#schedulers-and-dispatch-queues",
+      "quote": "the load/store scheduler has 48 entries ... I found the last point at which an independent load could still fit into the scheduler and run, to find the scheduler size.",
+      "method": "wong-probe",
+      "filler": "loads or stores with addresses dependent on the delay",
+      "derivation": "measured",
+      "value": 48,
+      "unit": "entries",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "notes": "Delay: a long-latency chain; filler: loads or stores whose addresses depend on it; probe: one independent load that still runs. Repeated in #fighting-stores-with-square-roots.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-dispatch-10": {
+      "source": "dougall-lsq-post",
+      "text": "The load/store dispatch queue in front of the scheduler has 10 entries",
+      "loc": "#schedulers-and-dispatch-queues",
+      "quote": "with a 10 entry dispatch queue ... the number of extra load/stores, once the scheduler was full, that were required to block independent floating-point operations. That gives the dispatch queue size.",
+      "method": "wong-probe",
+      "filler": "loads or stores with addresses dependent on the delay",
+      "derivation": "measured",
+      "value": 10,
+      "unit": "entries",
+      "supports": [
+        "dispatch.ls_entries"
+      ],
+      "notes": "Delay: a long-latency chain; filler: dependent loads/stores beyond a full scheduler; probe: independent FP ops that get blocked. Mixing op types separates the queues.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-dispatch-stall": {
+      "source": "dougall-lsq-post",
+      "text": "An op that finds both its scheduler and its dispatch queue full stalls the frontend: no further ops enter any dispatch queue until that queue has room",
+      "loc": "#schedulers-and-dispatch-queues",
+      "quote": "But if the scheduler and dispatch queue are full, and we have an op that needs to go to that queue, we stall. This means no more ops can enter any dispatch queues until there is room in that queue.",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-fsqrt-329": {
+      "source": "dougall-lsq-post",
+      "text": "With chains of square roots as the delay, about 329 loads or stores fit between them, the same limit for mixed loads and stores; Johnson attributes it to the coalescing retire queue, not the load/store queues",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "about 329 loads or stores can run between floating point operations, without forcing the two long-latency chains to run completely in parallel",
+      "method": "wong-probe",
+      "filler": "loads or stores (also mixed)",
+      "derivation": "measured",
+      "value": 329,
+      "unit": "loads or stores",
+      "approx": true,
+      "hedge": "about",
+      "supports": [],
+      "notes": "Delay: long-latency FP chains (fsqrt, per the heading and #final-notes); filler: independent loads or stores. Exceeds the 130/60 queue sizes, so queue entries are freed before retirement (c-dj-lsq-release-nonspec).",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-release-nonspec": {
+      "source": "dougall-lsq-post",
+      "text": "Loads and stores complete, freeing their load/store queue entries but not their retire queue entries, once they are non-speculative",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "I'm guessing that loads and stores can complete (free their load/store queue entries, but not their retire queue entries) once they are non-speculative.",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "hedge": "I'm guessing",
+      "supports": [],
+      "notes": "Tested by making the loads/stores speculative: one initial load/store whose address depends on the delay, or (in the write-up) a branch dependent on it (c-dj-lsq-branch-loads-188).",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-release-in-order": {
+      "source": "dougall-lsq-post",
+      "text": "Load/store completion that frees queue entries happens in order relative to other loads and stores",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "I believe this completion is in-order relative to other loads and stores.",
+      "derivation": "inferred",
+      "hedge": "I believe",
+      "supports": [],
+      "notes": "The intro states it as entries \"released once they are non-speculative and all earlier loads and stores have been released\".",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-branch-loads-188": {
+      "source": "dougall-lsq-post",
+      "text": "With a square-root delay and a branch dependent on it keeping the loads speculative, 188 loads fit before a stall",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "adding a branch, dependent on the result of the first long-latency operation ... we can run 188 loads or 118 stores without forcing the two long-latency chains to run completely in parallel",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 188,
+      "unit": "loads",
+      "supports": [],
+      "notes": "Delay: FSQRT chain plus a dependent B.cc (chained via FCMP, per #the-data, since FMOV might interfere); filler: loads. 188 = 130 queue + 48 scheduler + 10 dispatch queue.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-branch-stores-118": {
+      "source": "dougall-lsq-post",
+      "text": "With a square-root delay and a branch dependent on it keeping the stores speculative, 118 stores fit before a stall",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "This will ensure the loads and stores cannot become non-speculative, and keep their queue entries. In this test we see we can run 188 loads or 118 stores",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 118,
+      "unit": "stores",
+      "supports": [],
+      "notes": "Delay: FSQRT chain plus a dependent B.cc (chained via FCMP); filler: stores. 118 = 60 store queue + 58.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-extra-58": {
+      "source": "dougall-lsq-post",
+      "text": "The 58 entries beyond the queue sizes are the 48-entry load/store scheduler plus its 10-entry dispatch queue: integer and FP work continues while they fill, and the next load/store stalls the machine",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "If the load/store scheduler and dispatch queue are full, the integer and floating point units can continue operating. But if we hit one more load/store, the machine stalls ... This explains the 58 extra entries.",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 58,
+      "unit": "entries",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-sq-60": {
+      "source": "dougall-lsq-post",
+      "text": "Subtracting the 58 scheduler and dispatch-queue entries from the 118-store result, the store queue has 60 entries",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "By this logic (subtracting 58 for the size of the scheduler and dispatch queue), the store queue has only 60 entries.",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 60,
+      "unit": "entries",
+      "supports": [
+        "sq.entries"
+      ],
+      "notes": "Delay: FSQRT chain plus a dependent branch; filler: stores; 118 - 58. Johnson's summary: \"130 load queue entries and 60 store queue entries\".",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-scheduler-47": {
+      "source": "dougall-lsq-post",
+      "text": "The earlier 107-store result is 60 store-queue entries plus 47: a probe load can still enter and issue while the 48-entry scheduler has one free entry, but not once it is full",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "So why did we think it had 47 more? Because if the 48 entry scheduler is almost full, but has one free entry, then a load can enter the scheduler, and then issue from the scheduler and execute",
+      "derivation": "inferred",
+      "value": 47,
+      "unit": "entries",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-x29-base": {
+      "source": "dougall-lsq-post",
+      "text": "With cache-missing loads as the delay, the store probe gives 60 when the second delay load is based on X29 and the stores on X29 or SP, but 107 when either base register is X3 (same values)",
+      "loc": "#an-uncomfortable-surprising-discovery",
+      "quote": "I tried to reproduce the \"107 entry store queue\" result, but the result I got was 60 entries ... Changing either or both registers back to X3 (even though the values did not change) gave me 107 again.",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 60,
+      "unit": "stores",
+      "hedge": "take this section with a grain of salt",
+      "supports": [],
+      "notes": "Delay: two cache-missing loads (second one X29 + variable offset); filler: stores at X29 or SP + constant offset. In a July 2022 update Johnson could not reproduce this section on an M1 Max and suspects hardware or software revisions.",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-x29-prediction": {
+      "source": "dougall-lsq-post",
+      "text": "Memory dependency prediction appears to special-case X29 (the frame pointer): the load waits until it knows no older store aliases it, which it can check for up to 60 speculative stores but not 61",
+      "loc": "#an-uncomfortable-surprising-discovery",
+      "quote": "X29 is typically used as the stack frame base pointer, and I suspect the memory dependency prediction has a special case for this, and makes the load wait until it knows the store doesn't alias it.",
+      "derivation": "inferred",
+      "value": "suspected X29 special case",
+      "hedge": "I suspect",
+      "supports": [
+        "lsu.disambiguation"
+      ],
+      "notes": "Same M1 Max non-reproduction caveat as c-dj-lsq-x29-base. The intro calls it \"a trick for manipulating load/store alias prediction\".",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-mov-counter": {
+      "source": "dougall-lsq-post",
+      "text": "Apple's PMU has a MEMORY_ORDER_VIOLATION event, described as incorrect speculation between a store and a dependent load",
+      "loc": "#an-uncomfortable-surprising-discovery",
+      "quote": "Apple provides a performance counter for this. It's called MEMORY_ORDER_VIOLATION and described as \"Incorrect speculation between store and dependent load\".",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-lsq-prf-not-late": {
+      "source": "dougall-lsq-post",
+      "text": "Physical register file probes show no delay-type dependence (int+int vs int+float), so registers are neither allocated late nor freed early",
+      "loc": "#final-notes",
+      "quote": "I do not see this kind of pattern when measuring physical register file sizes (e.g. comparing int+int vs int+float), so I believe they are neither allocated late, nor freed early.",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "hedge": "I believe",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-ice-lq-30": {
+      "source": "dougall-lsq-post",
+      "text": "Icestorm's load queue has 30 entries",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "The same logic works for Icestorm, where we see 30 load queue entries and 18 store queue entries",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 30,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "entered": "johnson"
+    },
+    "c-dj-ice-sq-18": {
+      "source": "dougall-lsq-post",
+      "text": "Icestorm's store queue has 18 entries",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "The same logic works for Icestorm, where we see 30 load queue entries and 18 store queue entries",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 18,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "The X29-based probe also measures 18 on Icestorm (#an-uncomfortable-surprising-discovery).",
+      "entered": "johnson"
+    },
+    "c-dj-ice-sched-ls-18": {
+      "source": "dougall-lsq-post",
+      "text": "Icestorm's load/store scheduler has 18 entries",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "18 store queue entries (with an 18 entry scheduler and a 6 entry dispatch queue)",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 18,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "entered": "johnson"
+    },
+    "c-dj-ice-dispatch-ls-6": {
+      "source": "dougall-lsq-post",
+      "text": "Icestorm's load/store dispatch queue has 6 entries",
+      "loc": "#fighting-stores-with-square-roots",
+      "quote": "with an 18 entry scheduler and a 6 entry dispatch queue",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "entered": "johnson"
+    },
+    "c-dj-group-issuing": {
+      "source": "dougall-firestorm",
+      "text": "Groups of seven uops are only observed for eliminated instructions; issuing uops are limited to roughly four per retire group",
+      "loc": "#completion-and-the-reorder-buffer-rob",
+      "quote": "with issuing uops limited to roughly four per group",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 4,
+      "approx": true,
+      "unit": "uops",
+      "hedge": "roughly four",
+      "supports": [
+        "retire.group_issuing_uops"
+      ],
+      "notes": "330 groups at four issuing uops is ~1,320, not the \"just over 1000\" issuing window the same paragraph gives; three per group (~990) fits that window",
+      "chip": "m1",
+      "entered": "johnson"
+    },
+    "c-dj-rename-cost": {
+      "source": "dougall-firestorm",
+      "text": "Every architectural register write takes a rename retire queue entry, eliminated or not: cbz and str take none, add and mov one, adds and ldp two",
+      "loc": "#completion-and-the-reorder-buffer-rob",
+      "quote": "cbz or str do not require entries, add and mov need one entry, and adds or ldp need two entries",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m1",
+      "entered": "johnson"
     }
   },
   "sources": {
@@ -2050,6 +2404,13 @@
       "author": "Johnson, Dougall",
       "year": 2023,
       "url": "https://dougallj.github.io/applecpu/firestorm.html"
+    },
+    "dougall-lsq-post": {
+      "type": "web",
+      "title": "Apple M1: Load and Store Queue Measurements",
+      "author": "Johnson, Dougall",
+      "year": 2021,
+      "url": "https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/"
     }
   },
   "mechanisms": {
@@ -2060,7 +2421,8 @@
         "c-dj-retire-groups",
         "c-dj-group-size",
         "c-dj-nop-window",
-        "c-dj-issuing-window"
+        "c-dj-issuing-window",
+        "c-dj-group-issuing"
       ],
       "name": "Coalesced retire groups",
       "status": "inferred",
@@ -2079,7 +2441,8 @@
     "rename_retire_queue": {
       "claims": [
         "c-dj-reclaim-table",
-        "c-dj-rename-retire"
+        "c-dj-rename-retire",
+        "c-dj-rename-cost"
       ],
       "name": "Rename retire queue (history file)",
       "status": "inferred",
@@ -2091,9 +2454,32 @@
       "sim_switch": "rename_retire",
       "detection_rule": "register-writing fillers knee far below the NOP knee and above the physical register count"
     },
+    "lsq_at_issue": {
+      "claims": [
+        "c-dj-lsq-alloc-issue",
+        "c-dj-lsq-store-107",
+        "c-dj-lsq-branch-loads-188",
+        "c-dj-lsq-branch-stores-118",
+        "c-dj-lsq-extra-58",
+        "c-dj-lsq-scheduler-47"
+      ],
+      "name": "Load/store queue entries allocated at issue",
+      "status": "speculative",
+      "description": "Load and store queue entries are taken at issue, not at dispatch.",
+      "params": [
+        "lsu.allocation",
+        "lq.entries",
+        "sq.entries"
+      ],
+      "sim_switch": "lsq_alloc_issue",
+      "detection_rule": "same filler gives different knees under a miss delay and an ALU delay"
+    },
     "lsq_early_release": {
       "claims": [
-        "c-dj-ooo-commit"
+        "c-dj-ooo-commit",
+        "c-dj-lsq-fsqrt-329",
+        "c-dj-lsq-release-nonspec",
+        "c-dj-lsq-release-in-order"
       ],
       "name": "Early release of load/store queue entries",
       "status": "inferred",

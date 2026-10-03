@@ -8,3 +8,9 @@ sources:
     author: Johnson, Dougall
     year: 2023
     url: https://dougallj.github.io/applecpu/firestorm.html
+  dougall-lsq-post:
+    type: web
+    title: "Apple M1: Load and Store Queue Measurements"
+    author: Johnson, Dougall
+    year: 2021
+    url: https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/

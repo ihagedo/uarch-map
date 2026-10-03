@@ -1,20 +1,20 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 79, claims 49, sources 1, mechanisms 3
+blocks 37, links 35, params 79, claims 73, sources 2, mechanisms 4
 
 ## By status
 
-- inferred: 2
-- measured: 28
-- open: 49
+- inferred: 4
+- measured: 31
+- open: 44
 
 ## By confidence
 
-- low: 2
-- medium: 28
-- none: 49
+- low: 4
+- medium: 31
+- none: 44
 
-## Holes (49)
+## Holes (44)
 
 - pcluster.cores (pcluster): Firestorm cores per cluster
 - pcluster.clock_max (pcluster): Maximum clock
@@ -39,15 +39,10 @@ blocks 37, links 35, params 79, claims 49, sources 1, mechanisms 3
 - int_prf.headroom (int_prf): Integer rename headroom
 - dispatch.int_entries (dispatch): Integer dispatch buffer
 - dispatch.mul_entries (dispatch): Multiply dispatch buffer
-- dispatch.ls_entries (dispatch): Load-store dispatch buffer
 - sched_int.entries_per_queue (sched_int): Integer scheduler queue size
 - sched_int.queues (sched_int): Integer scheduler queue count
 - sched_fp.entries_per_queue (sched_fp): FP scheduler queue size
-- sched_ls.entries (sched_ls): Load-store scheduler size
-- retire.group_issuing_uops (retire): Issuing uops per retire group
-- lsu.allocation (lsu): LSQ allocation point
 - lsu.forwarding (lsu): Store-to-load forwarding
-- lsu.disambiguation (lsu): Memory disambiguation predictor
 - l1d.size (l1d): L1D capacity
 - l1d.line (l1d): L1D line size
 - l1d.assoc (l1d): L1D associativity

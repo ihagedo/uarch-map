@@ -85,9 +85,9 @@
     "confidence": "none"
   },
   "dispatch.ls_entries": {
-    "value": null,
+    "value": 10,
     "sim_key": "dispatch_ls",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "sched_int.entries_per_queue": {
     "value": null,
@@ -100,9 +100,9 @@
     "confidence": "none"
   },
   "sched_ls.entries": {
-    "value": null,
+    "value": 48,
     "sim_key": "sched_ls",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "eu_int.count": {
     "value": 6,
