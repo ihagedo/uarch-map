@@ -1,0 +1,19 @@
+# handley-vol2-latency.yaml
+# Maynard Handley, 2025
+# Latency by footprint, the TLB hierarchy and the prefetchers (M1 Explainer vol 2).
+session: handley-vol2-latency
+source: handley-vol2
+
+new_mechanisms:
+  content_directed_prefetch:
+    name: Content-directed (data memory-dependent) prefetch
+    status: inferred
+    description: Pointer-like values in filled lines are prefetched into the L2.
+    params: [prefetch.kinds]
+    sim_switch: null
+    detection_rule: >-
+      loading a line of pointers makes later chases through those pointers faster although no load ever used
+      their addresses
+
+mechanism_claims:
+  content_directed_prefetch: [c-at-pointer-prefetch]

@@ -15,9 +15,9 @@
     "confidence": "medium"
   },
   "l1i.size": {
-    "value": null,
+    "value": 192,
     "sim_key": "l1i_kib",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "btb.l0_entries": {
     "value": null,
@@ -150,19 +150,19 @@
     "confidence": "medium"
   },
   "l1d.size": {
-    "value": null,
+    "value": 128,
     "sim_key": "l1d_kib",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "l1d.line": {
-    "value": null,
+    "value": 64,
     "sim_key": "l1d_line",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "l1d.latency": {
     "value": 3,
     "sim_key": "l1d_latency",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "dtlb.l1_entries": {
     "value": null,
@@ -177,12 +177,12 @@
   "l2.size": {
     "value": 12,
     "sim_key": "l2_mib",
-    "confidence": "low"
+    "confidence": "medium"
   },
   "l2.latency": {
-    "value": null,
+    "value": 18,
     "sim_key": "l2_latency",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "memctrl.dram_latency": {
     "value": null,

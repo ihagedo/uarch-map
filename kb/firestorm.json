@@ -448,25 +448,28 @@
   "params": {
     "pcluster.cores": {
       "claims": [
-        "c-at-m1-cores"
+        "c-at-m1-cores",
+        "c-7cpu-cores"
       ],
       "disputes": [],
       "block": "pcluster",
       "name": "Firestorm cores per cluster",
       "unit": "cores",
       "value": 4,
-      "status": "reported",
-      "confidence": "low"
+      "status": "measured",
+      "confidence": "medium"
     },
     "pcluster.clock_max": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-clock"
+      ],
       "disputes": [],
       "block": "pcluster",
       "name": "Maximum clock",
       "unit": "GHz",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 3.2,
+      "status": "measured",
+      "confidence": "medium"
     },
     "fetch.width": {
       "claims": [
@@ -509,15 +512,17 @@
       "confidence": "medium"
     },
     "l1i.size": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l1i"
+      ],
       "disputes": [],
       "block": "l1i",
       "name": "L1I capacity",
       "unit": "KiB",
       "sim_key": "l1i_kib",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 192,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l1i.line": {
       "claims": [],
@@ -1103,10 +1108,21 @@
     },
     "lq.entries": {
       "claims": [
+        "c-at-lq",
         "c-dj-loads",
         "c-dj-lsq-lq-130"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-dj-lsq-lq-130",
+            "c-at-lq"
+          ],
+          "note": "range 148-154 (midpoint given); measured on the A14, probe not described",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "lq",
       "name": "Load queue",
       "unit": "entries",
@@ -1117,10 +1133,21 @@
     },
     "sq.entries": {
       "claims": [
+        "c-at-sq",
         "c-dj-stores",
         "c-dj-lsq-sq-60"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-dj-lsq-sq-60",
+            "c-at-sq"
+          ],
+          "note": "measured on the A14, probe not described",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "sq",
       "name": "Store queue",
       "unit": "entries",
@@ -1175,26 +1202,30 @@
       "confidence": "low"
     },
     "l1d.size": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l1d-size"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D capacity",
       "unit": "KiB",
       "sim_key": "l1d_kib",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 128,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l1d.line": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l1d-line"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D line size",
       "unit": "B",
       "sim_key": "l1d_line",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 64,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l1d.assoc": {
       "claims": [],
@@ -1208,6 +1239,8 @@
     },
     "l1d.latency": {
       "claims": [
+        "c-at-l1d-latency",
+        "c-7cpu-l1d",
         "c-dj-l1d-latency"
       ],
       "disputes": [],
@@ -1217,17 +1250,19 @@
       "sim_key": "l1d_latency",
       "value": 3,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "l1d.latency_complex": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l1d-complex"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D hit latency (complex addr)",
       "unit": "cycles",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 4,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l1d.load_bw": {
       "claims": [],
@@ -1240,7 +1275,9 @@
       "value": null
     },
     "dtlb.l1_entries": {
-      "claims": [],
+      "claims": [
+        "c-at-l1-tlb"
+      ],
       "disputes": [],
       "block": "dtlb",
       "name": "L1 dTLB entries",
@@ -1260,14 +1297,16 @@
       "value": null
     },
     "dtlb.l2_entries": {
-      "claims": [],
+      "claims": [
+        "c-at-l2-tlb"
+      ],
       "disputes": [],
       "block": "dtlb",
       "name": "L2 TLB entries",
       "unit": "entries",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 3072,
+      "status": "measured",
+      "confidence": "medium"
     },
     "mshr.outstanding": {
       "claims": [],
@@ -1291,7 +1330,8 @@
     },
     "l2.size": {
       "claims": [
-        "c-at-m1-l2-size"
+        "c-at-m1-l2-size",
+        "c-7cpu-l2-size"
       ],
       "disputes": [],
       "block": "l2",
@@ -1299,29 +1339,33 @@
       "unit": "MiB",
       "sim_key": "l2_mib",
       "value": 12,
-      "status": "reported",
-      "confidence": "low"
+      "status": "measured",
+      "confidence": "medium"
     },
     "l2.line": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l2-line"
+      ],
       "disputes": [],
       "block": "l2",
       "name": "L2 line size",
       "unit": "B",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 128,
+      "status": "inferred",
+      "confidence": "low"
     },
     "l2.latency": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-l2-latency"
+      ],
       "disputes": [],
       "block": "l2",
       "name": "L2 hit latency",
       "unit": "cycles",
       "sim_key": "l2_latency",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 18,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l2.inner_slice": {
       "claims": [],
@@ -1373,6 +1417,18 @@
       "name": "Loads per cycle",
       "unit": "loads/cycle",
       "value": 3,
+      "status": "measured",
+      "confidence": "medium"
+    },
+    "lsu.stores_per_cycle": {
+      "claims": [
+        "c-at-stores-per-cycle"
+      ],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Stores per cycle",
+      "unit": "stores/cycle",
+      "value": 2,
       "status": "measured",
       "confidence": "medium"
     },
@@ -1761,6 +1817,351 @@
       ],
       "notes": "measured on the A14",
       "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-stores-per-cycle": {
+      "text": "Firestorm executes at most two stores per cycle, and at most two stores alongside two loads",
+      "loc": "p002",
+      "quote": "The core can do at max 3 loads per cycle and two stores per cycle, but a maximum of only 2 loads and 2 stores concurrently",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "stores/cycle",
+      "supports": [
+        "lsu.stores_per_cycle"
+      ],
+      "notes": "measured on the A14",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-lq": {
+      "text": "Up to about 148-154 loads can be outstanding on Firestorm, taken as the load queue size",
+      "loc": "p002",
+      "quote": "We're measuring up to around 148-154 outstanding loads and around 106 outstanding stores, which should be the equivalent figures of the load-queues and store-queues",
+      "derivation": "measured",
+      "value": 151,
+      "unit": "entries",
+      "approx": true,
+      "hedge": "up to around ... should be the equivalent figures",
+      "range": [
+        148,
+        154
+      ],
+      "supports": [],
+      "contradicts": [
+        "lq.entries"
+      ],
+      "notes": "range 148-154 (midpoint given); measured on the A14, probe not described",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-sq": {
+      "text": "About 106 stores can be outstanding on Firestorm, taken as the store queue size",
+      "loc": "p002",
+      "quote": "We're measuring up to around 148-154 outstanding loads and around 106 outstanding stores, which should be the equivalent figures of the load-queues and store-queues",
+      "derivation": "measured",
+      "value": 106,
+      "unit": "entries",
+      "approx": true,
+      "hedge": "around ... should be the equivalent figures",
+      "supports": [],
+      "contradicts": [
+        "sq.entries"
+      ],
+      "notes": "measured on the A14, probe not described",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-l1-tlb": {
+      "text": "Firestorm's L1 TLB holds 256 pages, double the A13's 128",
+      "loc": "p002",
+      "quote": "One large improvement on the part of the Firestorm cores this generation has been on the side of the TLBs. The L1 TLB has been doubled from 128 pages to 256 pages",
+      "derivation": "measured",
+      "value": 256,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "measured on the A14; the article does not say data or instruction TLB",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-l2-tlb": {
+      "text": "Firestorm's L2 TLB holds 3072 pages, up from 2048 on the A13",
+      "loc": "p002",
+      "quote": "the L2 TLB goes up from 2048 pages to 3072 pages",
+      "derivation": "measured",
+      "value": 3072,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "notes": "measured on the A14; the article adds that with 16 KB pages this covers 48 MB",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-l1i": {
+      "text": "The A13's L1 instruction cache is 192 KB per Apple's Darwin kernel sources, not the 128 KB AnandTech had assumed; the article says the A14 Firestorm continues the large-cache trend but gives no Firestorm L1I size",
+      "loc": "p002",
+      "quote": "Last year we had speculated that the A13 had 128KB L1 Instruction cache ... following Darwin kernel source dumps Apple has confirmed that it's actually a massive 192KB instruction cache",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 192,
+      "unit": "KiB",
+      "chip": "a13",
+      "supports": [],
+      "notes": "The sentence is about the A13 (Lightning), not Firestorm. Firestorm's 192 KB comes from 7-cpu (c-7cpu-l1i).",
+      "source": "anandtech-m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-l1d-latency": {
+      "text": "Firestorm's L1D load-use latency is 3 cycles",
+      "loc": "p002",
+      "quote": "The huge caches also appear to be extremely fast \u2013 the L1D lands in at a 3-cycle load-use latency",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "measured on the A14; the author does not know whether load-load cascading is involved",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-streaming-stores": {
+      "text": "New relative to the A13, the core turns streaming stores into non-temporal stores automatically, using Arm's relaxed memory model, as the Cortex-A76 and Exynos M4 do",
+      "loc": "p002",
+      "quote": "the new design now also makes usage of Arm's more relaxed memory model in that the design is able to optimise streaming stores into non-temporal stores automatically",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "measured on the A14; the test is not described",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-at-pointer-prefetch": {
+      "text": "AnandTech has seen signs that Apple's designs may use some kind of pointer-chase prefetcher, which would help sparse-memory workloads such as 429.mcf and 471.omnetpp",
+      "loc": "p003",
+      "quote": "In our microarchitectural investigations we've seen signs of ... where we might believe they're using some sort of pointer-chase prefetching mechanism",
+      "derivation": "inferred",
+      "hedge": "we might believe they're using some sort of",
+      "supports": [],
+      "notes": "said of Apple's designs in general, in the A14 SPEC discussion",
+      "source": "anandtech-m1",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-cores": {
+      "source": "7cpu-m1",
+      "text": "The M1 tested has four Firestorm cores and four Icestorm cores",
+      "loc": "#apple-m1",
+      "quote": "Apple M1 (4x Firestorm 3200 MHz + 4x Icestorm 2064 MHz)",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "cores",
+      "supports": [
+        "pcluster.cores"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-clock": {
+      "source": "7cpu-m1",
+      "text": "The M1's Firestorm cores run at 3200 MHz",
+      "loc": "#apple-m1",
+      "quote": "Apple M1 (4x Firestorm 3200 MHz + 4x Icestorm 2064 MHz)",
+      "derivation": "measured",
+      "value": 3.2,
+      "unit": "GHz",
+      "supports": [
+        "pcluster.clock_max"
+      ],
+      "notes": "The page gives 3200 MHz; its single-thread 7-Zip run reports 3196-3202 MHz",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ice-clock": {
+      "source": "7cpu-m1",
+      "text": "The M1's Icestorm cores run at 2064 MHz",
+      "loc": "#apple-m1",
+      "quote": "Apple M1 (4x Firestorm 3200 MHz + 4x Icestorm 2064 MHz)",
+      "derivation": "measured",
+      "value": 2064,
+      "unit": "MHz",
+      "chip": "icestorm",
+      "supports": [],
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-memory": {
+      "source": "7cpu-m1",
+      "text": "The M1 tested has 16 GB of LPDDR4X-4266 on eight 16-bit channels",
+      "loc": "#apple-m1",
+      "quote": "RAM: 16 GB, 8x 16-bit LPDDR4X-4266",
+      "derivation": "measured",
+      "value": "8x 16-bit LPDDR4X-4266",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ice-l1d": {
+      "source": "7cpu-m1",
+      "text": "Icestorm's L1 data cache is 64 KB; line size and associativity not determined",
+      "loc": "#apple-m1",
+      "quote": "Icestorm (Small Core): ... L1 Data cache = 64 KB, ? B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "KiB",
+      "chip": "icestorm",
+      "supports": [],
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ice-l1i": {
+      "source": "7cpu-m1",
+      "text": "Icestorm's L1 instruction cache is 128 KB",
+      "loc": "#apple-m1",
+      "quote": "L1 Instruction cache = 128 KB, ? B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "KiB",
+      "chip": "icestorm",
+      "supports": [],
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ice-l2": {
+      "source": "7cpu-m1",
+      "text": "The Icestorm cluster's L2 is 4 MB, shared by its four cores",
+      "loc": "#apple-m1",
+      "quote": "L2 Cache = 4 MB (per 4 cores), ? B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "MiB",
+      "chip": "icestorm",
+      "supports": [],
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1d-size": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1 data cache is 128 KB",
+      "loc": "#apple-m1",
+      "quote": "Firestorm (Big Core): ... L1 Data cache = 128 KB, 64 B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "associativity marked ?",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1d-line": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1 data cache has 64-byte lines",
+      "loc": "#apple-m1",
+      "quote": "Firestorm (Big Core): ... L1 Data cache = 128 KB, 64 B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1i": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1 instruction cache is 192 KB; line size and associativity not determined",
+      "loc": "#apple-m1",
+      "quote": "L1 Instruction cache = 192 KB, ? B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l2-size": {
+      "source": "7cpu-m1",
+      "text": "The Firestorm cluster's L2 is 12 MB, shared by its four cores",
+      "loc": "#apple-m1",
+      "quote": "L2 Cache = 12 MB (per 4 cores), 128 ? B/line, ?-WAY.",
+      "derivation": "measured",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l2-line": {
+      "source": "7cpu-m1",
+      "text": "7-cpu gives the Firestorm L2 line as 128 bytes, marked uncertain",
+      "loc": "#apple-m1",
+      "quote": "L2 Cache = 12 MB (per 4 cores), 128 ? B/line, ?-WAY.",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "B",
+      "hedge": "128 ?",
+      "supports": [
+        "l2.line"
+      ],
+      "notes": "7-cpu marks the value with a question mark and does not say how it was obtained",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1d": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1D latency is 3 cycles for a simple pointer access",
+      "loc": "#apple-m1",
+      "quote": "L1 Data Cache Latency = 3 cycles for simple access via pointer",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "the 128 KB size and the 4-cycle complex-address latency are c-7cpu-l1d-size and c-7cpu-l1d-complex",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1d-complex": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1D latency is 4 cycles when the address needs a complex calculation (indexed pointer chase)",
+      "loc": "#apple-m1",
+      "quote": "L1 Data Cache Latency = 4 cycles for access with complex address calculation (size_t n, *p; n = p[n])",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency_complex"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l2-latency": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L2 latency is 18 cycles",
+      "loc": "#apple-m1",
+      "quote": "Firestorm (Big Core): ... L2 Cache Latency = 18 cycles",
+      "derivation": "measured",
+      "value": 18,
+      "unit": "cycles",
+      "supports": [
+        "l2.latency"
+      ],
+      "notes": "The page lists the 12 MB L2 at 18 cycles; its \"L3\" is the 8 MB SLC (c-7cpu-slc-latency). The page names pointer access only for the L1 lines.",
       "chip": "m1",
       "entered": "anandtech-7cpu"
     },
@@ -2833,6 +3234,13 @@
       "author": "Frumusanu, Andrei",
       "year": 2020,
       "url": "https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive"
+    },
+    "7cpu-m1": {
+      "type": "web",
+      "title": "Apple M1 (7-cpu.com)",
+      "author": "7-cpu",
+      "year": 2021,
+      "url": "https://www.7-cpu.com/cpu/Apple_M1.html"
     }
   },
   "mechanisms": {
@@ -2897,6 +3305,17 @@
       "sim_switch": "lsq_alloc_issue",
       "detection_rule": "same filler gives different knees under a miss delay and an ALU delay"
     },
+    "streaming_store_nt": {
+      "claims": [
+        "c-at-streaming-stores"
+      ],
+      "name": "Automatic non-temporal streaming stores",
+      "status": "inferred",
+      "description": "Streaming stores become non-temporal without software hints.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "full-line streaming stores show no read-for-ownership traffic, so streaming write bandwidth beats partial-line writes"
+    },
     "lsq_early_release": {
       "claims": [
         "c-dj-ooo-commit",
@@ -2913,6 +3332,19 @@
       ],
       "sim_switch": "lsq_early_release",
       "detection_rule": "the same load or store filler gives a larger knee with no older store pending than with one"
+    },
+    "content_directed_prefetch": {
+      "claims": [
+        "c-at-pointer-prefetch"
+      ],
+      "name": "Content-directed (data memory-dependent) prefetch",
+      "status": "inferred",
+      "description": "Pointer-like values in filled lines are prefetched into the L2.",
+      "params": [
+        "prefetch.kinds"
+      ],
+      "sim_switch": null,
+      "detection_rule": "loading a line of pointers makes later chases through those pointers faster although no load ever used their addresses"
     }
   }
 }

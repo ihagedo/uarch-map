@@ -20,3 +20,9 @@ sources:
     author: Frumusanu, Andrei
     year: 2020
     url: https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive
+  7cpu-m1:
+    type: web
+    title: Apple M1 (7-cpu.com)
+    author: 7-cpu
+    year: 2021
+    url: https://www.7-cpu.com/cpu/Apple_M1.html

@@ -1,25 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 80, claims 98, sources 3, mechanisms 4
+blocks 37, links 35, params 81, claims 122, sources 4, mechanisms 6
 
 ## By status
 
-- inferred: 4
-- measured: 32
-- open: 42
-- reported: 2
+- inferred: 5
+- measured: 42
+- open: 34
 
 ## By confidence
 
-- high: 4
-- low: 6
-- medium: 28
-- none: 42
+- high: 5
+- low: 5
+- medium: 37
+- none: 34
 
-## Holes (42)
+## Holes (34)
 
-- pcluster.clock_max (pcluster): Maximum clock
-- l1i.size (l1i): L1I capacity
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
 - btb.l0_entries (btb): Zero-bubble BTB entries
@@ -44,28 +41,24 @@ blocks 37, links 35, params 80, claims 98, sources 3, mechanisms 4
 - sched_int.queues (sched_int): Integer scheduler queue count
 - sched_fp.entries_per_queue (sched_fp): FP scheduler queue size
 - lsu.forwarding (lsu): Store-to-load forwarding
-- l1d.size (l1d): L1D capacity
-- l1d.line (l1d): L1D line size
 - l1d.assoc (l1d): L1D associativity
-- l1d.latency_complex (l1d): L1D hit latency (complex addr)
 - l1d.load_bw (l1d): L1D load bandwidth
 - dtlb.l1_entries (dtlb): L1 dTLB entries
 - dtlb.l1_org (dtlb): L1 dTLB organisation
-- dtlb.l2_entries (dtlb): L2 TLB entries
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
-- l2.line (l2): L2 line size
-- l2.latency (l2): L2 hit latency
 - l2.inner_slice (l2): Per-core inner L2 slice
 - slc.size (slc): SLC capacity
 - slc.latency (slc): SLC hit latency
 - memctrl.dram_latency (memctrl): DRAM latency
 
-## Open disputes (3)
+## Open disputes (5)
 
 - int_prf.total: measured on the A14  [c-dj-int-prf, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
+- lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
+- sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
 
 ## Problems (0)
 
