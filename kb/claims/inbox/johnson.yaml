@@ -1,0 +1,289 @@
+# johnson.yaml
+# Dougall Johnson, 2021-2023
+# The Firestorm overview and the load and store queue measurements.
+session: johnson
+source: dougall-firestorm
+
+claims:
+
+  - id: c-dj-width
+    text: Firestorm's pipeline width is eight instructions (uops) per cycle
+    loc: "#other-limits"
+    quote: "Firestorm has a pipeline width of eight instructions per cycle. Uops per cycle: 8"
+    method: counter
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    supports: [fetch.width, decode.width, rename.width]
+    notes: >-
+      Johnson gives one pipeline width, not separate fetch/decode/rename widths. Method from #firestorm-pipeline-overview
+      (uops counted with the RETIRE_UOP counter against the 8 uops/cycle limit).
+  - id: c-dj-taken
+    text: Firestorm sustains one taken branch per cycle
+    loc: "#other-limits"
+    quote: "Uops per cycle: 8 Taken branches per cycle: 1"
+    derivation: measured
+    value: 1
+    unit: branches/cycle
+    supports: [fetch.taken_per_cycle]
+    notes: The page does not say how this was measured.
+  - id: c-dj-int-prf
+    text: The integer physical register file holds about 380 to 394 registers
+    loc: "#other-limits"
+    quote: "Integer physical register file size: ~380-394? ... These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: int
+    derivation: measured
+    value: 387
+    unit: registers
+    approx: true
+    hedge: "?"
+    range: [380, 394]
+    supports: [int_prf.total]
+    notes: Johnson gives the range ~380-394 with a question mark; value is the midpoint.
+  - id: c-dj-fp-prf
+    text: The FP/SIMD physical register file holds about 432 registers
+    loc: "#other-limits"
+    quote: "FP/SIMD physical register file size: ~432? ... These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: simd
+    derivation: measured
+    value: 432
+    unit: registers
+    approx: true
+    hedge: "?"
+    supports: [fp_prf.total]
+  - id: c-dj-flags-prf
+    text: The flags physical register file holds about 128 registers
+    loc: "#other-limits"
+    quote: "Flags physical register file size: ~128 ... These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: flags
+    derivation: measured
+    value: 128
+    unit: registers
+    approx: true
+    supports: [flags_prf.total]
+  - id: c-dj-branches
+    text: About 144 branches can be in flight
+    loc: "#other-limits"
+    quote: "In-flight branches: ~144 ... These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: branch
+    derivation: measured
+    value: 144
+    unit: branches
+    approx: true
+    supports: [retire.inflight_branches]
+  - id: c-dj-loads
+    text: About 130 loads can be in flight
+    loc: "#other-limits"
+    quote: "In-flight loads: ~130 ... These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: load
+    derivation: measured
+    value: 130
+    unit: entries
+    approx: true
+    supports: [lq.entries]
+    notes: The page points to the load/store queue blog post for detail (see c-dj-lsq-lq-130).
+  - id: c-dj-stores
+    text: About 60 stores can be in flight
+    loc: "#other-limits"
+    quote: "In-flight stores: ~60 These numbers mostly come from my M1 buffer size measuring tool"
+    method: wong-probe
+    filler: store
+    derivation: measured
+    value: 60
+    unit: entries
+    approx: true
+    supports: [sq.entries]
+    notes: The page points to the load/store queue blog post for detail (see c-dj-lsq-sq-60).
+
+  - id: c-dj-retire-groups
+    text: The coalesced retire queue holds about 330 retire groups
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "The coalesced retire queue consists of ~330 such groups."
+    method: wong-probe
+    derivation: measured
+    value: 330
+    unit: groups
+    approx: true
+    supports: [retire.groups]
+    notes: >-
+      The page names no filler; the LSQ post reaches this limit with ~329 loads or stores under an FSQRT delay
+      (c-dj-lsq-fsqrt-329). Group boundaries are c-dj-group-boundaries.
+  - id: c-dj-group-size
+    text: A retire group may contain up to seven uops
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "Firestorm coalesces uops into retire groups, which all retire together. A retire group may contain up to seven uops."
+    method: wong-probe
+    derivation: inferred
+    value: 7
+    unit: uops
+    supports: [retire.group_max_uops]
+    notes: Seven-uop groups are only observed for eliminated instructions (c-dj-group-issuing).
+  - id: c-dj-nop-window
+    text: The coalesced retire queue allows an out-of-order window of over 2200 nop instructions
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "This allows an out-of-order window of ... or over 2200 nop instructions."
+    method: wong-probe
+    filler: nop
+    derivation: measured
+    value: 2200
+    unit: instructions
+    approx: true
+    hedge: "over 2200"
+    supports: [retire.nop_window]
+    notes: A lower bound ("over").
+  - id: c-dj-issuing-window
+    text: The coalesced retire queue allows an out-of-order window of just over 1000 contrived instructions that issue
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "This allows an out-of-order window of just over 1000 (contrived) instructions that issue"
+    method: wong-probe
+    filler: issuing uops
+    derivation: measured
+    value: 1000
+    unit: uops
+    approx: true
+    hedge: "just over 1000"
+    supports: [retire.issuing_window]
+  - id: c-dj-rename-retire
+    text: The rename retire queue allows up to about 623 renames in flight
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "This is tracked in a separate structure, called the \"rename retire queue\", which allows for up to ~623 renames."
+    method: wong-probe
+    filler: register-writing
+    derivation: measured
+    value: 623
+    unit: entries
+    approx: true
+    supports: [retire.rename_queue]
+    notes: >-
+      The every-write-needs-an-entry rule is c-dj-rename-cost. Also listed in #other-limits as "In-flight renames:
+      ~623".
+  - id: c-dj-retire-rate
+    text: Retirement is measured at up to eight coalesced retire queue entries per cycle
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "Retirement-rate is measured at up to eight coalesced retire queue entries per cycle"
+    derivation: measured
+    value: 8
+    unit: groups/cycle
+    supports: [retire.rate_groups]
+    notes: The page says "measured" but not how.
+  - id: c-dj-rename-rate
+    text: Retirement is measured at up to sixteen rename retire queue entries per cycle
+    loc: "#completion-and-the-reorder-buffer-rob"
+    quote: "or up to sixteen rename retire queue entries per cycle"
+    derivation: measured
+    value: 16
+    unit: entries/cycle
+    supports: [retire.rate_renames]
+    notes: The page says "measured" but not how.
+
+  - id: c-dj-int-units
+    text: Firestorm has six integer units (1 to 6), each with ALU and ubfm/sbfm
+    loc: "#firestorm-units"
+    quote: "Integer units: 1: alu + ubfm/sbfm + flags + branch ... 6: alu + ubfm/sbfm + mul + madd + crc + bfm/extr"
+    method: counter
+    derivation: measured
+    value: 6
+    unit: units
+    supports: [eu_int.count]
+    notes: >-
+      The page says issues are measured with SCHEDULE_UOP and per-class issue counters. Unit roles are c-dj-int-roles.
+  - id: c-dj-ls-units
+    text: >-
+      Firestorm has four load/store units handling up to 128-bit accesses: unit 7 store and AMX, unit 8 load/store
+      and AMX, units 9 and 10 load only
+    loc: "#firestorm-units"
+    quote: "Load/store units (up to 128-bit loads and stores ... 7: store + amx 8: load/store + amx 9: load 10: load"
+    method: counter
+    derivation: measured
+    value: 4
+    unit: units
+    supports: [lsu.ls_units]
+    notes: Method as for c-dj-int-units.
+  - id: c-dj-fp-units
+    text: Firestorm has four FP/SIMD units (11 to 14)
+    loc: "#firestorm-units"
+    quote: "SIMD units: 11: fp/simd 12: fp/simd 13: fp/simd + fcsel + to-gpr 14: fp/simd"
+    method: counter
+    derivation: measured
+    value: 4
+    unit: units
+    supports: [eu_fp.count]
+    notes: >-
+      Unit roles are c-dj-fp-roles. For unit 14 the page lists reciprocal and reciprocal-square-root estimates (frecpe,
+      frsqrte, urecpe, ursqrte), not fsqrt.
+
+  - id: c-dj-mov-elim
+    text: >-
+      64-bit register moves (mov x0, x1) are usually handled by renaming; mov w0, w1, mov x0, xzr and adr/adrp are not
+      eliminated
+    loc: "#elimination"
+    quote: "mov x0, x1 (usually handled by renaming, 64-bit version only) ... not eliminated, including adr/adrp, mov w0, w1 and mov x0, xzr"
+    method: counter
+    derivation: measured
+    value: true
+    hedge: "usually"
+    supports: [rename.mov_elimination]
+  - id: c-dj-zero-idiom
+    text: "mov x0, #0 (and its 32-bit form) and movi v0.16b, #0 (and other types) are handled by renaming"
+    loc: "#elimination"
+    quote: "mov x0, #0 (handled by renaming, as is 32-bit version) ... movi v0.16b, #0 (handled by renaming, including other types)"
+    method: counter
+    derivation: measured
+    value: true
+    supports: [rename.zero_idiom]
+    notes: mov x0, xzr is not eliminated (c-dj-mov-elim).
+  - id: c-dj-mov-imm
+    text: >-
+      Immediate moves (mov x0, #imm, 32- and 64-bit, including bitwise/movz/movn aliases) are handled by renaming at
+      most twice per eight instructions
+    loc: "#elimination"
+    quote: "mov x0, #123 (handled by renaming at a max of 2 per 8 instructions, both 32-bit and 64-bit. Includes all tested immediate \"mov\" aliases e.g. bitwise/movz/movn)"
+    method: counter
+    derivation: measured
+    value: 2
+    unit: per 8 instr
+    supports: [rename.mov_imm_limit]
+
+  - id: c-dj-fusion
+    text: >-
+      Certain consecutive instruction pairs issue as one uop: flag-setting ALU + b.cc, ALU + cbz/cbnz, aese + aesmc,
+      aesd + aesimc, aese/aesd + eor, pmull + eor, and amx + amx
+    loc: "#instruction-fusion"
+    quote: "Certain instructions are able to issue as one uop if they appear consecutively in the instruction stream."
+    method: counter
+    derivation: measured
+    value: "flag-ALU+b.cc, ALU+cbz/cbnz, aese+aesmc, aesd+aesimc, aes+eor, pmull+eor, amx+amx"
+    supports: [rename.fusion]
+    notes: >-
+      Conditions and non-fused pairs: c-dj-fusion-read-limit, c-dj-fusion-cbz, c-dj-fusion-crypto, c-dj-fusion-amx,
+      c-dj-fusion-branch-limits and c-dj-no-fusion.
+
+  - id: c-dj-l1d-latency
+    text: A load's result can feed the base address of another load with 3-cycle latency
+    loc: "#complex-latencies"
+    quote: "Loads may be passed to the base address of other loads with 3c latency (which is nice for linked lists)"
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: [l1d.latency]
+    notes: >-
+      The 4c ALU-chain latency is c-dj-load-alu-latency. The page gives no method for latencies.
+
+  - id: c-dj-pipeline-flow
+    text: >-
+      Instructions decode to one or more uops, which are mapped, renamed and placed in a dispatch queue, then dispatched
+      to a scheduler, issue when their operands are ready, and are marked completed in the reorder buffer, which
+      releases entries in order
+    loc: "#firestorm-pipeline-overview"
+    quote: "Typically, an instruction is decoded to one or more uops, each uop is mapped and renamed and placed into a dispatch queue. These uops are then dispatched from the queue to a scheduler."
+    derivation: inferred
+    supports: []
+
+mechanism_claims:
+  retire_groups: [c-dj-retire-groups, c-dj-group-size, c-dj-nop-window, c-dj-issuing-window]
+  rename_retire_queue: [c-dj-rename-retire]

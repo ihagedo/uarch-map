@@ -83,3 +83,20 @@ params:
   slc.size:                     {block: slc,      name: SLC capacity,                    unit: MiB}
   slc.latency:                  {block: slc,      name: SLC hit latency,                 unit: cycles}
   memctrl.dram_latency:         {block: memctrl,  name: DRAM latency,                    unit: ns,          sim_key: dram_latency_ns}
+
+mechanisms:
+  retire_groups:
+    name: Coalesced retire groups
+    status: inferred
+    description: Uops retire in groups of up to seven; a memory op starts a group and a branch ends one.
+    params: [retire.model, retire.groups, retire.group_max_uops, retire.group_issuing_uops, retire.nop_window,
+             retire.issuing_window]
+    sim_switch: retire_group
+    detection_rule: NOP knee divided by load, store or branch knee is close to a whole number >= 2
+  rename_retire_queue:
+    name: Rename retire queue (history file)
+    status: inferred
+    description: A second queue of about 620 entries limits instructions that change the register map.
+    params: [retire.rename_queue, retire.rate_renames]
+    sim_switch: rename_retire
+    detection_rule: register-writing fillers knee far below the NOP knee and above the physical register count

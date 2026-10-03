@@ -1,18 +1,18 @@
 {
   "fetch.width": {
-    "value": null,
+    "value": 8,
     "sim_key": "fetch_width",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "decode.width": {
-    "value": null,
+    "value": 8,
     "sim_key": "decode_width",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "fetch.taken_per_cycle": {
-    "value": null,
+    "value": 1,
     "sim_key": "taken_per_cycle",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "l1i.size": {
     "value": null,
@@ -60,24 +60,24 @@
     "confidence": "none"
   },
   "rename.width": {
-    "value": null,
+    "value": 8,
     "sim_key": "rename_width",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "int_prf.total": {
-    "value": null,
+    "value": 387,
     "sim_key": "int_prf",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "fp_prf.total": {
-    "value": null,
+    "value": 432,
     "sim_key": "fp_prf",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "flags_prf.total": {
-    "value": null,
+    "value": 128,
     "sim_key": "flags_prf",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "dispatch.int_entries": {
     "value": null,
@@ -105,49 +105,49 @@
     "confidence": "none"
   },
   "eu_int.count": {
-    "value": null,
+    "value": 6,
     "sim_key": "int_units",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "eu_fp.count": {
-    "value": null,
+    "value": 4,
     "sim_key": "fp_units",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "retire.groups": {
-    "value": null,
+    "value": 330,
     "sim_key": "retire_groups",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "retire.group_max_uops": {
-    "value": null,
+    "value": 7,
     "sim_key": "retire_group_size",
-    "confidence": "none"
+    "confidence": "low"
   },
   "retire.rename_queue": {
-    "value": null,
+    "value": 623,
     "sim_key": "rename_retire",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "retire.rate_groups": {
-    "value": null,
+    "value": 8,
     "sim_key": "retire_rate",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "retire.inflight_branches": {
-    "value": null,
+    "value": 144,
     "sim_key": "branch_window",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "lq.entries": {
-    "value": null,
+    "value": 130,
     "sim_key": "lq",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "sq.entries": {
-    "value": null,
+    "value": 60,
     "sim_key": "sq",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "l1d.size": {
     "value": null,
@@ -160,9 +160,9 @@
     "confidence": "none"
   },
   "l1d.latency": {
-    "value": null,
+    "value": 3,
     "sim_key": "l1d_latency",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "dtlb.l1_entries": {
     "value": null,

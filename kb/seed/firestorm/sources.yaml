@@ -1,4 +1,10 @@
 # sources.yaml
 # Isaac Hagedorn, 2026-10-02
 # The sources the claims cite.
-sources: {}
+sources:
+  dougall-firestorm:
+    type: web
+    title: Firestorm Overview (applecpu)
+    author: Johnson, Dougall
+    year: 2023
+    url: https://dougallj.github.io/applecpu/firestorm.html
