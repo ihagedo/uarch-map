@@ -1,0 +1,9 @@
+# handley-vol2-bandwidth.yaml
+# Maynard Handley, 2025
+# Load, store and copy bandwidth from L1 to DRAM (M1 Explainer vol 2).
+session: handley-vol2-bandwidth
+source: handley-vol2
+
+new_params:
+  memctrl.dram_load_bw:  {block: memctrl, name: DRAM load bandwidth (one core), unit: GB/s}
+

@@ -1,21 +1,21 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 81, claims 122, sources 4, mechanisms 6
+blocks 37, links 35, params 84, claims 147, sources 4, mechanisms 6
 
 ## By status
 
 - inferred: 5
-- measured: 42
-- open: 34
+- measured: 49
+- open: 30
 
 ## By confidence
 
-- high: 5
+- high: 6
 - low: 5
-- medium: 37
-- none: 34
+- medium: 43
+- none: 30
 
-## Holes (34)
+## Holes (30)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -26,7 +26,6 @@ blocks 37, links 35, params 81, claims 122, sources 4, mechanisms 6
 - dirpred.kind (dirpred): Direction predictor type
 - dirpred.history (dirpred): Global history length
 - dirpred.capacity (dirpred): Direction predictor capacity
-- dirpred.mispredict_penalty (dirpred): Mispredict penalty
 - ras.depth (ras): Return stack depth
 - indpred.capacity (indpred): Indirect predictor capacity
 - ftq.present (ftq): Decoupled fetch present
@@ -43,22 +42,20 @@ blocks 37, links 35, params 81, claims 122, sources 4, mechanisms 6
 - lsu.forwarding (lsu): Store-to-load forwarding
 - l1d.assoc (l1d): L1D associativity
 - l1d.load_bw (l1d): L1D load bandwidth
-- dtlb.l1_entries (dtlb): L1 dTLB entries
 - dtlb.l1_org (dtlb): L1 dTLB organisation
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
-- slc.size (slc): SLC capacity
 - slc.latency (slc): SLC hit latency
-- memctrl.dram_latency (memctrl): DRAM latency
 
-## Open disputes (5)
+## Open disputes (6)
 
 - int_prf.total: measured on the A14  [c-dj-int-prf, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
+- dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-7cpu-dtlb-l1, c-at-l1-tlb]
 
 ## Problems (0)
 

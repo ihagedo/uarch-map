@@ -618,15 +618,17 @@
       "value": null
     },
     "dirpred.mispredict_penalty": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-mispredict"
+      ],
       "disputes": [],
       "block": "dirpred",
       "name": "Mispredict penalty",
       "unit": "cycles",
       "sim_key": "mispredict_penalty",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 13,
+      "status": "measured",
+      "confidence": "medium"
     },
     "ras.depth": {
       "claims": [],
@@ -1276,16 +1278,27 @@
     },
     "dtlb.l1_entries": {
       "claims": [
-        "c-at-l1-tlb"
+        "c-at-l1-tlb",
+        "c-7cpu-dtlb-l1"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-7cpu-dtlb-l1",
+            "c-at-l1-tlb"
+          ],
+          "note": "measured on the A14; the article does not say data or instruction TLB",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "dtlb",
       "name": "L1 dTLB entries",
       "unit": "entries",
       "sim_key": "dtlb_l1",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 160,
+      "status": "measured",
+      "confidence": "medium"
     },
     "dtlb.l1_org": {
       "claims": [],
@@ -1298,7 +1311,8 @@
     },
     "dtlb.l2_entries": {
       "claims": [
-        "c-at-l2-tlb"
+        "c-at-l2-tlb",
+        "c-7cpu-dtlb-l2"
       ],
       "disputes": [],
       "block": "dtlb",
@@ -1306,7 +1320,7 @@
       "unit": "entries",
       "value": 3072,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "mshr.outstanding": {
       "claims": [],
@@ -1378,14 +1392,16 @@
       "value": null
     },
     "slc.size": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-slc-size"
+      ],
       "disputes": [],
       "block": "slc",
       "name": "SLC capacity",
       "unit": "MiB",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 8,
+      "status": "measured",
+      "confidence": "medium"
     },
     "slc.latency": {
       "claims": [],
@@ -1398,15 +1414,17 @@
       "value": null
     },
     "memctrl.dram_latency": {
-      "claims": [],
+      "claims": [
+        "c-7cpu-dram-latency"
+      ],
       "disputes": [],
       "block": "memctrl",
       "name": "DRAM latency",
       "unit": "ns",
       "sim_key": "dram_latency_ns",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 91,
+      "status": "measured",
+      "confidence": "medium"
     },
     "lsu.loads_per_cycle": {
       "claims": [
@@ -1429,6 +1447,42 @@
       "name": "Stores per cycle",
       "unit": "stores/cycle",
       "value": 2,
+      "status": "measured",
+      "confidence": "medium"
+    },
+    "dtlb.l1_miss_penalty": {
+      "claims": [
+        "c-7cpu-dtlb-l1-miss"
+      ],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L1 dTLB miss penalty",
+      "unit": "cycles",
+      "value": 6,
+      "status": "measured",
+      "confidence": "medium"
+    },
+    "dtlb.l2_miss_penalty": {
+      "claims": [
+        "c-7cpu-dtlb-l2-miss"
+      ],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L2 TLB miss penalty",
+      "unit": "cycles",
+      "value": 26,
+      "status": "measured",
+      "confidence": "medium"
+    },
+    "memctrl.dram_load_bw": {
+      "claims": [
+        "c-7cpu-ram-read-bw"
+      ],
+      "disputes": [],
+      "block": "memctrl",
+      "name": "DRAM load bandwidth (one core)",
+      "unit": "GB/s",
+      "value": 64,
       "status": "measured",
       "confidence": "medium"
     },
@@ -2162,6 +2216,336 @@
         "l2.latency"
       ],
       "notes": "The page lists the 12 MB L2 at 18 cycles; its \"L3\" is the 8 MB SLC (c-7cpu-slc-latency). The page names pointer access only for the L1 lines.",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-slc-size": {
+      "source": "7cpu-m1",
+      "text": "The M1's system level cache (7-cpu's L3) is 8 MB, shared by all clusters",
+      "loc": "#apple-m1",
+      "quote": "L3 Cache = 8 MB (shared for all clusters)",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "MiB",
+      "supports": [
+        "slc.size"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-slc-line": {
+      "source": "7cpu-m1",
+      "text": "7-cpu gives the SLC line as 128 bytes, marked uncertain",
+      "loc": "#apple-m1",
+      "quote": "L3 Cache = 8 MB (shared for all clusters), 128 ? B/line",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "B",
+      "hedge": "128 ?",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-slc-exclusive": {
+      "source": "7cpu-m1",
+      "text": "7-cpu suggests, with a question mark, that the SLC is exclusive of the L2",
+      "loc": "#apple-m1",
+      "quote": "128 ? B/line, ?-WAY. Exclusive ? with L2 Cache.",
+      "derivation": "inferred",
+      "value": true,
+      "hedge": "Exclusive ?",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-slc-latency": {
+      "source": "7cpu-m1",
+      "text": "From a Firestorm core, an SLC hit costs the 18-cycle L2 latency plus 10-15 ns",
+      "loc": "#apple-m1",
+      "quote": "L3 Cache Latency = 18 cycles + (10-15 ns) : for Firestorm - Big Core",
+      "derivation": "measured",
+      "value": 12.5,
+      "unit": "ns",
+      "approx": true,
+      "supports": [],
+      "notes": "stated as 18 cycles + (10-15 ns), so not a cycle count without a clock; value is the midpoint of the ns part",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-dram-latency": {
+      "source": "7cpu-m1",
+      "text": "From a Firestorm core, DRAM latency is the 18-cycle L2 latency plus 91 ns",
+      "loc": "#apple-m1",
+      "quote": "RAM Latency = 18 cycles + 91 ns : for Firestorm - Big Core",
+      "derivation": "measured",
+      "value": 91,
+      "unit": "ns",
+      "supports": [
+        "memctrl.dram_latency"
+      ],
+      "notes": "stated as 18 cycles + 91 ns; the value is the time beyond the 18-cycle L2 latency",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-dtlb-l1": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L1 data TLB holds 160 entries; associativity not determined",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "Data TLB L1: 160 items. ?-way?",
+      "derivation": "measured",
+      "value": 160,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-dtlb-l1-miss": {
+      "source": "7cpu-m1",
+      "text": "An L1 dTLB miss costs 6 cycles; overlapped misses cost 1.35 cycles per access",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "Data TLB L1: 160 items. ?-way? Miss penalty = 6 cycles. Parallel miss: 1.35 cycles per access",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "cycles",
+      "supports": [
+        "dtlb.l1_miss_penalty"
+      ],
+      "notes": "16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-dtlb-l2": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's L2 data TLB holds about 3K entries",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "Data TLB L2: 3K items. ?-way.",
+      "derivation": "measured",
+      "value": 3072,
+      "unit": "entries",
+      "approx": true,
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "notes": "stated as 3K; 16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-dtlb-l2-miss": {
+      "source": "7cpu-m1",
+      "text": "An L2 TLB miss costs 26 cycles, probably a page walk to the L2 cache; overlapped misses cost 6.4 cycles per access including the data access",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "Miss penalty = 26 cycles (page walk to L2 cache ? ). Parallel miss: 6.4 cycles per access (including L2 cache access for data and page walk).",
+      "derivation": "measured",
+      "value": 26,
+      "unit": "cycles",
+      "hedge": "page walk to L2 cache ?",
+      "supports": [
+        "dtlb.l2_miss_penalty"
+      ],
+      "notes": "16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-walk-cache": {
+      "source": "7cpu-m1",
+      "text": "A page directory cache of 24 entries, each covering a 32 MB block, covers 768 MB; a miss costs about 24 cycles",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "page directory cache: cover 768 MB = (24 items * 32 MB block). Miss penalty = 24 ? cycles (page walk to L2 cache ? ).",
+      "derivation": "measured",
+      "value": 24,
+      "unit": "entries",
+      "hedge": "24 ? cycles (page walk to L2 cache ? )",
+      "supports": [],
+      "notes": "16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-latency-curve-l2": {
+      "source": "7cpu-m1",
+      "text": "In the latency sweep, latency is 3 cycles at 128 KB, 11 at 256 KB (where the L2 adds 15), 15 at 512 KB, 16 at 1 MB, 17 at 2 MB, 20 at 4 MB (L1 TLB miss, +6) and 23 at 8 MB",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "128 K 3 256 K 11 8 + 15 (L2) 512 K 15 4 1 M 16 1 2 M 17 1 4 M 20 3 + 6 (L1 TLB miss) 8 M 23 3",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "16 KB pages",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-latency-curve-dram": {
+      "source": "7cpu-m1",
+      "text": "Beyond 8 MB the sweep reads 24 cycles + 9 ns at 16 MB, 24 + 44 ns at 32 MB (RAM, +91 ns), 32 + 66 ns at 64 MB (L2 TLB miss, +26), 55 + 90 ns at 1 GB (directory cache miss, +24) and 64 + 91 ns at 2 GB",
+      "loc": "#16-kb-pages-mode-firestorm-big-core",
+      "quote": "16 M 24 + 9 ns 1 + 9 ns 32 M 24 + 44 ns 0 + 35 ns + 91 ns (RAM) 64 M 32 + 66 ns 8 + 22 ns + 26 (L2 TLB miss)",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "16 KB pages; the 1 GB and 2 GB rows come from the same table",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-mispredict": {
+      "source": "7cpu-m1",
+      "text": "Firestorm's branch misprediction penalty is 13 cycles",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "Branch misprediction penalty = 13 cycles",
+      "derivation": "measured",
+      "value": 13,
+      "unit": "cycles",
+      "supports": [
+        "dirpred.mispredict_penalty"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-8b-cross": {
+      "source": "7cpu-m1",
+      "text": "An access that crosses an 8-byte range pays a 1-cycle penalty",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "8-bytes range cross penalty = 1 cycle",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "cycles",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1-read-tput": {
+      "source": "7cpu-m1",
+      "text": "Parallel random L1 reads take 0.34 cycles per access",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "L1 B/W (Parallel Random Read) = 0.34 cycles per one access",
+      "derivation": "measured",
+      "value": 0.34,
+      "unit": "cycles/access",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l1-write-tput": {
+      "source": "7cpu-m1",
+      "text": "L1 write throughput is 0.5 cycles per write",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "L1 Write throughput = 0.5 cycles per one write",
+      "derivation": "measured",
+      "value": 0.5,
+      "unit": "cycles/write",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l2-read-bw": {
+      "source": "7cpu-m1",
+      "text": "L2-to-L1 reads take 2.0 cycles per cache line, for both parallel random reads and 64-byte-step reads",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "L2->L1 B/W (Parallel Random Read) = 2.0 cycles per cache line - L2->L1 B/W (Read, 64 bytes step) = 2.0 cycles per cache line",
+      "derivation": "measured",
+      "value": 2.0,
+      "unit": "cycles/line",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-l2-write-bw": {
+      "source": "7cpu-m1",
+      "text": "Writes to the L2 with a 64-byte step take 2.0 cycles per write",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "L2 Write (Write, 64 bytes step) = 2.0 cycles per write",
+      "derivation": "measured",
+      "value": 2.0,
+      "unit": "cycles/write",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-slc-read-bw": {
+      "source": "7cpu-m1",
+      "text": "Parallel random reads from the SLC (7-cpu's L3) into L1 take 5 cycles per cache line",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "L3->L1 B/W (Parallel Random Read) = 5 cycles per cache line",
+      "derivation": "measured",
+      "value": 5,
+      "unit": "cycles/line",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ram-random-read": {
+      "source": "7cpu-m1",
+      "text": "Parallel random DRAM reads take 4 ns per line, the line probably being 128 bytes",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "RAM Read B/W (Parallel Random Read) = 4 ns / access line (128 bytes ?)",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ns/line",
+      "hedge": "128 bytes ?",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ram-read-bw": {
+      "source": "7cpu-m1",
+      "text": "Sequential DRAM read bandwidth from one Firestorm core is 64 GB/s with 16-64 byte steps",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "RAM Read B/W (Read, 16-64 Bytes step) = 64 GB/s",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "GB/s",
+      "supports": [
+        "memctrl.dram_load_bw"
+      ],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ram-chase-bw": {
+      "source": "7cpu-m1",
+      "text": "A pointer chase through DRAM with a 64-byte step reaches 52 GB/s thanks to hardware prefetch",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "RAM Read B/W (Read, 64 Bytes step - pointer chasing) = 52 GB/s (HW prefetch)",
+      "derivation": "measured",
+      "value": 52,
+      "unit": "GB/s",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ram-write-bw": {
+      "source": "7cpu-m1",
+      "text": "Full DRAM writes with an 8-byte step reach 32-63 GB/s",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "RAM Write B/W (Write, full, 8 Bytes step) = 32-63 GB/s",
+      "derivation": "measured",
+      "value": 47.5,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "notes": "range 32-63 GB/s (midpoint given)",
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-ram-partial-write-bw": {
+      "source": "7cpu-m1",
+      "text": "Partial DRAM writes with a 16-64 byte step reach 29 GB/s",
+      "loc": "#misc-firestorm-big-core",
+      "quote": "RAM Write B/W (Write, partial, 16-64 Bytes step) = 29 GB/s",
+      "derivation": "measured",
+      "value": 29,
+      "unit": "GB/s",
+      "supports": [],
+      "chip": "m1",
+      "entered": "anandtech-7cpu"
+    },
+    "c-7cpu-clock-multi": {
+      "source": "7cpu-m1",
+      "text": "7-Zip's clock estimate is about 3200 MHz with one thread, 3092 MHz with two threads and 2983 MHz with four",
+      "loc": "#7-zip-benchmark",
+      "quote": "1T CPU Freq (MHz): 3197 3202 3201 3200 ... 2T CPU Freq (MHz): 199% 3092 199% 3091 ... 4T CPU Freq (MHz): 399% 2983 399% 2984",
+      "derivation": "measured",
+      "value": 2983,
+      "unit": "MHz",
+      "supports": [],
+      "notes": "value is the four-thread figure; the page does not say which cores ran the threads",
       "chip": "m1",
       "entered": "anandtech-7cpu"
     },

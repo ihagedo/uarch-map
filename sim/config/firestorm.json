@@ -40,9 +40,9 @@
     "confidence": "none"
   },
   "dirpred.mispredict_penalty": {
-    "value": null,
+    "value": 13,
     "sim_key": "mispredict_penalty",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "ras.depth": {
     "value": null,
@@ -165,9 +165,9 @@
     "confidence": "high"
   },
   "dtlb.l1_entries": {
-    "value": null,
+    "value": 160,
     "sim_key": "dtlb_l1",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "mshr.outstanding": {
     "value": null,
@@ -185,8 +185,8 @@
     "confidence": "medium"
   },
   "memctrl.dram_latency": {
-    "value": null,
+    "value": 91,
     "sim_key": "dram_latency_ns",
-    "confidence": "none"
+    "confidence": "medium"
   }
 }
