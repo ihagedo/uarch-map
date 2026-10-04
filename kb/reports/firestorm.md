@@ -1,19 +1,19 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 85, claims 173, sources 5, mechanisms 8
+blocks 37, links 35, params 86, claims 200, sources 5, mechanisms 9
 
 ## By status
 
-- inferred: 5
+- inferred: 6
 - measured: 49
 - open: 30
 - reported: 1
 
 ## By confidence
 
-- high: 9
-- low: 6
-- medium: 40
+- high: 10
+- low: 7
+- medium: 39
 - none: 30
 
 ## Holes (30)
@@ -47,7 +47,7 @@ blocks 37, links 35, params 85, claims 173, sources 5, mechanisms 8
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
-- int_prf.banks (int_prf): Register file banks
+- int_prf.imm_regs (int_prf): Immediate register pool
 
 ## Open disputes (7)
 

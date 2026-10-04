@@ -1,0 +1,22 @@
+# handley-vol1-sched.yaml
+# Maynard Handley, 2025
+# Dispatch buffers, scheduler queues, execution units and immediates (M1 Explainer vol 1).
+session: handley-vol1-sched
+source: handley-vol1
+
+new_params:
+  int_prf.imm_regs:       {block: int_prf, name: Immediate register pool, unit: registers, mechanism: immediate_regs}
+
+new_mechanisms:
+  immediate_regs:
+    name: Immediate register pool written at rename
+    status: inferred
+    description: A MOV of a non-zero immediate completes at rename into a pool of about 36 registers.
+    params: [rename.mov_imm_limit, int_prf.imm_regs, int_prf.total, rename.zero_idiom]
+    sim_switch: imm_regs
+    detection_rule: >-
+      a MOV #imm filler knee lies about 36-38 above the ADD knee, and up to ~36 padded MOV #imm placed before
+      ADDs do not move the ADD knee
+
+mechanism_claims:
+  immediate_regs: [c-mh-v1-int-prf-movimm]

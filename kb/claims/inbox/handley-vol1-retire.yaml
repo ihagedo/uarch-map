@@ -342,6 +342,364 @@ claims:
     value: 8
     unit: instr/cycle
     supports: [decode.width, rename.width]
+  - id: c-mh-v1-history-file
+    text: >-
+      A unit of ADD + FABS + 1/3 CMP jumps after 266 units, about 620 register allocations, with none of the int, FP
+      or flags files exhausted, so a communal structure of ~620 entries is used by every register-writing
+      instruction
+    loc: p058
+    quote: >-
+      266*(2+1/3) =620 register allocations! ... there is some communal structure related to the allocation of
+      registers, of size ~620 entries
+    method: wong-probe
+    filler: add+fabs+cmp
+    derivation: measured
+    value: 620
+    unit: entries
+    approx: true
+    supports: [retire.rename_queue]
+    notes: >-
+      Measured in the "Register File Size (All Registers)" test. At the jump 266 int, 266 FP and 87 flags
+      registers are in use. Handley names it the History File (see c-mh-v1-620-history-file-patent).
+
+  - id: c-mh-v1-hf-walk
+    text: >-
+      Recovery rewinds a History File of register-mapping changes (Akkary's HBMAP+WALK) kept apart from the ROB and
+      sized separately, with ROB entries pointing to History File entries
+    loc: p061
+    quote: >-
+      HBMAP+WALK is essentially what Apple uses ... Apple separates those changes from the ROB into a separately
+      sized History File, with a pointer in each ROB entry pointing to a History File entry
+    derivation: inferred
+    hedge: "or something like that"
+    supports: []
+    notes: >-
+      The History File also marks when physical registers can be freed; Apple is the only
+      company Handley knows of using one
+  - id: c-mh-v1-adds-two-hf
+    text: >-
+      A FABS + ADD + 1/2 ADDS probe jumps at about 208 units (620/3 = 206), so flag-setting ALU instructions such
+      as ADDS take two History File slots
+    loc: p062
+    quote: >-
+      Instructions that both perform some other calculation and set the flags register (ie have two destination
+      registers) require two HF slots.
+    method: wong-probe
+    filler: fabs+add+adds
+    derivation: measured
+    supports: []
+  - id: c-mh-v1-hf-slot-rule
+    text: >-
+      History File slots are taken one per register rename: none for stores, PRFM or most special-register writes,
+      one for a load, two for a load pair
+    loc: p062
+    quote: >-
+      zero HF slots for stores ... one HF slot for standard loads ... two HF slots slots for load pair (which takes
+      two destination registers). These are all confirmed.
+    method: wong-probe
+    derivation: measured
+    supports: []
+    notes: Agrees with Johnson's rename retire queue costs (c-dj-rename-cost); special registers "somewhat", some are renamed
+  - id: c-mh-v1-spr-speculative-writes
+    text: >-
+      Per Apple's patent, flags moves are handled near the rename map, and other special-register writes proceed
+      out of order into speculative storage and become permanent at retire, avoiding serialization
+    loc: p062
+    quote: >-
+      Some easy cases (most obviously moving data to and from the flags register) are treated via machinery close
+      to the Rename Mapping machinery.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10838723B1 (2019); not tested on the M1 here
+  - id: c-mh-v1-crack-merge
+    text: >-
+      Per Apple's patent, ADDS and LDP count as two for rename and the History File but execute as one, while ADD
+      (shifted) counts as one for allocation and retire but executes as two, the shift result taken off the bypass
+      without a register
+    loc: p063
+    quote: >-
+      an ADDS or a LDP (load pair) want to be treated as two instructions for the purposes of register allocation
+      (Rename) and deallocation (History File) but as a single instruction for the purposes of execute.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US9223577B2 (2012). Handley says register-free bypass is used today only for a few cracked instructions
+      (US10691457B1)
+  - id: c-mh-v1-extr-intermediate
+    text: EXTR, unlike ADD (shifted), allocates a physical register for its intermediate result
+    loc: p063
+    quote: "the EXTR instruction ... does allocate a genuine intermediate register"
+    derivation: inferred
+    supports: []
+    notes: No method given
+  - id: c-mh-v1-mov-last-reference
+    text: >-
+      For eliminated moves the M1 appears to use the last-physical-register-reference scheme rather than the older
+      register duplication array or reference counts, with no limit on how many registers are duplicated
+    loc: p065
+    quote: >-
+      The M1 appears to implements this more elegant scheme, and appears to show none of the limits one might
+      expect from the two prior schemes.
+    method: patent-reading
+    derivation: inferred
+    hedge: appears to
+    supports: []
+    notes: >-
+      US20210064376A1 (2019) over US20130275720A1 (RDA, ~8 entries) and US20160026463A1 (free-list counts).
+      Handley guesses the mapping lookup is a bit matrix, not a CAM.
+
+  - id: c-mh-v1-no-width-split
+    text: >-
+      Apple's first 64-bit cores split the integer register file into about 40% 32-bit and 60% 64-bit registers;
+      Handley finds no sign of that split on the M1
+    loc: p105
+    quote: >-
+      in Apple's first 64-bit cores, the integer file was in fact split about 40% 32-bit registers and 60% 64-bit
+      registers! ... Apple no longer does that (at least I can find no evidence for it)
+    derivation: inferred
+    hedge: "at least I can find no evidence for it"
+    supports: []
+    notes: US9639369B2 (2013)
+  - id: c-mh-v1-prf-banks
+    text: >-
+      The physical register file is split into four banks that can be powered on or off individually, with
+      allocation steered to keep as few banks active as possible
+    loc: p107
+    quote: >-
+      we split our register file into multiple banks (the patent suggests 4, and I suspect that's still the case;
+      it matches the results I have seen)
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: banks
+    hedge: "I suspect that's still the case"
+    supports: [int_prf.banks]
+    notes: US10372500B1 (2016); Handley ties the delay glitch near 380 ADDs to it (c-mh-v1-bank-powerup)
+  - id: c-mh-v1-free-list-scanners
+    text: >-
+      Per Apple's register-allocation patents, free registers are tracked in bitvectors searched by scanners (eight
+      in the 2016 version), recently returned registers are reused first, and the bitvectors map onto banks so
+      allocation stays in one powered bank
+    loc: p107
+    quote: >-
+      rearranges the mapping of these bitvectors into the register banks so that all the (now eight rather than
+      six) scanners are likely to find free registers in the same single bank
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20120143874A1 (2010), US20140013085A1 (2012), US10372500B1 (2016); "returning physical registers"
+  - id: c-mh-v1-bank-powerup
+    text: >-
+      The small bump near 380 ADDs with a 46-cycle (not a 45-cycle) delay is allocation exhausting the one powered
+      bank and waiting two or three cycles for another bank to power up
+    loc: p108
+    quote: >-
+      Presumably the system copes by powering up one of the powered down banks, and that takes two or three cycles,
+      generating the glitch we see.
+    method: wong-probe
+    filler: add
+    derivation: inferred
+    value: 2.5
+    unit: cycles
+    approx: true
+    hedge: Presumably
+    supports: []
+    notes: >-
+      Range two to three cycles. The model assumes 3/4 of ~380 registers (285) sit in the ROB
+      during the delay. Handley is "open to alternative explanations".
+
+  - id: c-mh-v1-no-hw-context-switch
+    text: >-
+      Hardware register caching on thread switches (thread-tagged mappings, on-demand save and restore to the L2,
+      per Apple's 2015 patent) is probably not implemented; a patent author told Handley he believes it was not
+      built
+    loc: p111
+    quote: >-
+      His belief ... is that while the idea is valid and will work, it has not yet been implemented in an Apple
+      core.
+    method: secondhand
+    derivation: reported
+    hedge: "perhaps not yet implemented"
+    supports: []
+    notes: >-
+      US9817664B2. Same page: the register security tag (c-mh-v1-register-security-tag) "does appear to be
+      implemented"
+  - id: c-mh-v1-icestorm-int-prf
+    text: Icestorm has about 80 integer physical registers
+    loc: p112
+    quote: "consider that Icestorm has ~80 physical integer registers and ~88 physical SIMD registers"
+    derivation: reported
+    value: 80
+    unit: registers
+    approx: true
+    chip: icestorm
+    supports: []
+    notes: Given in passing in the Chinook discussion; source of the numbers not stated
+  - id: c-mh-v1-icestorm-fp-prf
+    text: Icestorm has about 88 SIMD physical registers
+    loc: p112
+    quote: "consider that Icestorm has ~80 physical integer registers and ~88 physical SIMD registers"
+    derivation: reported
+    value: 88
+    unit: registers
+    approx: true
+    chip: icestorm
+    supports: []
+    notes: Given in passing in the Chinook discussion; source of the numbers not stated
+
+  - id: c-mh-v1-no-virtual-registers
+    text: The M1 does not use virtual registers (late physical-register allocation) or early register de-allocation
+    loc: p114
+    quote: >-
+      But they haven't taken the next step in doing so, namely using virtual registers or something similar (for
+      late allocation) and allowing for early register de-allocation.
+    derivation: inferred
+    supports: []
+    notes: Handley also says Apple does not early-release registers, and "doesn't do this yet, but probably will soon"
+  - id: c-mh-v1-no-bypass-early-release
+    text: >-
+      ADD pairs whose first result is immediately overwritten still exhaust registers at ~380, so neither
+      bypass-only results nor early release of overwritten registers (Apple's US10691457B1) is used on the M1
+    loc: p115
+    quote: >-
+      However a test on the M1 suggests that, in spite of the patent, neither appears to be implemented, at least
+      not as of the M1. ... Even so, we see the jump at the usual ~380
+    method: wong-probe
+    filler: add-pairs
+    derivation: measured
+    hedge: suggests
+    supports: []
+    notes: >-
+      Filler ADD x0, x5, x5; ADD x0, x0, x0 and three more such pairs; also tried REV/CLZ/ADD from the patent.
+      Handley guesses early release waits on the last-reference scheme and may be behind chicken bits.
+
+  - id: c-mh-v1-retire-nops-56
+    text: >-
+      After a blocking FSQRT delay, the restart delay grows by 8 cycles per 450 NOPs queued behind it, so Retire
+      clears about 56 NOPs per cycle
+    loc: p118
+    quote: "So the time it takes the ROB to clear 450 NOPs is 8 cycles, ie the machine clears 450/8=56 NOPs/cycle!"
+    method: wong-probe
+    filler: nop
+    derivation: measured
+    value: 56
+    unit: instructions/cycle
+    supports: []
+    notes: >-
+      Baseline restart delay 20 cycles; 33-FSQRT delay, 0-1800 NOPs, then 370 ADDs to use up registers.
+  - id: c-mh-v1-rob-rows
+    text: The ROB is best modelled as about 330 rows of instruction slots
+    loc: p119
+    quote: "the ROB is best thought of as consisting of ~330 \"rows\" where each row can hold 7 instructions."
+    derivation: inferred
+    value: 330
+    unit: groups
+    approx: true
+    hedge: best thought of
+    supports: [retire.groups]
+    notes: The NOP window gives ~324 rows (324*7=2268, c-mh-v1-nop-window); Handley says the load/store and branch probes supply the evidence
+  - id: c-mh-v1-rob-row-slots
+    text: Each ROB row holds up to 7 instructions, only the last (failable) slot doing real recovery work
+    loc: p119
+    quote: "only the failable slot of a 7-entry row of the ROB actually matters; the other 6 slots just hold"
+    derivation: inferred
+    value: 7
+    unit: uops
+    supports: [retire.group_max_uops]
+  - id: c-mh-v1-rob-failable-slot
+    text: >-
+      Failable instructions (branches, loads and stores) must take the last slot of a ROB row; other instructions
+      may take any slot
+    loc: p119
+    quote: "Most instructions can go in any slot, but \"failable\" instructions must go in the last slot (which provides extra storage)."
+    derivation: inferred
+    supports: []
+    notes: >-
+      Even an unconditional B .+4 takes the failable slot. Differs from Johnson (c-dj-retire-groups, and the
+      retire_groups description), who has memory uops starting a group and only branches ending one.
+  - id: c-mh-v1-retire-rows-per-cycle
+    text: Retire clears 8 ROB rows per cycle, so between 8 and 56 instructions
+    loc: p119
+    quote: "So a better way to think of Retire is that Retire can clear 8 ROB rows per cycle."
+    derivation: inferred
+    value: 8
+    unit: groups/cycle
+    supports: [retire.rate_groups]
+    notes: From the 56 NOPs/cycle drain and 7-slot rows
+  - id: c-mh-v1-rob-row-counter
+    text: >-
+      The six non-failable slots of a row may not be stored at all: each of ~330 entries could hold the failable
+      instruction and a 3-bit count of the others; not visible to tests
+    loc: p119
+    quote: "We can treat the ROB as ~330 entries which hold a pair (failable instruction, 3-bit counter)"
+    derivation: inferred
+    hedge: "seems a reasonable way to save a few transistors"
+    supports: []
+    notes: Suggested to Handley by Arthur V.
+  - id: c-mh-v1-reg-free-rate
+    text: >-
+      Retire frees FP physical registers and their History File slots at about 16 per cycle: each extra 70 FABS
+      behind the delay adds about 4 cycles
+    loc: p121
+    quote: >-
+      I think it's legitimate to see clearing 70 FABS from the ROB as taking 4 cycles, so 17.5 clearances/cycle.
+      Probably best to read that as 16 per cycle.
+    method: wong-probe
+    filler: fabs
+    derivation: measured
+    value: 16
+    unit: entries/cycle
+    hedge: "Probably best to read that as 16 per cycle."
+    supports: [retire.rate_renames]
+    notes: 50 extra CMPs add about 3 cycles (50/16), which Handley takes as confirmation; consistent with c-mh-v1-reg-free-16
+  - id: c-mh-v1-hf-free-rate
+    text: >-
+      FMOV filler, whose History File entries free no register, gives the same delay as FABS, so History File slots
+      are freed at 16 per cycle whether or not a register is released
+    loc: p122
+    quote: >-
+      It appears that HF slots and registers are both freed at 16/cycle, there's no faster path for HF slots that
+      are not freeing a physical register.
+    method: wong-probe
+    filler: fmov
+    derivation: measured
+    value: 16
+    unit: entries/cycle
+    hedge: It appears
+    supports: [retire.rate_renames]
+    notes: Filler FMOV d31, d30 in place of FABS
+  - id: c-mh-v1-kip-930
+    text: An ADD + FABS + STR mix reaches about 310 iterations, ~930 instructions, in flight before it stalls
+    loc: p123
+    quote: "we can in fact reach about 310 iterations of this before he see a jump! So ~930 realistic'ish instructions!"
+    method: wong-probe
+    filler: add+fabs+str
+    derivation: measured
+    value: 930
+    unit: instructions
+    approx: true
+    hedge: "It might be possible to go slightly beyond this"
+    supports: []
+    notes: >-
+      A lower bound for realistic code (History File slots for ADD and FABS, failable ROB slots for STR); Handley
+      did not push further. Compare retire.issuing_window (~1000, Johnson).
+
+  - id: c-mh-v1-int-prf-movimm
+    text: "MOV x0, #1 filler maxes out at around 418 registers, about 38 more than ADDs"
+    loc: p100
+    quote: "The unexpected case is MOV x0, #1, which maxes out at around 418 physical registers."
+    method: wong-probe
+    filler: mov-imm
+    derivation: measured
+    value: 418
+    unit: registers
+    approx: true
+    supports: []
+    notes: >-
+      Not the register file size: Handley reads the 418 as ~380 integer registers plus ~36 immediate registers
+      (c-mh-v1-iregs-36).
 
 new_params:
   int_prf.banks: {block: int_prf, name: Register file banks, unit: banks}
@@ -356,7 +714,7 @@ new_mechanisms:
     detection_rule: a small extra delay at the register-exhaustion knee that appears or vanishes when the delay changes by one cycle
 
 mechanism_claims:
-  retire_groups: [c-mh-v1-nop-rob-slot, c-mh-v1-nop-window]
-  rename_retire_queue: [c-mh-v1-shared-pool-624, c-mh-v1-hf-common-limit, c-mh-v1-regs-freed-at-retire]
-  register_security_tag: [c-mh-v1-security-tag-details]
-  banked_prf_power: [c-mh-v1-split-power-gating]
+  retire_groups: [c-mh-v1-nop-rob-slot, c-mh-v1-retire-nops-56, c-mh-v1-rob-rows, c-mh-v1-rob-row-slots, c-mh-v1-rob-failable-slot, c-mh-v1-retire-rows-per-cycle, c-mh-v1-rob-row-counter, c-mh-v1-kip-930, c-mh-v1-nop-window]
+  rename_retire_queue: [c-mh-v1-shared-pool-624, c-mh-v1-hf-common-limit, c-mh-v1-hf-walk, c-mh-v1-adds-two-hf, c-mh-v1-hf-slot-rule, c-mh-v1-mov-last-reference, c-mh-v1-regs-freed-at-retire, c-mh-v1-reg-free-rate, c-mh-v1-hf-free-rate, c-mh-v1-no-bypass-early-release, c-mh-v1-history-file]
+  register_security_tag: [c-mh-v1-security-tag-details, c-mh-v1-no-hw-context-switch]
+  banked_prf_power: [c-mh-v1-prf-banks, c-mh-v1-free-list-scanners, c-mh-v1-bank-powerup, c-mh-v1-split-power-gating]
