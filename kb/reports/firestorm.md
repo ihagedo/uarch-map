@@ -1,18 +1,19 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 84, claims 147, sources 4, mechanisms 6
+blocks 37, links 35, params 85, claims 173, sources 5, mechanisms 8
 
 ## By status
 
 - inferred: 5
 - measured: 49
 - open: 30
+- reported: 1
 
 ## By confidence
 
-- high: 6
-- low: 5
-- medium: 43
+- high: 9
+- low: 6
+- medium: 40
 - none: 30
 
 ## Holes (30)
@@ -46,16 +47,17 @@ blocks 37, links 35, params 84, claims 147, sources 4, mechanisms 6
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
-- slc.latency (slc): SLC hit latency
+- int_prf.banks (int_prf): Register file banks
 
-## Open disputes (6)
+## Open disputes (7)
 
-- int_prf.total: measured on the A14  [c-dj-int-prf, c-at-int-prf]
+- int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-7cpu-dtlb-l1, c-at-l1-tlb]
+- l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-7cpu-l2-latency, c-mh-v1-l2-latency-aside]
 
 ## Problems (0)
 

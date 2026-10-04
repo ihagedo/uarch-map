@@ -487,6 +487,7 @@
     "decode.width": {
       "claims": [
         "c-at-decode-8",
+        "c-mh-v1-frontend-8",
         "c-dj-width"
       ],
       "disputes": [],
@@ -693,6 +694,7 @@
     },
     "rename.width": {
       "claims": [
+        "c-mh-v1-frontend-8",
         "c-dj-width"
       ],
       "disputes": [],
@@ -702,7 +704,7 @@
       "sim_key": "rename_width",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "rename.mov_elimination": {
       "claims": [
@@ -763,12 +765,13 @@
     "int_prf.total": {
       "claims": [
         "c-at-int-prf",
+        "c-mh-v1-int-prf-add",
         "c-dj-int-prf"
       ],
       "disputes": [
         {
           "claims": [
-            "c-dj-int-prf",
+            "c-mh-v1-int-prf-add",
             "c-at-int-prf"
           ],
           "note": "measured on the A14",
@@ -780,7 +783,7 @@
       "name": "Integer physical registers",
       "unit": "registers",
       "sim_key": "int_prf",
-      "value": 387,
+      "value": 380,
       "approx": true,
       "status": "measured",
       "confidence": "medium"
@@ -798,6 +801,7 @@
     "fp_prf.total": {
       "claims": [
         "c-at-fp-prf",
+        "c-mh-v1-fp-prf",
         "c-dj-fp-prf"
       ],
       "disputes": [
@@ -822,6 +826,7 @@
     },
     "flags_prf.total": {
       "claims": [
+        "c-mh-v1-flags-prf",
         "c-dj-flags-prf"
       ],
       "disputes": [],
@@ -832,7 +837,7 @@
       "value": 128,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "dispatch.int_entries": {
       "claims": [],
@@ -916,6 +921,7 @@
     "eu_int.count": {
       "claims": [
         "c-at-int-units",
+        "c-mh-v1-add-throughput",
         "c-dj-int-units"
       ],
       "disputes": [
@@ -951,6 +957,7 @@
     "eu_fp.count": {
       "claims": [
         "c-at-fp-pipes",
+        "c-mh-v1-fabs-throughput",
         "c-dj-fp-units"
       ],
       "disputes": [],
@@ -1030,16 +1037,17 @@
     },
     "retire.nop_window": {
       "claims": [
+        "c-mh-v1-nop-window",
         "c-dj-nop-window"
       ],
       "disputes": [],
       "block": "retire",
       "name": "NOP window",
       "unit": "instructions",
-      "value": 2200,
+      "value": 2228,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "retire.issuing_window": {
       "claims": [
@@ -1057,6 +1065,7 @@
     "retire.rename_queue": {
       "claims": [
         "c-at-rob-630",
+        "c-mh-v1-shared-pool-624",
         "c-dj-rename-retire"
       ],
       "disputes": [],
@@ -1279,7 +1288,8 @@
     "dtlb.l1_entries": {
       "claims": [
         "c-at-l1-tlb",
-        "c-7cpu-dtlb-l1"
+        "c-7cpu-dtlb-l1",
+        "c-mh-v1-opt-guide-dtlb"
       ],
       "disputes": [
         {
@@ -1370,9 +1380,20 @@
     },
     "l2.latency": {
       "claims": [
-        "c-7cpu-l2-latency"
+        "c-7cpu-l2-latency",
+        "c-mh-v1-l2-latency-aside"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-7cpu-l2-latency",
+            "c-mh-v1-l2-latency-aside"
+          ],
+          "note": "Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l2",
       "name": "L2 hit latency",
       "unit": "cycles",
@@ -1404,14 +1425,17 @@
       "confidence": "medium"
     },
     "slc.latency": {
-      "claims": [],
+      "claims": [
+        "c-mh-v1-slc-latency-aside"
+      ],
       "disputes": [],
       "block": "slc",
       "name": "SLC hit latency",
       "unit": "cycles",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 90,
+      "approx": true,
+      "status": "reported",
+      "confidence": "low"
     },
     "memctrl.dram_latency": {
       "claims": [
@@ -1473,6 +1497,16 @@
       "value": 26,
       "status": "measured",
       "confidence": "medium"
+    },
+    "int_prf.banks": {
+      "claims": [],
+      "disputes": [],
+      "block": "int_prf",
+      "name": "Register file banks",
+      "unit": "banks",
+      "status": "open",
+      "confidence": "none",
+      "value": null
     },
     "memctrl.dram_load_bw": {
       "claims": [
@@ -2549,6 +2583,399 @@
       "chip": "m1",
       "entered": "anandtech-7cpu"
     },
+    "c-mh-v1-opt-guide-dtlb": {
+      "text": "Citing Apple's CPU Optimization Guide, the M1 L1 data TLB has 160 entries",
+      "loc": "p002",
+      "quote": "Likewise for L1D TLB M1 had 160 entries, A14 had 256 entries",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 160,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "Handley relaying Apple's CPU Optimization Guide (apple-opt-guide)",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-opt-guide-a14-dtlb": {
+      "text": "Citing Apple's CPU Optimization Guide, the A14 L1 data TLB has 256 entries, unlike the M1's 160",
+      "loc": "p002",
+      "quote": "Likewise for L1D TLB M1 had 160 entries, A14 had 256 entries (as did M2, M3, and A15)",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 256,
+      "unit": "entries",
+      "chip": "a14",
+      "supports": [],
+      "notes": "Same Firestorm core, different dTLB size per Apple's guide; M2, M3 and A15 also 256",
+      "source": "handley-vol1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-opt-guide-a14-slc": {
+      "text": "Citing Apple's CPU Optimization Guide, the A14 has a 16 MiB system level cache",
+      "loc": "p002",
+      "quote": "For example the A14 had 16MiB SLC",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 16,
+      "unit": "MiB",
+      "chip": "a14",
+      "supports": [],
+      "notes": "Handley relaying Apple's guide; A15 32 MiB, A16 24 MiB in the same sentence",
+      "source": "handley-vol1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-security-tag-details": {
+      "text": "Claiming registers with MOV xn, xn does not avoid the slow path for reading unclaimed registers (MOV xn, #0 does), and leaving FP registers unclaimed causes no slowdown",
+      "loc": "p004",
+      "quote": "What if we use something like MOV xn, xn, rather than the current MOV xn, #0, to force the overwrite? That does not work! ... I can't generate the same sort of disaster by not forcing ownership of the FP registers",
+      "method": "throughput",
+      "derivation": "measured",
+      "hedge": "My bet is on MOV xn, xn, being mapped to NOP.",
+      "supports": [],
+      "notes": "Handley reads the FP result as the OS or interrupt not touching FP registers; he prefers the security-tag explanation over hardware context switching",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-l2-latency-aside": {
+      "text": "An L2 hit takes around 15 cycles on the M1",
+      "loc": "p012",
+      "quote": "the machine will not have to halt on a miss to L2 cache (around 15 cycles for M1)",
+      "derivation": "reported",
+      "value": 15,
+      "unit": "cycles",
+      "approx": true,
+      "hedge": "around",
+      "supports": [],
+      "contradicts": [
+        "l2.latency"
+      ],
+      "notes": "Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-slc-latency-aside": {
+      "text": "A hit in the system level cache takes around 90 cycles on the M1",
+      "loc": "p012",
+      "quote": "will usually cover the delay to the System Cache (around 90 cycles for M1)",
+      "derivation": "reported",
+      "value": 90,
+      "unit": "cycles",
+      "approx": true,
+      "hedge": "around",
+      "supports": [
+        "slc.latency"
+      ],
+      "notes": "Passing figure in the introductory ROB-size discussion, no method stated",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-sched-queue-36": {
+      "text": "Each execution unit has its own scheduling queue of 36 entries, small next to Intel's 97 but more in total",
+      "loc": "p014",
+      "quote": "separate queues in front of each. Each scheduling queue may sound small (36 entries compared to say Intel's 97)",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 36,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [],
+      "notes": "From Johnson's diagram. Handley later halves the non-load/store sizes, since a queue pair looks like one queue: ~18 per FP queue, ~13 per integer queue (c-mh-v1-sched-johnson-2x).",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-14-units": {
+      "text": "The M1 has fourteen execution units, each with its own scheduling queue, so it can issue up to 14 per cycle, against a sustained width of 8",
+      "loc": "p018",
+      "quote": "there are fourteen units, each has an independent scheduling queue ... In the case of the M1, this is 8, not 14.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 14,
+      "unit": "units",
+      "supports": [],
+      "notes": "Unit count taken from Johnson's Firestorm page; 6 integer + 4 FP/SIMD + 4 load/store",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-read-at-issue": {
+      "text": "Per Apple patents, operands are read from the register file at issue, not earlier, and scheduling tracks dependencies by instruction (scheduler) numbers rather than physical register numbers",
+      "loc": "p017",
+      "quote": "Apple patents explicitly say that registers are read at Issue time, not early; and they strongly suggest that scheduling is based on instruction numbers (called SCH#'s)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "strongly suggest",
+      "supports": [],
+      "notes": "Patents cited are US9940262B2 and US8555040B2",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-fetch-16": {
+      "text": "Fetch can probably bring in up to 16 instructions (one I-cache line) per cycle, one line per cycle, above the sustained width of 8",
+      "loc": "p019",
+      "quote": "Fetch can probably pull in a maximum width of 16 instructions (one cache line) in one cycle ... only one I-cache line is accessed per cycle",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "instr/cycle",
+      "hedge": "probably",
+      "supports": [],
+      "contradicts": [],
+      "notes": "Forward reference to the Fetch discussion in vol 4 (c-mh-v4-fetch-16), no measurement here. Johnson's 8 is a pipeline width (c-dj-width), so this may be peak versus sustained fetch. The line size in bytes is not stated.",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-split-power-gating": {
+      "text": "Both the register files and the L2 are split into independently managed pieces; the core runs from a fraction of each (e.g. a quarter of the register file, a third of the L2) and powers up the rest only when metrics show it would help",
+      "loc": "p025",
+      "quote": "they are in fact split into multiple independently managed smaller pieces ... or one third of the L2, with the rest powered down and taking no energy",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "The fractions are given as examples (\"eg\"); see c-mh-v1-prf-banks for the four-bank register file",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-nop-rob-slot": {
+      "text": "The M1 neither drops NOPs at decode nor fuses them with the next instruction (as recent Arm cores do); each NOP takes its own ROB slot",
+      "loc": "p027",
+      "quote": "Apple appears not to do this, at least not as of M1 ... so Apple don't do that, they apparently allocate a ROB slot to each NOP",
+      "derivation": "inferred",
+      "hedge": "apparently",
+      "supports": [],
+      "notes": "The NOP window (c-mh-v1-nop-window) depends on this",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-llvm-fusions": {
+      "text": "LLVM lists address, arithmetic-logic, CC-select and literal fusions for the A14, but whether the A14/M1 implements them is unclear: latency and throughput tests show no gain",
+      "loc": "p028",
+      "quote": "It's unclear whether these fusions are present in A14/M1 (or in later chips). People investigating latency or throughput report no obvious improvement from these fusions",
+      "method": "secondhand",
+      "derivation": "reported",
+      "hedge": "It's unclear whether these fusions are present in A14/M1",
+      "supports": [],
+      "notes": "FeatureFuseAddress, FeatureFuseArithmeticLogic, FeatureFuseCCSelect, FeatureFuseLiterals in AArch64.td. Handley suggests they could amplify History File capacity rather than cut latency; untested",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-hf-common-limit": {
+      "text": "The History File, which records destination-register allocations, is perhaps the most common limit on how far the M1 can reorder",
+      "loc": "p029",
+      "quote": "perhaps the most common constraint as to how aggressively the M1 can reorder instructions is the size of the History File",
+      "derivation": "inferred",
+      "hedge": "perhaps",
+      "supports": [],
+      "notes": "Handley later restates it as either the ~330 failable ROB slots or the History File limiting real code",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-fusion-patent": {
+      "text": "Per Apple's arithmetic-branch fusion patent, fusion is detected at Decode and applied at Map by rewriting one instruction (CBZ into a SUB-CBZ) and discarding the other; ROB slots are already allocated, but the pair needs one scheduler slot and gives its result in one cycle",
+      "loc": "p031",
+      "quote": "fusion detection occurs at Decode and is implemented at Map ... only one Scheduling slot is required, not two, and the result is available in once cycle, not two",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9672037B2 (2013)",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-nop-throughput": {
+      "text": "A stream of NOPs runs at 8 per cycle",
+      "loc": "p035",
+      "quote": "We would expect that this should run at 8 NOPs/cycle, and that's exactly what we see.",
+      "method": "throughput",
+      "filler": "nop",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [],
+      "notes": "Handley also says NOPs take ROB slots yet run at 8/cycle, \"presumably limited by Decode\"",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-nop-window": {
+      "text": "Behind a chained-FSQRT delay block, NOP filler first shows a timing glitch at 2228 NOPs, between the 2178 and 2274 NOPs predicted for 21 and 22 FSQRTs, so the ROB holds about that many NOPs",
+      "loc": "p040",
+      "quote": "We see trouble at 2228 between these two, so our ROB size is somewhere between these two.",
+      "method": "wong-probe",
+      "filler": "nop",
+      "derivation": "measured",
+      "value": 2228,
+      "unit": "instructions",
+      "approx": true,
+      "hedge": "somewhere between these two",
+      "supports": [
+        "retire.nop_window"
+      ],
+      "notes": "Delay: chained FSQRT.D, 13 cycles each, 22 in the analysis. Handley concludes \"The ROB is ~2274 instructions in size\", ~324 rows of 7, later ~330 rows (c-mh-v1-rob-rows).",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-add-throughput": {
+      "text": "Independent integer ADDs run at 6 per cycle",
+      "loc": "p049",
+      "quote": "No surprises, the primary notable fact is the slope (6 independent integer adds/cycle).",
+      "method": "throughput",
+      "filler": "add",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "instr/cycle",
+      "supports": [
+        "eu_int.count"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-int-prf-add": {
+      "text": "With a delay block, independent ADD x0, x5, x5 filler jumps at ~378-380 instructions, read as the integer physical register file size",
+      "loc": "p050",
+      "quote": "there's some sort of limitation at around 380 ADDs (seems like physical registers)",
+      "method": "wong-probe",
+      "filler": "add",
+      "derivation": "measured",
+      "value": 380,
+      "unit": "registers",
+      "approx": true,
+      "hedge": "seems like physical registers",
+      "supports": [
+        "int_prf.total"
+      ],
+      "notes": "The jump is at ~378 (=63*6) and Handley assumes \"the actual physical register count is say 380\". He later repeats that ADDs (register or immediate operand) \"max out at around 380 physical registers\".",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-regs-freed-at-retire": {
+      "text": "Integer physical registers are freed at Retire, held while the head of the ROB is blocked, not as soon as all their readers have completed",
+      "loc": "p050",
+      "quote": "we've also learned that registers are deallocated at Retire (deallocation is delayed by the Head of ROB blocking) rather than some more ambitious schemes",
+      "method": "wong-probe",
+      "filler": "add",
+      "derivation": "measured",
+      "hedge": "assuming the above point",
+      "supports": [],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-fabs-throughput": {
+      "text": "Independent FABS run at 4 per cycle, and an ADD+FABS mix is throttled by the four FP pipes",
+      "loc": "p055",
+      "quote": "shows a slope of 4 ops/cycle. We are throttled by the 4 fp pipes.",
+      "method": "throughput",
+      "filler": "fabs",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "instr/cycle",
+      "supports": [
+        "eu_fp.count"
+      ],
+      "notes": "FABS alone gives the same 4/cycle slope",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-fp-prf": {
+      "text": "With an integer (UDIV) delay block, FABS filler jumps at about 432, the FP/SIMD physical register file size",
+      "loc": "p055",
+      "quote": "we see that the fp register file is perhaps closer to 432 or so in size.",
+      "method": "wong-probe",
+      "filler": "fabs",
+      "derivation": "measured",
+      "value": 432,
+      "unit": "registers",
+      "approx": true,
+      "hedge": "perhaps closer to 432 or so",
+      "supports": [
+        "fp_prf.total"
+      ],
+      "notes": "With an FSQRT delay block the jump spans 403-425, centred ~415, because the delay holds FP registers",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-shared-pool-624": {
+      "text": "An ADD+FABS probe jumps at about 312 pairs, short of both register files, so a pool of ~624 entries is shared by integer and FP register writes",
+      "loc": "p056",
+      "quote": "There's an additional resource that constrains us, a pool of ~624 somethings that's shared by int and fp registers.",
+      "method": "wong-probe",
+      "filler": "add+fabs",
+      "derivation": "measured",
+      "value": 624,
+      "unit": "entries",
+      "approx": true,
+      "supports": [
+        "retire.rename_queue"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-flags-prf": {
+      "text": "CMP filler exhausts the flags physical register file at about 124-128 entries",
+      "loc": "p056",
+      "quote": "However the jump is at ~124 (128?) physical flags registers.",
+      "method": "wong-probe",
+      "filler": "cmp",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "registers",
+      "approx": true,
+      "hedge": "(128?)",
+      "supports": [
+        "flags_prf.total"
+      ],
+      "notes": "Jump measured at ~124; Handley uses ~128 from then on",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-cmp-throughput": {
+      "text": "Independent CMP x0, x0 run at 3 per cycle",
+      "loc": "p056",
+      "quote": "So no real surprises. This time the slope of the lines is 3 instructions per cycle",
+      "method": "throughput",
+      "filler": "cmp",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "instr/cycle",
+      "supports": [],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
+    "c-mh-v1-frontend-8": {
+      "text": "CMP+ADD+FABS triplets with no delay run at 8 instructions per cycle (600 triplets in 225 cycles), limited by the 8-wide Decode/Map front end",
+      "loc": "p057",
+      "quote": "The limiting point is the 8-wide front end (Decode, Map) of the machine.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [
+        "decode.width",
+        "rename.width"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-retire"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -3612,6 +4039,14 @@
       "year": 2021,
       "url": "https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/"
     },
+    "handley-vol1": {
+      "type": "pdf",
+      "title": "M1 Explainer, vol 1: Core (v0.93)",
+      "author": "Handley, Maynard",
+      "year": 2025,
+      "url": "https://github.com/name99-org/AArch64-Explore",
+      "pages": 227
+    },
     "anandtech-m1": {
       "type": "article",
       "title": "Apple Silicon M1: A14 Deep Dive",
@@ -3630,6 +4065,8 @@
   "mechanisms": {
     "retire_groups": {
       "claims": [
+        "c-mh-v1-nop-rob-slot",
+        "c-mh-v1-nop-window",
         "c-dj-rob-model",
         "c-dj-group-boundaries",
         "c-dj-retire-groups",
@@ -3655,6 +4092,9 @@
     "rename_retire_queue": {
       "claims": [
         "c-at-rob-630",
+        "c-mh-v1-shared-pool-624",
+        "c-mh-v1-hf-common-limit",
+        "c-mh-v1-regs-freed-at-retire",
         "c-dj-reclaim-table",
         "c-dj-rename-retire",
         "c-dj-rename-cost"
@@ -3689,6 +4129,19 @@
       "sim_switch": "lsq_alloc_issue",
       "detection_rule": "same filler gives different knees under a miss delay and an ALU delay"
     },
+    "register_security_tag": {
+      "claims": [
+        "c-mh-v1-security-tag-details"
+      ],
+      "name": "Register mapping security tag",
+      "status": "speculative",
+      "description": "Reading a register the process has not written slows integer issue to about 4-wide.",
+      "params": [
+        "rename.security_tag"
+      ],
+      "sim_switch": null,
+      "detection_rule": "throughput drop when reading unclaimed registers"
+    },
     "streaming_store_nt": {
       "claims": [
         "c-at-streaming-stores"
@@ -3716,6 +4169,20 @@
       ],
       "sim_switch": "lsq_early_release",
       "detection_rule": "the same load or store filler gives a larger knee with no older store pending than with one"
+    },
+    "banked_prf_power": {
+      "claims": [
+        "c-mh-v1-split-power-gating"
+      ],
+      "name": "Banked register file with bank power gating",
+      "status": "speculative",
+      "description": "The register file has four banks that power down separately; waking one costs two or three cycles.",
+      "params": [
+        "int_prf.banks",
+        "int_prf.total"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a small extra delay at the register-exhaustion knee that appears or vanishes when the delay changes by one cycle"
     },
     "content_directed_prefetch": {
       "claims": [

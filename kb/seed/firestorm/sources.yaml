@@ -14,6 +14,13 @@ sources:
     author: Johnson, Dougall
     year: 2021
     url: https://dougallj.wordpress.com/2021/04/08/apple-m1-load-and-store-queue-measurements/
+  handley-vol1:
+    type: pdf
+    title: "M1 Explainer, vol 1: Core (v0.93)"
+    author: Handley, Maynard
+    year: 2025
+    url: https://github.com/name99-org/AArch64-Explore
+    pages: 227
   anandtech-m1:
     type: article
     title: "Apple Silicon M1: A14 Deep Dive"

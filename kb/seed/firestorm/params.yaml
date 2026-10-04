@@ -107,3 +107,10 @@ mechanisms:
     params: [lsu.allocation, lq.entries, sq.entries]
     sim_switch: lsq_alloc_issue
     detection_rule: same filler gives different knees under a miss delay and an ALU delay
+  register_security_tag:
+    name: Register mapping security tag
+    status: speculative
+    description: Reading a register the process has not written slows integer issue to about 4-wide.
+    params: [rename.security_tag]
+    sim_switch: null
+    detection_rule: throughput drop when reading unclaimed registers
