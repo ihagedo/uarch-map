@@ -16,7 +16,7 @@
     "vendor-doc": "Apple documentation", secondhand: "repeated from another source", simulation: "simulation",
     other: "other",
   };
-  const state = { view: "L2", block: null, param: null, show: new Set(CONFS), disputesOnly: false };
+  const state = { view: "L2", block: null, param: null, show: new Set(CONFS) };
   const $ = (id) => document.getElementById(id);
   const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace");
   const wide = window.matchMedia("(min-width: 761px)");
@@ -28,7 +28,7 @@
   const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many || one + "s"}`;
   const openDispute = (p) => p.disputes.some((d) => !d.resolution);
-  const visible = (p) => state.show.has(p.conf) && (!state.disputesOnly || openDispute(p));
+  const visible = (p) => state.show.has(p.conf);
 
   function el(tag, attrs, parent) {
     const n = document.createElementNS(NS, tag);
@@ -59,22 +59,9 @@
 
   function renderMasthead() {
     const c = D.counts;
-    const stats = [[c.blocks, "blocks"], [c.params, "parameters"], [c.known, "with a value"], [c.holes, "holes"],
-      [c.claims, "claims"], [c.sources, "sources"], [c.disputes, c.disputes === 1 ? "open dispute" : "open disputes"]];
+    const stats = [[c.blocks, "blocks"], [c.params, "parameters"], [c.holes, "holes"], [c.claims, "claims"],
+      [c.sources, "sources"]];
     $("stats").innerHTML = stats.map(([n, w]) => `<div><dt>${w}</dt><dd>${n}</dd></div>`).join("");
-    const strip = [];
-    for (const [pid, p] of Object.entries(D.params)) {
-      for (const d of p.disputes) {
-        if (d.resolution) continue;
-        const sides = d.claims.map((cid) => {
-          const cl = D.claims[cid];
-          return `<span class="num">${esc(cl.value)}</span> ${esc(D.sources[cl.source].cite)}`;
-        }).join(" vs ");
-        strip.push(`<button type="button" data-param="${pid}">${DISPUTE_HTML}<span><b>Open dispute</b> · ` +
-          `${esc(p.name)}: ${sides}</span></button>`);
-      }
-    }
-    $("dispute-strip").innerHTML = strip.join("");
     const src = Object.entries(D.sources).sort((a, b) => b[1].claims - a[1].claims || a[1].cite.localeCompare(b[1].cite));
     $("source-list").innerHTML = src.map(([, s]) => {
       const name = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
@@ -132,7 +119,8 @@
     const known = b.params.filter((pid) => D.params[pid].known).length;
     const g = el("g", { class: `box conf-${b.conf}`, "data-block": bid, tabindex: "0", role: "button",
       "aria-label": `${b.name}: ${CONF_WORD[b.conf].toLowerCase()} confidence, ${known} of ${b.params.length} parameters known` +
-        (b.disputed ? ", open dispute" : "") }, layer);
+        (b.disputed ? ", disputed" : "") }, layer);
+    if (b.desc) el("title", {}, g).textContent = b.desc;
     el("rect", { x: bx.x - 4, y: bx.y - 4, width: bx.w + 8, height: bx.h + 8, rx: 9, class: "sel-ring" }, g);
     el("rect", { x: bx.x, y: bx.y, width: bx.w, height: bx.h, rx: 6, class: "body", "pointer-events": "all" }, g);
     el("text", { x: bx.x + 10, y: bx.y + 19, class: "name" }, g).textContent = clip(b.name, 22);
@@ -160,15 +148,13 @@
     const layer = el("g", { class: "regions" }, svg);
     for (const f of V.frames) {
       const claims = new Set(f.params.flatMap((pid) => D.params[pid].for));
-      const disputes = f.params.filter((pid) => openDispute(D.params[pid])).length;
       const g = el("g", { class: `box region conf-${f.conf}`, "data-frame": f.id, tabindex: "0", role: "button",
         "aria-label": `${f.label}: ${f.known} of ${f.params.length} parameters known. Open the stage view.` }, layer);
       el("rect", { x: f.x - 4, y: f.y - 4, width: f.w + 8, height: f.h + 8, rx: 13, class: "sel-ring" }, g);
       el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 10, class: "body", "pointer-events": "all" }, g);
       el("text", { x: f.x + 16, y: f.y + 30, class: "r-name" }, g).textContent = f.label;
       el("text", { x: f.x + 16, y: f.y + 52, class: "r-count" }, g).textContent =
-        `${f.known} of ${f.params.length} parameters known · ${plural(claims.size, "claim")}` +
-        (disputes ? ` · ${plural(disputes, "open dispute")}` : "");
+        `${f.known} of ${f.params.length} parameters known · ${plural(claims.size, "claim")}`;
       // one cell per parameter, drawn with the same outline code as a box
       const per = Math.max(1, Math.floor((f.w - 32 + 4) / 14));
       f.params.forEach((pid, i) => {
@@ -178,9 +164,8 @@
         el("rect", { x: cx, y: cy, width: 10, height: 10, rx: 2, class: "body" }, c);
         el("title", {}, c).textContent = `${p.name} (${CONF_WORD[p.conf].toLowerCase()})`;
       });
-      const names = f.blocks.map((bid) => D.blocks[bid].name).join(" · ");
       el("text", { x: f.x + 16, y: f.y + f.h - 16, class: "r-blocks" }, g)
-        .textContent = clip(names, Math.floor((f.w - 32) / 5.2));
+        .textContent = clip(f.desc || "", Math.floor((f.w - 32) / 5.6));
     }
   }
 
@@ -241,12 +226,11 @@
     renderDossier();
     for (const v of ["L1", "L2"]) $(`zoom-${v}`).setAttribute("aria-pressed", String(state.view === v));
     for (const c of CONFS) $(`show-${c}`).setAttribute("aria-pressed", String(state.show.has(c)));
-    $("only-disputes").setAttribute("aria-pressed", String(state.disputesOnly));
   }
 
   function applyFilters() {
     const dimGroup = (g, pids, conf) => {
-      const any = pids.length ? pids.some((pid) => visible(D.params[pid])) : state.show.has(conf) && !state.disputesOnly;
+      const any = pids.length ? pids.some((pid) => visible(D.params[pid])) : state.show.has(conf);
       g.classList.toggle("dim", !any);
       return any;
     };
@@ -311,17 +295,12 @@
     const params = b.params.map((pid) => [pid, D.params[pid]]);
     const known = params.filter(([, p]) => p.known).length;
     const claims = new Set(params.flatMap(([, p]) => p.for.concat(p.against)));
-    const disputes = params.filter(([, p]) => openDispute(p)).length;
     let h = `<div class="d-head"><p class="eyebrow">${b.region ? esc(b.region) + " · " : ""}${esc(b.stage)}</p>` +
-      `<h2>${esc(b.name)}</h2>` +
+      `<h2>${esc(b.name)}</h2>` + (b.desc ? `<p class="d-role">${esc(b.desc)}</p>` : "") +
       `<button type="button" class="d-close" id="d-close" aria-label="Close the dossier">×</button></div>`;
     h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${b.conf === "none" ? "Hole" : CONF_WORD[b.conf] + " confidence"}</span>` +
-      `<span>${known} of ${params.length} parameters known</span><span>${plural(claims.size, "claim")}</span>` +
-      (disputes ? `<span>${DISPUTE_HTML} ${plural(disputes, "open dispute")}</span>` : "") + `</p>`;
-    if (b.blackBox) {
-      h += `<p class="blackbox-note">Black box. No published source gives a number for this block yet, so it is drawn ` +
-        `as an empty outline. The parameters below are the holes a measurement would fill.</p>`;
-    }
+      `<span>${known} of ${params.length} parameters known</span><span>${plural(claims.size, "claim")}</span></p>`;
+    if (b.blackBox) h += `<p class="blackbox-note">Black box: nothing published yet.</p>`;
     h += `<section class="d-section"><h3>Parameters</h3><ul class="p-list">` +
       params.map(([pid, p]) => paramHTML(pid, p)).join("") + `</ul></section>`;
     const mechs = Object.values(D.mechanisms).filter((m) => m.params.some((pid) => D.params[pid].block === bid));
@@ -350,35 +329,20 @@
       `<span class="p-name">${esc(p.name)}</span><span class="p-value">${esc(p.value)}${unit}</span>` +
       `<span class="p-meta"><span class="conf-tag conf-${p.conf}">${CONF_WORD[p.conf]}</span>` +
       `<span>${p.known ? DERIV_WORD[p.status] : "No claim yet"}</span><span>${plural(n, "claim")}</span>` +
-      (openDispute(p) ? `<span>${DISPUTE_HTML} disputed</span>` : "") + `</span></button>` +
+      (openDispute(p) ? `<span class="flag">${DISPUTE_HTML}Disputed</span>` : "") + `</span></button>` +
       (open ? evidenceHTML(pid, p) : "") + `</li>`;
   }
 
   function evidenceHTML(pid, p) {
-    const disputed = new Set(p.disputes.filter((d) => !d.resolution).flatMap((d) => d.claims));
-    const meta = [p.known ? DERIV_WORD[p.status] : "Open", `${CONF_WORD[p.conf].toLowerCase()} confidence`];
-    if (p.simKey) meta.push(`simulator key <code>${esc(p.simKey)}</code>`);
-    if (p.mechanism) meta.push(`explained by ${esc(D.mechanisms[p.mechanism].name.toLowerCase())}`);
-    let h = `<div class="evidence" id="ev-${pid}"><p class="ev-meta">${meta.join(" · ")}</p>`;
+    let h = `<div class="evidence" id="ev-${pid}">`;
     for (const d of p.disputes) {
-      const sides = d.claims.map((cid) => `${D.sources[D.claims[cid].source].cite} gives ${D.claims[cid].value}`).join("; ");
-      h += `<div class="dispute-box"><b>${DISPUTE_HTML}${d.resolution ? "Resolved dispute" : "Open dispute"}</b>` +
-        `<span>${esc(sides)}.</span>` +
-        (d.resolution ? `<span>${esc(d.resolution)}</span>`
-          : `<span>Both claims rank equally, so the map keeps the first value and caps confidence at medium until a rule or a new measurement settles it.</span>`) +
-        `</div>`;
+      const sides = d.claims.map((cid) => `${D.sources[D.claims[cid].source].cite} ${D.claims[cid].value}`).join(", ");
+      h += `<p class="ev-flag">${DISPUTE_HTML}${d.resolution ? "Resolved" : "Disputed"}: ${esc(sides)}` +
+        (d.resolution ? `. ${esc(d.resolution)}` : "") + `</p>`;
     }
-    if (p.for.length) {
-      h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map((c) => claimHTML(c, disputed.has(c))).join("");
-    }
-    if (p.against.length) {
-      h += `<h4 class="ev-h">Contradicting claims (${p.against.length})</h4>` + p.against.map((c) => claimHTML(c, true)).join("");
-    }
-    if (!p.for.length && !p.against.length) {
-      h += `<p class="hole-note">No claim yet. Nothing published gives this value, so it is a hole on the map.</p>`;
-      const m = p.mechanism && D.mechanisms[p.mechanism];
-      if (m && m.test) h += `<p class="hole-note">Proposed test, from ${esc(m.name.toLowerCase())}: ${esc(m.test)}.</p>`;
-    }
+    if (p.for.length) h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map(claimHTML).join("");
+    if (p.against.length) h += `<h4 class="ev-h">Contradicting claims (${p.against.length})</h4>` + p.against.map(claimHTML).join("");
+    if (!p.for.length && !p.against.length) h += `<p class="hole-note">No published value.</p>`;
     return h + `</div>`;
   }
 
@@ -388,13 +352,13 @@
     return loc;
   }
 
-  function claimHTML(cid, inDispute) {
+  function claimHTML(cid) {
     const c = D.claims[cid], s = D.sources[c.source];
     const src = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
     const method = c.method ? METHOD_WORD[c.method] || c.method : "not stated";
-    let h = `<article class="claim${inDispute ? " in-dispute" : ""}"><p class="claim-text">${esc(c.text)}</p>`;
+    let h = `<article class="claim"><p class="claim-text">${esc(c.text)}</p>`;
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
-    if (c.hedge) h += `<p class="claim-hedge">In the author's words: <q>${esc(c.hedge)}</q></p>`;
+    if (c.hedge) h += `<p class="claim-hedge">Hedge: <q>${esc(c.hedge)}</q></p>`;
     h += `<dl class="claim-meta"><dt>Source</dt><dd>${src}, ${esc(s.title)}</dd>` +
       `<dt>Where</dt><dd>${esc(locText(c.loc))}</dd>` +
       `<dt>Method</dt><dd>${esc(method)}${c.filler ? ` (filler: ${esc(c.filler)})` : ""}</dd>` +
@@ -407,10 +371,7 @@
 
   function mechHTML(m) {
     return `<div class="mech"><h4>${esc(m.name)}<span class="status-tag">${esc(m.status)}</span></h4>` +
-      `<p class="mech-desc">${esc(m.description)}</p>` +
-      (m.test ? `<p class="mech-test"><b>Test:</b> ${esc(m.test)}.</p>` : "") +
-      `<p class="mech-test">${plural(m.claims.length, "supporting claim")}` +
-      (m.simSwitch ? ` · simulator switch <code>${esc(m.simSwitch)}</code>` : "") + `</p></div>`;
+      `<p class="mech-desc">${esc(m.description)}</p></div>`;
   }
 
   function linkHTML(other, dir, l) {
@@ -459,10 +420,6 @@
     const jump = e.target.closest("[data-block]");
     if (jump) select(jump.dataset.block);
   });
-  $("dispute-strip").addEventListener("click", (e) => {
-    const b = e.target.closest("[data-param]");
-    if (b) select(D.params[b.dataset.param].block, b.dataset.param);
-  });
   $("stage-list").addEventListener("click", (e) => {
     const card = e.target.closest(".card");
     if (card) select(card.dataset.block);
@@ -477,7 +434,6 @@
     if (state.show.has(c)) state.show.delete(c); else state.show.add(c);
     refresh();
   }));
-  $("only-disputes").addEventListener("click", () => { state.disputesOnly = !state.disputesOnly; refresh(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.block) select(null); });
 
   renderMasthead();

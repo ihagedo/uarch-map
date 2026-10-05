@@ -79,16 +79,6 @@ h1 {
 .stats div { display: flex; align-items: baseline; gap: 7px; }
 .stats dt { order: 2; font-size: 13px; color: var(--ink-3); }
 .stats dd { order: 1; margin: 0; font: 500 20px/1 var(--font-num); font-variant-numeric: tabular-nums; }
-.dispute-strip { display: flex; flex-wrap: wrap; gap: 8px; }
-.dispute-strip button {
-  display: inline-flex; align-items: center; gap: 9px;
-  padding: 7px 12px;
-  background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-  cursor: pointer; text-align: left; font-size: 14px;
-}
-.dispute-strip button:hover { border-color: var(--dispute); }
-.dispute-strip b { font-weight: 600; }
-.dispute-strip .num { font-family: var(--font-num); font-size: 13px; color: var(--ink-2); }
 
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; }
 .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
@@ -109,7 +99,6 @@ h1 {
 }
 .chip[aria-pressed="false"] { color: var(--ink-3); background: transparent; }
 .chip[aria-pressed="false"] .swatch { opacity: 0.35; }
-.chip-dispute[aria-pressed="true"] { border-color: var(--dispute); }
 .swatch { width: 16px; height: 12px; flex: none; overflow: visible; }
 .p-pin { width: 12px; height: 12px; flex: none; }
 
@@ -190,6 +179,7 @@ h1 {
 .d-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; }
 .d-head .eyebrow { grid-column: 1; }
 .d-head h2 { grid-column: 1; margin: 0; font: 500 26px/1.1 var(--font-text); text-wrap: balance; }
+.d-role { grid-column: 1 / -1; margin: 4px 0 0; font-size: 14.5px; line-height: 1.45; color: var(--ink-2); max-width: 46ch; }
 .d-close {
   grid-column: 2; grid-row: 1 / span 2;
   width: 32px; height: 32px; border-radius: 8px;
@@ -229,15 +219,9 @@ h1 {
 .p-row .p-meta { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--ink-3); }
 .p-row.conf-none .p-name, .p-row.conf-none .p-value { color: var(--ink-3); }
 .evidence { display: grid; gap: 10px; padding: 6px 0 10px 22px; }
-.ev-meta { margin: 0; font-size: 13px; color: var(--ink-2); }
-.ev-meta code { font: 12px var(--font-num); }
 .ev-h { margin: 4px 0 0; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
-.dispute-box {
-  margin: 0; padding: 10px 12px; border-radius: 8px;
-  border: 1px solid var(--dispute); background: var(--raise);
-  display: grid; gap: 4px; font-size: 14px;
-}
-.dispute-box b { display: inline-flex; gap: 6px; align-items: center; }
+.ev-flag, .flag { display: inline-flex; align-items: center; gap: 6px; }
+.ev-flag { margin: 0; font-size: 13.5px; color: var(--ink-2); }
 .hole-note { margin: 0; font-size: 14px; color: var(--ink-2); }
 
 .claim {
@@ -245,7 +229,6 @@ h1 {
   padding: 12px 14px; border-radius: 8px;
   background: var(--ground); border: 1px solid var(--line);
 }
-.claim.in-dispute { border-color: var(--dispute); }
 .claim-text { margin: 0; font: 400 16.5px/1.45 var(--font-text); }
 .claim-quote { margin: 0; padding-left: 10px; border-left: 2px solid var(--line); font: italic 400 15.5px/1.45 var(--font-text); color: var(--ink-2); }
 .claim-hedge { margin: 0; font-size: 13.5px; color: var(--ink-2); }
@@ -263,7 +246,6 @@ h1 {
 .status-tag { font-size: 11.5px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .mech p { margin: 0; }
 .mech .mech-desc { font: 400 15.5px/1.45 var(--font-text); color: var(--ink); }
-.mech .mech-test { font-size: 13.5px; color: var(--ink-2); }
 .link-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .link-list button {
   padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise);
@@ -285,7 +267,6 @@ h1 {
 .legend li .swatch { width: 28px; height: 18px; justify-self: center; }
 .legend-links li .swatch { width: 30px; height: 10px; }
 .swatch-empty { display: block; }
-.legend-note { margin: 0; font-size: 13px; color: var(--ink-3); }
 .sources { display: grid; gap: 10px; }
 .source-list {
   margin: 0; padding: 0; list-style: none;

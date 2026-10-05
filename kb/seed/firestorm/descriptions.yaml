@@ -1,0 +1,46 @@
+# descriptions.yaml
+# Isaac Hagedorn, 2026-10-05
+# A generic one-line role for each block; not claims about the M1.
+
+descriptions:
+  chip:      CPU clusters, system cache and memory.
+  pcluster:  The performance cores and their shared L2.
+  ecluster:  The efficiency cores.
+  slc:       Last-level cache shared by the whole chip.
+  memctrl:   DRAM reads and writes.
+  l2:        Shared by the cores of a cluster.
+  core:      One performance core.
+
+  frontend:  Predict, fetch and decode.
+  backend:   Rename, issue out of order, retire in order.
+  lsu:       Loads, stores and the data caches.
+
+  l1i:       Recently used instructions.
+  itlb:      Translations for instruction fetch.
+  btb:       Where branches are and where they go.
+  dirpred:   Taken or not taken, per conditional branch.
+  ras:       Return addresses.
+  indpred:   Targets of indirect branches.
+  fetch:     Reads instructions on the predicted path.
+  ftq:       Predicted fetch addresses, queued ahead of fetch.
+  decode:    Instructions to micro-ops.
+  iq:        Decoded instructions waiting for rename.
+
+  rename:    Architectural to physical registers.
+  int_prf:   Integer values in flight.
+  fp_prf:    FP and vector values in flight.
+  flags_prf: Renamed condition flags.
+  dispatch:  Renamed uops waiting for a scheduler.
+  sched_int: Integer uops waiting for their inputs.
+  sched_fp:  FP and vector uops waiting for their inputs.
+  sched_ls:  Memory uops waiting for their addresses.
+  eu_int:    ALUs, branch units, multipliers and divider.
+  eu_fp:     FP and vector pipelines.
+  retire:    Uops in flight, retired in program order.
+
+  lq:        Loads in flight.
+  sq:        Stores waiting to write the cache.
+  l1d:       First-level data cache.
+  dtlb:      Translations for loads and stores.
+  prefetch:  Brings lines in before they are asked for.
+  mshr:      Cache misses in flight.

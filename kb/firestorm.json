@@ -7,259 +7,296 @@
       "name": "Apple M1",
       "parent": null,
       "stage": "chip",
-      "level": 0
+      "level": 0,
+      "description": "CPU clusters, system cache and memory."
     },
     {
       "id": "pcluster",
       "name": "P-cluster",
       "parent": "chip",
       "stage": "chip",
-      "level": 0
+      "level": 0,
+      "description": "The performance cores and their shared L2."
     },
     {
       "id": "ecluster",
       "name": "E-cluster (Icestorm)",
       "parent": "chip",
       "stage": "chip",
-      "level": 0
+      "level": 0,
+      "description": "The efficiency cores."
     },
     {
       "id": "slc",
       "name": "System level cache",
       "parent": "chip",
       "stage": "uncore",
-      "level": 0
+      "level": 0,
+      "description": "Last-level cache shared by the whole chip."
     },
     {
       "id": "memctrl",
       "name": "Memory controllers",
       "parent": "chip",
       "stage": "uncore",
-      "level": 0
+      "level": 0,
+      "description": "DRAM reads and writes."
     },
     {
       "id": "l2",
       "name": "Shared L2",
       "parent": "pcluster",
       "stage": "cache",
-      "level": 1
+      "level": 1,
+      "description": "Shared by the cores of a cluster."
     },
     {
       "id": "core",
       "name": "Firestorm core",
       "parent": "pcluster",
       "stage": "core",
-      "level": 1
+      "level": 1,
+      "description": "One performance core."
     },
     {
       "id": "frontend",
       "name": "Frontend",
       "parent": "core",
       "stage": "frontend",
-      "level": 1
+      "level": 1,
+      "description": "Predict, fetch and decode."
     },
     {
       "id": "backend",
       "name": "Backend",
       "parent": "core",
       "stage": "core",
-      "level": 1
+      "level": 1,
+      "description": "Rename, issue out of order, retire in order."
     },
     {
       "id": "lsu",
       "name": "Load-store unit",
       "parent": "core",
       "stage": "memory",
-      "level": 1
+      "level": 1,
+      "description": "Loads, stores and the data caches."
     },
     {
       "id": "l1i",
       "name": "L1 instruction cache",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Recently used instructions."
     },
     {
       "id": "itlb",
       "name": "Instruction TLB",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Translations for instruction fetch."
     },
     {
       "id": "btb",
       "name": "Branch target buffer",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Where branches are and where they go."
     },
     {
       "id": "dirpred",
       "name": "Direction predictor",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Taken or not taken, per conditional branch."
     },
     {
       "id": "ras",
       "name": "Return address stack",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Return addresses."
     },
     {
       "id": "indpred",
       "name": "Indirect predictor",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Targets of indirect branches."
     },
     {
       "id": "fetch",
       "name": "Fetch",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Reads instructions on the predicted path."
     },
     {
       "id": "ftq",
       "name": "Fetch target queue",
       "parent": "frontend",
       "stage": "fetch",
-      "level": 2
+      "level": 2,
+      "description": "Predicted fetch addresses, queued ahead of fetch."
     },
     {
       "id": "decode",
       "name": "Decode",
       "parent": "frontend",
       "stage": "decode",
-      "level": 2
+      "level": 2,
+      "description": "Instructions to micro-ops."
     },
     {
       "id": "iq",
       "name": "Instruction queue",
       "parent": "frontend",
       "stage": "decode",
-      "level": 2
+      "level": 2,
+      "description": "Decoded instructions waiting for rename."
     },
     {
       "id": "rename",
       "name": "Rename and map",
       "parent": "backend",
       "stage": "rename",
-      "level": 2
+      "level": 2,
+      "description": "Architectural to physical registers."
     },
     {
       "id": "int_prf",
       "name": "Integer register file",
       "parent": "backend",
       "stage": "rename",
-      "level": 2
+      "level": 2,
+      "description": "Integer values in flight."
     },
     {
       "id": "fp_prf",
       "name": "FP/SIMD register file",
       "parent": "backend",
       "stage": "rename",
-      "level": 2
+      "level": 2,
+      "description": "FP and vector values in flight."
     },
     {
       "id": "flags_prf",
       "name": "Flags register file",
       "parent": "backend",
       "stage": "rename",
-      "level": 2
+      "level": 2,
+      "description": "Renamed condition flags."
     },
     {
       "id": "dispatch",
       "name": "Dispatch buffers",
       "parent": "backend",
       "stage": "dispatch",
-      "level": 2
+      "level": 2,
+      "description": "Renamed uops waiting for a scheduler."
     },
     {
       "id": "sched_int",
       "name": "Integer schedulers",
       "parent": "backend",
       "stage": "issue",
-      "level": 2
+      "level": 2,
+      "description": "Integer uops waiting for their inputs."
     },
     {
       "id": "sched_fp",
       "name": "FP/SIMD schedulers",
       "parent": "backend",
       "stage": "issue",
-      "level": 2
+      "level": 2,
+      "description": "FP and vector uops waiting for their inputs."
     },
     {
       "id": "sched_ls",
       "name": "Load-store scheduler",
       "parent": "backend",
       "stage": "issue",
-      "level": 2
+      "level": 2,
+      "description": "Memory uops waiting for their addresses."
     },
     {
       "id": "eu_int",
       "name": "Integer units",
       "parent": "backend",
       "stage": "execute",
-      "level": 2
+      "level": 2,
+      "description": "ALUs, branch units, multipliers and divider."
     },
     {
       "id": "eu_fp",
       "name": "FP/SIMD units",
       "parent": "backend",
       "stage": "execute",
-      "level": 2
+      "level": 2,
+      "description": "FP and vector pipelines."
     },
     {
       "id": "retire",
       "name": "Retire",
       "parent": "backend",
       "stage": "retire",
-      "level": 2
+      "level": 2,
+      "description": "Uops in flight, retired in program order."
     },
     {
       "id": "lq",
       "name": "Load queue",
       "parent": "lsu",
       "stage": "memory",
-      "level": 2
+      "level": 2,
+      "description": "Loads in flight."
     },
     {
       "id": "sq",
       "name": "Store queue",
       "parent": "lsu",
       "stage": "memory",
-      "level": 2
+      "level": 2,
+      "description": "Stores waiting to write the cache."
     },
     {
       "id": "l1d",
       "name": "L1 data cache",
       "parent": "lsu",
       "stage": "cache",
-      "level": 2
+      "level": 2,
+      "description": "First-level data cache."
     },
     {
       "id": "dtlb",
       "name": "Data TLBs",
       "parent": "lsu",
       "stage": "cache",
-      "level": 2
+      "level": 2,
+      "description": "Translations for loads and stores."
     },
     {
       "id": "prefetch",
       "name": "Prefetchers",
       "parent": "lsu",
       "stage": "cache",
-      "level": 2
+      "level": 2,
+      "description": "Brings lines in before they are asked for."
     },
     {
       "id": "mshr",
       "name": "Miss handling",
       "parent": "lsu",
       "stage": "cache",
-      "level": 2
+      "level": 2,
+      "description": "Cache misses in flight."
     }
   ],
   "links": [

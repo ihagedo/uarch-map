@@ -29,6 +29,7 @@ bands:
   - frames:
       - id: beyond
         label: Beyond the core
+        description: The shared caches and memory outside the core.
         cells:
           predict: [l2]
           fetch:   [slc]
