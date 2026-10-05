@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 86, claims 200, sources 5, mechanisms 9
+blocks 37, links 35, params 92, claims 221, sources 5, mechanisms 11
 
 ## By status
 
-- inferred: 6
+- inferred: 8
 - measured: 49
-- open: 30
+- open: 34
 - reported: 1
 
 ## By confidence
 
-- high: 10
-- low: 7
-- medium: 39
-- none: 30
+- high: 11
+- low: 9
+- medium: 38
+- none: 34
 
-## Holes (30)
+## Holes (34)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -37,7 +37,6 @@ blocks 37, links 35, params 86, claims 200, sources 5, mechanisms 9
 - int_prf.headroom (int_prf): Integer rename headroom
 - dispatch.int_entries (dispatch): Integer dispatch buffer
 - dispatch.mul_entries (dispatch): Multiply dispatch buffer
-- sched_int.entries_per_queue (sched_int): Integer scheduler queue size
 - sched_int.queues (sched_int): Integer scheduler queue count
 - sched_fp.entries_per_queue (sched_fp): FP scheduler queue size
 - lsu.forwarding (lsu): Store-to-load forwarding
@@ -47,6 +46,11 @@ blocks 37, links 35, params 86, claims 200, sources 5, mechanisms 9
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
+- sched_int.total_entries (sched_int): Integer scheduler entries (total)
+- dispatch.fp_entries (dispatch): FP dispatch buffer
+- dispatch.int_buffers (dispatch): Integer dispatch buffer count
+- dispatch.accept_width (dispatch): Dispatch buffer intake per cycle
+- dispatch.queue_inflow (dispatch): Dispatch rate into each scheduler queue
 - int_prf.imm_regs (int_prf): Immediate register pool
 
 ## Open disputes (7)

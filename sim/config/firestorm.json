@@ -90,9 +90,9 @@
     "confidence": "medium"
   },
   "sched_int.entries_per_queue": {
-    "value": null,
+    "value": 13,
     "sim_key": "sched_int",
-    "confidence": "none"
+    "confidence": "low"
   },
   "sched_fp.entries_per_queue": {
     "value": null,

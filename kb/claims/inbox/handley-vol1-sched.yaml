@@ -4,10 +4,270 @@
 session: handley-vol1-sched
 source: handley-vol1
 
+claims:
+  - id: c-mh-v1-int-prf-movxzr
+    text: About 380 MOV xn, xzr instructions fit before the knee, so a move from xzr allocates an integer physical register
+    loc: p066
+    quote: "So we see that about 380 xzr allocations can be performed."
+    method: wong-probe
+    filler: mov-xzr
+    derivation: measured
+    value: 380
+    unit: registers
+    approx: true
+    hedge: "about 380"
+    supports: [int_prf.total]
+    notes: knee between N=380 and N=381 in the listed data
+
+  - id: c-mh-v1-mov-xzr-not-elim
+    text: MOV from xzr is not eliminated; counters show it issues, and it runs at about 6 per cycle in the integer units
+    loc: p066
+    quote: "Looking at the performance counters tells us that MOV from xzr is, in fact, not eliminated."
+    method: counter
+    derivation: measured
+    supports: []
+    notes: agrees with Johnson (c-dj-mov-elim, mov x0,xzr not eliminated); the 6 per cycle slope is on the same page
+
+  - id: c-mh-v1-mov-elim-rename
+    text: >-
+      A MOV between two different registers issues nothing; all eight MOVs per cycle complete at rename, and the
+      knee is the history file (~620), not the ~380 physical registers
+    loc: p067
+    quote: "So we're seeing not a limit at the number of physical register (380, as in the previous graph) but at the number of HF slots. ... all eight MOV's (different register case) execute purely at Rename."
+    method: counter
+    filler: mov
+    derivation: measured
+    value: true
+    supports: [rename.mov_elimination]
+
+  - id: c-mh-v1-rename-8wide
+    text: >-
+      Eliminated MOVs run at about 8 per cycle, the mapper/rename throughput, against 6 per cycle for instructions
+      that go through the integer units
+    loc: p067
+    quote: "the throughput of the MOV's is ~8/cycle, which is Mapper/Rename throughput, not the 6 we'd expect if the instruction had to go through the integer pipes"
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: uops/cycle
+    approx: true
+    supports: [rename.width]
+
+  - id: c-mh-v1-mov-self-nop
+    text: MOV xn, xn is treated as a NOP; it uses only ROB slots and the curve jumps at about 2300 when they run out
+    loc: p067
+    quote: "behave just like NOPs, using no execution resources except ROB slots, and the curve jumping at around ~2300 when the ROB slots are exhausted"
+    method: wong-probe
+    filler: mov-self
+    derivation: measured
+    value: 2300
+    unit: instructions
+    approx: true
+    hedge: "around ~2300"
+    supports: [retire.nop_window]
+
+  - id: c-mh-v1-mov-fp-elim
+    text: FP/SIMD register moves (MOV.16B v0, v1) are eliminated the same way, at zero cycles and 8 per cycle
+    loc: p068
+    quote: "The same zero-cycle (and 8-wide!) behavior holds for FP/SIMD registers (eg MOV.16B v0, v1)."
+    derivation: measured
+    value: true
+    supports: [rename.mov_elimination]
+
+  - id: c-mh-v1-hf-shared-int-fp
+    text: >-
+      Integer MOV and FP MOV.16B draw on one shared pool of history-file slots; interleaving them puts the knee
+      at about 310 pairs, half of 620
+    loc: p068
+    quote: "when we pair the MOV with a MOV.16B, the jump will be at ~620/2=~310, and that's exactly what we see"
+    method: wong-probe
+    filler: mov + mov.16b
+    derivation: measured
+    value: 310
+    unit: pairs
+    approx: true
+    supports: []
+
+  - id: c-mh-v1-hf-630
+    text: >-
+      Repeatedly duplicating fifteen different registers gives a sharp knee at 630 when the history file is
+      full, with throughput held at 8 per cycle
+    loc: p068
+    quote: "The result shows the expected jump (extremely sharp!) when the HF is maxed out at 630."
+    method: wong-probe
+    filler: mov (15 different registers)
+    derivation: measured
+    value: 630
+    unit: entries
+    supports: [retire.rename_queue]
+    notes: knee between N=629 and N=630 in the listed data
+
+  - id: c-mh-v1-no-rda
+    text: >-
+      Move elimination shows no limit on how many distinct registers are duplicated (15 integer plus 15 FP
+      sources change nothing), so Handley sees no sign of a register duplicate array
+    loc: p069
+    quote: "We can also add 15 floating point duplications, for a total pool of 30 duplicated source registers, no difference. So, yeah, seems like no RDA is being used."
+    derivation: measured
+    hedge: "seems like"
+    supports: []
+    notes: the register duplicate array is from a 2012 Apple patent; any limit is above fifteen per register file
+
+  - id: c-mh-v1-subreg-mov-not-elim
+    text: Sub-register moves (MOV wn, wm; MOV.8B vn, vm; MOV dn, dm) are not eliminated
+    loc: p069
+    quote: "What if we try subregisters, eg MOV wn, wm, or MOV.8B vn, vm, or MOV dn, dm? On the M1 we don't get any of these fancy tricks when copying subregisters"
+    derivation: measured
+    supports: []
+    notes: agrees with Johnson (c-dj-mov-elim, mov w0,w1 not eliminated)
+
+  - id: c-mh-v1-dispatch-unordered
+    text: >-
+      What Johnson calls dispatch queues are better seen as buffers that make no ordering promise, and Handley
+      suspects they can lose age order when the scheduler queues are full
+    loc: p070
+    quote: "I suspect the Apple Dispatch Buffers can lose ordering (in cases where it doesn't matter much, namely when the Scheduler Queues are so filled up that the Dispatch Buffers are more than just pass-through)."
+    derivation: inferred
+    hedge: "I suspect"
+    supports: []
+
+  - id: c-mh-v1-sched-ls-split-48
+    text: >-
+      Load/store scheduling holds 48 entries as four separate 12-entry queues, not the single 48-entry queue of
+      Johnson's diagram
+    loc: p070
+    quote: "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases"
+    derivation: inferred
+    value: 48
+    unit: entries
+    supports: [sched_ls.entries]
+    notes: >-
+      4 x 12 = 48 in total. The split is argued with the load/store probes (c-mh-v1-sched-ls-4x12, "I suggest that the Scheduling Queue
+      is split into 4 queue of 12 entries").
+
+  - id: c-mh-v1-sched-ls-split-queues
+    text: Load/store scheduling is split into four queues of 12 entries each
+    loc: p070
+    quote: "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases"
+    derivation: inferred
+    value: 4
+    unit: queues
+    supports: [sched_ls.queues]
+
+  - id: c-mh-v1-sched-johnson-2x
+    text: >-
+      Handley holds that the non-load/store queue sizes in Johnson's scheduler diagram are about twice too large
+      (MUL queues ~13 each, FP queues 18 each), because a pair of queues looks like one queue to most probes
+    loc: p070
+    quote: "the other entries apart from load/store are probably about 2x too large (that is, the size of say the two MUL queues is probably ~13 each), likewise the FP queues probably 18 each"
+    derivation: inferred
+    hedge: "probably about 2x too large"
+    supports: []
+    contradicts: [sched_int.total_entries]
+    notes: >-
+      Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes
+      (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.
+
+  - id: c-mh-v1-sched-pairing
+    text: >-
+      Each scheduler queue feeds one execution unit, but queues are paired; a queue with no ready instruction can
+      issue its partner's second-choice ready instruction, so a probe sees the sum of the pair
+    loc: p070
+    quote: 'while each queue feeds a primary execution unit, the queues are paired, and if one queue does not have a runnable instruction, it can accept the "second choice" runnable instruction from the companion queue'
+    derivation: inferred
+    supports: []
+    notes: Handley has seen the pairing only for load/store (c-mh-v1-sched-ls-pairing); the integer and FP pairings are his guesses
+
+  - id: c-mh-v1-sched-ls-pairing
+    text: >-
+      On the load/store side the store queue is paired with the store+load (ambidextrous) queue; this is the
+      one pairing Handley has observed
+    loc: p071
+    quote: "beyond having seen it in action in the case of load store ... On the load/store side, the store queue is paired with the ambidextrous (store+load) queue."
+    derivation: measured
+    supports: []
+    notes: he found it because stores can go only to the store unit or the ambidextrous unit
+
+  - id: c-mh-v1-sched-int-13
+    text: The two integer MUL queues are paired and hold about 13 entries each
+    loc: p071
+    quote: "Given the numbers, an obvious guess is that on the integer side ... the two MUL queues are paired (each 13 in size)"
+    derivation: inferred
+    value: 13
+    unit: entries
+    approx: true
+    hedge: "an obvious guess"
+    supports: [sched_int.entries_per_queue]
+    notes: >-
+      Half the MUL queue size in Johnson's diagram ("probably ~13 each"); Handley's 18 is the FP queue size
+      (c-mh-v1-sched-18). No size is given for the unpaired ALU/flags and ALU queues.
+
+  - id: c-mh-v1-sched-br-13
+    text: The two integer branch queues are paired, at about 13 entries each (perhaps one of 12 and one of 14)
+    loc: p071
+    quote: "two two BR queues are paired (maybe one of size 12, one of size 14, or both of size 13)"
+    derivation: inferred
+    value: 13
+    unit: entries
+    approx: true
+    hedge: "maybe"
+    supports: [sched_int.entries_per_queue]
+    notes: range 12-14
+
+  - id: c-mh-v1-sched-int-unpaired
+    text: The ALU/flags queue and the plain ALU queue are not paired
+    loc: p071
+    quote: "the ALU/FLAGS queue and the ALU queue stand alone and are not paired."
+    derivation: inferred
+    hedge: "an obvious guess"
+    supports: []
+
+  - id: c-mh-v1-sched-fp-pairing
+    text: Handley guesses, without testing, that the two FCSEL-capable FP queues are paired
+    loc: p071
+    quote: "I would guess that the two FPCSEL queues are paired, but have not tested that."
+    derivation: inferred
+    hedge: "I would guess"
+    supports: []
+
+  - id: c-mh-v1-int-rate-6
+    text: ADDs run at 6 per cycle, the rate of the six integer units, while eliminated MOVs run at 8 per cycle
+    loc: p072
+    quote: "The first segment of the graph corresponds to the 370 ADDs, processed at a slope of 6/cycle; these are followed by the MOVs, processed at 8/cycle"
+    method: throughput
+    derivation: measured
+    value: 6
+    unit: units
+    supports: [eu_int.count]
+    notes: Handley names "the six integer pipelines" and six integer queues
+
 new_params:
+  dispatch.fp_entries:    {block: dispatch, name: FP dispatch buffer, unit: entries}
+  dispatch.int_buffers:   {block: dispatch, name: Integer dispatch buffer count, unit: buffers}
+  dispatch.accept_width:  {block: dispatch, name: Dispatch buffer intake per cycle, unit: instr/cycle}
+  dispatch.queue_inflow:  {block: dispatch, name: Dispatch rate into each scheduler queue, unit: instr/cycle}
+  sched_ls.queues:        {block: sched_ls, name: Load-store scheduler queue count, unit: queues}
   int_prf.imm_regs:       {block: int_prf, name: Immediate register pool, unit: registers, mechanism: immediate_regs}
 
 new_mechanisms:
+  dispatch_buffers:
+    name: Two-level dispatch through unordered buffers
+    status: inferred
+    description: Rename writes into unordered dispatch buffers that feed one scheduler queue per unit.
+    params: [dispatch.int_entries, dispatch.mul_entries, dispatch.ls_entries, dispatch.fp_entries,
+             dispatch.int_buffers, dispatch.accept_width, dispatch.queue_inflow]
+    sim_switch: dispatch_split
+    detection_rule: >-
+      after a long run of ADDs, rename-only instructions (MOV, NOP) run free for about buffer size / drain rate
+      cycles; a filler limited to three integer units fills a 12-entry buffer, not 24
+  paired_sched_queues:
+    name: Paired scheduler queues
+    status: inferred
+    description: Scheduler queues are paired; a queue with nothing ready issues from its partner.
+    params: [sched_int.entries_per_queue, sched_int.queues, sched_fp.entries_per_queue, sched_ls.entries,
+             sched_ls.queues]
+    sim_switch: sched_pairing
+    detection_rule: a filler that can issue to only one unit of a pair sees about half the queue capacity of one that can issue to both
   immediate_regs:
     name: Immediate register pool written at rename
     status: inferred
@@ -19,4 +279,7 @@ new_mechanisms:
       ADDs do not move the ADD knee
 
 mechanism_claims:
+  dispatch_buffers: [c-mh-v1-dispatch-unordered]
+  paired_sched_queues: [c-mh-v1-sched-johnson-2x, c-mh-v1-sched-pairing, c-mh-v1-sched-ls-pairing, c-mh-v1-sched-int-unpaired, c-mh-v1-sched-fp-pairing]
   immediate_regs: [c-mh-v1-int-prf-movimm]
+  rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630]

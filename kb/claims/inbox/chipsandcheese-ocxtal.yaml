@@ -1,0 +1,9 @@
+# chipsandcheese-ocxtal.yaml
+# Chester Lam (Chips and Cheese), 2022-2024; Hajime Suzuki, 2021
+# M1 comparisons from three Chips and Cheese articles, and Suzuki's M1 optimization notes.
+session: chipsandcheese-ocxtal
+source: ocxtal-m1-notes
+
+new_params:
+  sched_int.total_entries: {block: sched_int, name: Integer scheduler entries (total), unit: entries}
+

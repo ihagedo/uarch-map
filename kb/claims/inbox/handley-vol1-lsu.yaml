@@ -1,0 +1,9 @@
+# handley-vol1-lsu.yaml
+# Maynard Handley, 2025
+# Load and store queues, the dependence predictor, forwarding and load accelerators (M1 Explainer vol 1).
+session: handley-vol1-lsu
+source: handley-vol1
+
+new_params:
+  sched_ls.queues:               {block: sched_ls, name: Load-store scheduler queue count, unit: queues}
+
