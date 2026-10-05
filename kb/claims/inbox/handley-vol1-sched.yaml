@@ -501,6 +501,250 @@ claims:
     supports: [dispatch.fp_entries]
     notes: sensitive to how the FP instructions fall in the 8-instruction rename groups
 
+  - id: c-mh-v1-dispatch-cmp-12
+    text: >-
+      A CMP probe (CMP issues to three of the six integer units) fills a 12-entry buffer rather than a 24-entry
+      one, so each integer dispatch buffer feeds three units
+    loc: p093
+    quote: "we can transfer all those CMPs into a (12-sized) buffer ... the numbers kinda work out – certainly better than assuming a 24-sized buffer"
+    method: drain-timing
+    filler: cmp + nop
+    derivation: measured
+    value: 12
+    unit: entries
+    hedge: "the numbers kinda work out"
+    supports: []
+    notes: the counterpart of the MUL buffer (dispatch.mul_entries); together they make dispatch.int_entries
+
+  - id: c-mh-v1-dispatch-accept-8
+    text: Both integer dispatch buffers accept 8 instructions per cycle
+    loc: p093
+    quote: "It also seems that these two integer Dispatch Buffers can accept 8 instructions per cycle."
+    method: drain-timing
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    hedge: "It also seems"
+    supports: [dispatch.accept_width]
+    notes: the FP buffer also takes 8 per cycle
+
+  - id: c-mh-v1-fp-roles
+    text: FCMP can execute on only one of the four FP/SIMD units
+    loc: p093
+    quote: "We can try the same technique with FCMP (which can only execute down one of the four fp pipelines)."
+    method: secondhand
+    derivation: reported
+    value: "FCMP on 1 of 4"
+    supports: [eu_fp.roles]
+    notes: >-
+      Stated without a method; Handley also names two FCSEL-capable FP queues (c-mh-v1-sched-fp-pairing). Corroborates Johnson's table
+      (c-dj-fp-roles).
+
+  - id: c-mh-v1-dispatch-fp-14
+    text: An FCMP probe sustains 14 FCMPs at full rate, suggesting the FP dispatch buffer may hold 14 rather than 12
+    loc: p094
+    quote: "This is so perfectly matched it suggests that perhaps the size of the FP Dispatch Buffer is slightly larger, perhaps 14 rather than 12?"
+    method: drain-timing
+    filler: fcmp + nop
+    derivation: measured
+    value: 14
+    unit: entries
+    approx: true
+    hedge: "perhaps 14 rather than 12?"
+    supports: [dispatch.fp_entries]
+    notes: >-
+      The jump comes at 15 x (1 FCMP + 7 NOP); Handley finds it hard to square with Johnson's diagram. Disagrees
+      with his own FABS probe (c-mh-v1-dispatch-fp-12, 12).
+
+  - id: c-mh-v1-dispatch-fp-single
+    text: There is a single FP dispatch buffer, not a split one as for integer
+    loc: p094
+    quote: "we have a single FP Dispatch Buffer, rather than a split buffer like integer."
+    method: drain-timing
+    derivation: measured
+    supports: []
+
+  - id: c-mh-v1-dispatch-ls-probe
+    text: >-
+      A load probe overflows the load/store dispatch buffer slightly sooner than the 12-entry CMP case, in line
+      with Johnson's size of 10
+    loc: p095
+    quote: "we overflow the LD/ST Dispatch Buffer slightly sooner than for CMP, which agrees with Dougall's result of a size of 10 for the LD/ST Dispatch Buffer."
+    method: secondhand
+    derivation: reported
+    value: 10
+    unit: entries
+    supports: [dispatch.ls_entries]
+    notes: the 10 is Johnson's; Handley's own probe shows only a buffer a little smaller than 12. CMP and LD are both 3-wide.
+
+  - id: c-mh-v1-zero-other-6wide
+    text: "Zeroing with AND x0, xzr, #1 or MOV x0, xzr is not special-cased and runs 6 per cycle in the integer units"
+    loc: p095
+    quote: "we will try AND x0, xzr, #1) runs 6 wide ... MOV x0, xzr runs 6 wide"
+    method: throughput
+    derivation: measured
+    supports: []
+    notes: "only MOV #0 (MOVZ) zeroes at 8 per cycle (c-mh-v1-mov-zero-rename)"
+
+  - id: c-mh-v1-eor-zero-not-idiom
+    text: EOR x0, x0, x0 is not a zeroing idiom; it runs one per cycle as a dependent chain
+    loc: p095
+    quote: "EOR x0, x0, x0 runs 1 wide! Not only not an idiom, but forces the chain dependency!"
+    method: throughput
+    derivation: measured
+    supports: []
+
+  - id: c-mh-v1-mov-imm-8wide
+    text: >-
+      Every non-zero MOV-immediate form tried runs 8 per cycle, as 2 per cycle completed at rename plus 6 in the
+      integer units
+    loc: p096
+    quote: "ALL of these (!) are recognized and run 8-wide. ... Apart from an immediate of zero, these are implemented as 2-wide in rename plus 6-wide in execution"
+    method: throughput
+    filler: mov-imm
+    derivation: measured
+    value: 2
+    unit: per cycle
+    supports: [rename.mov_imm_limit]
+    notes: >-
+      Forms tried include #1, #-1, #0x1234, shifted MOVZ and a logical immediate. Rename handles 8 per cycle,
+      so 2 per cycle is 2 per 8 instructions; Handley later repeats "two free MOV# Rename's per cycle".
+
+  - id: c-mh-v1-mov-imm-dependent
+    text: "Chains of eliminated operations resolve within rename; MOV x0, #0 followed by MOV x1, x0 still runs 8 per cycle"
+    loc: p096
+    quote: "MOV x0, #0; MOV x1, x0 seems to run fine (800 ops in 100 cycles), though I'm not doing true latency tests."
+    method: throughput
+    derivation: measured
+    hedge: "though I'm not doing true latency tests"
+    supports: []
+    notes: chains such as MOV x2, x1; MOV x3, x2; ... are also handled at rename
+
+  - id: c-mh-v1-movk-not-fused
+    text: "MOV #imm plus MOVK pairs run at 4 pairs per cycle, so MOV+MOVK is not fused"
+    loc: p097
+    quote: "This runs at 4 (of these pairs) per cycle ... MOV+MOVK is not fused."
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: pairs/cycle
+    supports: []
+    notes: agrees with Johnson's fusion list (c-dj-fusion, not mov+movk) and his MOVK throughput
+
+  - id: c-mh-v1-fp-imm-not-special
+    text: FP immediates, and zeroing an FP register with FMOV dn, xzr, get no special handling at rename
+    loc: p097
+    quote: "ARM supports a few floating point immediates, but the M1 does not handle these in any special way at Rename."
+    derivation: measured
+    supports: []
+
+  - id: c-mh-v1-imm-pool-reason
+    text: >-
+      Handley thinks Apple writes immediates into a separate immediates-only register file filled only from the
+      decode/rename path, sparing the write ports of the main integer file
+    loc: p098
+    quote: 'Another path (which appears to be what Apple is doing right now) is using a separate register pool. ... another alternative is to create a separate "immediates-only" register file which can only be written to by this Decode path'
+    derivation: inferred
+    hedge: "which appears to be what Apple is doing right now"
+    supports: []
+    notes: >-
+      The evidence is the ~38 extra registers seen with MOV #1. Handley says the 2012 patent scheme
+      (US9430243B2, constants encoded in spare register IDs) has been superseded.
+
+  - id: c-mh-v1-mov-zero-rename
+    text: "MOV xn, #0 is completed at rename like a register MOV or a NOP, while other immediates are only partly special-cased"
+    loc: p099
+    quote: "MOV xn, #0 is special-cased and is handled like MOV or NOP, fully resolved at Rename."
+    method: wong-probe
+    filler: mov-zero
+    derivation: measured
+    value: true
+    supports: [rename.zero_idiom]
+    notes: slope 8 per cycle with a small stutter near N=620; Handley adds that it takes no physical register
+
+  - id: c-mh-v1-hf-movreg-620
+    text: MOV x0, x5 uses no physical registers and maxes out at around 620 history-file entries
+    loc: p100
+    quote: "the MOV x0, x5 does not use physical registers at all, and maxes out at around 620 History File entries."
+    method: wong-probe
+    filler: mov
+    derivation: measured
+    value: 620
+    unit: entries
+    approx: true
+    hedge: "around 620"
+    supports: [retire.rename_queue]
+    notes: MOV x0, x2 shows the same (c-mh-v1-mov-elim-rename, "This case reaches 620 with no glitches")
+
+  - id: c-mh-v1-iregs-separate
+    text: >-
+      Thirty-two MOV x0, #1 padded with NOPs and placed before ADDs leave the ADD knee unchanged, so immediates
+      are held outside the main integer register file, with room for more than 32
+    loc: p101
+    quote: "Look at how the green curve jumps at close to the same place as the gold curve; ie the MOV# register usage has not removed registers from those available to the ADD."
+    method: wong-probe
+    filler: "mov-imm + 3 nop, then add"
+    derivation: measured
+    supports: []
+    notes: >-
+      with 40 MOV #1 the result "suggests that there are more than 32 I registers available, perhaps as many as 40"
+
+  - id: c-mh-v1-iregs-36
+    text: >-
+      About 36 immediate registers exist, each able to hold a different value; 10 or 20 distinct MOV #i add 10
+      or 20 to the ADD knee, and 40 add about 36
+    loc: p102
+    quote: "For 40 we don't get quite all the way to 420, so the number of additional iRegs appears to be around 36."
+    method: wong-probe
+    filler: "mov-imm (distinct values) + 3 nop, then add"
+    derivation: measured
+    value: 36
+    unit: registers
+    approx: true
+    hedge: "appears to be around 36"
+    supports: [int_prf.imm_regs]
+    notes: range 32-40 ("no more than about 36..40 iRegs"; see c-mh-v1-iregs-separate)
+
+  - id: c-mh-v1-iregs-exhausted
+    text: "Only immediate registers can be written from rename; when none is free, MOV #imm runs 6 per cycle through the integer units"
+    loc: p103
+    quote: "In other words, it appears that only iRegs can be written to from Rename, and when an iReg is not available, MOV# has to run 6-wide."
+    method: wong-probe
+    filler: "mov-imm + 3 add"
+    derivation: measured
+    hedge: "it appears"
+    supports: []
+    notes: seen as a stretch of 6-wide execution at longer delays (e.g. 39 cycles); with short delays the iRegs free up fast enough to stay 8-wide
+
+  - id: c-mh-v1-reg-free-16
+    text: When the ROB head is not blocked, registers are freed at 16 per cycle
+    loc: p104
+    quote: "Later we will see that freeing registers (when it is possible, ie if there's not a delay instruction blocking the head of the ROB) occurs at 16 registers/cycle"
+    derivation: measured
+    value: 16
+    unit: registers/cycle
+    supports: []
+    notes: a forward reference to the measurement (c-mh-v1-reg-free-rate); the same rate as retire.rate_renames (16)
+
+  - id: c-mh-v1-zpr
+    text: "Handley's model has a hardwired zero physical register, distinct from xzr, and MOV #0 is a rename-time duplicate of it"
+    loc: p104
+    quote: "there is a special hardwired zero physical register (ZPR) (which, strangely, appears not to be xzr!) and a MOV #0 is treated as a Rename duplication to that ZPR"
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v1-imm-model
+    text: >-
+      In Handley's model rename can write only to the immediate registers, up to two per cycle, when the value is
+      known and a register is free; otherwise MOV #imm goes on to scheduling and execution
+    loc: p104
+    quote: "there is a special write path from Rename to the iRegs, but not generic pRegs, to allow up to two writes from Rename per cycle"
+    derivation: inferred
+    value: 2
+    unit: per cycle
+    supports: []
+    notes: 'Handley calls MOV # "primarily a latency reduction tool" that also adds a few registers'
+
 new_params:
   dispatch.fp_entries:    {block: dispatch, name: FP dispatch buffer, unit: entries}
   dispatch.int_buffers:   {block: dispatch, name: Integer dispatch buffer count, unit: buffers}
@@ -539,8 +783,12 @@ new_mechanisms:
       ADDs do not move the ADD knee
 
 mechanism_claims:
-  dispatch_buffers: [c-mh-v1-dispatch-unordered, c-mh-v1-dispatch-load-balance, c-mh-v1-dispatch-accept-patent, c-mh-v1-dispatch-int, c-mh-v1-dispatch-int-two, c-mh-v1-dispatch-mul, c-mh-v1-dispatch-smoothing, c-mh-v1-queue-inflow-1]
+  dispatch_buffers: [c-mh-v1-dispatch-unordered, c-mh-v1-dispatch-load-balance, c-mh-v1-dispatch-accept-patent,
+                     c-mh-v1-dispatch-int, c-mh-v1-dispatch-int-two, c-mh-v1-dispatch-mul, c-mh-v1-dispatch-cmp-12,
+                     c-mh-v1-dispatch-smoothing, c-mh-v1-dispatch-accept-8, c-mh-v1-queue-inflow-1,
+                     c-mh-v1-dispatch-fp-single]
   paired_sched_queues: [c-mh-v1-sched-johnson-2x, c-mh-v1-sched-pairing, c-mh-v1-sched-ls-pairing,
                         c-mh-v1-sched-int-unpaired, c-mh-v1-sched-fp-pairing, c-mh-v1-pairing-patent]
-  immediate_regs: [c-mh-v1-int-prf-movimm]
-  rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630]
+  immediate_regs: [c-mh-v1-int-prf-movimm, c-mh-v1-mov-imm-8wide, c-mh-v1-mov-zero-rename, c-mh-v1-imm-pool-reason,
+                   c-mh-v1-iregs-separate, c-mh-v1-iregs-36, c-mh-v1-iregs-exhausted, c-mh-v1-zpr, c-mh-v1-imm-model]
+  rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630, c-mh-v1-hf-movreg-620]

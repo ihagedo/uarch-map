@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 92, claims 242, sources 5, mechanisms 11
+blocks 37, links 35, params 92, claims 263, sources 5, mechanisms 11
 
 ## By status
 
-- inferred: 12
-- measured: 53
-- open: 26
+- inferred: 11
+- measured: 55
+- open: 25
 - reported: 1
 
 ## By confidence
 
-- high: 11
-- low: 13
+- high: 13
+- low: 12
 - medium: 42
-- none: 26
+- none: 25
 
-## Holes (26)
+## Holes (25)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -43,9 +43,8 @@ blocks 37, links 35, params 92, claims 242, sources 5, mechanisms 11
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
-- int_prf.imm_regs (int_prf): Immediate register pool
 
-## Open disputes (8)
+## Open disputes (9)
 
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
@@ -55,6 +54,7 @@ blocks 37, links 35, params 92, claims 242, sources 5, mechanisms 11
 - lsu.disambiguation: LSDP at the mapper; predicted store becomes a dependency of the load vs suspected X29 special case at equal rank  [c-mh-v1-lsdp-mapper, c-dj-lsq-x29-prediction]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-7cpu-dtlb-l1, c-at-l1-tlb]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-7cpu-l2-latency, c-mh-v1-l2-latency-aside]
+- dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 
 ## Problems (0)
 
