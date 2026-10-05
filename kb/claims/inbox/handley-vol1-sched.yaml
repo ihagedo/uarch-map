@@ -241,6 +241,266 @@ claims:
     supports: [eu_int.count]
     notes: Handley names "the six integer pipelines" and six integer queues
 
+  - id: c-mh-v1-dispatch-int
+    text: >-
+      The integer dispatch buffer holds about 24 instructions, as two buffers of 12; after a long run of ADDs,
+      about four cycles of rename-only MOVs run free while the buffered ADDs drain at 6 per cycle
+    loc: p072
+    quote: "The integer Dispatch Buffer has a capacity of ~24 instructions, so it soon fills up."
+    method: drain-timing
+    filler: add then mov
+    derivation: measured
+    value: 24
+    unit: entries
+    approx: true
+    hedge: "~24"
+    supports: [dispatch.int_entries]
+    notes: >-
+      Flat region from N=370 to about 397; with FABS instead of MOVs the flat run is 23 instructions. Johnson probed
+      24 (12+12) directly (c-mh-v1-dispatch-int-dj).
+
+  - id: c-mh-v1-dispatch-mul
+    text: >-
+      The dispatch buffer feeding the two MUL units holds 12; after a run of MULs, about 50 rename-only
+      instructions run free while it drains in 6 cycles
+    loc: p073
+    quote: "The Dispatch Buffer that feeds the two MUL units has a capacity of 12, so will drain in 6 cycles."
+    method: drain-timing
+    filler: mul then mov
+    derivation: measured
+    value: 12
+    unit: entries
+    supports: [dispatch.mul_entries]
+    notes: >-
+      Flat region from N=370 to 420. Handley takes this to be one of the two 12-entry integer buffers ("a
+      buffer of ~12 in size").
+
+  - id: c-mh-v1-dispatch-int-two
+    text: Two dispatch buffers feed the six integer scheduler queues, as in Johnson's diagram
+    loc: p073
+    quote: "So we validate both our understanding and that there are two Dispatch Buffers feeding the six integer Scheduling Queues, as in the diagram."
+    method: drain-timing
+    derivation: measured
+    value: 2
+    unit: buffers
+    supports: [dispatch.int_buffers]
+
+  - id: c-mh-v1-mul-two-units
+    text: MUL runs at 2 per cycle because only two integer units multiply, and both are fully pipelined
+    loc: p073
+    quote: "We get an initial slope of two instructions per cycle (only two execution units support multiply, but they are fully pipelined)."
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: units
+    supports: []
+    notes: a role fact for eu_int.roles (multiply on two units); the roles value is c-mh-v1-int-roles
+
+  - id: c-mh-v1-sched-int-queues
+    text: Apple puts a scheduler queue in front of each execution unit, giving six integer queues
+    loc: p074
+    quote: "Apple takes this idea to an extreme by adopting a queue in front of each execution unit ... ADD can go to any of the six integer execution unit queues"
+    derivation: inferred
+    value: 6
+    unit: queues
+    supports: [sched_int.queues]
+
+  - id: c-mh-v1-int-roles
+    text: Only two integer units take branches and only one divides, while ADD can go to any of the six integer queues
+    loc: p074
+    quote: "there are only two branch execution units, only one integer divide unit), while other integer instructions like ADD can go to any of the six integer execution unit queues"
+    method: secondhand
+    derivation: reported
+    value: "branch on 2, divide on 1, ADD on all 6"
+    supports: [eu_int.roles]
+    notes: >-
+      Stated without a method; Handley works from Johnson's diagram. Corroborates Johnson's table
+      (c-dj-int-roles); multiply on two units is measured in c-mh-v1-mul-two-units.
+
+  - id: c-mh-v1-dispatch-load-balance
+    text: >-
+      The dispatch buffer balances the queues; unit-restricted instructions go to their queues and the rest go
+      to whichever queues are least full
+    loc: p074
+    quote: "after instructions with strict requirements are sent to the appropriate queues, the remaining instructions are sent out according to which queues are least full"
+    derivation: inferred
+    supports: []
+    notes: Handley's reading of Apple patent US9336003B2 (multi-level dispatch, 2013)
+
+  - id: c-mh-v1-queue-inflow-1
+    text: >-
+      Each scheduler queue accepts one instruction per cycle, so the integer dispatch buffers drain at 6 per
+      cycle and the FP and load/store buffers at 4
+    loc: p075
+    quote: "Each of the six integer queues can only accept one instruction per cycle"
+    derivation: inferred
+    value: 1
+    unit: instr/cycle
+    supports: [dispatch.queue_inflow]
+    notes: >-
+      Proposed to explain the 8-in, 6-out filling of the integer buffer ("maybe instructions can
+      only leave that buffer at 6/cycle, so one per scheduling queue?"); Handley gives 4 per cycle for runs of FP
+      or load/store instructions.
+
+  - id: c-mh-v1-dispatch-accept-patent
+    text: >-
+      Handley reads Apple's multi-level dispatch patent as buffers that accept up to eight instructions per cycle
+      feeding queues that take one per cycle
+    loc: p075
+    quote: "the buffers are capable of accepting up to eight instructions (whereas queues only need to accept one instruction per cycle)"
+    method: patent-reading
+    derivation: inferred
+    value: 8
+    unit: instr/cycle
+    supports: [dispatch.accept_width]
+    notes: US9336003B2 (2013), Multi-level dispatch for a superscalar processor
+
+  - id: c-mh-v1-age-matrix
+    text: >-
+      Scheduler queues do not shift entries; an age matrix holds the relative age of every pair of entries, and a
+      pairwise tournament picks the oldest ready instruction
+    loc: p076
+    quote: "The age matrix tracks the temporal ordering of the instructions while not requiring them to continually be moved from one slot to another."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Handley's reading of US20170024205A1 (non-shifting reservation station, 2015) and US10120690B1 (early age indicator, 2016)
+
+  - id: c-mh-v1-pairing-patent
+    text: >-
+      Handley reads Apple's 2017 issue-selection patent as offering each queue's second-choice candidate to its
+      paired queue at the last round of the age tournament
+    loc: p077
+    quote: "So suppose that at the very last round, we also offer the second choice candidate from queue A to queue B (and vice versa)."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10983799B1, Selection of instructions to issue in a processor
+
+  - id: c-mh-v1-sched-18
+    text: Each FP/SIMD scheduler queue holds 18 entries, sized for the long dependency chains and latencies of FP code
+    loc: p078
+    quote: "for FP/SIMD both long dependency chains and long instruction latencies are common, hence we see each Scheduler Queue as a hefty 18 entries in size"
+    derivation: inferred
+    value: 18
+    unit: entries
+    supports: [sched_fp.entries_per_queue]
+    notes: >-
+      The 18 is the FP/SIMD queue size, not that of every scheduler queue (also "likewise the FP queues probably
+      18 each", half of Johnson's diagram). No method or hedge given. Integer queues ~13
+      (c-mh-v1-sched-int-13).
+
+  - id: c-mh-v1-sched-pending-400
+    text: >-
+      At most about 400 instructions wait in all the scheduler queues and dispatch buffers together, and Handley
+      guesses the scheduler IDs come from a pool of that size
+    loc: p082
+    quote: "which is a maximum of ~400 (worst case total occupancy of all the scheduling queues and dispatch buffers)"
+    derivation: inferred
+    value: 400
+    unit: instructions
+    approx: true
+    hedge: "~400"
+    supports: []
+    notes: compare the ~280-instruction issue-queue look-ahead (c-mh-v1-issue-window-280)
+
+  - id: c-mh-v1-lsdp-mapper
+    text: >-
+      A load-store dependency predictor sits with the mapper rather than the load/store unit, and adds a
+      predicted store as one more dependency of the load
+    loc: p083
+    quote: "this table is associated not with the Load/Store unit but with the Mapper unit ... because the LSDP implementation is handled as just one more dependency of the load!"
+    method: patent-reading
+    derivation: inferred
+    value: "LSDP at the mapper; predicted store becomes a dependency of the load"
+    supports: [lsu.disambiguation]
+    notes: from Apple patent US20130298127A1 (load-store dependency predictor content management, 2012), which Handley presents as current
+
+  - id: c-mh-v1-matrix-scheduler
+    text: >-
+      Handley reads Apple's index-based wakeup patent as matrix scheduling, with a dependency bit matrix indexed
+      by scheduler ID, an age matrix and an operand table per queue, woken by issuing units setting bits on a
+      wide bus
+    loc: p085
+    quote: "a scheduling matrix that tells us which instructions are able to execute (all dependencies fulfilled) ... This idea is called matrix scheduling."
+    method: patent-reading
+    derivation: inferred
+    hedge: "I think you will agree that it's the only reasonable interpretation"
+    supports: []
+    notes: US11036514B1 (scheduler entries storing dependency indexes for index-based wakeup, 2016); Handley puts the wakeup bus at about 400 bits
+
+  - id: c-mh-v1-microcode-dispatch
+    text: >-
+      Microcoded instructions are probably expanded at dispatch, after rename, rather than at decode, and the
+      microcode ops seem not to take ROB slots
+    loc: p087
+    quote: "When the complex instructions are detected, they are replaced with some number of microcode instructions which are fed into the Dispatch process until they're done."
+    method: patent-reading
+    derivation: inferred
+    hedge: "If we take the patent literally"
+    supports: []
+    notes: US9280352B2 (2011, A6 era), which Handley says "may well be (to some extent) the way the issue is still handled"
+
+  - id: c-mh-v1-rob-1000
+    text: The M1's ROB holds effectively about 1000 instructions of speculative state
+    loc: p088
+    quote: "So the ROB is (as of M1) effectively around 1000 instruction or so of speculative state"
+    derivation: inferred
+    value: 1000
+    unit: instructions
+    approx: true
+    hedge: "around 1000 instruction or so"
+    supports: []
+    notes: a summary remark with no method; close to retire.issuing_window (1000)
+
+  - id: c-mh-v1-issue-window-280
+    text: The issue queues taken together give the M1 a look-ahead window of about 280 instructions
+    loc: p088
+    quote: "the Issue Queue(s taken together) as of the M1 provide a look-ahead window of about 280 instructions"
+    derivation: inferred
+    value: 280
+    unit: instructions
+    approx: true
+    hedge: "about 280"
+    supports: []
+    notes: Handley gives no breakdown of the 280
+
+  - id: c-mh-v1-dispatch-int-dj
+    text: Johnson's direct probe put the first-level integer dispatch buffer at 24 entries, split 12 + 12
+    loc: p089
+    quote: "In fact Dougall's experiments (probing for exactly this size, not detecting it as a side effect like we are doing) has the 1st level int Dispatch Buffer as 24 elements (split into 12+12)."
+    method: secondhand
+    derivation: reported
+    value: 24
+    unit: entries
+    supports: [dispatch.int_entries]
+
+  - id: c-mh-v1-dispatch-smoothing
+    text: >-
+      The integer dispatch buffer absorbs bursts; runs of 6k ADDs followed by 2k NOPs keep the full rate up to
+      k=13 and slow from k=15
+    loc: p091
+    quote: "Essentially the case 6*1 through 6*13 always take the fast path (102 cycles per loop iteration), anything above 6*15 takes 108 cycles"
+    method: drain-timing
+    filler: 6k add + 2k nop
+    derivation: measured
+    supports: []
+    notes: k=14 is noisy, in between; Handley reads the transition as the buffer filling at about 2 excess ADDs per cycle over 11 cycles
+
+  - id: c-mh-v1-dispatch-fp-12
+    text: The FP dispatch buffer accepts 8 instructions per cycle and holds about 12
+    loc: p092
+    quote: "We see that we can't quite achieve that with 6*(4x FABS+4x NOP) but we can with 5*(4x FABS+4x NOP). Suggesting that the Dispatch Buffer is ~12 in size."
+    method: drain-timing
+    filler: fabs + nop
+    derivation: measured
+    value: 12
+    unit: entries
+    approx: true
+    hedge: "The methodology is somewhat sloppy"
+    supports: [dispatch.fp_entries]
+    notes: sensitive to how the FP instructions fall in the 8-instruction rename groups
+
 new_params:
   dispatch.fp_entries:    {block: dispatch, name: FP dispatch buffer, unit: entries}
   dispatch.int_buffers:   {block: dispatch, name: Integer dispatch buffer count, unit: buffers}
@@ -279,7 +539,8 @@ new_mechanisms:
       ADDs do not move the ADD knee
 
 mechanism_claims:
-  dispatch_buffers: [c-mh-v1-dispatch-unordered]
-  paired_sched_queues: [c-mh-v1-sched-johnson-2x, c-mh-v1-sched-pairing, c-mh-v1-sched-ls-pairing, c-mh-v1-sched-int-unpaired, c-mh-v1-sched-fp-pairing]
+  dispatch_buffers: [c-mh-v1-dispatch-unordered, c-mh-v1-dispatch-load-balance, c-mh-v1-dispatch-accept-patent, c-mh-v1-dispatch-int, c-mh-v1-dispatch-int-two, c-mh-v1-dispatch-mul, c-mh-v1-dispatch-smoothing, c-mh-v1-queue-inflow-1]
+  paired_sched_queues: [c-mh-v1-sched-johnson-2x, c-mh-v1-sched-pairing, c-mh-v1-sched-ls-pairing,
+                        c-mh-v1-sched-int-unpaired, c-mh-v1-sched-fp-pairing, c-mh-v1-pairing-patent]
   immediate_regs: [c-mh-v1-int-prf-movimm]
   rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630]

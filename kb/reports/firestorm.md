@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 92, claims 221, sources 5, mechanisms 11
+blocks 37, links 35, params 92, claims 242, sources 5, mechanisms 11
 
 ## By status
 
-- inferred: 8
-- measured: 49
-- open: 34
+- inferred: 12
+- measured: 53
+- open: 26
 - reported: 1
 
 ## By confidence
 
 - high: 11
-- low: 9
-- medium: 38
-- none: 34
+- low: 13
+- medium: 42
+- none: 26
 
-## Holes (34)
+## Holes (26)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -35,10 +35,6 @@ blocks 37, links 35, params 92, claims 221, sources 5, mechanisms 11
 - iq.depth (iq): Fetch-to-decode queue depth
 - rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
-- dispatch.int_entries (dispatch): Integer dispatch buffer
-- dispatch.mul_entries (dispatch): Multiply dispatch buffer
-- sched_int.queues (sched_int): Integer scheduler queue count
-- sched_fp.entries_per_queue (sched_fp): FP scheduler queue size
 - lsu.forwarding (lsu): Store-to-load forwarding
 - l1d.assoc (l1d): L1D associativity
 - l1d.load_bw (l1d): L1D load bandwidth
@@ -47,19 +43,16 @@ blocks 37, links 35, params 92, claims 221, sources 5, mechanisms 11
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
-- dispatch.fp_entries (dispatch): FP dispatch buffer
-- dispatch.int_buffers (dispatch): Integer dispatch buffer count
-- dispatch.accept_width (dispatch): Dispatch buffer intake per cycle
-- dispatch.queue_inflow (dispatch): Dispatch rate into each scheduler queue
 - int_prf.imm_regs (int_prf): Immediate register pool
 
-## Open disputes (7)
+## Open disputes (8)
 
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
+- lsu.disambiguation: LSDP at the mapper; predicted store becomes a dependency of the load vs suspected X29 special case at equal rank  [c-mh-v1-lsdp-mapper, c-dj-lsq-x29-prediction]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-7cpu-dtlb-l1, c-at-l1-tlb]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-7cpu-l2-latency, c-mh-v1-l2-latency-aside]
 

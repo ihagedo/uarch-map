@@ -80,9 +80,9 @@
     "confidence": "high"
   },
   "dispatch.int_entries": {
-    "value": null,
+    "value": 24,
     "sim_key": "dispatch_int",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "dispatch.ls_entries": {
     "value": 10,
@@ -95,9 +95,9 @@
     "confidence": "low"
   },
   "sched_fp.entries_per_queue": {
-    "value": null,
+    "value": 18,
     "sim_key": "sched_fp",
-    "confidence": "none"
+    "confidence": "low"
   },
   "sched_ls.entries": {
     "value": 48,
