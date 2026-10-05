@@ -1,0 +1,40 @@
+# firestorm.yaml
+# Isaac Hagedorn, 2026-10-04
+# Where each block sits on the map, and what each structure view draws.
+
+columns:
+  - {id: predict,  label: Predict}
+  - {id: fetch,    label: Fetch}
+  - {id: decode,   label: Decode}
+  - {id: rename,   label: Rename}
+  - {id: dispatch, label: Dispatch}
+  - {id: issue,    label: Issue}
+  - {id: execute,  label: Execute}
+  - {id: retire,   label: Retire}
+
+bands:
+  - frames:
+      - region: frontend
+        cells:
+          predict: [btb, dirpred, indpred, ras]
+          fetch:   [fetch, ftq, l1i, itlb]
+          decode:  [decode, iq]
+      - region: backend
+        cells:
+          rename:   [rename, int_prf, fp_prf, flags_prf]
+          dispatch: [dispatch]
+          issue:    [sched_int, sched_fp, sched_ls]
+          execute:  [eu_int, eu_fp]
+          retire:   [retire]
+  - frames:
+      - id: beyond
+        label: Beyond the core
+        cells:
+          predict: [l2]
+          fetch:   [slc]
+          decode:  [memctrl]
+      - region: lsu
+        cells:
+          issue:   [lq, sq]
+          execute: [l1d, dtlb]
+          retire:  [mshr, prefetch]

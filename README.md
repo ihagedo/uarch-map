@@ -14,6 +14,8 @@ format and how values are chosen.
 
 ```
 python3 tools/kb/merge.py firestorm    # kb/firestorm.json, kb/reports/firestorm.md
+python3 site/build.py firestorm        # build/site/index.html
 ```
 
-Needs Python 3 with PyYAML and jsonschema.
+Needs Python 3 with PyYAML and jsonschema. The page is plain HTML, CSS and JS, laid out from
+`site/layout/firestorm.yaml`.

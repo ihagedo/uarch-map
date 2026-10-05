@@ -1,0 +1,88 @@
+<!-- page.html
+     Isaac Hagedorn, 2026-10-04
+     Page template; build.py fills in the styles, the data and the script. -->
+<title>Firestorm Architecture Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
+<style>
+/*STYLE*/
+</style>
+<!-- body -->
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">Apple M1 · Firestorm performance core · AArch64</p>
+    <h1>Firestorm Architecture Map</h1>
+    <p class="lede">Every number on this map traces to a claim, and every claim to a place in a source.
+      Each box is drawn by how well it is known: solid where measurements agree, dashed where the
+      evidence is thin, an empty outline where nothing has been published.</p>
+    <dl class="stats" id="stats"></dl>
+    <div class="dispute-strip" id="dispute-strip"></div>
+  </header>
+
+  <div class="toolbar" role="toolbar" aria-label="Map controls">
+    <div class="seg" role="group" aria-label="Zoom level">
+      <button type="button" id="zoom-L1" data-view="L1" aria-pressed="false">Regions <span class="lvl">L1</span></button>
+      <button type="button" id="zoom-L2" data-view="L2" aria-pressed="true">Stages <span class="lvl">L2</span></button>
+    </div>
+    <div class="filters" role="group" aria-label="Show by confidence">
+      <span class="tool-label">Show</span>
+      <button type="button" class="chip" id="show-high" data-conf="high" aria-pressed="true"><svg class="swatch conf-high" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>High</button>
+      <button type="button" class="chip" id="show-medium" data-conf="medium" aria-pressed="true"><svg class="swatch conf-medium" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Medium</button>
+      <button type="button" class="chip" id="show-low" data-conf="low" aria-pressed="true"><svg class="swatch conf-low" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Low</button>
+      <button type="button" class="chip" id="show-none" data-conf="none" aria-pressed="true"><svg class="swatch conf-none" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Holes</button>
+    </div>
+    <button type="button" class="chip chip-dispute" id="only-disputes" aria-pressed="false"><svg class="swatch" viewBox="0 0 12 12" aria-hidden="true"><path class="pin-dispute" d="M6 1.5 L10.5 10 L1.5 10 Z"/></svg>Open disputes only</button>
+  </div>
+
+  <main class="workspace" id="workspace">
+    <div class="map-wrap" id="map-wrap">
+      <svg id="map" role="group" aria-label="Block diagram of the Firestorm core"></svg>
+    </div>
+    <div class="stage-list" id="stage-list"></div>
+    <aside class="dossier" id="dossier" aria-label="Dossier" hidden></aside>
+  </main>
+
+  <section class="legend" aria-label="How to read the map">
+    <div class="legend-group">
+      <h2>Box outline: confidence</h2>
+      <ul>
+        <li><svg class="swatch conf-high" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>High</b> two independent sources agree, or a measurement is confirmed by Apple</span></li>
+        <li><svg class="swatch conf-medium" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Medium</b> one careful measurement or one Apple statement</span></li>
+        <li><svg class="swatch conf-low" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Low</b> a single report, or an inference from a patent</span></li>
+        <li><svg class="swatch conf-none" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Hole</b> nothing published; a black box until someone measures it</span></li>
+      </ul>
+      <p class="legend-note">A box takes the average confidence of its parameters, with holes counted as none.</p>
+    </div>
+    <div class="legend-group">
+      <h2>Pins: how a value was obtained</h2>
+      <ul>
+        <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><circle class="pin pin-measured" cx="7" cy="7" r="4"/></svg><span><b>Measured</b> on the hardware by the author</span></li>
+        <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><circle class="pin pin-documented" cx="7" cy="7" r="3.5"/></svg><span><b>Documented</b> by Apple</span></li>
+        <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><rect class="pin pin-inferred" x="4" y="4" width="6" height="6" transform="rotate(45 7 7)"/></svg><span><b>Inferred</b> a mechanism proposed to explain a measurement</span></li>
+        <li><span class="swatch swatch-empty" aria-hidden="true"></span><span><b>Reported</b> repeated from elsewhere, no pin</span></li>
+        <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><path class="pin pin-dispute" d="M7 2 L12 11 L2 11 Z"/></svg><span><b>Open dispute</b> sources disagree and no rule has settled it</span></li>
+      </ul>
+    </div>
+    <div class="legend-group">
+      <h2>Lines, shown for the selected block</h2>
+      <ul class="legend-links">
+        <li><svg class="swatch" viewBox="0 0 40 10" aria-hidden="true"><path class="link k-instruction" d="M2 5 H38"/></svg><span>Instruction flow</span></li>
+        <li><svg class="swatch" viewBox="0 0 40 10" aria-hidden="true"><path class="link k-control" d="M2 5 H38"/></svg><span>Control</span></li>
+        <li><svg class="swatch" viewBox="0 0 40 10" aria-hidden="true"><path class="link k-data" d="M2 5 H38"/></svg><span>Data</span></li>
+        <li><svg class="swatch" viewBox="0 0 40 10" aria-hidden="true"><path class="link k-allocation" d="M2 5 H38"/></svg><span>Allocation</span></li>
+        <li><svg class="swatch" viewBox="0 0 40 10" aria-hidden="true"><path class="link k-release" d="M2 5 H38"/></svg><span>Release</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sources" aria-labelledby="sources-h">
+    <h2 id="sources-h">Sources</h2>
+    <ol class="source-list" id="source-list"></ol>
+  </section>
+
+</div>
+<script id="map-data" type="application/json">{{DATA}}</script>
+<script>
+/*APP*/
+</script>
