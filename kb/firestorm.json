@@ -911,6 +911,7 @@
     },
     "dispatch.ls_entries": {
       "claims": [
+        "c-mh-v1-dispatch-ls",
         "c-mh-v1-dispatch-ls-probe",
         "c-dj-lsq-dispatch-10"
       ],
@@ -965,6 +966,7 @@
     },
     "sched_ls.entries": {
       "claims": [
+        "c-mh-v1-sched-ls-48",
         "c-mh-v1-sched-ls-split-48",
         "c-dj-lsq-sched-48"
       ],
@@ -1191,6 +1193,7 @@
     "lq.entries": {
       "claims": [
         "c-at-lq",
+        "c-mh-v1-lq-130",
         "c-dj-loads",
         "c-dj-lsq-lq-130"
       ],
@@ -1216,6 +1219,7 @@
     "sq.entries": {
       "claims": [
         "c-at-sq",
+        "c-mh-v1-sq-late-alloc-60",
         "c-dj-stores",
         "c-dj-lsq-sq-60"
       ],
@@ -1253,6 +1257,7 @@
     "lsu.ls_units": {
       "claims": [
         "c-at-ls-ports",
+        "c-mh-v1-ls-units-3l-2s",
         "c-dj-ls-units"
       ],
       "disputes": [],
@@ -1594,6 +1599,7 @@
     },
     "sched_ls.queues": {
       "claims": [
+        "c-mh-v1-sched-ls-4x12",
         "c-mh-v1-sched-ls-split-queues"
       ],
       "disputes": [],
@@ -2765,6 +2771,309 @@
       "notes": "value is the four-thread figure; the page does not say which cores ran the threads",
       "chip": "m1",
       "entered": "anandtech-7cpu"
+    },
+    "c-mh-v1-lsq-fsqrt-330": {
+      "text": "With an FSQRT chain as the delay, independent loads show a jump at ~330; Handley notes the limit looks like the ROB's \"failable\" slots rather than a load-queue size",
+      "loc": "p124",
+      "quote": "a jump at ~330, which would suggests that the LSQ can hold 328 loads",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 330,
+      "unit": "loads",
+      "approx": true,
+      "supports": [],
+      "notes": "Stores show the same jump. Handley later attributes it to ~330 ROB rows that each hold one load or store, loads having released their queue slots early",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lsq-fsqrt-4wide": {
+      "text": "Past the ~330 jump, both the load and the store FSQRT probes run at about four memory ops per cycle until N of about 420, then return to their unit-limited slope",
+      "loc": "p125",
+      "quote": "same jump at ~330, - same running at about 4-wide till N=~420",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ops/cycle",
+      "approx": true,
+      "supports": [],
+      "notes": "Handley explains the 4-wide stretch by four 12-entry LS scheduling queues, each fed one op per cycle, until the store/AMX queue fills with loads it never issues",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-ls-units-3l-2s": {
+      "text": "M1 has two load units, one store unit and one unit that does either, so it runs at most 3 loads or 2 stores per cycle; this sets the different slopes of the load and store probes",
+      "loc": "p125",
+      "quote": "2 load units - 1 store unit - 1 ambidextrous unit so that it can run either 3 loads/cycle or 2 stores/cycle",
+      "method": "throughput",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "units",
+      "supports": [
+        "lsu.ls_units"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lq-dram-125": {
+      "text": "With a chain of loads that miss to DRAM as the delay, the load probe shows a discontinuity at N of about 125, which Handley takes as the load-queue size",
+      "loc": "p126",
+      "quote": "there appears to be load queue, of size ~125 loads",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 125,
+      "unit": "entries",
+      "approx": true,
+      "hedge": "there appears to be",
+      "supports": [],
+      "notes": "Noisy; read off a moving-median smoothed curve. The slots are genuine load-queue entries; Handley's own count of the queue is ~130 (c-mh-v1-lq-130).",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sq-dram-100": {
+      "text": "With the DRAM-miss delay, the store probe shows a discontinuity at around 100 stores",
+      "loc": "p126",
+      "quote": "there appears to be store queue, of size ~100 stores",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "stores",
+      "approx": true,
+      "hedge": "there appears to be",
+      "supports": [],
+      "notes": "Not the store-queue size: Handley later explains the jump as 60 store-queue plus 48 scheduling-queue slots, 48+60=108 (c-mh-v1-sq-dram-108)",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lq-storeaddr-188": {
+      "text": "With an FSQRT chain feeding a store's address as the delay, the load probe jumps cleanly at N=188, matching Johnson's result from a branch-based version of the probe",
+      "loc": "p154",
+      "quote": "We see a clear jump at N=188 (load queue can hold 188 entries) and this matches Dougall's results",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 188,
+      "unit": "loads",
+      "supports": [],
+      "notes": "Handley reads 188 as ~130 genuine load-queue entries plus 58 dispatch-buffer and scheduler slots",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sq-storeaddr-118": {
+      "text": "With the same FSQRT-to-store-address delay, the store probe jumps cleanly at ~118 stores, again matching Johnson",
+      "loc": "p155",
+      "quote": "Again we see a nice clean jump, giving us ~118 store queue slots, again matching Dougall's result.",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 118,
+      "unit": "stores",
+      "approx": true,
+      "supports": [],
+      "notes": "Read as ~60 store-queue entries plus 58 dispatch/scheduler slots. Younger stores stay speculative behind the unresolved store address even when aligned; Handley thinks Apple does not special-case that",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-rob-rows-330": {
+      "text": "The ~330 jump of the plain FSQRT probe is the ROB limit: ~330 rows of up to 7 instructions, each row holding only one \"failable\" instruction, and loads, stores and branches are failable",
+      "loc": "p157",
+      "quote": "the ROB consists of ~330 rows, each row can hold 7 instructions, but only one \"failable\"",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 330,
+      "unit": "groups",
+      "approx": true,
+      "supports": [],
+      "notes": "Restates the conclusion of Handley's ROB section (c-mh-v1-rob-rows); the same structure as Johnson's coalesced retire groups",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lq-130": {
+      "text": "M1 has ~130 genuine load-queue (LRQ) entries, amplified for most code by early release of entries and by late, at-issue allocation",
+      "loc": "p158",
+      "quote": "the M1 has a pool of ~130 genuine Load Queue entries (ie LRQ entries)",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 130,
+      "unit": "entries",
+      "approx": true,
+      "supports": [
+        "lq.entries"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sched-ls-48": {
+      "text": "When the physical load or store queue slots run out, further loads or stores wait first in the 48 load-store scheduling-queue entries, then in the 10 load-store dispatch-buffer entries, before Rename stalls",
+      "loc": "p158",
+      "quote": "pile up, first in the 48 LS Scheduling Queue entries, then in the 10 LS Dispatch Buffer entries",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 48,
+      "unit": "entries",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "notes": "Sizes from Johnson's diagram; the probes test only their sum, 58, the excess of the 188-load and 118-store jumps over the ~130 and ~60 genuine queues. The 48 is four 12-entry queues (c-mh-v1-sched-ls-4x12).",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-late-alloc-58": {
+      "text": "Allocating queue slots at issue lets 58 more loads or stores in before Rename stalls than allocation at rename would: about 50% more effective load-queue and 100% more effective store-queue capacity",
+      "loc": "p158",
+      "quote": "late allocation allows us to enqueue 58 more loads or stores than traditional allocation before we have to stall",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 58,
+      "unit": "entries",
+      "supports": [],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sq-dram-108": {
+      "text": "Under the DRAM-miss delay the store jump comes when the 60 store-queue and 48 scheduling-queue slots are full (48+60=108); a delay load parked in the dispatch buffer cannot issue, so the buffer does not count",
+      "loc": "p165",
+      "quote": "the N, number of stores, at which we should expect a jump is in fact 48+60=108, omitting the 10 storage units of the Dispatch Buffer",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "inferred",
+      "value": 108,
+      "unit": "stores",
+      "hedge": "by eye, given the noisiness",
+      "supports": [],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-ls-dispatch-unordered": {
+      "text": "The load-store dispatch buffer does not try to dispatch the oldest instruction first, so movement into the scheduling queues is somewhat stochastic once both are full",
+      "loc": "p165",
+      "quote": "the Dispatch Buffer makes no serious attempt to preserve ordering and Dispatch the oldest instruction",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Offered to explain noise in the DRAM-delay probe; Handley later repeats that the dispatch buffer does not promise order",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sq-late-alloc-60": {
+      "text": "Store-queue slots are allocated late as well: in both store probes many stores get past Rename while the ~60-entry store queue is full",
+      "loc": "p166",
+      "quote": "many stores can progress past Rename even when the Store Queue (of size ~60 entries) is full",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 60,
+      "unit": "entries",
+      "approx": true,
+      "hedge": "it seems reasonable to assume",
+      "supports": [
+        "sq.entries"
+      ],
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-store-fsqrt-not-idempotent": {
+      "text": "In the plain FSQRT store probe the jump stays at ~330 stores whether the stores hit one address, successive addresses, or addresses 64 bytes apart, so it is not culling of overwritten stores",
+      "loc": "p167",
+      "quote": "So I separated successive stores by 64 bytes and again, no change, the jump in the curve is at ~330 stores.",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 330,
+      "unit": "stores",
+      "approx": true,
+      "supports": [],
+      "notes": "Handley's explanation is store-queue release once a store is non-speculative (c-mh-v1-store-early-release)",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-dispatch-ls": {
+      "text": "Load/store has a dispatch buffer of about 10 entries; the size is read off Johnson's diagram, which Handley accepts as probably correct",
+      "loc": "p159",
+      "quote": "This shows a single Dispatch Buffer holding 10 entries (probably correct)",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 10,
+      "approx": true,
+      "hedge": "probably correct",
+      "supports": [
+        "dispatch.ls_entries"
+      ],
+      "notes": "Handley does not measure it: his drain argument starts \"Let's start by assuming the diagram is correct\", and his late-allocation accounting only tests the 48+10=58 sum",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sched-ls-4x12": {
+      "text": "The load-store scheduler drawn as one 48-entry queue is four 12-entry queues, each fed one op per cycle by the dispatch buffer and paired so a queue can issue from its partner; this explains the 4-wide stretch from N 330 to 420",
+      "loc": "p161",
+      "quote": "this apparently monolithic queue is actually four queues each 12 entries in size",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "queues",
+      "hedge": "My guess is",
+      "supports": [
+        "sched_ls.queues"
+      ],
+      "notes": "Also stated earlier (c-mh-v1-sched-ls-split-48). 4 x 12 = 48, consistent with c-mh-v1-sched-ls-48",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-sched-ls-pairs": {
+      "text": "Handley's model of the A14/M1 load-store scheduling queues is two pairs, a store/AMX queue with a load queue and a store/AMX/load queue with a load queue, the third load pipe reusing store machinery",
+      "loc": "p163",
+      "quote": "So we land up, finally, with a structure that looks like (SA0 L2) (SAL1 L3)",
+      "derivation": "inferred",
+      "value": "(SA0 L2) (SAL1 L3)",
+      "hedge": "this is a conceptual model!",
+      "supports": [],
+      "notes": "Explains the drop to 3 loads/cycle at N of about 420 (the SA0 queue fills with loads that never issue). Excess buffer past the queues: 10 dispatch + 12 (one L queue) for loads, 10 + 24 (two S queues) for stores.",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lsdp-patent-256": {
+      "text": "Apple's 2012 dependence-predictor patent describes a 256-entry fully associative table of store/load pairs, each side keyed by a hash of PC and register (24 low PC bits folded 12 xor 12)",
+      "loc": "p137",
+      "quote": "We learn that (for this implementation) the size of the LSDP table is 256 entries.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 256,
+      "unit": "entries",
+      "supports": [],
+      "notes": "US20130326198A1 (2012). Not the M1 size; Handley measures ~74 entries (c-mh-v1-lsdp-74-delayed-data)",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
+    },
+    "c-mh-v1-lsdp-arming": {
+      "text": "In the 2012 design a store at Rename arms every matching predictor entry; a load at Rename that matches an armed entry takes a dependency on that store and cannot execute until the store does",
+      "loc": "p138",
+      "quote": "every store, as it flows through Rename constructs the PC+register id hash, - probes the LSDP CAM, and - sets an \"armed\" bit on every match",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20130326198A1",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-lsu"
     },
     "c-mh-v1-opt-guide-dtlb": {
       "text": "Citing Apple's CPU Optimization Guide, the M1 L1 data TLB has 160 entries",
@@ -5532,6 +5841,7 @@
   "mechanisms": {
     "retire_groups": {
       "claims": [
+        "c-mh-v1-rob-rows-330",
         "c-mh-v1-nop-rob-slot",
         "c-mh-v1-retire-nops-56",
         "c-mh-v1-rob-rows",
@@ -5596,6 +5906,15 @@
     },
     "lsq_at_issue": {
       "claims": [
+        "c-mh-v1-lq-dram-125",
+        "c-mh-v1-sq-dram-100",
+        "c-mh-v1-lq-storeaddr-188",
+        "c-mh-v1-sq-storeaddr-118",
+        "c-mh-v1-lq-130",
+        "c-mh-v1-sched-ls-48",
+        "c-mh-v1-late-alloc-58",
+        "c-mh-v1-sq-dram-108",
+        "c-mh-v1-sq-late-alloc-60",
         "c-dj-lsq-alloc-issue",
         "c-dj-lsq-store-107",
         "c-dj-lsq-branch-loads-188",
@@ -5641,6 +5960,9 @@
     },
     "lsq_early_release": {
       "claims": [
+        "c-mh-v1-lsq-fsqrt-330",
+        "c-mh-v1-rob-rows-330",
+        "c-mh-v1-store-fsqrt-not-idempotent",
         "c-dj-ooo-commit",
         "c-dj-lsq-fsqrt-329",
         "c-dj-lsq-release-nonspec",
