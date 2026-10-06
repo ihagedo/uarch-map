@@ -212,6 +212,7 @@ def view_data(kb, geo):
         "sources": {
             s.id: {
                 "cite": s.cite,
+                "author": s.cite.rsplit(" ", 1)[0] if s.year else s.cite,
                 "title": s.title,
                 "type": s.type,
                 "url": s.url,

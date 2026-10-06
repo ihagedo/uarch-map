@@ -19,13 +19,25 @@
       <button type="button" id="zoom-L1" data-view="L1" aria-pressed="false">Regions <span class="lvl">L1</span></button>
       <button type="button" id="zoom-L2" data-view="L2" aria-pressed="true">Stages <span class="lvl">L2</span></button>
     </div>
-    <div class="filters" role="group" aria-label="Show by confidence">
-      <span class="tool-label">Show</span>
+    <div class="filters" role="group" aria-label="Filter by confidence">
+      <span class="tool-label">Confidence</span>
       <button type="button" class="chip" id="show-high" data-conf="high" aria-pressed="true"><svg class="swatch conf-high" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>High</button>
       <button type="button" class="chip" id="show-medium" data-conf="medium" aria-pressed="true"><svg class="swatch conf-medium" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Medium</button>
       <button type="button" class="chip" id="show-low" data-conf="low" aria-pressed="true"><svg class="swatch conf-low" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Low</button>
       <button type="button" class="chip" id="show-none" data-conf="none" aria-pressed="true"><svg class="swatch conf-none" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Holes</button>
     </div>
+    <div class="filters" role="group" aria-label="Filter by derivation">
+      <span class="tool-label">Derivation</span>
+      <button type="button" class="chip" id="deriv-measured" data-deriv="measured" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><circle class="pin-measured" cx="6" cy="6" r="3.6"/></svg>Measured</button>
+      <button type="button" class="chip" id="deriv-documented" data-deriv="documented" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><circle class="pin-documented" cx="6" cy="6" r="3.2"/></svg>Documented</button>
+      <button type="button" class="chip" id="deriv-inferred" data-deriv="inferred" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><rect class="pin-inferred" x="3" y="3" width="6" height="6" transform="rotate(45 6 6)"/></svg>Inferred</button>
+      <button type="button" class="chip" id="deriv-reported" data-deriv="reported" aria-pressed="true">Reported</button>
+    </div>
+    <div class="filters">
+      <label class="tool-label" for="source-filter">Source</label>
+      <select id="source-filter"><option value="">All sources</option></select>
+    </div>
+    <button type="button" class="clear" id="clear-filters" hidden>Clear filters</button>
   </div>
 
   <main class="workspace" id="workspace">

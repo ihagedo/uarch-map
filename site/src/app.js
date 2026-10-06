@@ -7,6 +7,7 @@
   const M = D.views.metrics;
   const NS = "http://www.w3.org/2000/svg";
   const CONFS = ["high", "medium", "low", "none"];
+  const DERIVS = ["measured", "documented", "inferred", "reported"];
   const CONF_WORD = { high: "High", medium: "Medium", low: "Low", none: "Hole" };
   const DERIV_WORD = { measured: "Measured", documented: "Documented", inferred: "Inferred", reported: "Reported" };
   const METHOD_WORD = {
@@ -16,7 +17,7 @@
     "vendor-doc": "Apple documentation", secondhand: "repeated from another source", simulation: "simulation",
     other: "other",
   };
-  const state = { view: "L2", block: null, param: null, show: new Set(CONFS) };
+  const state = { view: "L2", block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS), source: "" };
   const $ = (id) => document.getElementById(id);
   const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace");
   const wide = window.matchMedia("(min-width: 761px)");
@@ -29,7 +30,12 @@
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many || one + "s"}`;
   const openDispute = (p) => p.disputes.some((d) => !d.resolution);
   const hue = (frame) => `--hue: var(--c-${frame})`;
-  const visible = (p) => state.show.has(p.conf);
+  // source filter value: "" (all), "s:<source id>", or "a:<author>" for every source by that author
+  const fromSource = (sid) => !state.source || (state.source.startsWith("s:") ? sid === state.source.slice(2)
+    : D.sources[sid].author === state.source.slice(2));
+  const visible = (p) => state.show.has(p.conf) && (!p.known || state.derivs.has(p.status)) &&
+    (!state.source || p.for.concat(p.against).some((cid) => fromSource(D.claims[cid].source)));
+  const filtering = () => state.show.size < CONFS.length || state.derivs.size < DERIVS.length || !!state.source;
 
   function el(tag, attrs, parent) {
     const n = document.createElementNS(NS, tag);
@@ -222,11 +228,14 @@
       g.setAttribute("aria-pressed", String(bid === state.block));
     });
     svg.querySelectorAll(".row").forEach((r) => r.classList.toggle("selected", r.dataset.param === state.param));
+    renderDossier();
     applyFilters();
     drawLinks();
-    renderDossier();
     for (const v of ["L1", "L2"]) $(`zoom-${v}`).setAttribute("aria-pressed", String(state.view === v));
     for (const c of CONFS) $(`show-${c}`).setAttribute("aria-pressed", String(state.show.has(c)));
+    for (const d of DERIVS) $(`deriv-${d}`).setAttribute("aria-pressed", String(state.derivs.has(d)));
+    $("source-filter").value = state.source;
+    $("clear-filters").hidden = !filtering();
   }
 
   function applyFilters() {
@@ -250,6 +259,8 @@
       const any = dimGroup(card, b.params, b.conf);
       card.querySelectorAll(".c-row").forEach((r) => r.classList.toggle("dim", any && !visible(D.params[r.dataset.param])));
     });
+    dossier.querySelectorAll(".p-row").forEach((r) => r.classList.toggle("dim", !visible(D.params[r.dataset.param])));
+    dossier.querySelectorAll(".claim").forEach((c) => c.classList.toggle("dim", !fromSource(c.dataset.source)));
   }
 
   function select(bid, pid, opts) {
@@ -359,7 +370,7 @@
     const c = D.claims[cid], s = D.sources[c.source];
     const src = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
     const method = c.method ? METHOD_WORD[c.method] || c.method : "not stated";
-    let h = `<article class="claim"><p class="claim-text">${esc(c.text)}</p>`;
+    let h = `<article class="claim" data-source="${esc(c.source)}"><p class="claim-text">${esc(c.text)}</p>`;
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
     if (c.hedge) h += `<p class="claim-hedge">Hedge: <q>${esc(c.hedge)}</q></p>`;
     h += `<dl class="claim-meta"><dt>Source</dt><dd>${src}, ${esc(s.title)}</dd>` +
@@ -396,6 +407,24 @@
               `<span class="v">${esc(p.short)}</span></span>`;
           }).join("") + `</button>`;
       }).join("") + `</section>`).join("");
+  }
+
+  function renderSourceFilter() {
+    const byAuthor = {};
+    for (const [sid, s] of Object.entries(D.sources)) if (s.claims) (byAuthor[s.author] = byAuthor[s.author] || []).push(sid);
+    const total = (sids) => sids.reduce((n, sid) => n + D.sources[sid].claims, 0);
+    const opt = (sid) => {
+      const s = D.sources[sid];
+      return `<option value="s:${esc(sid)}">${esc(s.cite)} · ${esc(clip(s.title, 44))} (${s.claims})</option>`;
+    };
+    const out = ['<option value="">All sources</option>'];
+    for (const [author, sids] of Object.entries(byAuthor).sort((a, b) => total(b[1]) - total(a[1]))) {
+      sids.sort((a, b) => D.sources[b].claims - D.sources[a].claims);
+      if (sids.length === 1) { out.push(opt(sids[0])); continue; }
+      out.push(`<optgroup label="${esc(author)}"><option value="a:${esc(author)}">${esc(author)}, all (${total(sids)})</option>` +
+        sids.map(opt).join("") + `</optgroup>`);
+    }
+    $("source-filter").innerHTML = out.join("");
   }
 
   svg.addEventListener("click", (e) => {
@@ -437,9 +466,22 @@
     if (state.show.has(c)) state.show.delete(c); else state.show.add(c);
     refresh();
   }));
+  document.querySelectorAll(".chip[data-deriv]").forEach((btn) => btn.addEventListener("click", () => {
+    const d = btn.dataset.deriv;
+    if (state.derivs.has(d)) state.derivs.delete(d); else state.derivs.add(d);
+    refresh();
+  }));
+  $("source-filter").addEventListener("change", (e) => { state.source = e.target.value; refresh(); });
+  $("clear-filters").addEventListener("click", () => {
+    state.show = new Set(CONFS);
+    state.derivs = new Set(DERIVS);
+    state.source = "";
+    refresh();
+  });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.block) select(null); });
 
   renderMasthead();
+  renderSourceFilter();
   renderList();
   renderMap();
   const fromHash = location.hash.slice(1);

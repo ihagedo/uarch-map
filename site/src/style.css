@@ -318,3 +318,14 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .box, .row, .card, .p-row { transition: none; }
 }
+
+#source-filter {
+  max-width: min(100%, 340px);
+  padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px;
+  background: var(--surface); color: var(--ink); font: 14px var(--font-ui);
+}
+.clear {
+  padding: 4px 2px; border: 0; background: none; cursor: pointer;
+  font-size: 14px; color: var(--link); text-decoration: underline; text-underline-offset: 2px;
+}
+.chip[aria-pressed="false"] .p-pin { opacity: 0.35; }
