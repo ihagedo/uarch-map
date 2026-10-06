@@ -1258,6 +1258,7 @@
       "claims": [
         "c-at-ls-ports",
         "c-mh-v1-ls-units-3l-2s",
+        "c-mh-v2-ls-pipes",
         "c-dj-ls-units"
       ],
       "disputes": [],
@@ -1294,7 +1295,8 @@
     },
     "l1d.size": {
       "claims": [
-        "c-7cpu-l1d-size"
+        "c-7cpu-l1d-size",
+        "c-mh-v2-l1d-size"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1307,7 +1309,8 @@
     },
     "l1d.line": {
       "claims": [
-        "c-7cpu-l1d-line"
+        "c-7cpu-l1d-line",
+        "c-mh-v2-l1d-line"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1316,17 +1319,19 @@
       "sim_key": "l1d_line",
       "value": 64,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "l1d.assoc": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-l1d-8way"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D associativity",
       "unit": "ways",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 8,
+      "status": "inferred",
+      "confidence": "low"
     },
     "l1d.latency": {
       "claims": [
@@ -1357,20 +1362,23 @@
       "confidence": "medium"
     },
     "l1d.load_bw": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-l1-bw-basics"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D load bandwidth",
       "unit": "B/cycle",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 48,
+      "status": "measured",
+      "confidence": "medium"
     },
     "dtlb.l1_entries": {
       "claims": [
         "c-at-l1-tlb",
         "c-7cpu-dtlb-l1",
-        "c-mh-v1-opt-guide-dtlb"
+        "c-mh-v1-opt-guide-dtlb",
+        "c-mh-v2-dtlb-160-aside"
       ],
       "disputes": [
         {
@@ -1756,6 +1764,16 @@
       "status": "measured",
       "confidence": "medium"
     },
+    "l1d.store_bw": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D store bandwidth",
+      "unit": "B/cycle",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
     "memctrl.dram_load_bw": {
       "claims": [
         "c-7cpu-ram-read-bw"
@@ -1767,6 +1785,38 @@
       "value": 64,
       "status": "measured",
       "confidence": "medium"
+    },
+    "l1d.banks": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D banks",
+      "unit": "banks",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "l1d.bank_width": {
+      "claims": [],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D bank width",
+      "unit": "B",
+      "status": "open",
+      "confidence": "none",
+      "value": null
+    },
+    "dtlb.l1_lookups_per_cycle": {
+      "claims": [
+        "c-mh-v2-dtlb-single-port"
+      ],
+      "disputes": [],
+      "block": "dtlb",
+      "name": "L1 dTLB lookups per cycle",
+      "unit": "lookups/cycle",
+      "value": 1,
+      "status": "inferred",
+      "confidence": "low"
     },
     "rename.fusion_read_limit": {
       "claims": [
@@ -5388,6 +5438,398 @@
       "chip": "m1",
       "entered": "handley-vol1-sched"
     },
+    "c-mh-v2-l1-bw-basics": {
+      "text": "Three LDP (X-register pair) loads per cycle with autoincrement addressing load 48 B/cycle from the L1, a peak of 153.6 GB/s at 3.2 GHz",
+      "loc": "p002",
+      "quote": "within L1 we can load 48B/cycle ... the maximum load throughput from L1D is 48B*3.2GHz=153.6GB/s",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 48,
+      "unit": "B/cycle",
+      "supports": [
+        "l1d.load_bw"
+      ],
+      "notes": "LDP x0, [x2, #16] or the post-index form run at essentially three per cycle; manual base increments add a dependency chain. For the perfect-48 vs realistic-32 B/cycle rule of thumb see c-mh-v2-l1-bw",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1-lsu-128b": {
+      "text": "Each load moves at most 128 bits from the L1D to the LSU, so a vector LDP needs two cycles of data transfer",
+      "loc": "p002",
+      "quote": "the width from L1D to the LSU for each load appears to be 128b, so something like a vector LDP takes two cycles for the data transfer",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "bits",
+      "hedge": "appears to be",
+      "supports": [],
+      "notes": "See c-mh-v2-ldpq-throughput (LDP Q at 1.5 per cycle, two cache traversals each)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-dram-random-64": {
+      "text": "For random loads that mostly miss to DRAM, the M1 delivers around 64 GB/s",
+      "loc": "p003",
+      "quote": "mostly misses to DRAM for every load ... M1 appears to provide a bandwidth of around 64GB/s",
+      "derivation": "reported",
+      "value": 64,
+      "unit": "GB/s",
+      "approx": true,
+      "hedge": "appears to provide ... around",
+      "supports": [],
+      "notes": "Given right after he points readers to AnandTech's A13 and M1 articles for bandwidth and latency numbers; he does not say whose figure it is. He adds that the M1 has twice the A13's DRAM bandwidth",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-slc-memory-side": {
+      "text": "The M1's system level cache is a memory-side cache, associated with the DRAM controller rather than with the CPUs or any other block",
+      "loc": "p003",
+      "quote": "it's a memory-side cache. In other words you can think of it as being a cache that is tightly associated with the DRAM (and more specifically with the DRAM controller)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "He lists benefits this allows: streaming traffic bypassing the SLC, and the SLC acting as a virtual write queue (ISCA 2010; known in IBM POWER8). He does not show the M1 doing either",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ls-pipes": {
+      "text": "The load/store pipes are best summarized as two load-only, one store-only and one ambidextrous pipeline, four in all",
+      "loc": "p004",
+      "quote": "the best way to summarize is something like there are ... 2 load-only pipelines ... 1 store-only pipeline ... 1 ambidextrous pipeline",
+      "method": "throughput",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "units",
+      "supports": [
+        "lsu.ls_units"
+      ],
+      "notes": "Starts from the instruction tables' 3 loads or 2 stores per cycle",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ls-mix": {
+      "text": "The core runs 3 loads + 1 store or 2 loads + 2 stores in one cycle, but not 3 loads + 2 stores",
+      "loc": "p004",
+      "quote": "we should be able to run 3 loads+1 store, or 2 loads+2stores in one cycle, and we can; but we can't, for example, run 3 loads and 2 stores in a cycle",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "Interleaved store/load streams reach 3.99-4.0 ops/cycle and one store plus three loads 3.97-4.0. Ice Lake does 2+2 but cannot switch to 3+1",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-two-pages": {
+      "text": "Probes of three loads, two on one page and one on a page 16 KiB away, take 2.8 cycles per two probes, against one cycle per probe when all three share a page and cache line",
+      "loc": "p005",
+      "quote": "LDR [x1]; LDR [x1+8]; LDR [x1+16K] 2 probes per 2.8 cycles (so about 1.4 cycles per",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 1.4,
+      "unit": "cycles/probe",
+      "approx": true,
+      "supports": [],
+      "notes": "No address update, so no L1 or TLB misses; about 2.14 loads serviced per cycle",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-three-pages": {
+      "text": "Probes of three loads on three pages 16 KiB apart take 5 cycles per two probes",
+      "loc": "p005",
+      "quote": "LDR [x1]; LDR [x1+16K]; LDR [x1+32K] 2 probes per 5 cycles (so about 2.5 cycles per",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2.5,
+      "unit": "cycles/probe",
+      "approx": true,
+      "supports": [],
+      "notes": "Handley reads this as about 1 + 1/6 requests serviced per TLB lookup",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-dtlb-single-port": {
+      "text": "The L1 dTLB does one lookup per cycle, and the result is shared over piggyback ports with every waiting load or store to the same page, so the TLB is single-ported",
+      "loc": "p005",
+      "quote": "one TLB lookup per cycle, but that TLB lookup result can service multiple requestors that all have the same page number",
+      "method": "throughput",
+      "derivation": "inferred",
+      "value": 1,
+      "unit": "lookups/cycle",
+      "supports": [
+        "dtlb.l1_lookups_per_cycle"
+      ],
+      "notes": "Up to four loads/stores on the same page share one translation. Handley guesses each piggyback port also receives the page permissions.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-queues": {
+      "text": "Requests wait for the TLB in 4 queues of up to 4 entries, binned by low page-number bits; each cycle the oldest request is translated together with the others in its queue on the same page",
+      "loc": "p006",
+      "quote": "The results of these simulations do not prove, but strongly suggest, that the system is using 4 queues, each queue holds up to four entries",
+      "method": "simulation",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "queues",
+      "hedge": "do not prove, but strongly suggest",
+      "supports": [],
+      "notes": "Stochastic simulations; the system favours latency (oldest first) over waiting for queues to fill, and a request may wait up to three cycles. The four-ops-per-cycle case needs at least four queues of at least four entries",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1-entry-queues": {
+      "text": "Requests entering the L1 are queued the same way, four queues of up to four requestors, the scarce resource being access to a bank: requests to different lines in the same bank must wait",
+      "loc": "p006",
+      "quote": "Very much the same structure (servicing multiple requests when possible, four queues, holding up to four requestors) is used at entry into the L1",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "queues",
+      "supports": [],
+      "notes": "Handley mentions 16 banks \"to simplify tremendously\"; see c-mh-v2-l1d-banks",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-autoinc": {
+      "text": "When each base register auto-increments by #200, the 16K- and 32K-offset probes run at close to three loads per cycle, which Handley explains as the loads spreading evenly over the four TLB queues",
+      "loc": "p007",
+      "quote": "But this substantially improves things! Giving a throughput of very close one one cycle per three loads",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "approx": true,
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-4ops": {
+      "text": "Two loads and two stores to four pages at offsets of k x (16 KiB + 80 B) sustain four operations per cycle",
+      "loc": "p007",
+      "quote": "if you use the four offsets (0, 1, 2, 3)*(16*1024+64+16) you will sustain four operations per cycle",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "Two loads + two stores on one page also run at full rate; one access on another page gives about one cycle per quad (2.6-2.7 requests per lookup). Three loads + one store, or auto-updates, break the symmetry.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-no-sharing": {
+      "text": "A load stream that touches a new page on every access, over about 16 pages, can share no TLB lookups and drops to about one load per cycle (0.97 cycles per load)",
+      "loc": "p008",
+      "quote": "no TLB lookup can be shared, and the number of accesses processed per cycle drops from the ideal of three or four down to to just very slightly below 1.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 0.97,
+      "unit": "cycles/load",
+      "supports": [],
+      "notes": "Loads only, offsets (0, 1, 2) x (16 KiB + 80 B), wrapped every 256 KiB; wrapping at 128 KiB (8-12 pages live) doubles throughput to 2 loads/cycle",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-tlb-queue-overflow": {
+      "text": "Spreading the same stream over 32 or 64 pages makes each load take two cycles; Handley guesses a load that cannot be enqueued for the TLB (4 x 4 slots) is replayed",
+      "loc": "p009",
+      "quote": "If we go in the other direction, making the BIC happen at either 512K or 1024K, each load now takes two cycles.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "cycles/load",
+      "hedge": "My guess is",
+      "supports": [],
+      "notes": "He does not think TLB entries, cache lines or line segments are the bottleneck; his guess is that each load is submitted twice, the first time unsuccessfully",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-page-cross-31": {
+      "text": "A load that crosses a page boundary costs 31 cycles; three such loads to the same page pair take 93 cycles, with no reuse of the translations",
+      "loc": "p009",
+      "quote": "What is surprising, perhaps, is just how bad it is - 31 cycles per load!",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 31,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "He presumes microcode performs the two TLB lookups and two accesses. Two normal loads plus one page-crossing load still take 31 cycles per iteration. Compare c-ox-page-cross (about 28 extra cycles)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-size": {
+      "text": "The L1D is 128 KiB and holds 2048 lines",
+      "loc": "p035",
+      "quote": "And we know that the L1D is 128kiB, so it holds 2048 lines.",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "Handley calls size and line length the only definite facts, but gives no method on this page",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-line": {
+      "text": "The L1D line is 64 B, not the 128 B line Handley had taken from internet claims until his own tests showed otherwise",
+      "loc": "p035",
+      "quote": "We know that cache lines are 64B (eventually we'll see experiments to this effect).",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "notes": "The 128 B line and a 100 GB/s in-L1 load bandwidth were problematic internet claims he (in)validated with his own tests. The DC ZVA test (64 B L1 lines, 128 B L2 lines) is c-mh-v2-l1d-line-dczva",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-8way": {
+      "text": "Handley's working model of the L1D is 8-way set associative with 256 sets indexed by address bits 6-13 (the bits untranslated with 16 KiB pages), which he labels conjecture",
+      "loc": "p035",
+      "quote": "the cache is 8-way set associative ... And we know that the L1D is 128kiB, so it holds 2048 lines. Those two are definite. The rest is conjecture.",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "ways",
+      "hedge": "The rest is conjecture.",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "2048 lines in 256 sets of 8; addresses 16 KiB apart compete for 8 lines. Untested here (see c-mh-v2-l1d-8way-tlb). Handley thinks the real lookup is closer to c-mh-v2-l1d-hashed-lookup.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-dtlb-160-aside": {
+      "text": "In passing, the M1's L1 TLB holds 160 pages",
+      "loc": "p039",
+      "quote": "But that's not quite as bad as you might think. The M1 TLB holds 160 pages",
+      "derivation": "reported",
+      "value": 160,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "Aside in his estimate of the storage cost of a D2D-style TLB; his measurement (at least 160 entries, 128+32) is c-mh-v2-dtlb",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-no-large-pages": {
+      "text": "Apple appears uninterested in large pages, possibly because range registers cover much the same need",
+      "loc": "p039",
+      "quote": "Apple so far has appeared uninterested in these (possibly because they use range registers, which solve much the same problem",
+      "derivation": "inferred",
+      "hedge": "appeared",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-hashed-lookup": {
+      "text": "Handley thinks the L1D is in effect a direct-mapped cache with a two-stage lookup (8 untranslated set bits, then a 3-bit hash of the physical address from a fast TLB-side table), because no way misprediction is seen; the L2 TLB shows similar signs",
+      "loc": "p043",
+      "quote": "Ultimately, I think something like this last, most complicated setup, is in fact what we are seeing. ... there never seems to be way misprediction [the L1 case]",
+      "derivation": "inferred",
+      "hedge": "I think",
+      "supports": [],
+      "notes": "Handley cites US8472267B2 (its micro-TLB supplies one physical address bit early) as a stripped-down version. In the L2 TLB, overflowing one set's ways misbehaves; he guesses the L2 does something similar.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-way-pred-test": {
+      "text": "Byte loads to six sets, each at a randomly chosen one of eight 16 KiB-apart pages, take 2.53 cycles per three loads against 2.39 without randomness, and the gap closes once the bases avoid shared banks, so no way misprediction is visible",
+      "loc": "p050",
+      "quote": "we see no evidence of way misprediction. When I use random numbers in the array, time per (three loads) is 2.53 cycles; when I use all zeros that time is 2.39 cycles.",
+      "method": "throughput",
+      "derivation": "measured",
+      "hedge": "Assuming I got the details correct (hah!)",
+      "supports": [],
+      "notes": "The residual gap tracked LD_UNIT_UOP (bank-collision resubmissions), not L2 traffic; moving x9 and x10 to offset 16 in their lines removed it.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-way-pred-hashed": {
+      "text": "The L1D does not use a standard set-indexed way predictor; Handley suggests one indexed by a hash of the virtual address (perhaps with the ASID), covering at least 2048 and more likely 4096 entries",
+      "loc": "p050",
+      "quote": "This all suggests to me we're absolutely not using a standard way predictor (table indexed by setID); but we may well be using a way predictor of the form I described",
+      "derivation": "inferred",
+      "hedge": "may well be",
+      "supports": [],
+      "notes": "A 12-bit hash into a 4096-entry table of predicted ways is the only scheme he knows that matches the accuracy of the M1 way predictor; he knows of no paper or Apple patent describing it",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ld-unit-uop": {
+      "text": "The LD_UNIT_UOP counter mostly counts bank collisions: it counts how often the LSU submits a load request to the L1, and most resubmissions come from bank collisions",
+      "loc": "p050",
+      "quote": "looks like, under most conditions, this counter counts bank collisions. More precisely, it counts how often a load request is submitted by the LSU to the L1",
+      "method": "counter",
+      "derivation": "inferred",
+      "hedge": "looks like",
+      "supports": [],
+      "notes": "About 1.2 per load in the zero case, 1.3 in the random case of the way-prediction probe. The later tables' \"traversals\" column is his reading of an M1 performance counter",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-byte-subarrays": {
+      "text": "Handley reads his timings as showing the L1D is built from byte-wide (perhaps two-byte) sub-arrays, so a cycle powers only the bytes it uses and can write some bytes of a line while reading others",
+      "loc": "p052",
+      "quote": "My timings suggest that we do in fact have these very narrow cache sub-arrays.",
+      "derivation": "inferred",
+      "hedge": "My timings suggest",
+      "supports": [],
+      "notes": "The lowest-level access is the byte, or perhaps the two-byte word; \"Apple apparently sub-array their cache by bytes\". Apple's patents call these sub-arrays banks",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-concurrent-store-load": {
+      "text": "Per Apple's patent, a store writes the byte sub-arrays a load is not using in the same cycle, even partially when the two overlap, and line IDs found by loads' tag lookups are attached to pending stores",
+      "loc": "p052",
+      "quote": "As long as the bytes differ, I can perform the loads and stores in the same cycle because they live in different sub-arrays.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9448936B2 (2014), Concurrent store and load operations",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-store-write-buffers": {
+      "text": "A store that is no longer speculative moves with its data into a write buffer between the store queue and the L1, freeing its store-queue entry; patents suggest at least four such buffers, with some store coalescing",
+      "loc": "p053",
+      "quote": "patents suggest there are at least four of these buffers, and that there is probably some sort of store coalescing happening",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "buffers",
+      "hedge": "patents suggest",
+      "supports": [],
+      "notes": "In Handley's store flow a store first borrows the translation and line ID from a load to the same page or line, and later writes the L1 on a load's line access or a dedicated store access. Patents not named.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -6459,6 +6901,14 @@
       "url": "https://github.com/name99-org/AArch64-Explore",
       "pages": 227
     },
+    "handley-vol2": {
+      "type": "pdf",
+      "title": "AArch64-Explore vol 2: Memory",
+      "author": "Handley, Maynard",
+      "year": 2025,
+      "url": "https://github.com/name99-org/AArch64-Explore",
+      "pages": 243
+    },
     "anandtech-m1": {
       "type": "article",
       "title": "Apple Silicon M1: A14 Deep Dive",
@@ -6599,6 +7049,7 @@
         "c-mh-v1-lsq-fsqrt-330",
         "c-mh-v1-rob-rows-330",
         "c-mh-v1-store-fsqrt-not-idempotent",
+        "c-mh-v2-store-write-buffers",
         "c-dj-ooo-commit",
         "c-dj-lsq-fsqrt-329",
         "c-dj-lsq-release-nonspec",
@@ -6728,6 +7179,61 @@
       ],
       "sim_switch": "imm_regs",
       "detection_rule": "a MOV #imm filler knee lies about 36-38 above the ADD knee, and up to ~36 padded MOV #imm placed before ADDs do not move the ADD knee"
+    },
+    "dtlb_piggyback": {
+      "claims": [
+        "c-mh-v2-dtlb-single-port",
+        "c-mh-v2-tlb-queues",
+        "c-mh-v2-tlb-two-pages",
+        "c-mh-v2-tlb-three-pages",
+        "c-mh-v2-tlb-autoinc",
+        "c-mh-v2-tlb-4ops",
+        "c-mh-v2-tlb-no-sharing",
+        "c-mh-v2-tlb-queue-overflow"
+      ],
+      "name": "Single-ported dTLB with piggyback ports",
+      "status": "inferred",
+      "description": "One dTLB lookup per cycle, shared with queued requests to the same page.",
+      "params": [
+        "dtlb.l1_lookups_per_cycle"
+      ],
+      "sim_switch": null,
+      "detection_rule": "three loads per cycle to one page run at full rate; spreading them over three pages 16 KiB apart drops to about 2.5 cycles per three loads, and a new page on every access to about one load per cycle"
+    },
+    "l1d_banked_piggyback": {
+      "claims": [
+        "c-mh-v2-l1-entry-queues",
+        "c-mh-v2-l1d-byte-subarrays",
+        "c-mh-v2-concurrent-store-load",
+        "c-mh-v2-ld-unit-uop"
+      ],
+      "name": "Banked L1D with piggybacked loads and buffered stores",
+      "status": "inferred",
+      "description": "Sixteen 16 B banks; loads to one element share an access and stores are buffered.",
+      "params": [
+        "l1d.banks",
+        "l1d.bank_width",
+        "l1d.load_bw",
+        "l1d.store_bw"
+      ],
+      "sim_switch": null,
+      "detection_rule": "loads stepping by 256 B fall to one per cycle, by 128 B to about 1.7 and by 64 B to about 2.35, while steps up to 32 B keep three per cycle; stores keep two per cycle out to 128 B steps"
+    },
+    "l1d_way_lookup": {
+      "claims": [
+        "c-mh-v2-l1d-8way",
+        "c-mh-v2-l1d-hashed-lookup",
+        "c-mh-v2-way-pred-test",
+        "c-mh-v2-way-pred-hashed"
+      ],
+      "name": "L1D way selection without visible misprediction",
+      "status": "speculative",
+      "description": "Loads to random ways run as fast as loads to one way; no way misprediction shows.",
+      "params": [
+        "l1d.assoc"
+      ],
+      "sim_switch": null,
+      "detection_rule": "loads that pick one of eight 16 KiB-apart pages at random on every access run no slower than loads to a fixed page once bank collisions are removed"
     },
     "content_directed_prefetch": {
       "claims": [

@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 97, claims 324, sources 5, mechanisms 12
+blocks 37, links 35, params 101, claims 352, sources 6, mechanisms 15
 
 ## By status
 
-- inferred: 10
-- measured: 62
-- open: 24
+- inferred: 12
+- measured: 63
+- open: 25
 - reported: 1
 
 ## By confidence
 
-- high: 13
-- low: 11
+- high: 14
+- low: 13
 - medium: 49
-- none: 24
+- none: 25
 
-## Holes (24)
+## Holes (25)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -35,13 +35,14 @@ blocks 37, links 35, params 97, claims 324, sources 5, mechanisms 12
 - iq.depth (iq): Fetch-to-decode queue depth
 - rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
-- l1d.assoc (l1d): L1D associativity
-- l1d.load_bw (l1d): L1D load bandwidth
 - dtlb.l1_org (dtlb): L1 dTLB organisation
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
 - l2.inner_slice (l2): Per-core inner L2 slice
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
+- l1d.store_bw (l1d): L1D store bandwidth
+- l1d.banks (l1d): L1D banks
+- l1d.bank_width (l1d): L1D bank width
 
 ## Open disputes (8)
 

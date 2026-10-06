@@ -157,7 +157,7 @@
   "l1d.line": {
     "value": 64,
     "sim_key": "l1d_line",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "l1d.latency": {
     "value": 3,
