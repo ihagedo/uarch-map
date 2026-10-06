@@ -6,4 +6,5 @@ source: ocxtal-m1-notes
 
 new_params:
   sched_int.total_entries: {block: sched_int, name: Integer scheduler entries (total), unit: entries}
+  lsu.store_load_latency: {block: lsu, name: Store-to-load latency (same address), unit: cycles}
 

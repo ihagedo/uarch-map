@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 94, claims 304, sources 5, mechanisms 11
+blocks 37, links 35, params 97, claims 324, sources 5, mechanisms 12
 
 ## By status
 
 - inferred: 10
-- measured: 58
-- open: 25
+- measured: 62
+- open: 24
 - reported: 1
 
 ## By confidence
 
 - high: 13
 - low: 11
-- medium: 45
-- none: 25
+- medium: 49
+- none: 24
 
-## Holes (25)
+## Holes (24)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -35,7 +35,6 @@ blocks 37, links 35, params 94, claims 304, sources 5, mechanisms 11
 - iq.depth (iq): Fetch-to-decode queue depth
 - rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
-- lsu.forwarding (lsu): Store-to-load forwarding
 - l1d.assoc (l1d): L1D associativity
 - l1d.load_bw (l1d): L1D load bandwidth
 - dtlb.l1_org (dtlb): L1 dTLB organisation

@@ -523,11 +523,267 @@ claims:
     unit: accesses/cycle
     hedge: "even if we accept that Zero Cycle Loads are shouldering some of the burden"
     supports: []
+  - id: c-mh-v1-line-cross-jump
+    text: >-
+      For chained same-address pairs that straddle a line, the fast regime matches the aligned case up to ~74 pairs
+      and the replay regime is ~8.5 rather than 8 cycles per pair, but an unexplained ~130-cycle jump separates them
+    loc: p190
+    quote: "But there is a pronounced jump (by about 130 cycles!) between the two regimes."
+    method: throughput
+    derivation: measured
+    value: 130
+    unit: cycles
+    approx: true
+    hedge: "I have no idea what's causing this."
+    supports: []
+    notes: Handley's tentative theory, a flush draining ~60 store-queue entries split over two lines, he calls special pleading
+  - id: c-mh-v1-partial-forward-bytes
+    text: >-
+      Forwarding from a store pair to three byte loads that each read part of it (STP x10,x11,[x2] then three LDRB)
+      runs at one iteration per cycle
+    loc: p191
+    quote: "The basic unit involves one store and three loads, so (assuming everything is timed correctly) we should be able to perform one iteration per cycle. And that's what we see!"
+    method: throughput
+    derivation: measured
+    value: 1
+    unit: iterations/cycle
+    supports: []
+    notes: Vector loads/stores and load/store pairs also behave as expected, including predictor behaviour
+  - id: c-mh-v1-stp-lsdp-third
+    text: >-
+      Chaining a store pair to three dependent byte loads moves the predictor knee to ~25 iterations, as if each
+      store/load pair took its own entry, and costs 5 and 9 cycles per iteration in the two regimes instead of 4 and 8
+    loc: p192
+    quote: "The largest difference is that we move to the slower part of the curve at around N=25 rather than 74."
+    method: throughput
+    derivation: measured
+    value: 25
+    unit: iterations
+    approx: true
+    hedge: "Presumably"
+    supports: []
+    notes: With a single-register store the regimes are 4.5 and 7 cycles; the STP itself adds a cycle
+  - id: c-mh-v1-stitch-extra-cycle
+    text: >-
+      A load that must combine bytes from two store-queue entries (and the cache) takes ~1.33 cycles per
+      store-store-load triplet instead of 1, which Handley puts down to an extra cycle for stitching the pieces
+    loc: p194
+    quote: "Now we take ~1.33 cycles per triplet, likewise if both byte stores match the LDR address."
+    method: throughput
+    derivation: measured
+    value: 1.33
+    unit: cycles
+    approx: true
+    hedge: "It looks like"
+    supports: []
+    notes: >-
+      Unchanged when both halves come from store-queue entries with no cache access. His guess: speculative
+      scheduling assumes four-cycle loads
+
+  - id: c-mh-v1-forwarding-rf
+    text: >-
+      Besides store-queue forwarding (~6 cycles, comparable to high-end x86 at 5.5-7), Apple can serve a load from
+      the register file that held the stored value: 5 cycles store-to-load in the hardest case, 3 in the easier one
+    loc: p198
+    quote: "service the store from the register file rather than the Store Queue, so that the (store to load) takes 5 cycles (in the most difficult case) and 3 cycles (in the easier case)"
+    derivation: measured
+    value: store queue, plus register file when store and load share an address register
+    supports: [lsu.forwarding]
+    notes: >-
+      Measured in the zero-cycle-load probes (3 cycles, ~5-5.5 when store and load decode together).
+      Handley knows of no other vendor doing register-based memory renaming
+  - id: c-mh-v1-zcl-patent-rf-lsdp
+    text: >-
+      Apple's 2012 zero-cycle-load patent (RF-LSDP) records which physical register a store through a given base
+      register wrote; a later load through the same unchanged base register is renamed to it at Rename and validated later
+    loc: p199
+    quote: "In other words, just like Zero Cycle Move, the work is done at Rename, and this acts as a Zero Cycle Load."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9996348B2; extended to base+immediate addresses and immediate adds to the base
+  - id: c-mh-v1-sp-lsdp
+    text: >-
+      A stack-pointer variant (SP-LSDP) applies the same register forwarding to stack stores and loads, including
+      pairs, aimed at prologue saves and epilogue restores; entries last only until the producing store or load retires
+    loc: p200
+    quote: "This specialization, called the SP-LSDP (Stack Pointer LSDP) allows the mechanism to capture load/store pairs, and to be an especially good fit to function prolog/epilogs"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US10838729B1 (2018), which also covers a reload from the same base register. The patent pipeline puts
+      RF-LSDP at Decode, SP-LSDP at Map and the LSDP at Dispatch, but it is an A7-class pipeline, not M1
+  - id: c-mh-v1-zcl-same-decode-group
+    text: >-
+      A 2019 patent extends zero-cycle loads to a store and load decoded in the same cycle by comparing the address
+      patterns of store/load pairs within a decode group
+    loc: p202
+    quote: "every appropriate possible pair of store/loads in a decode group (ie all the instructions decoded in a single cycle) is tested for matching address patterns"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20210173654A1. Handley credits it for the ~5.5-cycle same-group case of his DIV probe
+  - id: c-mh-v1-forwarding-lam
+    text: >-
+      Forwarding from a store still in the load-store queue to a later load reportedly takes 4 to 5 cycles on M1,
+      where some x86 designs take one; Handley argues Apple optimised the register-matched case instead
+    loc: p204
+    quote: "Some x86 designs can handle this in one cycle, whereas M1 seems to take 4 to 5 cycles."
+    method: secondhand
+    derivation: reported
+    value: 4.5
+    unit: cycles
+    approx: true
+    hedge: "seems to"
+    supports: [lsu.store_load_latency]
+    notes: Range 4-5; from a Chester Lam tweet (twitter.com/lamchester/status/1530297321333739521). Handley adds it seems somewhat improved on M2
+  - id: c-mh-v1-store-load-pair-6
+    text: >-
+      A forced-sequential store/load pair to one address through different registers (STR x1,[x1]; LDR x2,[x2],
+      x1=x2) settles at ~6 cycles per pair once the buffers fill past ~80 pairs: about three for the store, three or four for the load
+    loc: p209
+    quote: "the time to execute a store/load pair of this form seems to takes ~6 cycles (three for the store, then three, maybe four for the load)"
+    method: throughput
+    derivation: measured
+    value: 6
+    unit: cycles
+    approx: true
+    hedge: "seems to"
+    supports: [lsu.store_load_latency]
+    notes: >-
+      Handley's store-queue figure ("~6 cycles"). Adding a dependent DIV gives 11 cycles per probe (3+8).
+      A chained pair that issues together costs ~4 (c-mh-v1-forward-chained-4)
+  - id: c-mh-v1-zcl-div-probe
+    text: >-
+      When store and load use the same base register (STR x1,[x2]; LDR x2,[x2]; DIV), the loaded value is supplied at
+      rename and successive DIVs overlap: ~5.5 cycles per probe in one decode group, 3 with 8 NOPs between, against 11
+    loc: p212
+    quote: "inserting 8 NOPs between the store and the load, so they decode in subsequent cycles ... now we run at 3 cycles per probe rather than about 5.5"
+    method: throughput
+    derivation: measured
+    value: true
+    supports: [lsu.zero_cycle_load]
+    notes: >-
+      11 cycles is the same probe with the address in a different register. With the DIV on the store data
+      instead, no zero-cycle load and 12 cycles
+  - id: c-mh-v1-zcl-addressing
+    text: >-
+      The register-matched zero-cycle load handles base+immediate addresses such as [x2,#8], but not
+      register-indexed addresses or store-pair/load-pair, and Handley saw no tracking of immediate adds to the base
+    loc: p212
+    quote: "Slightly fancy addresses like [x2, #8] are handled appropriately. But not addresses that depend on two registers, like [x2, x10]. Likewise not store pair+load pair."
+    method: throughput
+    derivation: measured
+    supports: []
+  - id: c-mh-v1-zcl-5-vs-7
+    text: >-
+      A store/load pair that reloads its own stored register runs at ~5 cycles per pair when both use the same
+      address register (zero-cycle load) and ~7 when the same address comes through different registers
+    loc: p213
+    quote: "the first case uses ZCL and runs at ~5 cycles/load/store; the second case doesn't use ZCL and runs at ~7cycles per load/store"
+    method: throughput
+    derivation: measured
+    value: 5
+    unit: cycles
+    approx: true
+    supports: []
+    notes: STR x1,[x2]; LDR x1,[x2] vs STR x1,[x2]; LDR x1,[x1] with x1=x2
+  - id: c-mh-v1-zcl-no-simd
+    text: >-
+      Zero-cycle loads do not apply to SIMD registers: STR q0,[x2]; LDR q0,[x2] runs at ~7 cycles per pair like the
+      unmatched case, and a stack pair of SIMD registers is not accelerated either
+    loc: p213
+    quote: "then, in principle, the front-end could notice that the address registers are the same and ZCL the q0 value given to the load. But that does not happen, we get the same ~7 cycles per load/store."
+    method: throughput
+    derivation: measured
+    value: false
+    supports: []
+    notes: Handley also says "it seems that the ZCLs are not used for NEON registers"
+  - id: c-mh-v1-zcl-stack
+    text: >-
+      Stack save/restore pairs (STP/LDP x28,x27 at [SP,#-16]) get no zero-cycle acceleration when decoded in the same
+      cycle, 7 cycles per pair, but are accelerated when 8 NOPs separate the store and the load
+    loc: p216
+    quote: "with 8 NOPs after the store, and another 8 after the load ... That's more like it!!! Nice acceleration there!"
+    method: throughput
+    derivation: measured
+    value: true
+    supports: []
+    notes: The text gives no figure for the accelerated case
+  - id: c-mh-v1-no-add-imm-elim
+    text: Apple eliminates move-immediates at rename but does not appear to special-case add-immediate
+    loc: p206
+    quote: "Apple handle zero-cycle load-immediates (a case not considered by the paper), but do not appear to handle add-immediate as a special case."
+    derivation: inferred
+    value: false
+    hedge: "do not appear to"
+    supports: []
+  - id: c-mh-v1-redundant-mem-ops
+    text: >-
+      Back-to-back identical stores, or identical loads, are not removed: two stores and two loads still take one
+      cycle per probe, the same as four distinct addresses
+    loc: p208
+    quote: "In theory, now, the front-end could see that one of the stores is redundant, remove it ... But (unsurprisingly) this does not happen."
+    method: throughput
+    derivation: measured
+    value: false
+    supports: []
+
+  - id: c-mh-v1-pointer-chase-3
+    text: >-
+      A load whose base register comes straight from the previous load runs at 3 cycles per load, also with complex
+      addressing or a load pair; other load chains, such as the pointer used as the index, take 4
+    loc: p223
+    quote: "Pointer chasing that feeds the pointer into the first argument (the base pointer) runs at 3 cycles per load, as opposed to normal load loops ... which takes 4 cycles per load"
+    method: pointer-chase
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: [l1d.latency]
+    notes: LDR x2,[x2] and LDR x2,[x2,x0] vs LDR x2,[x0,x2]. Load pair works if the chased pointer is the first register
+  - id: c-mh-v1-pointer-chase-patent
+    text: >-
+      Apple's 2013 pointer-chasing patent issues a load whose base comes from a just-issued L1-hitting load so the
+      address arrives inside the LSU, a cycle earlier than via the bypass bus; mispredictions replay
+    loc: p218
+    quote: "begins its execution one cycle earlier than it would have been if it had to wait for the value of x1 on the bypass bus"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US9116817B2; the 2014 follow-up US9710268B2 lets failures train the LSDP. The patent pipeline is A7
+      generation; Handley says M1 takes one cycle less
+  - id: c-mh-v1-no-addr-prediction
+    text: >-
+      Handley found no case where Apple's constant-address and stride load-address prediction patent shows up and
+      tentatively concludes M1 does not have it
+    loc: p223
+    quote: "So my tentative belief is that, in spite of the patent, this is not present in M1."
+    derivation: measured
+    value: false
+    hedge: "my tentative belief"
+    supports: [lsu.address_prediction]
+    notes: US20210049015A1 (2019) predicts a load's next address from a linear stream, loads early and renames the destination
 
 new_params:
   sched_ls.queues:               {block: sched_ls, name: Load-store scheduler queue count, unit: queues}
   lsu.lsdp_entries:              {block: lsu, name: Dependence predictor entries, unit: entries}
   lsu.ordering_flush_penalty:    {block: lsu, name: Memory-ordering flush penalty, unit: cycles}
+  lsu.zero_cycle_load:           {block: lsu, name: Zero-cycle loads (register-file forwarding), mechanism: zero_cycle_loads}
+  lsu.address_prediction:        {block: lsu, name: Load address prediction}
+  lsu.store_load_latency:        {block: lsu, name: Store-to-load latency (same address), unit: cycles}
+
+new_mechanisms:
+  zero_cycle_loads:
+    name: Zero-cycle loads (register-file memory renaming)
+    status: inferred
+    description: A load from a just-stored address is renamed to the register holding the stored value.
+    params: [lsu.zero_cycle_load, lsu.forwarding, lsu.store_load_latency]
+    sim_switch: null
+    detection_rule: >-
+      a store and reload through the same base register shortens a load-to-DIV dependency chain; the same address
+      through a different register does not
 
 mechanism_claims:
   lsq_at_issue: [c-mh-v1-lq-dram-125, c-mh-v1-sq-dram-100, c-mh-v1-lq-storeaddr-188, c-mh-v1-sq-storeaddr-118,
@@ -535,3 +791,6 @@ mechanism_claims:
                  c-mh-v1-sq-late-alloc-60]
   lsq_early_release: [c-mh-v1-lsq-fsqrt-330, c-mh-v1-rob-rows-330, c-mh-v1-store-fsqrt-not-idempotent]
   retire_groups: [c-mh-v1-rob-rows-330]
+  zero_cycle_loads: [c-mh-v1-forwarding-rf, c-mh-v1-zcl-patent-rf-lsdp, c-mh-v1-sp-lsdp, c-mh-v1-zcl-same-decode-group,
+                     c-mh-v1-zcl-div-probe, c-mh-v1-zcl-addressing, c-mh-v1-zcl-5-vs-7, c-mh-v1-zcl-no-simd,
+                     c-mh-v1-zcl-stack]
