@@ -275,9 +275,259 @@ claims:
     derivation: inferred
     supports: []
     notes: US20130326198A1
+  - id: c-mh-v1-lsdp-confidence
+    text: >-
+      Each predictor entry has a confidence field, raised when a load that matched an armed entry gets its data from
+      the store queue and lowered when it gets it from the L1D; low-confidence entries do not arm and are replaced first
+    loc: p139
+    quote: "If it acquires the data from the store queue, then we increment confidence ... But if the load acquires the data from the L1D, then we decrement confidence"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9128725B2 (2012); low-confidence behaviour from US20130326198A1
+  - id: c-mh-v1-lsdp-replay-entries
+    text: >-
+      The predictor also trains on loads that replayed for want of store data, not only on ordering flushes; entries
+      carry a replay-or-flush bit, and replay entries need higher confidence before they delay a load
+    loc: p141
+    quote: "So for Replay entries, we require a rather higher confidence value before we force the load to depend on the store."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10437595B1 (2016)
+  - id: c-mh-v1-replay-shadow-window
+    text: >-
+      Instructions issued speculatively behind a load stay in their scheduling queue under a shifting-bit timer
+      (the "shadow kill window") and leave only if the load succeeds; otherwise they reissue when it replays
+    loc: p143
+    quote: "when an instruction dependent on a load begins execution, it is not removed from the scheduling queue"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10514925B1 (2016); inherited by dependents of dependents
+  - id: c-mh-v1-leq-bank-per-pipe
+    text: >-
+      The load execution queue that holds loads for replay has one bank per load pipe, each acting as an extension
+      of its scheduling queue, while the larger load retirement queue holds loads for ordering checks
+    loc: p146
+    quote: "This queue inherits the structure described above, one bank per Load Pipe."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Reading of US20200394039A1; the A14's third load pipe needs a third LEQ bank
+  - id: c-mh-v1-late-ordering-check-patent
+    text: >-
+      Apple's 2019 ordering-violation patent repeats the load/store address check when the load's data would reach
+      its register, a few cycles later, so a store address that resolves in between causes a replay, not a flush
+    loc: p147
+    quote: "suppose we move the test instead to the cycle at which the data would be stored into a register"
+    method: patent-reading
+    derivation: inferred
+    hedge: "maybe 3 cycles under normal conditions"
+    supports: []
+    notes: US10983801B2. The later check also catches aliases that only show in physical addresses
+  - id: c-mh-v1-rlb-patent
+    text: >-
+      A 2020 patent adds a small Replay Load Buffer beside the load-store reservation station that reissues a
+      replaying load in step with its store-data op, two cycles after the store data issues instead of seven
+    loc: p149
+    quote: "Note how it's seven cycle from the IS(issue) of the StoreData till the IS of the dependent Load. With the new timeline we are able to ISsue the load only two cycles later."
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: cycles
+    supports: []
+    notes: US11175917B1 (2020); Handley does not tie it to a chip
+
+  - id: c-mh-v1-ls-pairs-2-per-cycle
+    text: >-
+      Independent store/load pairs to different addresses run at two pairs (two stores and two loads) per cycle,
+      also when the load's destination is the next store's data register
+    loc: p173
+    quote: "we see a throughput of 800 store+load pairs takes essentially 400 cycles, so two pairs (four memory ops) per cycle"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: pairs/cycle
+    supports: []
+    notes: STR x10,[x2]; LDR x11,[x3]; also LDR x10 and mixed w/x widths
+  - id: c-mh-v1-same-addr-no-lsdp
+    text: >-
+      Store/load pairs to the same address with different registers run about 15% below two pairs per cycle: they
+      issue together and the load finds the store in the store queue, with occasional replays and no predictor needed
+    loc: p176
+    quote: "would be perfection (2 load/store pairs per cycle, no cycles lost to Replay or Flush) and we run about 15% slower than perfection"
+    method: throughput
+    derivation: measured
+    value: 15
+    unit: "%"
+    approx: true
+    supports: []
+    notes: Handley credits the in-flight store-vs-load address compare of the 2019 ordering patent for catching loads a few cycles early
+  - id: c-mh-v1-lsdp-74-delayed-data
+    text: >-
+      With the store data delayed by FCVTAS, same-address store/load pairs run at ~1.6 pairs per cycle up to 74
+      pairs and ~0.8 beyond, which Handley reads as a ~74-entry dependence predictor; past it every load replays once
+    loc: p179
+    quote: "that the LSDP can hold ~74 entries"
+    method: throughput
+    derivation: measured
+    value: 74
+    unit: entries
+    approx: true
+    hedge: "This suggests"
+    supports: [lsu.lsdp_entries]
+    notes: FCVTAS x10,d1; STR x10,[x2]; LDR x11,[x2]. Replay costs half the throughput, no more
+  - id: c-mh-v1-lsdp-74-chained
+    text: >-
+      With store and load chained through both address and register, the fast regime lasts for about 70-80 pairs,
+      again matching a ~74-entry predictor
+    loc: p181
+    quote: "Secondly it confirms that the size of the LSDP seems to indeed be around 74 elements."
+    method: throughput
+    derivation: measured
+    value: 74
+    unit: entries
+    approx: true
+    hedge: "seems to"
+    supports: [lsu.lsdp_entries]
+  - id: c-mh-v1-forward-chained-4
+    text: >-
+      A store/load pair chained through the same address and register costs about 4 cycles while the predictor
+      holds it (both issue together, meet at the store queue, data to the bypass) and about 8 once it must replay
+    loc: p181
+    quote: "The initial regime can support about 70..80 load/store pairs. While in that regime the cost of a single load/store pair is about 4 cycles"
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: cycles
+    approx: true
+    supports: []
+    notes: >-
+      STR x10,[x2]; LDR x10,[x2]. Handley's expectation is three cycles to meet at the store-queue entry plus one to the
+      bypass bus. A different probe from the ~6-cycle pair (c-mh-v1-store-load-pair-6)
+  - id: c-mh-v1-lsdp-replacement
+    text: >-
+      When entries are otherwise alike the predictor appears to replace round-robin, a pointer advancing from the
+      last entry replaced, which behaves like LRU on streaming probes and like random on mixed code
+    loc: p182
+    quote: "This fourth option seems to me to be what we are seeing."
+    derivation: inferred
+    value: round-robin
+    hedge: "seems to me"
+    supports: []
+    notes: Inferred from the sharp knee of the delayed-data probe vs the softer knee of the chained probe
+  - id: c-mh-v1-lsdp-pc-indexed
+    text: >-
+      Varying the shared address quadratically, so no address-pattern accelerator applies, leaves the chained
+      store/load results unchanged, as expected of a predictor keyed on store and load PCs rather than addresses
+    loc: p183
+    quote: "even this quadratically varying index stream (no ZCL!) has essentially identical results"
+    method: throughput
+    derivation: measured
+    supports: []
+  - id: c-mh-v1-lsdp-default-no-alias
+    text: >-
+      With the store address delayed by FCVTAS and the load to a different address, pairs run at a smooth two per
+      cycle even beyond predictor capacity: loads are by default predicted not to alias
+    loc: p184
+    quote: "Even when we do overflow the LSDP, as long as loads are predicted by default never to match unknown store addresses we should still see no interference ... nice smooth two pairs processed per cycle"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: pairs/cycle
+    supports: []
+  - id: c-mh-v1-ordering-flush-25
+    text: >-
+      Once the predictor overflows, a load that runs ahead of an aliasing store with an unresolved address costs ~38
+      cycles per pair, which Handley splits into ~25 cycles for the ordering flush and ~13 for redoing the FCVTAS
+    loc: p185
+    quote: "I think this splits into something like 25 cycles as the cost of a flush caused by a load/store aliasing"
+    method: throughput
+    derivation: measured
+    value: 25
+    unit: cycles
+    approx: true
+    hedge: "I think this splits into something like"
+    supports: [lsu.ordering_flush_penalty]
+    notes: FCVTAS x0,d1; STR x10,[x2,x0]; LDR x11,[x2]. Below ~50 pairs it runs at ~1.4 pairs per cycle
+  - id: c-mh-v1-lsdp-74-flush
+    text: >-
+      In the aliasing-flush probe the knee looks like ~50 entries, but Handley fits it with 74 entries: random
+      replacement lets a few flushes in early, and each flush costs so much that the knee appears sooner
+    loc: p186
+    quote: "I added the gold line to both curves to show how we're still really dealing with ~74 entries in the LSDP."
+    method: throughput
+    derivation: measured
+    value: 74
+    unit: entries
+    approx: true
+    supports: [lsu.lsdp_entries]
+    notes: From the plot legend, "fit assuming 74 entries and 38 cycle flush"
+  - id: c-mh-v1-delayed-both
+    text: >-
+      When both the store and the load wait on the slow FCVTAS address, pairs run at ~1.5 per cycle up to ~70-80
+      pairs and ~1.2 after, mostly replays rather than flushes
+    loc: p186
+    quote: "We see an initial slightly faster regime, about 1.5 pairs per cycle, for N<~70..80. Then about 1.2 pairs per cycle."
+    method: throughput
+    derivation: measured
+    value: 1.5
+    unit: pairs/cycle
+    approx: true
+    supports: []
+  - id: c-mh-v1-eor-not-zero-idiom
+    text: >-
+      On M1 an EOR of a register with itself is not a zeroing or dependency-breaking idiom: it takes a cycle and
+      chains on its input
+    loc: p187
+    quote: "on M1, unlike x86, xor is not a zero'ing or dependency breaking idiom, so EOR takes one cycle"
+    derivation: measured
+    value: false
+    supports: []
+    notes: Used as a one-cycle delay element in the EOR sweep (c-mh-v1-late-check-window), where each added EOR lengthens the iteration
+  - id: c-mh-v1-late-check-window
+    text: >-
+      A late load/store address check catches loads that ran two to four cycles ahead of an aliasing store's
+      address and turns them into replays instead of flushes
+    loc: p195
+    quote: "there is also late checking of whether loads might have collided with stores (catching cases where the load is two, three, even four cycles early; and converting them into Replays)"
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: []
+    notes: >-
+      EOR sweep: 0-3 cycles of store-address delay give ~0.8 to ~1.5 cycles per iteration; at 4 every
+      pair replays (a little over 4 cycles); at 5 some flush (10 cycles); at 6 every pair flushes once the predictor overflows
+  - id: c-mh-v1-lsdp-pc-pairs
+    text: >-
+      M1 has a load-store dependence predictor holding about 74 (store PC, load PC) pairs that delays
+      predicted-dependent loads to avoid both ordering flushes and store-data replays
+    loc: p195
+    quote: "it can hold about 74 pairs of (storePC, loadPC) - it prevents both Flushes (catastrophic) and Replays"
+    method: throughput
+    derivation: measured
+    value: store/load PC-pair predictor
+    supports: [lsu.disambiguation]
+    notes: Conclusion of the "Testing the LSDP" probes
+  - id: c-mh-v1-line-cross-4-per-cycle
+    text: >-
+      Offsetting both addresses by 127 bytes so every access straddles a cache line leaves independent store/load
+      throughput unchanged, four line-straddling accesses per cycle
+    loc: p189
+    quote: "Somehow we are getting four cache-line-straddling accesses per cycle"
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: accesses/cycle
+    hedge: "even if we accept that Zero Cycle Loads are shouldering some of the burden"
+    supports: []
 
 new_params:
   sched_ls.queues:               {block: sched_ls, name: Load-store scheduler queue count, unit: queues}
+  lsu.lsdp_entries:              {block: lsu, name: Dependence predictor entries, unit: entries}
+  lsu.ordering_flush_penalty:    {block: lsu, name: Memory-ordering flush penalty, unit: cycles}
 
 mechanism_claims:
   lsq_at_issue: [c-mh-v1-lq-dram-125, c-mh-v1-sq-dram-100, c-mh-v1-lq-storeaddr-188, c-mh-v1-sq-storeaddr-118,
