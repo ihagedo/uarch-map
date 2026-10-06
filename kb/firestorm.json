@@ -1541,7 +1541,8 @@
     },
     "lsu.loads_per_cycle": {
       "claims": [
-        "c-at-loads-per-cycle"
+        "c-at-loads-per-cycle",
+        "c-mh-v2-loads-per-cycle"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1549,11 +1550,12 @@
       "unit": "loads/cycle",
       "value": 3,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "lsu.stores_per_cycle": {
       "claims": [
-        "c-at-stores-per-cycle"
+        "c-at-stores-per-cycle",
+        "c-mh-v2-stores-per-cycle"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1561,7 +1563,7 @@
       "unit": "stores/cycle",
       "value": 2,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "dtlb.l1_miss_penalty": {
       "claims": [
@@ -1765,14 +1767,16 @@
       "confidence": "medium"
     },
     "l1d.store_bw": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-store-bw-32"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D store bandwidth",
       "unit": "B/cycle",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 32,
+      "status": "measured",
+      "confidence": "medium"
     },
     "memctrl.dram_load_bw": {
       "claims": [
@@ -1787,24 +1791,28 @@
       "confidence": "medium"
     },
     "l1d.banks": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-l1d-banks"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D banks",
       "unit": "banks",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 16,
+      "status": "measured",
+      "confidence": "medium"
     },
     "l1d.bank_width": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-l1d-bank-width"
+      ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D bank width",
       "unit": "B",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 16,
+      "status": "measured",
+      "confidence": "medium"
     },
     "dtlb.l1_lookups_per_cycle": {
       "claims": [
@@ -5830,6 +5838,400 @@
       "chip": "m1",
       "entered": "handley-vol2-l1"
     },
+    "c-mh-v2-stores-free": {
+      "text": "Tests show that stores very rarely cost load bandwidth",
+      "loc": "p053",
+      "quote": "A variety of tests seem to validate the above model, bottom line being that you very rarely lose load bandwidth to stores.",
+      "derivation": "measured",
+      "hedge": "seem to validate",
+      "supports": [],
+      "notes": "His summary: \"for the most part stores never consume load bandwidth\"",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-unaligned-free": {
+      "text": "Aligned halfword loads behave like byte loads, and non-aligned halfword loads pay essentially no penalty",
+      "loc": "p055",
+      "quote": "non-aligned halfwords pay essentially no penalty, given the mechanisms we have described (and again what we see)",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-misaligned-single-request": {
+      "text": "Per Apple's patent, a load that straddles two cache lines stays one unit that sends two line requests to the cache; only a page-crossing load falls back to microcode",
+      "loc": "p055",
+      "quote": "a misaligned load is still handled as a single unit, with two line requests sent to the cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20130013862A1",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-bank-width": {
+      "text": "Each L1D bank is 16 B wide, so a 256 B row spans the 16 banks and addresses 256 B apart share a bank",
+      "loc": "p057",
+      "quote": "So, at a physical level, the cache consists of 16 banks, each bank is 16B wide.",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "B",
+      "supports": [
+        "l1d.bank_width"
+      ],
+      "notes": "Model stated up front and fitted to the stride tables (c-mh-v2-l1d-banks)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1d-banks": {
+      "text": "The L1D has 16 banks, each 16 B wide",
+      "loc": "p072",
+      "quote": "seems reasonable to me to conclude that the EO3 and ABCD3 models describe the byte loads ... which in turn implies 16 banks, each 16B wide.",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "banks",
+      "hedge": "it seems reasonable to me to conclude",
+      "supports": [
+        "l1d.banks"
+      ],
+      "notes": "The Intel designs Handley knows used 8 banks",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-loads-per-cycle": {
+      "text": "Byte loads stepping by 0 to 32 B run at three per cycle",
+      "loc": "p063",
+      "quote": "Note that nothing interesting happens till 64B; within margin of noise we achieve three loads per cycle.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "supports": [
+        "lsu.loads_per_cycle"
+      ],
+      "notes": "2.97-3.0 loads/cycle; halfword, word, doubleword and 128-bit loads give the same",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-bank-stride-sweep": {
+      "text": "Byte loads stepping by 64 B run at 2.35 per cycle, by 128 B at 1.71 and by 256 B at 1.0, as they crowd onto four, two and one bank, with 1.28, 1.75 and 3 traversals per load",
+      "loc": "p062",
+      "quote": "LSU LoadB 64 2.35 1. 1. 1.28 LSU LoadB 128 1.71 1. 1. 1.75 LSU LoadB 256 1. 1. 1. 3.",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "loads/cycle",
+      "supports": [],
+      "notes": "Stochastic models with three-request lookahead (EO3 for two banks: 1.66; ABCD3 for four banks: 2.27) come close to the 1.71 and 2.35 measured",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-piggyback": {
+      "text": "Several loads to the same 16 B bank element are served by one bank access, the bytes for each load extracted and routed to its register, so they still run at three per cycle",
+      "loc": "p063",
+      "quote": "When we are loading from the same 16B element (the case for loads separated by 0, 1, 2, 4) the piggybacking scheme works!",
+      "method": "stride-sweep",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Three overlapping 16 B loads at A, A+1, A+2 are served from 18 B across two banks without serialising",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1-lookahead-3": {
+      "text": "Each cycle the LSU offers three load requests to the L1, which serves the first and any later ones bound for other banks; the traversal counter (1.75) fits this three-request model (1.8) better than a four-request one (2.28)",
+      "loc": "p068",
+      "quote": "I can give various pleading excuses for why the Apple value means something different from what it seems to mean, but EO3 looks like the way to bet.",
+      "method": "simulation",
+      "derivation": "inferred",
+      "value": 3,
+      "unit": "requests/cycle",
+      "hedge": "looks like the way to bet",
+      "supports": [],
+      "notes": "Requests reach the cache in roughly random order (c-mh-v2-load-order). He suggests holding the rejected request in a buffer at the L1 would gain about 5 %",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-width-independent": {
+      "text": "Byte, halfword, word, doubleword and 128-bit loads give the same throughput at every step, so only the bank pattern of the addresses matters",
+      "loc": "p073",
+      "quote": "The loaded width does not matter, only the pattern of addresses (ie which banks are accessed).",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Steps of 0-256 B, and 512 and 1024 B for 128-bit loads",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ldp-x-single": {
+      "text": "An LDP of two X registers takes two register remaps but one ROB entry and one cache submission, and performs like a single 128-bit load",
+      "loc": "p074",
+      "quote": "Also note that a load pair X is not cracked either as regards retirement (second to last column; one entry in the ROB for each load pair X instruction) or cracked for submission to the cache",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ldpq-throughput": {
+      "text": "LDP of two Q registers runs at 1.5 per cycle with two cache traversals each, against three per cycle for the equivalent pair of LDR Q, so both move 48 B per cycle",
+      "loc": "p075",
+      "quote": "The LDPQ case performs 1.5 loads per cycle; in both cases 3*16B gets transferred to the LSU.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 1.5,
+      "unit": "loads/cycle",
+      "supports": [],
+      "notes": "LoadPQ table: 1.5 up to a 64 B step, 1.17 at 128 B and 0.86 at 256 B, half the LDR Q pair rates of 2.35 and 1.71",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-ldpq-late-crack": {
+      "text": "LDP Q is split into two 16 B requests only at submission to the cache, after address generation, TLB and way lookup; rename and the ROB see one instruction",
+      "loc": "p075",
+      "quote": "This all suggests to me that a LDPQ is cracked, but very late in the LSU (probably after TLB and way lookup) into two LDQ instructions.",
+      "method": "counter",
+      "derivation": "inferred",
+      "hedge": "suggests to me",
+      "supports": [],
+      "notes": "Not cracked at decode: \"256b=32B via a single instruction that splits into two at the point of cache access\"",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-line-cross-loads": {
+      "text": "Doubleword and 128-bit loads that each straddle two cache lines run at the same rates as aligned loads, three per cycle at small steps, with the same bank-collision pattern",
+      "loc": "p076",
+      "quote": "These probes correspond to loads from a base address that is a cacheline aligned address minus one. So every load straddles two cache lines. ... Whether we load from two lines or not, we see the same pattern of collisions.",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "supports": [],
+      "notes": "LoadX1 and LoadQ1 tables. Line-straddling LDP Q pairs fall further, to 0.53 pairs/cycle at a 256 B step, because both halves need the same bank",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-l1-load-paths-6": {
+      "text": "The L1 has six 16 B data paths to the LSU, since three line-straddling loads per cycle each read two banks",
+      "loc": "p077",
+      "quote": "But what these results do suggest is that in fact we have not three 16B wide paths from the L1 to the LSU, but 6 such paths.",
+      "derivation": "inferred",
+      "value": 6,
+      "unit": "paths",
+      "hedge": "what these results do suggest",
+      "supports": [],
+      "notes": "From LoadX1 at a 64 B step approaching three loads per cycle; Handley had earlier left it at \"three (four? six?)\"",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-subarray-guess": {
+      "text": "Each bank, logically 512 rows of 16 B, may be built from four sub-arrays of 128 rows that work in parallel, which would explain line-straddling LDP Q pairs at a 256 B step running slightly above 0.5 per cycle",
+      "loc": "p077",
+      "quote": "the basic SRAM subarray may be 128b wide (16B*8) and 128 rows high, so that there are four such sub-arrays in a bank",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "sub-arrays per bank",
+      "hedge": "My best guess",
+      "supports": [],
+      "notes": "Sits uneasily with his byte-wide sub-array reading (c-mh-v2-l1d-byte-subarrays)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-no-parallel-sources": {
+      "text": "Apple does not yet seem to serve some loads from the store queue or the L1's specialty buffers in parallel with the L1D to raise load bandwidth",
+      "loc": "p060",
+      "quote": "Apple doesn't yet seem to be exploiting aggressively the performance amplification available in having some loads serviced by either the Store Queue or the Specialty Buffers, in parallel with the L1D",
+      "derivation": "inferred",
+      "hedge": "doesn't yet seem",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-4-lines-per-cycle": {
+      "text": "Three loads and one store per cycle to four different lines (320 B step) show that four cache lines can be addressed per cycle, so way determination handles four addresses per cycle",
+      "loc": "p086",
+      "quote": "shows us that we can access 4 different cache lines per cycle, ie however we perform address to way translation, we can perform four of those, and submit 4 addresses, to the cache, per cycle",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "lines/cycle",
+      "supports": [],
+      "notes": "The text says the 320 B case gives a throughput of 4; the printed Store1Load3B table row reads 3.37 ops/cycle. He also says more than two (three, presumably four) indices can be submitted per cycle",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-stores-per-cycle": {
+      "text": "Byte stores stepping by 0 to 128 B run at two per cycle, falling to 1.02 at a 256 B step",
+      "loc": "p078",
+      "quote": "This works perfectly all the way out to 128 -- we can submit two stores to the cache per cycle",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "stores/cycle",
+      "supports": [
+        "lsu.stores_per_cycle"
+      ],
+      "notes": "StoreB table; a store that overwrites the previous one still runs at full speed",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-store-fire-forget": {
+      "text": "Stores cross from the LSU to the L1 once, even under bank conflicts, so they are latched in buffers at the L1 that write them into the banks whenever loads leave room",
+      "loc": "p078",
+      "quote": "What I think is happening is that stores are submitted to the cache as ... latched to some buffer(s), and the buffer(s) opportunistically feed bytes to the L1D whenever loads aren't using resources",
+      "method": "counter",
+      "derivation": "inferred",
+      "hedge": "What I think is happening",
+      "supports": [],
+      "notes": "Store traversals stay at 1 except for three loads + one store at 64-256 B steps (1.04-1.08), read as occasional buffer overflow, loads presumably having priority. One or two stores can wait at the L1 on a bank collision.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-load-order": {
+      "text": "Loads reach the L1 in jumbled order, mainly because one scheduler queue pair drains through a load unit and the ambidextrous unit while the other drains through one load unit; stores stay much closer to program order",
+      "loc": "p078",
+      "quote": "My guess is that the primary reason loads are reordered is the ambidextrous load/store queue.",
+      "derivation": "inferred",
+      "hedge": "My guess is",
+      "supports": [],
+      "notes": "Handley also suspects the instruction pool between rename and the scheduling queues does not preserve order; the bank-collision models assume randomly ordered requests",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-store-bw-32": {
+      "text": "128-bit stores also run at two per cycle, so the LSU can move at least 32 B of store data per cycle to the cache",
+      "loc": "p079",
+      "quote": "Storing vectors shows the same pattern, so there's at least 32B of bandwidth (two 16B stores per cycle) from LSU to the cache.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 32,
+      "unit": "B/cycle",
+      "hedge": "at least",
+      "supports": [
+        "l1d.store_bw"
+      ],
+      "notes": "StoreQ: 2.0 per cycle out to a 128 B step, 1.02 at 256 B; STP Q pairs run at 1.0 pair (2 x 16 B) per cycle at every step tried, 0-256 B",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-misaligned-store-16": {
+      "text": "16-byte stores that each straddle a line boundary run at two per cycle up to an 8 B step but only 1.23 at a 16 B step and 1.0 beyond",
+      "loc": "p080",
+      "quote": "Now we see trouble start at at offset of 16 ... it should be able to run at 2*16B per cycle, not the 1.25 (20B/cycle) we see.",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 1.23,
+      "unit": "stores/cycle",
+      "supports": [],
+      "notes": "StoreQ1 table; his text rounds to 1.25. Line-straddling STP Q pairs fall to 0.53-0.61 pairs/cycle from a 32 B step",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-store-paths-2": {
+      "text": "There are only two 16 B store data paths from the LSU to the L1D",
+      "loc": "p082",
+      "quote": "there are only two 16B store paths from the LSU to the L1D (and perhaps also a wider path to the pool of specialty buffers than can transfer an entire cache line?)",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "paths",
+      "supports": [],
+      "notes": "From the misaligned 16 B store results (c-mh-v2-misaligned-store-16), unlike misaligned loads, which keep three per cycle; one of the conclusions he calls solid",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-sq-slot-32b": {
+      "text": "Store-queue slots seem to be 32 B wide: stores aggregate within a slot and a store torn across a line takes two slots, which predicts about 1.33 misaligned 16 B stores per cycle",
+      "loc": "p082",
+      "quote": "the numbers we see here seem to suggest that + the width of a slot in the store queue is 32B (rather than 64B)",
+      "derivation": "inferred",
+      "value": 32,
+      "unit": "B",
+      "hedge": "seem to suggest",
+      "supports": [],
+      "notes": "He adds that he does not especially trust any aspect of this explanation",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-same-address-storeload": {
+      "text": "A store, load, store, load stream to one address runs at 3.66 operations per cycle, the loads served from the store queue",
+      "loc": "p083",
+      "quote": "both the loads (they will go to different physical registers, even though, of course, the first load is meaningless) will be serviced out of the store queue, not the L1D",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3.66,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "He sees a glitch costing about one op in twelve. Slightly over one register remap per load, which he puts down to initial flushes before the load/store alias detector was trained",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-storeload-same-bank": {
+      "text": "Interleaved byte stores and loads to alternate bytes of one 16 B element (steps of 1-4 B) run at 3.99 operations per cycle, so a bank serves a load and a store to different bytes in the same cycle",
+      "loc": "p083",
+      "quote": "Apple's patents claim these can happen in the same cycle; we activate one bank, send the appropriate read and write byte enables ... and this certainly seems to be possible",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3.99,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "StoreLoadB table: about 3.2 ops/cycle at 8-32 B steps with no cache bank collisions counted (c-mh-v2-sq-banks-guess), 3.2 at 64 B with 1.44 load traversals, 2.0 at 128 B, 1.03 at 256 B",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-partial-forwarding": {
+      "text": "Interleaved 16 B stores and loads offset by 1-4 B, each load overlapping the previous store, still run at four operations per cycle, merging store-queue bytes with L1 bytes",
+      "loc": "p084",
+      "quote": "the first load has to pull in 15 bytes from the store queue and one byte from the L1 cache, then glue them together. And this is done without a glitch!",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "ops/cycle",
+      "supports": [],
+      "notes": "StoreLoadQ table: 3.99-4.0 for steps of 0-4 B, 2.97 at 8 B",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
+    "c-mh-v2-sq-banks-guess": {
+      "text": "Mixed store/load streams at 8-32 B steps stall at about 3.2 operations per cycle with no cache bank collisions counted, which Handley guesses comes from collisions between sub-queues of a banked store queue",
+      "loc": "p084",
+      "quote": "My best guess is that perhaps the store queue is split into multiple sub-queues",
+      "derivation": "inferred",
+      "hedge": "My best guess is that perhaps",
+      "supports": [],
+      "notes": "Also invoked for 16 B stores/loads at 8-16 B steps, and for four stores then four loads, which worsens the 64 and 128 B steps without more load resubmissions",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-l1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -7202,9 +7604,19 @@
     },
     "l1d_banked_piggyback": {
       "claims": [
+        "c-mh-v2-l1d-banks",
+        "c-mh-v2-l1d-bank-width",
         "c-mh-v2-l1-entry-queues",
+        "c-mh-v2-bank-stride-sweep",
+        "c-mh-v2-piggyback",
+        "c-mh-v2-l1-lookahead-3",
+        "c-mh-v2-l1-load-paths-6",
+        "c-mh-v2-4-lines-per-cycle",
         "c-mh-v2-l1d-byte-subarrays",
         "c-mh-v2-concurrent-store-load",
+        "c-mh-v2-store-fire-forget",
+        "c-mh-v2-storeload-same-bank",
+        "c-mh-v2-stores-free",
         "c-mh-v2-ld-unit-uop"
       ],
       "name": "Banked L1D with piggybacked loads and buffered stores",
