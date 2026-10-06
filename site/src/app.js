@@ -28,6 +28,7 @@
   const clip = (s, n) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many || one + "s"}`;
   const openDispute = (p) => p.disputes.some((d) => !d.resolution);
+  const hue = (frame) => `--hue: var(--c-${frame})`;
   const visible = (p) => state.show.has(p.conf);
 
   function el(tag, attrs, parent) {
@@ -104,7 +105,7 @@
   function drawStages(V) {
     const frames = el("g", { class: "frames" }, svg);
     for (const f of V.frames) {
-      const g = el("g", { class: "frame", "data-frame": f.id }, frames);
+      const g = el("g", { class: "frame", "data-frame": f.id, style: hue(f.id) }, frames);
       el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 10, class: "frame-body" }, g);
       el("text", { x: f.x + 12, y: f.y + 18, class: "frame-label" }, g).textContent = f.label.toUpperCase();
       el("text", { x: f.x + f.w - 12, y: f.y + 18, "text-anchor": "end", class: "frame-count" }, g)
@@ -117,7 +118,7 @@
   function drawBox(layer, bid, bx) {
     const b = D.blocks[bid];
     const known = b.params.filter((pid) => D.params[pid].known).length;
-    const g = el("g", { class: `box conf-${b.conf}`, "data-block": bid, tabindex: "0", role: "button",
+    const g = el("g", { class: `box conf-${b.conf}`, "data-block": bid, tabindex: "0", role: "button", style: hue(bx.frame),
       "aria-label": `${b.name}: ${CONF_WORD[b.conf].toLowerCase()} confidence, ${known} of ${b.params.length} parameters known` +
         (b.disputed ? ", disputed" : "") }, layer);
     if (b.desc) el("title", {}, g).textContent = b.desc;
@@ -148,7 +149,7 @@
     const layer = el("g", { class: "regions" }, svg);
     for (const f of V.frames) {
       const claims = new Set(f.params.flatMap((pid) => D.params[pid].for));
-      const g = el("g", { class: `box region conf-${f.conf}`, "data-frame": f.id, tabindex: "0", role: "button",
+      const g = el("g", { class: `box region conf-${f.conf}`, "data-frame": f.id, tabindex: "0", role: "button", style: hue(f.id),
         "aria-label": `${f.label}: ${f.known} of ${f.params.length} parameters known. Open the stage view.` }, layer);
       el("rect", { x: f.x - 4, y: f.y - 4, width: f.w + 8, height: f.h + 8, rx: 13, class: "sel-ring" }, g);
       el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 10, class: "body", "pointer-events": "all" }, g);
@@ -292,10 +293,12 @@
     shown = { block: bid, param: state.param };
     dossier.hidden = false;
     const b = D.blocks[bid];
+    const frame = D.views.L2.boxes[bid] && D.views.L2.boxes[bid].frame;
+    dossier.style.cssText = frame ? hue(frame) : "";
     const params = b.params.map((pid) => [pid, D.params[pid]]);
     const known = params.filter(([, p]) => p.known).length;
     const claims = new Set(params.flatMap(([, p]) => p.for.concat(p.against)));
-    let h = `<div class="d-head"><p class="eyebrow">${b.region ? esc(b.region) + " · " : ""}${esc(b.stage)}</p>` +
+    let h = `<div class="d-head"><p class="eyebrow"><span class="dot"></span>${b.region ? esc(b.region) + " · " : ""}${esc(b.stage)}</p>` +
       `<h2>${esc(b.name)}</h2>` + (b.desc ? `<p class="d-role">${esc(b.desc)}</p>` : "") +
       `<button type="button" class="d-close" id="d-close" aria-label="Close the dossier">×</button></div>`;
     h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${b.conf === "none" ? "Hole" : CONF_WORD[b.conf] + " confidence"}</span>` +
@@ -382,7 +385,7 @@
   function renderList() {
     const frames = D.views.L2.frames.slice().sort((a, b) => (a.id === "beyond") - (b.id === "beyond"));
     $("stage-list").innerHTML = frames.map((f) =>
-      `<section class="sl-frame"><h3>${esc(f.label)}<span>${f.known} of ${f.params.length} known</span></h3>` +
+      `<section class="sl-frame" style="${hue(f.id)}"><h3>${esc(f.label)}<span>${f.known} of ${f.params.length} known</span></h3>` +
       f.blocks.map((bid) => {
         const b = D.blocks[bid];
         return `<button type="button" class="card conf-${b.conf}" data-block="${bid}">` +

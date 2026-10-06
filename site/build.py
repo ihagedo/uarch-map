@@ -18,7 +18,7 @@ OUT = os.path.join(ROOT, "build", "site")
 
 # geometry, in SVG user units (1 unit = 1 CSS px at scale 1)
 MARGIN = 16
-COL_W, COL_GAP = 150, 24
+COL_W, COL_GAP = 156, 22
 HEAD_H = 40  # stage-column header strip
 FRAME_PAD, FRAME_LABEL = 11, 26
 BOX_HEAD, ROW_H, BOX_FOOT = 30, 17, 9

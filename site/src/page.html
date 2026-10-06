@@ -2,9 +2,6 @@
      Isaac Hagedorn, 2026-10-04
      Page template; build.py fills in the styles, the data and the script. -->
 <title>Firestorm Architecture Map</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap">
 <style>
 /*STYLE*/
 </style>
@@ -41,6 +38,15 @@
 
   <section class="legend" aria-label="How to read the map">
     <div class="legend-group">
+      <h2>Regions</h2>
+      <ul>
+        <li><span class="hue-chip" style="--hue: var(--c-frontend)" aria-hidden="true"></span><span>Frontend</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-backend)" aria-hidden="true"></span><span>Backend</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-lsu)" aria-hidden="true"></span><span>Load-store unit</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-beyond)" aria-hidden="true"></span><span>Beyond the core</span></li>
+      </ul>
+    </div>
+    <div class="legend-group">
       <h2>Confidence</h2>
       <ul>
         <li><svg class="swatch conf-high" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>High</b> two sources agree</span></li>
@@ -75,7 +81,6 @@
     <h2 id="sources-h">Sources</h2>
     <ol class="source-list" id="source-list"></ol>
   </section>
-
 </div>
 <script id="map-data" type="application/json">{{DATA}}</script>
 <script>
