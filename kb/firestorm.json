@@ -1310,6 +1310,7 @@
     "l1d.line": {
       "claims": [
         "c-7cpu-l1d-line",
+        "c-mh-v2-l1d-line-dczva",
         "c-mh-v2-l1d-line"
       ],
       "disputes": [],
@@ -1460,7 +1461,8 @@
     },
     "l2.line": {
       "claims": [
-        "c-7cpu-l2-line"
+        "c-7cpu-l2-line",
+        "c-mh-v2-l2-line-128-bw"
       ],
       "disputes": [],
       "block": "l2",
@@ -1564,6 +1566,7 @@
     "lsu.stores_per_cycle": {
       "claims": [
         "c-at-stores-per-cycle",
+        "c-mh-v2-two-stores-per-cycle",
         "c-mh-v2-stores-per-cycle"
       ],
       "disputes": [],
@@ -1777,6 +1780,7 @@
     },
     "l1d.store_bw": {
       "claims": [
+        "c-mh-v2-l1-store-32",
         "c-mh-v2-store-bw-32"
       ],
       "disputes": [],
@@ -1797,6 +1801,19 @@
       "name": "L2 load bandwidth (one core)",
       "unit": "GB/s",
       "value": 85,
+      "approx": true,
+      "status": "measured",
+      "confidence": "medium"
+    },
+    "l2.store_bw": {
+      "claims": [
+        "c-mh-v2-l2-store-100"
+      ],
+      "disputes": [],
+      "block": "l2",
+      "name": "L2 store bandwidth (one core)",
+      "unit": "GB/s",
+      "value": 100,
       "approx": true,
       "status": "measured",
       "confidence": "medium"
@@ -5948,6 +5965,416 @@
       "chip": "m1",
       "entered": "handley-vol2-bandwidth"
     },
+    "c-mh-v2-m1max-flat-bw": {
+      "text": "M1 Pro and Max show no drop past L2: DRAM delivers ~100 GB/s, like L2, so bandwidth is flat from L2 to DRAM; each SLC+memory unit appears able to deliver 100 GB/s",
+      "loc": "p115",
+      "quote": "On M1 Pro and Max we do not see this dropoff. SLC bandwidth is still matched to DRAM, but DRAM is now at ~100 GB/s, as is L2, and bandwidth is essentially flat from L2 to DRAM!",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 100,
+      "unit": "GB/s",
+      "approx": true,
+      "chip": "m1max",
+      "supports": [],
+      "notes": "Also M1 Pro. The page does not say whose measurement; Handley later reads AnandTech's M1 Max graphs (c-mh-v2-m1max-core-100). A single P cluster cannot take more than ~100 GB/s.",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-nt-load-dram-10pct": {
+      "text": "In DRAM the non-temporal loads go from worst to best, perhaps 10% more bandwidth than ordinary loads",
+      "loc": "p115",
+      "quote": "Note that once we hit DRAM the previously sub-optimal non-temporal loads become optimal delivering perhaps 10% better bandwidth.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 10,
+      "unit": "%",
+      "approx": true,
+      "hedge": "perhaps",
+      "supports": [],
+      "notes": "His guess is that NT lines are installed in no cache on the way, so no bandwidth goes to moving victims.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-lpddr4x-peak": {
+      "text": "The M1 appears to use standard LPDDR4x at 4266 MT/s on a 16 B interface, a peak of 4266 x 16 B = 68.256 GB/s",
+      "loc": "p115",
+      "quote": "Apple appears to be using more or less standard LPDDR4x at 4266MT/s, which converts to a maximum possible bandwidth of 4266*16B=68.256GB/s.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 68.256,
+      "unit": "GB/s",
+      "hedge": "appears to be",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-dram-efficiency": {
+      "text": "Measured DRAM bandwidth is about 94% of the LPDDR4x-4266 peak",
+      "loc": "p115",
+      "quote": "So they're getting about 94% bandwidth efficiency out of their DRAM, which is astonishingly high!",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 94,
+      "unit": "%",
+      "approx": true,
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-m1max-lpddr5": {
+      "text": "M1 Pro and Max move to LPDDR5 at 6400 MT/s, a peak of 102.4 GB/s per memory controller, with two or four controllers",
+      "loc": "p116",
+      "quote": "with the Max and Pro this switches to LPDDR5 at 6400MT/s, giving a maximum possible bandwidth of 6400*16B=102.4GB/s (times two or four memory controllers).",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 102.4,
+      "unit": "GB/s",
+      "chip": "m1max",
+      "supports": [],
+      "notes": "Two controllers on M1 Pro, four on M1 Max.",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l2-scalar": {
+      "text": "The M1's ~85 GB/s L2 load bandwidth is available even to code using scalar registers",
+      "loc": "p118",
+      "quote": "compare with Apple\u2019s 85GB/s or so ... whereas the Apple result is available even for code using scalar registers",
+      "derivation": "measured",
+      "value": 85,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "notes": "From the Tiger Lake comparison (Intel ~140 GB/s from L2, but only with AVX256 code). Restates c-mh-v2-l2-load-85.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-two-stores-per-cycle": {
+      "text": "With one store unit and one load/store unit, the core can process at most two stores per cycle",
+      "loc": "p119",
+      "quote": "the core has one store unit, and one ambidextrous unit, so we\u2019d expect the maximum rate at which stores can be processed is two per cycle.",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "stores/cycle",
+      "supports": [
+        "lsu.stores_per_cycle"
+      ],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l1-store-32": {
+      "text": "The best fill loops reach the ideal L1 store limit of 32 B per cycle, 100 GB/s",
+      "loc": "p120",
+      "quote": "there are clearly cases that are able to reach the ideal limit (store 32B of data/cycle=100GB/s), and cases that don\u2019t do so well.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 32,
+      "unit": "B/cycle",
+      "supports": [
+        "l1d.store_bw"
+      ],
+      "notes": "Naive Fill2 (eight stp q0, q0 per iteration) gets essentially there.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-naive-fill-90": {
+      "text": "The compiler's fill loop (two stp q0, q0 per iteration) reaches about 90 GB/s, not the optimum; Handley puts it down to only two stores entering the queues per cycle, since one taken branch is processed per cycle, so nothing is queued to ride out glitches",
+      "loc": "p121",
+      "quote": "this performs well, at about 90GB/s (the blue curve) but not optimally. ... the first case results in, per cycle, only two stores placed in the various queues",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 90,
+      "unit": "GB/s",
+      "approx": true,
+      "hedge": "I think",
+      "supports": [],
+      "notes": "The idiomatic C++ fill compiles to the same loop and behaves the same.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-store-path-16b": {
+      "text": "A fill writing only 48 B of each 64 B line (three stp x0, x0) runs as fast as full-line vector fills, so there is no wider line-at-a-time path from the store queue to the L1D; stores use the 16 B store path",
+      "loc": "p121",
+      "quote": "this implies that there is no special path from the STQ to the L1D that can transfer entire cache lines at a higher rate ... rather than using the baseline store 16B wide transfer path",
+      "method": "throughput",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "B",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-nt-stores-slc": {
+      "text": "STNP and STNPQ loops run at about SLC/DRAM bandwidth even in the L1 range, suggesting lines filled in the store queue go straight to the SLC without being allocated in L1 or L2",
+      "loc": "p122",
+      "quote": "The two non-temporal cases run at about SLC or DRAM bandwidth ... they are probably transferred all the way to SLC without ever being allocated in L1 or L2?",
+      "method": "throughput",
+      "derivation": "measured",
+      "hedge": "probably",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-full-line-to-dram": {
+      "text": "When successive stores in the store queue fill a whole line, the line is written straight out to DRAM/SLC, not to L2, and is not counted as an L1 writeback; a copy already in L1 appears to be invalidated",
+      "loc": "p126",
+      "quote": "as far as I can tell, the line is not written to L2, it is written all the way out to DRAM (or SLC, which amounts to the same thing) ... As far as I can tell M1 chooses invalidation",
+      "method": "counter",
+      "derivation": "inferred",
+      "hedge": "as far as I can tell",
+      "supports": [],
+      "notes": "Counters used: L1 store misses (l1MsSt), L1 writebacks (l1WbSt), non-temporal stores (stNT). A partially written line instead goes through L1 and is later written back.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-store-stream-detect": {
+      "text": "The core detects streams of stores that are not jumbled and converts them to non-temporal stores on its own",
+      "loc": "p127",
+      "quote": "the CPU transparently detects streams of stores (as long as they aren\u2019t \u201cjumbled\u201d) and converts them to non-temporal stores",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Naive Fill and Fill STPQ (two and four STPQ per iteration) show stNT near 0.5 per int64 and no writebacks.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-nt-store-bypass": {
+      "text": "Non-temporal stores bypass L1, and Handley thinks also L2",
+      "loc": "p127",
+      "quote": "So what\u2019s definitely established is ... nontemporal stores bypass L1 (and I think also L2)",
+      "method": "counter",
+      "derivation": "measured",
+      "hedge": "I think",
+      "supports": [],
+      "notes": "The L2 part is the hedged one.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-store-stream-warmup": {
+      "text": "Detecting a store stream takes a few cycles, so the first stores of a fill are partly done in cache, giving noise at small depths",
+      "loc": "p127",
+      "quote": "it takes a few cycles to confidently detect a stream of stores, hence the \u201cnoise\u201d (not all stores ... to non-temporal, some stores being performed in cache) for the first few entries",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-fill2-jumbled": {
+      "text": "A fill unrolled to eight STPQ per iteration is never converted to non-temporal stores and its lines go through L1 with writebacks, which Handley puts down to full scheduling queues jumbling the store order; unrolling by four instead restores streaming",
+      "loc": "p127",
+      "quote": "To test this theory I made a very slight tweak to Naive Fill 2 so that it unrolled to an inner loop of 4 rather than 8 STPQ, and the prediction was born out",
+      "method": "counter",
+      "derivation": "measured",
+      "hedge": "My best guess",
+      "supports": [],
+      "notes": "Naive Fill2 has stNT 0 and l1WbSt ~0.13 beyond L1, about 60 GB/s in L2 and ~28 GB/s in DRAM, against ~98 GB/s in L1. The hedge is on the cause.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-stnpq-dram-speed": {
+      "text": "Explicit non-temporal STNPQ stores lose the startup noise but also the L1 performance: they run at DRAM speed at every depth",
+      "loc": "p128",
+      "quote": "Suppose we tell the system from the start that we have a non-temporal stream? Then we lose that \u201cstartup\u201d noise. But we also lose L1 performance! Basically we always run at DRAM speeds.",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "About 64-65 GB/s from 8 KB upward. Handley finds no case where STNPQ is worthwhile and has not seen it in library or compiler output.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-large-store-policy": {
+      "text": "Handley's reading of the store policy: small stores gather and stay in cache; a stream of large (STPQ) stores is first captured in L1, but once it looks set to exceed L1 it is pushed all the way to DRAM, apparently not to L2",
+      "loc": "p128",
+      "quote": "if it looks like the store stream will exceed the capacity of L1, then we stop trying to store in L1 and push the stores out all the way to DRAM",
+      "derivation": "inferred",
+      "hedge": "appears to be something like",
+      "supports": [],
+      "notes": "Not to L2, since he thinks that would keep ~100 GB/s.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-partial-fill": {
+      "text": "A fill that writes three of the four quadrants of each line cannot be aggregated or streamed: counters show no non-temporal stores, constant writebacks, and stores mostly to lines already in L1",
+      "loc": "p129",
+      "quote": "And we see this in the numbers \u2013 no non-temporal stores, constant stream of writebacks, and many of the stores are to addresses that are already in L1",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "~96-98 GB/s in L1, ~52 GB/s in L2, ~21-23 GB/s in DRAM.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l2-store-100": {
+      "text": "In the best case the ~100 GB/s (32 B/cycle) L1 store bandwidth roughly persists into L2, at least to the 3 MiB inner L2",
+      "loc": "p132",
+      "quote": "for the optimal case the L1 store bandwidth (~100GB/s = 32B/cycle) kinda persists all the way to L2 (at least out to the inner L2 of 3MB or so).",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "GB/s",
+      "approx": true,
+      "hedge": "kinda",
+      "supports": [
+        "l2.store_bw"
+      ],
+      "notes": "Store data is noisy; Handley has seen almost 100 GB/s persist to ~3 MiB in other runs.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l2-store-no-overhead": {
+      "text": "The one-lost-cycle-in-seven overhead of sustained L2 loads does not appear for L2 stores",
+      "loc": "p132",
+      "quote": "The occasional overhead (one lost cycle every seven cycles or so) that we saw for sustained L2 loads is not present here in L2 stores.",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-outer-l2-store": {
+      "text": "In the outer L2, store bandwidth drops to maybe 80 GB/s",
+      "loc": "p132",
+      "quote": "For the outer L2 this drops to maybe 80 GB/s",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 80,
+      "unit": "GB/s",
+      "approx": true,
+      "hedge": "maybe",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-slc-dram-store": {
+      "text": "Store bandwidth falls to about 65 GB/s in the SLC and DRAM",
+      "loc": "p132",
+      "quote": "falling to about 65GB/s for SLC and DRAM",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 65,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-slc-store-vs-load": {
+      "text": "In the SLC and DRAM range the best store curve matches loads but a few percent higher, and holds out to DRAM",
+      "loc": "p136",
+      "quote": "For the SLC and DRAM region, for the best case curve, we see performance essentially like for loads, but a few percent higher.",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Handley imagines the L2 packing two lines per NoC packet for stores, cutting NoC and clock-crossing overhead.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-dczva-rate": {
+      "text": "A stream of DC ZVA sustains about two instructions (two 64 B lines) per three cycles, about 134 GB/s, better than ordinary stores but short of one per cycle (200 GB/s)",
+      "loc": "p133",
+      "quote": "It looks like we can sustain about 2/3 of a DC ZVA per cycle, or to put it differently, we can execute two such instructions in three cycles (that would give about 128B/3~=42B/s~=134GB/s)",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 134,
+      "unit": "GB/s",
+      "approx": true,
+      "hedge": "It looks like",
+      "supports": [],
+      "notes": "Ordinary stores zero a line in two cycles at 32 B/cycle; DC ZVA takes 1.5.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-dczva-l2-alloc": {
+      "text": "DC ZVA appears to allocate zeroed lines directly in L2, probably through a cache-protocol state change rather than a data transfer; counters show no writebacks",
+      "loc": "p135",
+      "quote": "DC ZVA allocates zeroed lines directly in L2 (probably by extensions to the cache protocol rather than by transferring data). Looking at the performance monitor data confirms no writebacks.",
+      "method": "counter",
+      "derivation": "inferred",
+      "hedge": "probably",
+      "supports": [],
+      "notes": "1.5 cycles per line, below the 2 cycles a 32 B transfer needs, is his evidence for a protocol shortcut. The fast path reaches only L2, not the SLC. Compared to Arm's streaming mode.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-dczva-with-load": {
+      "text": "When the lines to be zeroed were just read, DC ZVA is slow at every depth: beyond L1 each line is loaded and written back, losing the zero-allocate path",
+      "loc": "p135",
+      "quote": "As soon as we leave L1, each line has to be loaded, and the write back to L2 or SLC/DRAM is recorded in the performance monitor data as a writeback",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-dczva-with-store": {
+      "text": "Interleaving DC ZVA with ordinary STPQ stores runs at normal store speed, not at DC ZVA speed",
+      "loc": "p135",
+      "quote": "As we can see, the results are not terrible, but they run at standard store speed, not at the higher speed of a stream of DC ZVA.",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Four DC ZVA then four STPQ per iteration; it falls apart beyond the SLC, which Handley cannot explain.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l1d-line-dczva": {
+      "text": "L1 cache line length is 64 B, not the 128 B widely reported; DC ZVA clears 64 B",
+      "loc": "p134",
+      "quote": "DC ZVA wipes 64B of data, not 128B. Another concrete piece of evidence that Apple\u2019s L1 cache line width (at least for the M1 P core) is actually 64B, contra to what is reported in some places on the internet.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "notes": "Earlier vol 2 pages assume 64 B lines and point forward to experiments; this DC ZVA test is one.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
+    "c-mh-v2-l2-line-128-bw": {
+      "text": "The L2 line is 128 B, and probably so for the rest of the SoC including the SLC, against 64 B for the L1",
+      "loc": "p134",
+      "quote": "In fact the final resolution to this issue is that the L1 cache line length is 64B, the cache line length for the L2 (and probably the rest of the SoC, including eg the SLC) is 128B.",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "B",
+      "hedge": "probably",
+      "supports": [
+        "l2.line"
+      ],
+      "notes": "No test for the L2 figure on this page; the prefetcher-patent section dates the 128 B L2 line to around the A10. The hedge applies to the SLC.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-bandwidth"
+    },
     "c-mh-v2-l1-bw-basics": {
       "text": "Three LDP (X-register pair) loads per cycle with autoincrement addressing load 48 B/cycle from the L1, a peak of 153.6 GB/s at 3.2 GHz",
       "loc": "p002",
@@ -7939,7 +8366,16 @@
     },
     "streaming_store_nt": {
       "claims": [
-        "c-at-streaming-stores"
+        "c-at-streaming-stores",
+        "c-mh-v2-nt-stores-slc",
+        "c-mh-v2-full-line-to-dram",
+        "c-mh-v2-store-stream-detect",
+        "c-mh-v2-nt-store-bypass",
+        "c-mh-v2-store-stream-warmup",
+        "c-mh-v2-fill2-jumbled",
+        "c-mh-v2-stnpq-dram-speed",
+        "c-mh-v2-large-store-policy",
+        "c-mh-v2-partial-fill"
       ],
       "name": "Automatic non-temporal streaming stores",
       "status": "inferred",
@@ -8101,10 +8537,25 @@
       "sim_switch": null,
       "detection_rule": "single-core bandwidth sweeps step at ~3 MiB and ~7.5 MiB, short of the 12 MiB L2"
     },
+    "dczva_l2_zero": {
+      "claims": [
+        "c-mh-v2-dczva-rate",
+        "c-mh-v2-dczva-l2-alloc",
+        "c-mh-v2-dczva-with-load",
+        "c-mh-v2-dczva-with-store"
+      ],
+      "name": "DC ZVA zero-allocates lines in L2",
+      "status": "inferred",
+      "description": "DC ZVA allocates zeroed lines directly in the L2.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "a DC ZVA stream beats the plain-store fill rate beyond L1 and shows no L1 writebacks"
+    },
     "nt_load_handling": {
       "claims": [
         "c-mh-v2-ldnp-l1-ignored",
-        "c-mh-v2-nt-load-no-l1-prefetch"
+        "c-mh-v2-nt-load-no-l1-prefetch",
+        "c-mh-v2-nt-load-dram-10pct"
       ],
       "name": "Non-temporal loads skip L1 fill",
       "status": "inferred",
