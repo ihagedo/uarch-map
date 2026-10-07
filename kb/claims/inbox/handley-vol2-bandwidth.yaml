@@ -4,7 +4,406 @@
 session: handley-vol2-bandwidth
 source: handley-vol2
 
+claims:
+  - id: c-mh-v2-l1-bw-internet
+    text: >-
+      Handley puts the M1's L1 load bandwidth at 150 GB/s and attributes internet reports of ~100 GB/s to reduction
+      code that limits the loop before the cache does
+    loc: p090
+    quote: "I think insufficient attention to this fact is why some internet reports for the M1 show its L1 load bandwidth as ~100GB/s rather than the 150GB/s it’s really capable of."
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    hedge: "I think"
+    supports: []
+    notes: The measurement behind the 150 GB/s is the LDPQ loop.
+  - id: c-mh-v2-zero-data
+    text: >-
+      Runs over all-zero data were neither faster nor slower than runs over non-zero data, so no performance
+      special case for zeroed lines was found
+    loc: p091
+    quote: "I did not discover any interesting cases where zero’d data is faster (or slower) than no-zero’d data."
+    method: throughput
+    derivation: measured
+    supports: []
+    notes: >-
+      Tested against Apple's sparse-data patent US10691610B2; Handley suggests it may be unimplemented or save
+      power only.
+  - id: c-mh-v2-clock-variation
+    text: >-
+      During the bandwidth runs the clock mostly stays between 3 and 3.2 GHz, but after long memory-bound stretches
+      with little CPU activity it drops as low as 2.11 GHz or even 1.74 GHz
+    loc: p093
+    quote: "for the most part the frequency stays between 3 and 3.2 GHz ... the frequency drops to as low as 2.11GHz or even 1.74GHz"
+    method: other
+    derivation: measured
+    supports: []
+    notes: The harness records both cycles and real time, giving the frequency per run.
+  - id: c-mh-v2-l1-bw-150-ceiling
+    text: >-
+      Under ideal conditions the core reaches the 150 GB/s case from L1, about six 8 B loads per cycle, but no
+      higher
+    loc: p095
+    quote: "We see that the CPU can clearly (under ideal conditions) hit the 150GB/s case (~6 8B loads/cycle) but no higher."
+    method: throughput
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: >-
+      The theoretical cases on the same page are 24 B/cycle (~75 GB/s) for three 8 B loads, 48 B/cycle (150 GB/s)
+      for three load pairs and 96 B/cycle (300 GB/s) for three vector pairs; the measured ceiling is the middle one.
+  - id: c-mh-v2-l1-load-paths
+    text: >-
+      Two load units and the load/store unit give three loads per cycle, over three 16 B load paths from the L1D to
+      the LSU; a load vector pair is cracked in the LSU into two 16 B cache transactions
+    loc: p095
+    quote: "two dedicated load units, and one ambidextrous unit, so we can perform 3 ... three load paths from the L1D to the LSU, each 16B wide"
+    derivation: inferred
+    value: 3
+    unit: loads/cycle
+    supports: [lsu.loads_per_cycle]
+    notes: Offered as the explanation for the 150 GB/s ceiling (48 B/cycle = three 16 B paths).
+  - id: c-mh-v2-naive-reduction-100
+    text: >-
+      The naive sum loop and the STL accumulate() version compile to the same vectorized LDPQ code and run at about
+      100 GB/s (32 B/cycle) from L1
+    loc: p097
+    quote: "(we'd hope so given identical assembly) and run at essentially 100GB/s (ie 32B/cycle"
+    method: throughput
+    derivation: measured
+    value: 32
+    unit: B/cycle
+    approx: true
+    supports: []
+    notes: >-
+      Code-limited, not a cache limit: Handley's realistic-code figure. Kernel per iteration: two LDPQ, four
+      two-lane vector adds, SUBS, B.NE.
+  - id: c-mh-v2-scalar-reduction-width
+    text: >-
+      The hand-split 8-way scalar reduction cannot vectorize; three scalar load pairs need six adds plus loop
+      overhead per cycle, so it is limited by machine width, not by the LSU or cache
+    loc: p097
+    quote: "M1 is wide, but it is not (3+6+2 wide!) So we’re no longer throttled by LSU or cache issues ... simply by the width of the machine compared to the width of our inner loop."
+    derivation: inferred
+    supports: []
+    notes: The Reduction 8Wide table rows run at about 74-76 GB/s.
+  - id: c-mh-v2-ldp-32
+    text: >-
+      Assembly loops of LDP or LDNP (scalar pairs, 16 B per load) run at about 110 GB/s from L1, about 32 B per cycle
+      plus 10%
+    loc: p098
+    quote: "The first two loops (running at about 110GB/s) are loops of either ... They give us basically 32B(+ about 10%) per cycle."
+    method: throughput
+    derivation: measured
+    value: 110
+    unit: GB/s
+    approx: true
+    supports: []
+  - id: c-mh-v2-ldnp-l1-ignored
+    text: The non-temporal hint makes no difference to loads that hit in L1 (LDNP matches LDP, LDNPQ matches LDPQ)
+    loc: p098
+    quote: "You’d think the N would be irrelevant for loads that hit in L1, and that’s what we see."
+    method: throughput
+    derivation: measured
+    supports: []
+    notes: Handley adds the guess that the L1 ignores the hint when the data is already in cache.
+  - id: c-mh-v2-ldpq-48
+    text: >-
+      Assembly loops of LDPQ or LDNPQ (vector pairs, 32 B per load) run at almost 150 GB/s from L1, almost 48 B per
+      cycle
+    loc: p098
+    quote: "And these two little monsters manages to run at almost 150GB/s, almost 48B/cycle!"
+    method: throughput
+    derivation: measured
+    value: 48
+    unit: B/cycle
+    approx: true
+    hedge: almost
+    supports: [l1d.load_bw]
+    notes: A later table shows LDPQ at 47.59 B/cycle (152 GB/s) at an 87 KB footprint.
+  - id: c-mh-v2-ldpq-cracked-lsu
+    text: >-
+      Counters show an LDPQ retires as one instruction (one ROB slot) but sends two uops through the load unit, so the
+      vector load pair is cracked inside the LSU into two single-vector loads; an LDP is one instruction and one
+      load-unit uop
+    loc: p100
+    quote: "this means the vector load pair is cracked inside the LSU (so one LDP Qx, Qy is a single ROB instruction but is split in the LSU into two uOps that each load a single vector"
+    method: counter
+    derivation: inferred
+    hedge: "To my mind"
+    supports: []
+    notes: >-
+      Retired loads 1/4 and load-unit uops (LD_UNIT_UOP) 1/2 per int64 for LDPQ; 1/2 and 1/2 for LDP.
+      Handley does not know whether the split comes after the TLB lookup.
+  - id: c-mh-v2-reduction-simd-latency
+    text: >-
+      Every SIMD operation on the M1, even ADD or ABS, has two-cycle latency, and this dependency chain, not the
+      cache, holds the compiler's vectorized reductions to about 100 GB/s
+    loc: p100
+    quote: "On the M1 every SIMD operation, even the most simple (like ADD or ABS), has a latency of two cycles."
+    derivation: inferred
+    value: 2
+    unit: cycles
+    supports: []
+    notes: >-
+      Latency figure stated without a method on this page. The naive and STL loops start faster at very small
+      depths because queued work carries over.
+  - id: c-mh-v2-antinaive-150
+    text: >-
+      AntiNaive (two independent vectorizable sums) and the 2-, 3- and 4-array reductions approach the 150 GB/s L1
+      limit because their loops are unrolled enough to hide the SIMD add latency
+    loc: p101
+    quote: "they all do adequately well in approaching the 150GB/s limit ... the loop is unrolled enough that it’s not limited by the latency of the SIMD adds."
+    method: throughput
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    supports: []
+  - id: c-mh-v2-multiarray-falloff
+    text: >-
+      The 2- to 4-array reductions fall off inside the L1 range with no L1 misses while the load-unit uop count
+      rises well above its usual 0.5; Handley's best guess is aggressive L1D sub-array power-down whose wake-up
+      tracking is confused by several sequential streams, so loads are rejected for a cycle
+    loc: p103
+    quote: "for these three reduction cases the value jumps much higher ... My best guess is that it represents our usual fallback when we can’t understand something, namely energy savings."
+    method: counter
+    derivation: inferred
+    hedge: "My best guess"
+    supports: []
+    notes: >-
+      Array placement was chosen to rule out bank or set alignment. Elsewhere Handley reads a high opLd as bank
+      collisions, which he says makes no sense here. The effect goes away once data comes from L2.
+  - id: c-mh-v2-l2-transitions
+    text: >-
+      Bandwidth curves change value together at about 3 MiB, 7.5 MiB and ~16 MiB of footprint, as one core moves from
+      inner L2 to outer L2 to SLC to DRAM
+    loc: p103
+    quote: "the graphs stay in sync (and change value) at the expected sorts of places (3MiB, 7.5MiB, ~16MiB) as we switch from inner L2 to outer L2 to SLC to DRAM"
+    method: throughput
+    derivation: measured
+    value: 7.5
+    unit: MiB
+    approx: true
+    supports: [l2.core_capacity]
+    notes: Multi-array reduction curves, footprints to 128 MiB. 3 MiB is the inner L2, ~16 MiB the end of the SLC.
+
+  - id: c-mh-v2-l2-load-range
+    text: >-
+      Past 128 KiB, out to about 8 MB, loads come from L2 and run at about 77 to 87 GB/s depending on the code path;
+      code details matter much less than in L1
+    loc: p104
+    quote: "Within the L2 region, precise code details no longer matter as much ... about 77 to 87GB/s depending on the exact code path"
+    method: throughput
+    derivation: measured
+    value: 82
+    unit: GB/s
+    approx: true
+    range: [77, 87]
+    supports: [l2.load_bw]
+    notes: Range 77-87 GB/s over the reduction kernels; the non-temporal loads are the low outliers.
+  - id: c-mh-v2-temporal-prefetch-l1
+    text: >-
+      Throughout the L2 range ordinary sequential loads are prefetched into L1 in time: the L1 miss count stays near
+      zero
+    loc: p106
+    quote: "Throughout the L2 range, the standard code appears to be prefetched exactly as one would hope; data is (mostly) in L1 by the time one wants it"
+    method: counter
+    derivation: measured
+    supports: []
+    notes: L1D_CACHE_MISS_LD about 0.01-0.03 per int64 for LDPQ between 170 KB and 7 MB.
+  - id: c-mh-v2-nt-load-no-l1-prefetch
+    text: >-
+      In the L2 range the non-temporal loads (LDNP, LDNPQ) are clearly slower and miss in L1 far more often than
+      ordinary loads, so their lines seem not to be prefetched into L1 (either fetched only to L2 or not prefetched
+      at all)
+    loc: p106
+    quote: "the poorly performing non-temporal cases miss in L1 substantially more often than the equivalent “temporal load” cases ... whereas for the non-temporal loads, Apple seems to not even prefetch the data."
+    method: counter
+    derivation: inferred
+    hedge: "seems to"
+    supports: []
+    notes: >-
+      LDNPQ vs LDPQ tables: same 150 GB/s in L1, LDNPQ falling to about 65-68 GB/s by 1-5 MB with a
+      rising L1 miss count. No L2-miss counter is known, so the two readings cannot be separated.
+  - id: c-mh-v2-l2-load-85
+    text: Load bandwidth in the L2 region (about 128 KiB to 7 MiB) is about 85 GB/s, roughly 6/7 of the L1 bandwidth
+    loc: p107
+    quote: "We see that the bandwidth in the L2 region (say 128K to maybe 7M or so) is about 85GB/s. This is about 6/7 of the L1 bandwidth."
+    method: throughput
+    derivation: measured
+    value: 85
+    unit: GB/s
+    approx: true
+    supports: [l2.load_bw]
+  - id: c-mh-v2-l2-l1-read-32b
+    text: >-
+      Handley assumes a 32 B wide read path from L2 to L1, which would give 100 GB/s and move a 64 B L1 line in two
+      cycles
+    loc: p107
+    quote: "Assume that the read path from L2 to L1 is 32B in width. ... Transferring a single L1 line (64B) should take two cycles."
+    derivation: inferred
+    value: 32
+    unit: B/cycle
+    hedge: "Assume"
+    supports: [l2.l1_path_width]
+    notes: One extra cycle of overhead per line would give about 2/3 of 100 GB/s; the measured ~85 GB/s needs less.
+  - id: c-mh-v2-l2-overhead-l1-side
+    text: >-
+      Handley places the L2 load shortfall (about 100 to 85 GB/s) on the L1 side: writing prefetched lines from the
+      specialty buffers into the L1 blocks LSU access to those banks and causes bank collisions
+    loc: p107
+    quote: "My guess is that the reduction from 100GB/s to 85 GB/s perhaps lies in imperfect co-ordination between the LSU (which is continually sending loads to the cache as fast as possible) and the pool of specialty buffers"
+    derivation: inferred
+    hedge: "My guess is that ... perhaps"
+    supports: []
+    notes: This one-lost-cycle-in-seven overhead is absent for L2 stores (c-mh-v2-l2-store-no-overhead).
+  - id: c-mh-v2-l1-bw
+    text: >-
+      As a rule of thumb, perfect L1 load bandwidth is about 48 B/cycle (~150 GB/s); realistic code gets about
+      32 B/cycle (~100 GB/s), limited by SIMD latency or non-load work
+    loc: p107
+    quote: "perfect L1 load bandwidth at ~150GB/s (48B/cycle) ... realistic L1 load bandwidth at ~100GB/s (32B/cycle limited by SIMD latency"
+    method: throughput
+    derivation: measured
+    value: 48
+    unit: B/cycle
+    approx: true
+    supports: [l1d.load_bw]
+    notes: >-
+      Rule-of-thumb summary of the LDPQ runs (c-mh-v2-ldpq-48). Same list puts L2 load bandwidth at ~80% of the realistic
+      L1 figure.
+  - id: c-mh-v2-l2-inner-bw
+    text: >-
+      Load bandwidth curves start to droop at about 3 MiB on the way to 8 MiB, so each core sees an inner L2 of
+      3 MiB and a slightly slower outer L2
+    loc: p107
+    quote: "they start to droop at around 3MiB on their way to 8MiB ... the general pattern is that there’s an “inner L2” of 3MiB, and an “outer L2”, that’s slightly slower."
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: MiB
+    approx: true
+    supports: [l2.inner_slice]
+    notes: >-
+      The latency section only mentions the 3 MiB "near-L2" in passing. The one-quarter-of-12-MiB reading is the
+      cachelet model (c-mh-v2-l2-cachelets).
+  - id: c-mh-v2-l2-cachelets
+    text: >-
+      Handley models the 12 MiB L2 as four 3 MiB cachelets, one per core, each split in half: one half for its own
+      core, the other spare L2 for the other three; a lone core then sees 3 MiB inner plus 4.5 MiB outer, 7.5 MiB
+    loc: p108
+    quote: "Half of the 3MiB cachelet is devoted to a particular core; the other half is allowed to act as excess L2 for the remaining three cores ... a total L2 (per core) of 7.5MiB"
+    derivation: inferred
+    value: 7.5
+    unit: MiB
+    hedge: "My guess for this is"
+    supports: [l2.core_capacity]
+    notes: >-
+      Handley does not know how lines are placed in inner vs outer L2 or how cores compete; he compares it to IBM
+      Telum. The win he sees: inner-L2 latency stays low and the outer L2 is hidden by the prefetcher.
+  - id: c-mh-v2-a14-l2-effective
+    text: >-
+      The same partitioning fits the A14: its 8 MiB L2 for two P-cores is considered 6 MiB effective, 4 MiB inner and
+      2 MiB outer from half of the other cachelet
+    loc: p108
+    quote: "the A14 (8MiB total L2, two P-cores, is considered to have 6MiB of “effective” L2. This would again consist of 4 MiB of inner cache, and 2MiB of “outer cache”"
+    derivation: inferred
+    value: 6
+    unit: MiB
+    chip: a14
+    supports: []
+    notes: Where the 6 MiB effective figure comes from is not said.
+  - id: c-mh-v2-inner-l2-latency
+    text: >-
+      Inner-L2 latency is lower, apparently 18 cycles, and outer-L2 latency is not much higher and is hidden while the
+      prefetcher is active
+    loc: p108
+    quote: "the latency for the inner L2 is smaller (apparently 18 cycles), while the latency for the outer L2 isn’t that much larger, and is hidden as long as the prefetcher is active"
+    derivation: reported
+    value: 18
+    unit: cycles
+    hedge: apparently
+    supports: [l2.latency]
+    notes: >-
+      No method or source on this page; agrees with 7-cpu's 18 cycles. The latency section has
+      Handley's own probes.
+
+  - id: c-mh-v2-slc-size
+    text: The most reliable SLC size Handley has seen for the M1 is 8 MiB, so cached behaviour should extend to ~16 MiB
+    loc: p115
+    quote: "The most reliable number I’ve seen for the size of the SLC in M1 is 8MiB."
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: MiB
+    supports: [slc.size]
+  - id: c-mh-v2-slc-dram-load-64
+    text: Load bandwidth drops from about 85 GB/s in L2 to about 64 GB/s once the footprint is in the SLC or DRAM
+    loc: p115
+    quote: "that seems enough to explain the reduction in throughput, from about 85GB/s in L2 to ~64GB/s in SLC/DRAM."
+    method: throughput
+    derivation: measured
+    value: 64
+    unit: GB/s
+    approx: true
+    supports: [slc.load_bw, memctrl.dram_load_bw]
+    notes: Single core, reduction kernels, footprints to 512 MB.
+  - id: c-mh-v2-slc-matched-dram
+    text: >-
+      SLC bandwidth is not notably different from DRAM bandwidth; Apple appears to match the SLC's bandwidth to
+      DRAM's
+    loc: p115
+    quote: "the SLC does not have a notably different bandwidth from DRAM (in fact it looks like Apple essentially matches the SLC bandwidth to the DRAM bandwidth)."
+    method: throughput
+    derivation: measured
+    hedge: "it looks like"
+    supports: []
+    notes: >-
+      Handley guesses that on the M1 the NoC and SLC run no faster than needed to match DRAM, hence ~65-70
+      GB/s rather than the L2's ~100.
+  - id: c-mh-v2-slc-link-64b
+    text: >-
+      Handley guesses the SLC connects to the L2 over a 64 B bus at about half the CPU clock rather than 32 B at full
+      clock; asynchronous clocking and NoC overhead then explain the drop to ~64 GB/s
+    loc: p115
+    quote: "My guess is that the SLC is actually connected to the L2 via a bus that’s 64B wide rather than 32B. This would allow it to run at half the frequency of the CPU"
+    derivation: inferred
+    value: 64
+    unit: B
+    hedge: "My guess is that"
+    supports: []
+    notes: >-
+      He allows a 32 B link at core frequency as the alternative but thinks wider and slower more likely. He
+      sketches the Pro/Max NoC as 64 B at ~1.6 GHz.
+
 new_params:
   l1d.store_bw:          {block: l1d, name: L1D store bandwidth, unit: B/cycle}
+  l2.load_bw:            {block: l2, name: L2 load bandwidth (one core), unit: GB/s}
+  l2.l1_path_width:      {block: l2, name: L1-L2 path width (each direction), unit: B/cycle}
+  l2.core_capacity:      {block: l2, name: L2 capacity seen by one core, unit: MiB}
+  slc.load_bw:           {block: slc, name: SLC load bandwidth (one core), unit: GB/s}
   memctrl.dram_load_bw:  {block: memctrl, name: DRAM load bandwidth (one core), unit: GB/s}
 
+new_mechanisms:
+  l2_cachelets:
+    name: Per-core L2 cachelets (inner and outer L2)
+    status: speculative
+    description: The 12 MiB L2 behaves as four 3 MiB cachelets, one beside each core.
+    params: [l2.inner_slice, l2.core_capacity]
+    sim_switch: null
+    detection_rule: single-core bandwidth sweeps step at ~3 MiB and ~7.5 MiB, short of the 12 MiB L2
+  nt_load_handling:
+    name: Non-temporal loads skip L1 fill
+    status: inferred
+    description: Non-temporal loads are not prefetched into the L1.
+    params: []
+    sim_switch: null
+    detection_rule: LDNPQ vs LDPQ sweep is equal in L1, LDNPQ lower in L2 with a higher L1 miss count, higher in DRAM
+
+mechanism_claims:
+  l2_cachelets: [c-mh-v2-l2-inner-bw, c-mh-v2-l2-cachelets, c-mh-v2-l2-transitions, c-mh-v2-a14-l2-effective]
+  nt_load_handling: [c-mh-v2-ldnp-l1-ignored, c-mh-v2-nt-load-no-l1-prefetch]

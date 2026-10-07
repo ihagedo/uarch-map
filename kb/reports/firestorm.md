@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 101, claims 381, sources 6, mechanisms 15
+blocks 37, links 35, params 105, claims 411, sources 6, mechanisms 17
 
 ## By status
 
-- inferred: 12
-- measured: 66
-- open: 22
+- inferred: 13
+- measured: 70
+- open: 21
 - reported: 1
 
 ## By confidence
 
-- high: 16
-- low: 13
-- medium: 50
-- none: 22
+- high: 17
+- low: 14
+- medium: 53
+- none: 21
 
-## Holes (22)
+## Holes (21)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -38,7 +38,6 @@ blocks 37, links 35, params 101, claims 381, sources 6, mechanisms 15
 - dtlb.l1_org (dtlb): L1 dTLB organisation
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - prefetch.kinds (prefetch): Prefetcher kinds
-- l2.inner_slice (l2): Per-core inner L2 slice
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
 ## Open disputes (8)
