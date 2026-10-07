@@ -5,6 +5,18 @@ session: chipsandcheese-ocxtal
 source: ocxtal-m1-notes
 
 new_params:
+  btb.l0_footprint: {block: btb, name: Zero-bubble code footprint, unit: KiB}
   sched_int.total_entries: {block: sched_int, name: Integer scheduler entries (total), unit: entries}
   lsu.store_load_latency: {block: lsu, name: Store-to-load latency (same address), unit: cycles}
 
+new_mechanisms:
+  l1i_coupled_btb:
+    name: Branch targets tied to the L1I
+    status: inferred
+    description: A branch that misses the first-level BTB takes its target from the L1I, with a two-cycle bubble.
+    params: [btb.l0_entries, btb.l1_entries, btb.taken_bubble, btb.l0_footprint]
+    sim_switch: null
+    detection_rule: taken-branch latency steps with code footprint (branch spacing) more than with branch count
+
+mechanism_claims:
+  l1i_coupled_btb: [c-mh-v4-btb-l0]

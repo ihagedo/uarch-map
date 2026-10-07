@@ -20,19 +20,19 @@
     "confidence": "medium"
   },
   "btb.l0_entries": {
-    "value": null,
+    "value": 1024,
     "sim_key": "btb_l0",
-    "confidence": "none"
+    "confidence": "low"
   },
   "btb.l1_entries": {
-    "value": null,
+    "value": 8192,
     "sim_key": "btb_l1",
-    "confidence": "none"
+    "confidence": "low"
   },
   "btb.taken_bubble": {
-    "value": null,
+    "value": 2,
     "sim_key": "btb_bubble",
-    "confidence": "none"
+    "confidence": "low"
   },
   "dirpred.history": {
     "value": null,

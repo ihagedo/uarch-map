@@ -28,6 +28,13 @@ sources:
     year: 2025
     url: https://github.com/name99-org/AArch64-Explore
     pages: 243
+  handley-vol4:
+    type: pdf
+    title: "AArch64-Explore vol 4: Instruction Fetch"
+    author: Handley, Maynard
+    year: 2025
+    url: https://github.com/name99-org/AArch64-Explore
+    pages: 108
   anandtech-m1:
     type: article
     title: "Apple Silicon M1: A14 Deep Dive"

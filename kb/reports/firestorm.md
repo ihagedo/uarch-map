@@ -1,45 +1,42 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 111, claims 551, sources 6, mechanisms 20
+blocks 37, links 35, params 113, claims 577, sources 7, mechanisms 22
 
 ## By status
 
-- inferred: 16
+- inferred: 20
 - measured: 75
-- open: 19
-- reported: 1
+- open: 15
+- reported: 3
 
 ## By confidence
 
 - high: 19
-- low: 17
+- low: 23
 - medium: 56
-- none: 19
+- none: 15
 
-## Holes (19)
+## Holes (15)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
-- btb.l0_entries (btb): Zero-bubble BTB entries
-- btb.l1_entries (btb): Second-level BTB entries
-- btb.taken_bubble (btb): Taken-branch bubble (L1 tier)
 - btb.assoc (btb): BTB associativity
 - dirpred.kind (dirpred): Direction predictor type
 - dirpred.history (dirpred): Global history length
 - dirpred.capacity (dirpred): Direction predictor capacity
 - ras.depth (ras): Return stack depth
 - indpred.capacity (indpred): Indirect predictor capacity
-- ftq.present (ftq): Decoupled fetch present
 - ftq.depth (ftq): Fetch target queue depth
-- ftq.fdip (ftq): Fetch-directed prefetch present
 - iq.depth (iq): Fetch-to-decode queue depth
 - rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
+- btb.l0_footprint (btb): Zero-bubble code footprint
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
-## Open disputes (10)
+## Open disputes (11)
 
+- fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]

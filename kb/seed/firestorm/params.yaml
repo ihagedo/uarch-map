@@ -114,3 +114,10 @@ mechanisms:
     params: [rename.security_tag]
     sim_switch: null
     detection_rule: throughput drop when reading unclaimed registers
+  decoupled_fetch:
+    name: Decoupled fetch with fetch-directed prefetch
+    status: absent
+    description: Fetch is not fully decoupled from branch prediction on the M1.
+    params: [ftq.present, ftq.depth, ftq.fdip]
+    sim_switch: decoupled_fetch
+    detection_rule: I-cache miss cost drops under predictable branches for footprints larger than L1I

@@ -1,0 +1,370 @@
+# handley-vol4-fetch.yaml
+# Maynard Handley, 2025
+# Fetch prediction, BTB tiers and decoupling, largely read from Apple patents (M1 Explainer vol 4).
+session: handley-vol4-fetch
+source: handley-vol4
+
+claims:
+  - id: c-mh-v4-btb-l0
+    text: >-
+      Relaying James Aslan's graph, the M1 has a zero-bubble BTB (his L0BTB) of 1024 entries, and the whole L1I
+      cache serves as the next tier (his L2BTB)
+    loc: p011
+    quote: "So, by his language, the M1 has an L0BTB of 1024 entries, and an L2BTB consisting of the entire L1I cache."
+    method: secondhand
+    derivation: reported
+    value: 1024
+    unit: entries
+    supports: [btb.l0_entries]
+    notes: >-
+      James Aslan numbers tiers by cycles lost between fetches. Handley elsewhere gives "about 1024 items (as of
+      recent M chips)", covering ~40 KB at ~10-instruction traces.
+  - id: c-mh-v4-not-decoupled
+    text: >-
+      The M1 has no fully decoupled fetch (no fetch-address queue between prediction and I-cache access),
+      probably because a single-level fetch predictor rarely stalls, except on returns and indirect calls
+    loc: p009
+    quote: >-
+      the only obvious cases are fairly rare - returns, and indirect calls. This is probably why Apple does not use
+      Fully Decoupled as of the M1.
+    derivation: inferred
+    value: false
+    hedge: probably
+    supports: [ftq.present]
+    notes: >-
+      Rests on design reasoning and the Cloudflare graph, not a patent. For the M2 see c-mh-v4-m2-l2-fp and
+      c-mh-v4-m2-not-fully-decoupled. Handley's "Decoupled" (instruction queue) is present (c-mh-v4-decoupled-iq).
+
+  - id: c-mh-v4-decoupled-iq
+    text: >-
+      The M1 decouples fetch from decode through an instruction queue and gets some instruction prefetch from it
+      for free, but goes no further
+    loc: p007
+    quote: >-
+      Apple very clearly are using Decoupled Fetch and deriving some value from the Prefetch that you get for free
+      in this case (like pretty much every modern CPU). As of M1 this is as far as they go.
+    derivation: inferred
+    supports: []
+    notes: >-
+      Handley's terms: "Decoupled" = fetch -> instruction queue -> decode; "Fully Decoupled" = an extra
+      fetch-address queue (FTQ) between prediction and cache access. ftq.present refers to the latter.
+  - id: c-mh-v4-fdip-absent
+    text: >-
+      Because Cloudflare's per-branch cost rises as soon as the code outgrows the L1I, Handley infers the M1
+      has no fully decoupled fetch acting as fetch-directed instruction prefetch, and no sequential I-prefetch for
+      this pattern
+    loc: p013
+    quote: >-
+      Apple has neither a sequential I-fetch predictor ... nor a fully decoupled fetch
+      (which would be able to queue up the relevant fetch addresses in advance of cache access and thus have them
+      act as FDIP)
+    method: secondhand
+    derivation: inferred
+    value: false
+    supports: [ftq.fdip]
+    notes: >-
+      Reading of Cloudflare's M1 graph. Handley is not consistent: he also calls the callgraph prefetcher "Apple's
+      second Instruction Prefetcher after FDIP" and models this cost with a next-line-prefetched successor.
+  - id: c-mh-v4-fully-decoupled-no-win
+    text: >-
+      Full decoupling would not pay on the M1: in the slow BTB tier an address takes three cycles to generate,
+      while fetching its line, even from L2, takes two, so a fetch-address queue would rarely fill
+    loc: p015
+    quote: "it takes us three cycles to generate an address and two cycles to utilize (ie fetch from L2) that address"
+    derivation: inferred
+    supports: []
+    notes: >-
+      Argument built on Cloudflare's graph; with 64B blocks fetch is throttled by address generation, so
+      full decoupling is invisible in that test. Also uses decode at 32B per cycle (c-mh-v4-decode-32b).
+  - id: c-mh-v4-iq-guess
+    text: >-
+      Handley does not know the instruction queue size; he guesses Apple aims for at least 120 instructions
+      (8 x 15) to cover an L1I miss that hits in L2
+    loc: p005
+    quote: >-
+      How large is the Instruction Queue? I’ve no idea! ... I’d guess Apple try for at least 8×15=120 instructions,
+      to cover 15 cycles or so of latency in the event of an I-cache miss that hits in L2.
+    derivation: inferred
+    value: 120
+    unit: instructions
+    hedge: "I’ve no idea! ... I’d guess"
+    supports: []
+    notes: >-
+      A design guess with no evidence. Zen 2 (~80) and Sunny Cove (~50) cited from the internet for comparison. He adds that
+      the queue "might, best case, cover fifteen cycles or so".
+
+  - id: c-mh-v4-l1i-tier-bubble-2
+    text: >-
+      Beyond the fetch predictor's capacity (zero lost cycles), predecode flags in each L1I line let the line act
+      as a fetch predictor, at two lost cycles between successive fetches
+    loc: p009
+    quote: >-
+      when Fetch requirements exceed the capacity of the Fetch Predictor (which gives zero cycles lost between
+      successive Fetches) we then operate out of the I-cache acting as an “L3 Fetch predictor” giving two cycles
+      lost between successive Fetches.
+    method: secondhand
+    derivation: reported
+    value: 2
+    unit: cycles
+    supports: [btb.taken_bubble]
+    notes: >-
+      The numbers are James Aslan's ("2 cycle delay between fetches (I-cache)"). Handley calls this tier "L3"
+      here, James "L2BTB". Agrees with c-ox-btb-miss-bubble.
+  - id: c-mh-v4-icache-tier-3-cycles
+    text: >-
+      When every fetch predictor misses, the next fetch address is produced in three cycles from predecode
+      metadata in the fetched I-cache line
+    loc: p042
+    quote: "If we miss in the L2 Fetch Predictor, the next Fetch Address is generated in three cycles"
+    derivation: inferred
+    value: 3
+    unit: cycles
+    supports: []
+    notes: >-
+      Same tier as the two lost cycles of c-mh-v4-l1i-tier-bubble-2 (three cycles per address); Handley also writes "one
+      address generation/three cycles" for it. Handley is unsure how this relates to the scan-on-fill predictor.
+  - id: c-mh-v4-btb-l1i-8192
+    text: >-
+      From Cloudflare's M1 graph, the BTB structure behind the zero-bubble tier holds at least 8192 traces, most
+      likely the L1I itself
+    loc: p013
+    quote: >-
+      the BTB infrastructure can hold at least 8192 traces ... the likely scenario (as we discussed/assumed above)
+      is that this “BTB infrastructure [that] can hold at least 8192 traces” is the L1I cache itself
+    method: secondhand
+    derivation: inferred
+    value: 8192
+    unit: entries
+    hedge: the likely scenario
+    supports: [btb.l1_entries]
+    notes: >-
+      Lower bound. If this tier is the L1I, its reach is set by the L1I's 192 KiB (c-mh-v4-cloudflare-l1i-jumps)
+      rather than by an entry count. Handley repeats "L2 at least 8192 entries" for the M1 (c-mh-v4-m1-nfp-dm).
+  - id: c-mh-v4-cloudflare-l1i-jumps
+    text: >-
+      In Cloudflare's M1 test the taken-branch cost jumps at 3072 branches 64B apart and 6144 branches 32B apart,
+      both a 192 KiB footprint, so the step follows code size, not branch count (AMD's jumps at 4096 regardless)
+    loc: p012
+    quote: >-
+      Note the big jumps for Apple at 3072 and 6144, and for AMD at 4096. In both Apple cases 3072 traces that are
+      each 64B long, and 6144 traces each 32B long comes to 192KiB.
+    method: secondhand
+    derivation: reported
+    value: 192
+    unit: KiB
+    supports: []
+    notes: Cloudflare's graph (blog.cloudflare.com/branch-predictor); Handley cannot verify it himself.
+  - id: c-mh-v4-l2-two-lines
+    text: >-
+      Beyond the L1I, Cloudflare's per-branch cost on M1 depends on trace length (bytes moved), not branch count;
+      Handley fits it with two lines brought from L2 per miss at an assumed ~14-cycle L2 access (about 14/2 per
+      64B block, 14/4 per 32B block)
+    loc: p013
+    quote: >-
+      For Apple the cost at the high end is different for larger traces vs shorter traces. ... Assume Apple is
+      moving two lines of data from L2 to L1I, and the L2 access delay is about 14 cycles.
+    method: secondhand
+    derivation: inferred
+    hedge: Assume
+    supports: []
+    notes: >-
+      The 14 cycles is an assumption, not a measured L2 latency. The model needs a next-line prefetch of the successor
+      line, which sits uneasily with the same page's "no sequential I-prefetcher" (c-mh-v4-fdip-absent).
+  - id: c-mh-v4-m1-no-l2-fp
+    text: >-
+      The M1 has no second-level fetch predictor (the one-bubble tier added in the M2); after the fetch and
+      scan-on-fill predictors it falls back to I-cache line metadata
+    loc: p042
+    quote: >-
+      If we miss in both of these, we can try for a hit in the L2 Fetch Predictor (not present in M1, but present as
+      of M2).
+    method: secondhand
+    derivation: reported
+    supports: []
+    notes: From James Aslan's M1 vs M2 graphs.
+  - id: c-mh-v4-m2-l2-fp
+    text: >-
+      The M2 adds a second-level fetch predictor of 2048 entries between the zero-bubble predictor and the I-cache
+      tier; a hit costs a one-cycle taken-branch bubble
+    loc: p042
+    quote: >-
+      This is 2048 entries, and so between all three we should be able to cover the L1 and then some. A hit in the
+      L2 Fetch Predictor will cost a one cycle taken branch bubble.
+    method: secondhand
+    derivation: reported
+    value: 2048
+    unit: entries
+    chip: m2
+    supports: []
+    notes: >-
+      James Aslan's graph; James calls it 3072 entries, Handley subtracts the 1024 L0 entries. The M2
+      also uses the I-cache tier more reliably for small footprints.
+  - id: c-mh-v4-m2-not-fully-decoupled
+    text: Per James Aslan, even the M2, with its second-level fetch predictor, does not use fully decoupled fetch
+    loc: p011
+    quote: "Apparently not, as of M2, at least this is what James says."
+    method: secondhand
+    derivation: reported
+    value: false
+    chip: m2
+    supports: []
+
+  - id: c-mh-v4-fetch-16
+    text: >-
+      Apple appears to have fetched up to 16 instructions per fetch, with traces crossing two cache lines, since
+      about 2011
+    loc: p018
+    quote: >-
+      In fact Apple appear to have been fetching a maximum of sixteen instruction, and fetching traces crossing two
+      cache lines, for a long time, since at least 2011 or so.
+    derivation: inferred
+    value: 16
+    unit: instr/cycle
+    hedge: appear to have been
+    supports: []
+    contradicts: [fetch.width]
+    notes: >-
+      Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8
+      A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.
+  - id: c-mh-v4-decode-32b
+    text: Decode handles 32 bytes, eight instructions (e.g. one branch and seven NOPs), per cycle
+    loc: p014
+    quote: "Finally consider this: Decode can handle 32B per cycle (eg one branch and 7 NOPs)."
+    derivation: reported
+    value: 8
+    unit: instr/cycle
+    supports: [decode.width]
+    notes: Passing figure in the full-decoupling argument; given as 32B per cycle.
+  - id: c-mh-v4-one-trace-per-cycle
+    text: >-
+      Apple's fetch predicts one trace (one next-fetch target) per cycle; Handley knows of no Apple design that
+      predicts and fetches two traces per cycle
+    loc: p002
+    quote: >-
+      predict the next two traces (start+length) so that two separate traces can be fetched in the next cycle. As
+      far as I know Apple hasn't had to move onto that next stage yet.
+    derivation: inferred
+    hedge: As far as I know
+    supports: []
+    notes: Consistent with fetch.taken_per_cycle = 1. Handley repeats it later ("I'm unaware of any actual implementation").
+  - id: c-mh-v4-l1i-two-banks
+    text: The L1I is split into at least two banks so a fetch can take a trace that straddles two cache lines
+    loc: p041
+    quote: >-
+      Given that the I-cache is split into at least two banks, to allow Fetch to access a trace that straddles two
+      cache lines
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: banks
+    hedge: at least
+    supports: []
+    notes: >-
+      From the 2012 fetch-width patent. Handley also guesses the L1I tags use "at least 6 independent banks", and that
+      scan-on-fill uses whichever bank fetch leaves idle.
+  - id: c-mh-v4-l1i-line-assumed
+    text: Handley's fetch discussion assumes a 64-byte (16-instruction) I-cache line
+    loc: p001
+    quote: "at least initially, assume an I-cache line is 16 instructions (64B/4B)"
+    derivation: inferred
+    value: 64
+    unit: B
+    hedge: at least initially, assume
+    supports: []
+    notes: >-
+      A working assumption, not stated as fact; he also writes "If we're using 64B lines" and treats 64B blocks as
+      one line.
+  - id: c-mh-v4-l1i-192
+    text: The M1's L1I is 192 KB, six times the 32 KB baseline of a Skylake-class core
+    loc: p043
+    quote: "a much larger L1 cache (192K, so 6×the baseline 32K)"
+    derivation: reported
+    value: 192
+    unit: KiB
+    supports: [l1i.size]
+    notes: Passing figure, no method stated.
+  - id: c-mh-v4-predecode-every-line
+    text: Every line entering the L1I is predecoded, classifying its instructions (branches by type)
+    loc: p040
+    quote: >-
+      As far as I can tell, basic pre-decode (classify instructions into classes) happens for every line that
+      enters the L1 I-cache.
+    method: patent-reading
+    derivation: inferred
+    hedge: As far as I can tell
+    supports: []
+    notes: >-
+      The IT-predecode patent US20140244976A1 "confirms the (unsurprising) fact that Apple's I-cache used
+      pre-decode". These flags let an L1I line act as the fetch predictor of last resort.
+
+  - id: c-mh-v4-nfp-trace-details
+    text: >-
+      Per Apple's patents, the fetch predictor (Apple's name for the BTB) is indexed by the current PC and gives the
+      next trace's target fetch address and length, plus the type of branch ending it
+    loc: p008
+    quote: >-
+      Indexed by current PC, provides the details for the next trace to be loaded, ie a target fetch address and a
+      length; also contains details about the type of branch
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      The branch type redirects returns to the RAS and lets indirect calls wait for the slower ITTAGE predictor
+      (a few cycles).
+  - id: c-mh-v4-return-bubble
+    text: >-
+      A fetch-predictor entry ending in a return costs one cycle while the return address is read from the RAS;
+      a patent filed after the M1 (US11941401B1) removes that cycle
+    loc: p008
+    quote: >-
+      retrieve the return address from the Return Address Stack, and Fetch from that. This costs a cycle ... A
+      patent subsequent to the M1 describes a scheme that allows for avoiding this one cycle cost.
+    method: patent-reading
+    derivation: inferred
+    value: 1
+    unit: cycles
+    supports: [ras.return_bubble]
+    notes: The later patent is discussed in vol 1's Update section.
+  - id: c-mh-v4-pa-in-fp
+    text: >-
+      Apple stores the physical address in the fetch predictor so most fetches skip the iTLB; the
+      predictor also supplies the I-cache way
+    loc: p022
+    quote: >-
+      We know, for example, that Apple try to store the Physical Address in the Fetch Predictor so as to avoid
+      having to hit the ITLB on each fetch.
+    derivation: inferred
+    supports: []
+    notes: >-
+      Handley adds, as speculation, that the 192 KB L1I then need not be 12 ways of 16 KB; he states no M1
+      associativity.
+  - id: c-mh-v4-separate-training
+    text: Many Apple predictors, not only branch predictors, use one structure for training and a separate one for predicting
+    loc: p020
+    quote: >-
+      you'll notice with a lot of Apple predictors (not just branch prediction) that one structure is used for
+      training, a different, separate, structure for generating predictions.
+    derivation: inferred
+    supports: []
+  - id: c-mh-v4-redirect-sources
+    text: >-
+      In the scan-on-fill patent's pipeline, the next fetch address comes from single-cycle predictors,
+      corrections from multi-cycle predictors, decode catching direct branches and returns, and mispredict flushes
+      from execution
+    loc: p017
+    quote: >-
+      Pipe Stage 1 decides the next Fetch Address. This is derived from - various single cycle predictors - one or
+      more multi-cycle predictors sending a correction signal
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US10747539B1 diagram. Per its Figure 3, decode forwards branch-related instructions directly to fetch
+      and branch prediction (no details given).
+
+new_params:
+  ras.return_bubble: {block: ras, name: Return prediction bubble, unit: cycles}
+
+mechanism_claims:
+  l1i_coupled_btb: [c-mh-v4-l1i-tier-bubble-2, c-mh-v4-icache-tier-3-cycles, c-mh-v4-btb-l1i-8192, c-mh-v4-cloudflare-l1i-jumps, c-mh-v4-predecode-every-line, c-mh-v4-m1-no-l2-fp, c-mh-v4-m2-l2-fp]
+  decoupled_fetch: [c-mh-v4-decoupled-iq, c-mh-v4-fdip-absent, c-mh-v4-fully-decoupled-no-win, c-mh-v4-iq-guess, c-mh-v4-l2-two-lines, c-mh-v4-m2-not-fully-decoupled, c-mh-v4-not-decoupled]
