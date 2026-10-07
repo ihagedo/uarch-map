@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 109, claims 498, sources 6, mechanisms 19
+blocks 37, links 35, params 111, claims 524, sources 6, mechanisms 19
 
 ## By status
 
-- inferred: 15
-- measured: 73
-- open: 20
+- inferred: 16
+- measured: 75
+- open: 19
 - reported: 1
 
 ## By confidence
 
-- high: 18
-- low: 16
-- medium: 55
-- none: 20
+- high: 19
+- low: 17
+- medium: 56
+- none: 19
 
-## Holes (20)
+## Holes (19)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -35,7 +35,6 @@ blocks 37, links 35, params 109, claims 498, sources 6, mechanisms 19
 - iq.depth (iq): Fetch-to-decode queue depth
 - rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
-- dtlb.l1_org (dtlb): L1 dTLB organisation
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
@@ -46,7 +45,7 @@ blocks 37, links 35, params 109, claims 498, sources 6, mechanisms 19
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
-- dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-7cpu-dtlb-l1, c-at-l1-tlb]
+- dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-7cpu-l2-latency, c-mh-v1-l2-latency-aside]
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 

@@ -317,8 +317,293 @@ claims:
     unit: slots
     supports: []
     notes: US9015422B2 (2013). The patent gives no count of tracked regions; the AMPM paper suggests 50-60
+  - id: c-mh-v2-ampm-throttle
+    text: A credit scheme throttles the prefetcher to about 4 outstanding prefetches per region
+    loc: p233
+    quote: "throttles the prefetcher so that (essentially) a maximum of about 4 outstanding prefetches are allowed per region."
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: prefetches
+    approx: true
+    supports: []
+    notes: US9015422B2 (2013)
+  - id: c-mh-v2-unified-prefetch
+    text: >-
+      The L1 prefetcher drives both levels: high-confidence prefetches go through the L1 and on to a per-CPU
+      prefetch queue at the L2 if they miss; low-confidence ones go straight to the L2 queue, which pulls from
+      SLC/DRAM into the L2
+    loc: p234
+    quote: "The L1 Prefetcher is now fully in charge, generating two different streams of requests, one designed to pull data from L2 into L1, the second designed to pull data from SLC/DRAM into L2."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US10180905B1 (2016). Per-region state now holds virtual and physical addresses. Earlier (US9971694B1,
+      2015) a separate L2 prefetcher per core was steered by the L1 unit
+  - id: c-mh-v2-l2-line-128
+    text: The M1 has 64 B lines in the L1 and 128 B lines in the L2 and SLC
+    loc: p235
+    quote: "So we have the system we still have as of M1, with an L1 that has 64B lines, and and L2 (+SLC) that has 128B lines."
+    method: patent-reading
+    derivation: inferred
+    value: 128
+    unit: B
+    hedge: "my guess"
+    supports: [l2.line]
+    notes: Handley's guess from the access-map granularity bit in US10180905B1 (2016), placing the change at about the A10
+  - id: c-mh-v2-density-pattern
+    text: >-
+      One predefined pattern is a density pattern: when many lines of a region have been accessed, the rest are
+      prefetched at low confidence, acting as a region prefetcher
+    loc: p235
+    quote: "pattern, which effectively behaves like a region prefetcher; ie if we're accessed many lines within a region ... lines of that region are prefetched as low confidence lines"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10180905B1 (2016); region perhaps 2, 4 or 8 KiB
+  - id: c-mh-v2-prefetch-throttle
+    text: >-
+      Every 32 cycles the L2 judges how busy the per-CPU prefetch queues are; over a history of busy periods it
+      sets a throttle level, and L1 prefetchers then drop requests from regions below a quality threshold
+      (50 %, 75 %, 90 %)
+    loc: p236
+    quote: "Every 32 cycle we loop over each CPU Prefetch Request Queue in the L2, and decide whether or not it should be throttled."
+    method: patent-reading
+    derivation: inferred
+    value: 32
+    unit: cycles
+    supports: []
+    notes: US9904624B1 (2016); example thresholds 16 requests and 4 low-confidence requests per queue, history of ~20 periods
+  - id: c-mh-v2-content-directed
+    text: >-
+      A content-directed prefetcher scans lines entering the L1 for pointer-like 8-byte-aligned values, filters
+      them and prefetches by a quality table; Handley saw no evidence of it in his tests
+    loc: p237
+    quote: "as data lines enter the L1 cache, they are scanned to see if they contain any values that look \"like\" pointers (the patent suggests doing this only on 8-byte aligned boundaries ... we saw no evidence for anything like this"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9886385B1 (2016); Handley guesses it arrived with the A11. Requests go straight to the L2
+  - id: c-mh-v2-augury-dmp
+    text: Security researchers (Augury, 2022) found evidence of a data memory-dependent prefetcher on the M1, matching the patent
+    loc: p239
+    quote: "A team investigating security have found evidence of a Content-Dependent Prefetcher on the M1"
+    method: secondhand
+    derivation: reported
+    supports: []
+  - id: c-mh-v2-mini-access-maps
+    text: >-
+      The filter holds one- or two-entry mini access maps, so a region gets a full access map only after a second
+      or third access
+    loc: p240
+    quote: "We create some very small (one or two entry) \"mini Access Maps\" living in the filter."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: 2017 patent (Handley gives no number)
+  - id: c-mh-v2-ampm-granularity
+    text: For some long patterns the access-map field granularity grows from 64 B to 128 B and then 256 B
+    loc: p240
+    quote: "we bump the granularity of each field in the Access Map from 64B to 128B then even to 256B."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: 2017 patent (Handley gives no number)
+  - id: c-mh-v2-large-stride
+    text: >-
+      A secondary large-stride prefetcher, a conventional stride table, catches strides the AMPM cannot: longer
+      than half a region, about 1000 bytes
+    loc: p241
+    quote: "the AMPM scheme, flexible as it is, cannot detect strides that are longer than half the size of a region (so, let's say, strides long than about 1000 bytes)."
+    method: patent-reading
+    derivation: inferred
+    value: 1000
+    unit: B
+    approx: true
+    supports: []
+    notes: 2017 patent (Handley gives no number)
+  - id: c-mh-v2-sms
+    text: >-
+      A secondary spatial memory streaming prefetcher stores access patterns by PC and, once confident, hands a
+      pattern back to the AMPM prefetcher to replay at the new base address
+    loc: p241
+    quote: "This essentially tries to track access patterns associated with a given PC. ... the SMSP returns the full pattern up to the AMPM Prefetcher, which will replay it"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: 2017 patent (Handley gives no number)
+  - id: c-mh-v2-secondary-coverage
+    text: >-
+      The large-stride prefetcher reports its coverage of an access map to the AMPM prefetcher and takes over the
+      stream once that coverage is large enough
+    loc: p242
+    quote: "once the coverage of the Stride Prefetcher is a large enough fraction of the coverage of the AMPM Prefetcher, we switch to Stride assuming primary control for this stream."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US11176045B2 (2020); Handley does not say which chip implements it
+  - id: c-mh-v2-prefetch-not-slc
+    text: Prefetching seems to stay within the cluster, using the L2 but not extending to the SLC
+    loc: p231
+    quote: "It's unclear that, even today, Apple extends prefetching up to the SLC; it looks like prefetching is considered ... to be done within a cluster, exploiting the L2 but not involving the SLC"
+    method: patent-reading
+    derivation: inferred
+    hedge: "It's unclear ... it looks like"
+    supports: []
+    notes: From US9098418B2 and US9047198B2 (2012), which coordinate L1 and L2 prefetch and translate L2 prefetches across pages
+  - id: c-mh-v2-no-i-stream-prefetch
+    text: The M1 has no stream prefetcher for instructions
+    loc: p243
+    quote: "Is there the equivalent of a stream prefetcher for Instructions? Well, maybe there is on other CPUs, but on M1 there is not"
+    derivation: inferred
+    supports: []
+    notes: Handley's explanation for the low L2 code-fetch bandwidth in Chips and Cheese's data; argued in vol 4
+
+  - id: c-mh-v2-dtlb
+    text: L1 TLB holds at least 160 entries (128 + 32), not the 128 suggested on the internet
+    loc: p186
+    quote: "This seems to suggest that the L1 TLB holds at least 160 entries or so (128+32)."
+    method: pointer-chase
+    derivation: measured
+    value: 160
+    unit: entries
+    hedge: "This seems to suggest"
+    supports: [dtlb.l1_entries]
+    notes: >-
+      Nodes spaced 16 KiB+64 B stay at best-case latency to 161 nodes (2676 KiB).
+  - id: c-mh-v2-dtlb-5way
+    text: >-
+      The L1 data TLB is five-way set associative, indexed by virtual-address bits 14-18, as shown by where
+      latency jumps for node spacings from 32 KiB+64 B to 512 KiB+64 B
+    loc: p190
+    quote: "I think it's pretty clear that we are using 5 bits of the virtual address (so bits 14..18) to index into a five-way associative set."
+    method: pointer-chase
+    derivation: measured
+    value: 5-way set associative, indexed by VA bits 14-18
+    hedge: "I think it's pretty clear"
+    supports: [dtlb.l1_org]
+    notes: >-
+      Handley spells out 160 entries as 32 sets of five and rules out 128 set-associative + 32 fully associative,
+      and says the internet's 128-entry L1D TLB is not what he sees
+  - id: c-mh-v2-dtlb-random-repl
+    text: >-
+      Past the L1 TLB capacity latency climbs linearly from 3 to 9 cycles rather than stepping, so the L1 TLB
+      probably uses random replacement
+    loc: p191
+    quote: "Note also how latency climbs linearly from the initial 3 cycles to 9 cycles. This is the signature of ... replacement in a cache, rather than LRU ... My guess is the L1 TLB is random replacement"
+    method: pointer-chase
+    derivation: inferred
+    hedge: "My guess"
+    supports: []
+  - id: c-mh-v2-page-16k
+    text: >-
+      8 KiB node spacing jumps at the same ~2.5 MiB depth and then pays about half the TLB cost per node, which
+      confirms 16 KiB pages
+    loc: p191
+    quote: "this confirms one more point, that the page size really is 16kiB"
+    method: pointer-chase
+    derivation: measured
+    value: 16
+    unit: KiB
+    supports: [dtlb.page_size]
+  - id: c-mh-v2-no-large-pages-tlb
+    text: >-
+      Apple shows no interest in large pages on the M1: only 16 KiB pages, with range registers presumably
+      covering the I/O and OS cases
+    loc: p186
+    quote: "Apple appears to have no interest in large pages. This seems to make sense given that the easy large page cases (IO and OS situations) they can cover with Range Registers"
+    derivation: inferred
+    hedge: "appears to"
+    supports: []
+    notes: Handley elsewhere calls range registers "likely (though not proved)"
+  - id: c-mh-v2-tlb2-drowsy
+    text: >-
+      Noisy timing on the first L2 TLB accesses suggests the L2 TLB is split into banks that sleep quickly and
+      take a few cycles to wake
+    loc: p191
+    quote: "My guess is that the L2 TLB is aggressively drowsy (ie it's divided into physically distinct banks, those banks are designed to go to sleep rapidly, and take a few cycles to wake up out of sleep)"
+    method: pointer-chase
+    derivation: inferred
+    hedge: "My guess"
+    supports: []
+    notes: Handley later suggests the L2 TLB, like the L2, may be three segments that sleep or power down independently
+  - id: c-mh-v2-tlb2-hit-9
+    text: >-
+      A load that misses the L1 TLB, hits the L2 TLB and hits the L1D takes 9 cycles, flat from ~2.5 MB out to
+      ~50 MB for most node spacings
+    loc: p193
+    quote: "corresponding to a TLB lookup that hits in L2 TLB but not L1 TLB, along with a subsequent data lookup that hits in L1, together forming a latency of 9 cycles."
+    method: pointer-chase
+    derivation: measured
+    value: 9
+    unit: cycles
+    supports: []
+    notes: >-
+      Total load latency, not a miss penalty (7-cpu gives a 6-cycle L1 dTLB miss penalty). 16 KiB+64 B spacing shows
+      12-15 cycles instead. AnandTech sees ~9 cycles rising, Handley flat
+  - id: c-mh-v2-tlb1-prefetch
+    text: >-
+      Some TLB prefetching fills the L1 TLB, since loads past its capacity cost only 9 cycles
+    loc: p204
+    quote: "The quick summary seems to be that we do have TLB prefetching (one way or another) into the TLB1"
+    method: pointer-chase
+    derivation: inferred
+    hedge: "seems to be"
+    supports: []
+  - id: c-mh-v2-dtlb-l2-3072
+    text: Latency jumps for many node spacings at ~48 MB, which is 3072 16 KiB pages, giving a 3072-entry L2 TLB
+    loc: p194
+    quote: "corresponds to 3072 16kB pages, suggesting an L2 TLB size of 3072, which is in accord with what I've seen elsewhere on the internet."
+    method: pointer-chase
+    derivation: measured
+    value: 3072
+    unit: entries
+    supports: [dtlb.l2_entries]
+  - id: c-mh-v2-tlb2-miss-25
+    text: >-
+      Missing the L2 TLB adds about 25 cycles (to ~55 per load), the mapping being rebuilt from the MMU cache
+    loc: p195
+    quote: "a jump to ~55 cycles (additional 25 cycles) when page lookups miss in TLB2 and we have to use the MMU cache to reconstruct the mapping."
+    method: pointer-chase
+    derivation: measured
+    value: 25
+    unit: cycles
+    approx: true
+    supports: [dtlb.l2_miss_penalty]
+    notes: 16 KiB+64 B node spacing; elsewhere Handley gives 45-55 cycles after the jump, and "~25 cycles" from the MMU cache
+  - id: c-mh-v2-l2-increment-15
+    text: >-
+      In the 16 KiB+64 B probe, an L1 TLB miss raises latency to ~15 cycles, and also missing the L1D (L2 hit) to
+      ~30, read as ~15 cycles each for the L2 TLB and the L2
+    loc: p195
+    quote: "a jump to around 30 cycles when loads miss in L1 and have to come out of L2. So apparently ~15 cycles to hit in TLB2, then another ~15 cycles to hit in L2."
+    method: pointer-chase
+    derivation: measured
+    value: 15
+    unit: cycles
+    approx: true
+    hedge: "apparently"
+    supports: []
+    notes: >-
+      Increments over an L1 hit in a TLB probe, not a load-to-use L2 latency; see c-mh-v2-l2-latency-17. Handley calls a
+      ~16-cycle jump "about the L2 latency"
+  - id: c-mh-v2-tlb2-org
+    text: >-
+      All 3072 L2 TLB entries are usable with power-of-two node spacings, so the L2 TLB is probably 1024 hashed
+      sets of three ways rather than plainly set associative
+    loc: p199
+    quote: "the TLB2 is probably not set associative. Or, to be more precise, it's organized as 1024 entries that are each three ways. So you perform a hash of the virtual address down to a number in the range 0..1023"
+    method: pointer-chase
+    derivation: inferred
+    value: 3-way, 1024 sets, hashed index
+    hedge: "probably"
+    supports: [dtlb.l2_org]
+    notes: The hash might XOR the ten lowest page bits with the next ten. Handley later gives 256 sets of 12 ways instead (c-mh-v2-tlb2-256x12)
 
 new_params:
+  dtlb.page_size:   {block: dtlb, name: Page size, unit: KiB}
+  dtlb.l2_org:      {block: dtlb, name: L2 TLB organisation}
   prefetch.streams: {block: prefetch, name: Simultaneous stride streams, unit: streams}
 
 new_mechanisms:
@@ -342,5 +627,5 @@ new_mechanisms:
       their addresses
 
 mechanism_claims:
-  lsu_virtual_prefetch: [c-mh-v2-prefetch-at-lsu, c-mh-v2-stride-to-dram, c-mh-v2-ampm-2k, c-mh-v2-ampm-map, c-mh-v2-prefetch-filter, c-mh-v2-prefetch-kinds, c-mh-v2-region-to-l2]
-  content_directed_prefetch: [c-at-pointer-prefetch]
+  lsu_virtual_prefetch: [c-mh-v2-prefetch-at-lsu, c-mh-v2-stride-to-dram, c-mh-v2-tlb1-prefetch, c-mh-v2-ampm-2k, c-mh-v2-ampm-map, c-mh-v2-prefetch-filter, c-mh-v2-unified-prefetch, c-mh-v2-prefetch-kinds, c-mh-v2-region-to-l2]
+  content_directed_prefetch: [c-mh-v2-content-directed, c-mh-v2-augury-dmp, c-at-pointer-prefetch]
