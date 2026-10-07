@@ -17,9 +17,9 @@
     "vendor-doc": "Apple documentation", secondhand: "repeated from another source", simulation: "simulation",
     other: "other",
   };
-  const state = { view: "L2", block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS), source: "" };
+  const state = { view: "L2", block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS), source: "", mech: null };
   const $ = (id) => document.getElementById(id);
-  const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace");
+  const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace"), strings = $("strings");
   const wide = window.matchMedia("(min-width: 761px)");
   let linkLayer = null;
   let shown = null; // block and param the dossier currently shows
@@ -236,6 +236,59 @@
     for (const d of DERIVS) $(`deriv-${d}`).setAttribute("aria-pressed", String(state.derivs.has(d)));
     $("source-filter").value = state.source;
     $("clear-filters").hidden = !filtering();
+    const explained = new Set(state.mech ? D.mechanisms[state.mech].params : []);
+    svg.querySelectorAll(".row").forEach((r) => r.classList.toggle("mech-hit", explained.has(r.dataset.param)));
+    dossier.querySelectorAll(".mech").forEach((m) => m.setAttribute("aria-pressed", String(m.dataset.mech === state.mech)));
+    queueStrings();
+  }
+
+  let stringsQueued = false;
+  function queueStrings() {
+    if (stringsQueued) return;
+    stringsQueued = true;
+    requestAnimationFrame(() => { stringsQueued = false; drawStrings(); });
+  }
+
+  function drawStrings() {
+    strings.replaceChildren();
+    if (!wide.matches || state.view !== "L2" || dossier.hidden) return;
+    const ws = workspace.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), dr = dossier.getBoundingClientRect();
+    const clampY = (y) => Math.min(Math.max(y, dr.top + 8), dr.bottom - 8);
+    const frameOf = (pid) => (D.views.L2.boxes[D.params[pid].block] || {}).frame;
+    const rowEnd = (pid) => {
+      const bg = svg.querySelector(`.row[data-param="${CSS.escape(pid)}"] .row-bg`);
+      if (!bg) return null;
+      const b = bg.getBoundingClientRect();
+      return b.right < wr.left || b.right > wr.right ? null : [b.right - 2, b.top + b.height / 2];
+    };
+    const tie = (a, b, frame, cls) => {
+      const ax = a[0] - ws.left, ay = a[1] - ws.top, bx = b[0] - ws.left, by = b[1] - ws.top;
+      const dx = Math.max(30, (bx - ax) / 2);
+      const g = el("g", { class: `string-g ${cls}`, style: frame ? hue(frame) : "" }, strings);
+      el("path", { d: `M${ax} ${ay} C${ax + dx} ${ay} ${bx - dx} ${by} ${bx} ${by}`, class: "string" }, g);
+      el("circle", { cx: ax, cy: ay, r: 2.6, class: "string-end" }, g);
+      el("circle", { cx: bx, cy: by, r: 2.6, class: "string-end" }, g);
+    };
+    if (state.param) {
+      const p = D.params[state.param], a = rowEnd(state.param);
+      // the side of an open dispute that lost the value, and contradicting claims, are dashed
+      const other = new Set(p.disputes.filter((d) => !d.resolution).flatMap((d) => d.claims.slice(1)).concat(p.against));
+      if (a) dossier.querySelectorAll(`[id="ev-${state.param}"] .claim`).forEach((card) => {
+        const c = card.getBoundingClientRect();
+        tie(a, [c.left, clampY(c.top + 18)], frameOf(state.param),
+          `${other.has(card.dataset.claim) ? "alt" : ""} ${card.classList.contains("dim") ? "dim" : ""}`);
+      });
+    }
+    if (state.mech) {
+      const card = dossier.querySelector(`.mech[data-mech="${state.mech}"]`);
+      if (card) {
+        const c = card.getBoundingClientRect(), b = [c.left, clampY(c.top + 16)];
+        for (const pid of D.mechanisms[state.mech].params) {
+          const a = rowEnd(pid);
+          if (a) tie(a, b, frameOf(pid), "");
+        }
+      }
+    }
   }
 
   function applyFilters() {
@@ -265,6 +318,7 @@
 
   function select(bid, pid, opts) {
     const o = opts || {};
+    if (bid !== state.block) state.mech = null;
     if (state.view !== "L2" && bid) { state.view = "L2"; state.block = bid; state.param = pid || null; renderMap(); }
     else { state.block = bid; state.param = pid || null; refresh(); }
     try { history.replaceState(null, "", bid ? `#${bid}` : location.pathname + location.search); } catch (e) { /* sandboxed */ }
@@ -317,7 +371,7 @@
     if (b.blackBox) h += `<p class="blackbox-note">Black box: nothing published yet.</p>`;
     h += `<section class="d-section"><h3>Parameters</h3><ul class="p-list">` +
       params.map(([pid, p]) => paramHTML(pid, p)).join("") + `</ul></section>`;
-    const mechs = Object.values(D.mechanisms).filter((m) => m.params.some((pid) => D.params[pid].block === bid));
+    const mechs = Object.entries(D.mechanisms).filter(([, m]) => m.params.some((pid) => D.params[pid].block === bid));
     if (mechs.length) h += `<section class="d-section"><h3>Mechanisms</h3>${mechs.map(mechHTML).join("")}</section>`;
     const outs = D.links.filter((l) => l.from === bid), ins = D.links.filter((l) => l.to === bid);
     if (outs.length || ins.length) {
@@ -370,7 +424,7 @@
     const c = D.claims[cid], s = D.sources[c.source];
     const src = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
     const method = c.method ? METHOD_WORD[c.method] || c.method : "not stated";
-    let h = `<article class="claim" data-source="${esc(c.source)}"><p class="claim-text">${esc(c.text)}</p>`;
+    let h = `<article class="claim" data-source="${esc(c.source)}" data-claim="${esc(cid)}"><p class="claim-text">${esc(c.text)}</p>`;
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
     if (c.hedge) h += `<p class="claim-hedge">Hedge: <q>${esc(c.hedge)}</q></p>`;
     h += `<dl class="claim-meta"><dt>Source</dt><dd>${src}, ${esc(s.title)}</dd>` +
@@ -383,9 +437,10 @@
     return h + `</article>`;
   }
 
-  function mechHTML(m) {
-    return `<div class="mech"><h4>${esc(m.name)}<span class="status-tag">${esc(m.status)}</span></h4>` +
-      `<p class="mech-desc">${esc(m.description)}</p></div>`;
+  function mechHTML([mid, m]) {
+    return `<button type="button" class="mech" data-mech="${mid}" aria-pressed="${state.mech === mid}">` +
+      `<span class="mech-h">${esc(m.name)}<span class="status-tag">${esc(m.status)}</span></span>` +
+      `<span class="mech-desc">${esc(m.description)}</span></button>`;
   }
 
   function linkHTML(other, dir, l) {
@@ -449,6 +504,8 @@
     if (e.target.closest("#d-close")) return select(null);
     const row = e.target.closest(".p-row");
     if (row) return select(state.block, state.param === row.dataset.param ? null : row.dataset.param, { scroll: false });
+    const mech = e.target.closest(".mech");
+    if (mech) { state.mech = state.mech === mech.dataset.mech ? null : mech.dataset.mech; return refresh(); }
     const jump = e.target.closest("[data-block]");
     if (jump) select(jump.dataset.block);
   });
@@ -479,6 +536,8 @@
     refresh();
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.block) select(null); });
+  for (const t of [window, wrap, dossier]) t.addEventListener("scroll", queueStrings, { passive: true });
+  window.addEventListener("resize", queueStrings);
 
   renderMasthead();
   renderSourceFilter();

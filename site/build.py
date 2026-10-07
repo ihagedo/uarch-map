@@ -80,7 +80,7 @@ def geometry(kb, layout):
                 tallest = max(tallest, y - STACK_GAP - y2)
             fh = tallest + FRAME_PAD
             region = kb.blocks.get(fr.get("region"))
-            params = [p for b in members for p in b.all_params]
+            params = [p for b in members for p in b.params]
             frame = {
                 "id": fid,
                 "label": region.name if region else fr["label"],
@@ -157,8 +157,8 @@ def view_data(kb, geo):
                 "parent": b.parent.id if b.parent else None,
                 "region": region_of(b).name if b.parent else None,
                 "desc": b.description,
-                "conf": b.confidence,
-                "blackBox": b.black_box,
+                "conf": aggregate(b.params) if b.params else b.confidence,
+                "blackBox": not any(p.known for p in b.params) if b.params else b.black_box,
                 "deriv": b.best_derivation,
                 "disputed": bool(b.open_disputes),
                 "params": [p.id for p in b.params],
