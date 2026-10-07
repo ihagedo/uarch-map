@@ -713,12 +713,356 @@ claims:
       No test for the L2 figure on this page; the prefetcher-patent section dates the 128 B L2 line to around the
       A10. The hedge applies to the SLC.
 
+  - id: c-mh-v2-flip-bw
+    text: >-
+      Line-flip kernels (each line read and written back reversed) run at about 150 GB/s in L1, 110 GB/s in L2,
+      100 GB/s in the SLC and 60 GB/s in DRAM
+    loc: p139
+    quote: "Immediately obvious points are that the L1 performance is about 150GB/s, the L2 performance is about 110GB/s, the SLC performance is about 100GB/s, falling to about 60GB/s in DRAM."
+    method: throughput
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    supports: [l1d.copy_bw]
+    notes: >-
+      Value is the L1 figure. Flip CL (permute and no permute) and Flip Address range; two LDP + two STP of q
+      registers per iteration.
+  - id: c-mh-v2-l1-copy-chokepoint
+    text: >-
+      Copying in L1 reaches ~150 GB/s, not the 200 GB/s of 100 GB/s loads plus 100 GB/s stores: two lines take five
+      cycles instead of four, a chokepoint Handley did not expect given separate load and store paths
+    loc: p139
+    quote: "There appears to be a chokepoint in L1. I would expect have expected we could sustain 200GB/s in L1 ... Two lines should take four cycles but we get the number we see if we assume two lines takes five cycles."
+    derivation: inferred
+    supports: []
+  - id: c-mh-v2-flip-partial
+    text: >-
+      A flip that leaves part of each line unwritten, so no full line goes to L2, is still pegged just over 150 GB/s,
+      so L1-to-L2 line writes are not the L1 copy limit
+    loc: p140
+    quote: "I tested this by modifying Flip CL to only write back some of the cache line not completely overwrite the cache line ... we’re still pegged at just slightly over 150GB/s."
+    method: throughput
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    supports: []
+  - id: c-mh-v2-copy-store-stream-bypass
+    text: >-
+      Copies fall off at 128 KiB, not at the 64 KiB a cache holding source and destination lines would give (nor at
+      half the L2 or SLC), so full-line store streams bypass the caches to DRAM even within a copy, and the stream
+      detector tracks store addresses only
+    loc: p140
+    quote: "Look at the way the performance falls off at 128kiB. ... the overwritten line is bypassed all the way to DRAM ... track only stores addresses (not all addresses)"
+    derivation: inferred
+    hedge: "suggests to me"
+    supports: []
+  - id: c-mh-v2-coherence-hypothesis
+    text: >-
+      Handley's best, weak hypothesis for the copy limits is coherence processing in L1 or L2, perhaps running every
+      other cycle because a line crosses the 32 B L1-L2 paths only every two cycles
+    loc: p140
+    quote: "My current best (not great) hypothesis is that the constraint is processing coherence in either L1 or L2."
+    derivation: inferred
+    hedge: "My current best (not great) hypothesis"
+    supports: []
+    notes: He calls the story "pretty flimsy". He offers the same explanation for the ~100 GB/s L2 limit on mixed traffic (c-mh-v2-unbalanced-l2-100).
+  - id: c-mh-v2-naive-copy-2ops
+    text: >-
+      The compiler turns the naive copy loop into LDR q0; STR q0; SUBS; B.NE, and with one taken branch per cycle
+      that issues only two memory ops per cycle
+    loc: p141
+    quote: "Recall that the CPU can only handle one taken branch per cycle, so the net result is that we only issue two (rather than four) memory ops per cycle!"
+    derivation: inferred
+    supports: []
+  - id: c-mh-v2-copy-l1-170
+    text: >-
+      Unrolled copies (LDP/STP of q-register pairs), memcpy() and STL copy approach 170 GB/s at about 64 KiB, short of
+      200 GB/s
+    loc: p141
+    quote: "We don’t reach the 200GB/s that one might hope for, but at around 64kiB we get close at about 170GB/s."
+    method: throughput
+    derivation: measured
+    value: 170
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: Peak of the best copy code, very noisy; Handley's rule-of-thumb L1 copy figure is 150 GB/s.
+  - id: c-mh-v2-l2-copy-100
+    text: >-
+      Within L2, copies settle just over 100 GB/s, more than a single 32 B/cycle L1-L2 link could carry
+    loc: p147
+    quote: "the long term (within L2) pattern is just over 100GB/s; which is better than what’s possible if we assume a link between L1 and L2 of 32B/s!"
+    method: throughput
+    derivation: measured
+    value: 100
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: Naive Copy, Naive Copy2, memcpy() and STL copy, linear-axis plot.
+  - id: c-mh-v2-l1-l2-split-paths
+    text: The L1 and L2 must be joined by separate read and write paths, each 32 B wide
+    loc: p147
+    quote: "I think we have to assume separate read and write paths from L1 to L2, each 32B in width."
+    derivation: inferred
+    value: 32
+    unit: B/cycle
+    hedge: "I think we have to assume"
+    supports: [l2.l1_path_width]
+    notes: >-
+      Handley's summary: about one line read and one line written every four cycles, slightly more than even a
+      perfect shared 32 B/cycle link could give.
+  - id: c-mh-v2-ldnt-copy-l2
+    text: >-
+      memcpy() and STL copy use non-temporal loads (LDNT) where the naive loops use plain loads, and this clearly
+      helps from 128 KiB out to about 1500 KiB
+    loc: p147
+    quote: "The Naive Code (both versions) use LD and ST; the memcpy() and STL differ in that they use LDNT and ST, ie they use a non-temporal load. This clearly helps in the range from 128kIB out to about 1500kiB."
+    method: throughput
+    derivation: measured
+    supports: []
+  - id: c-mh-v2-nt-load-buffer-model
+    text: >-
+      Handley's model for the LDNT gain: the L1 keeps its 128 KiB of load data and later non-temporal loads are fed to
+      the LSU from the prefetch buffers without replacing L1 lines, so part of the footprint still runs at L1 speed
+    loc: p148
+    quote: "In the second model the cache holds onto 128 kiB of data and all loads after that point are routed from the prefetch specialty buffers to the LSU, without replacing L1 lines."
+    derivation: inferred
+    supports: []
+    notes: >-
+      Both of his models assume stores are silently made non-temporal, so the L1 holds only load data. The
+      plain-load copies fit the other model, a strictly LRU L1 with no reuse.
+  - id: c-mh-v2-copy-beyond-l2
+    text: >-
+      Beyond L2, copy bandwidth drops to about 60 GB/s over the SLC and DRAM, and here non-temporal loads are clearly
+      worse than ordinary loads
+    loc: p149
+    quote: "Beyond L2 performance drops to about 60GB/s over the SLC and DRAM range. One thing we see is that in this range non-temporal loads are unequivocally worse than temporal loads."
+    method: throughput
+    derivation: measured
+    value: 60
+    unit: GB/s
+    approx: true
+    supports: []
+  - id: c-mh-v2-l2-random-repl
+    text: >-
+      Handley thinks the L2 uses random rather than LRU replacement: ordinary loads keep partly hitting in L2 between
+      8 and 16 MiB, while non-temporal loads, never installed in L2, drop straight to SLC bandwidth
+    loc: p149
+    quote: "the L2 replacement is random rather than LRU, giving the reverse of the effect we saw earlier moving from L1 to L2."
+    derivation: inferred
+    value: random
+    hedge: "I think"
+    supports: [l2.replacement]
+  - id: c-mh-v2-copy-no-turnaround
+    text: >-
+      Copy costs nothing over pure load or store traffic at the NoC/SLC or in DRAM, so the memory controller hides
+      DRAM read-write switching well
+    loc: p149
+    quote: "Finally we see no real cost to copy as opposed to pure load/store traffic, either at the NoC (and so SLC performance) or in DRAM. ... we seem to see a good memory controller here."
+    method: throughput
+    derivation: measured
+    supports: []
+  - id: c-mh-v2-memmove-160
+    text: >-
+      memmove() shifting data down by 16 to 256 B copies at about 160 GB/s in L1; the 8 B shift, which splits some
+      16 B loads across lines, still gets 150 GB/s
+    loc: p149
+    quote: "they essentially cluster together giving perfect copy performance of 160GB/s or so. Even the misaligned 8B case ... you still get 150GB/s!"
+    method: throughput
+    derivation: measured
+    value: 160
+    unit: GB/s
+    approx: true
+    supports: []
+  - id: c-mh-v2-memmove-nt-dropped
+    text: >-
+      memmove() runs the same bcopy code as memcpy(), with loads marked non-temporal, but counters show no
+      non-temporal loads for memmove; Handley infers the hardware drops the hint when it sees the lines reused
+    loc: p151
+    quote: "we see that this number is as expected (essentially all loads non-temporal) for the C Copy and STL code, but is zero for the memmove code, even though they all route to the same inner loop"
+    method: counter
+    derivation: inferred
+    hedge: "Perhaps"
+    supports: []
+    notes: >-
+      memmove drops sharply to ~100 GB/s at the L1 boundary and tracks the Flip curves, unlike memcpy's drawn-out
+      LDNT transition. He credits the prefetcher.
+  - id: c-mh-v2-m1max-core-100
+    text: From AnandTech's M1 Max data, a single M1 Max core sustains 100 GB/s out to the SLC and DRAM
+    loc: p152
+    quote: "A single M1M core can now sustain 100GB/s out to DRAM and the SLC. So the NoC can sustain that."
+    method: secondhand
+    derivation: reported
+    value: 100
+    unit: GB/s
+    chip: m1max
+    supports: []
+    notes: AnandTech M1 Max review. The same copy test shows 150 GB/s in L1.
+  - id: c-mh-v2-one-thread-saturates
+    text: The M1 saturates its SLC and DRAM bandwidth at 65 GB/s with one thread; more threads add nothing
+    loc: p153
+    quote: "The M1 saturates its SLC and DRAM bandwidth at 65GB/s with just one thread, further threads see no improvement."
+    method: secondhand
+    derivation: reported
+    value: 65
+    unit: GB/s
+    approx: true
+    supports: [slc.load_bw, memctrl.dram_load_bw]
+    notes: >-
+      Stated next to AnandTech's M1 Max thread-scaling graph, where a second thread nearly doubles bandwidth; the
+      page does not say whether the M1 thread-scaling result is Handley's own.
+  - id: c-mh-v2-m1max-slc-split
+    text: >-
+      On M1 Pro and Max the SLC and its memory controller are split into two (Pro) or four (Max) independent,
+      address-striped units, which the die shots confirm
+    loc: p154
+    quote: "The natural assumption is that “the” SLC (and associated memory controller) are now split into (two for the Pro, four for the Max) independent entities striped by address"
+    derivation: inferred
+    value: 4
+    unit: units
+    chip: m1max
+    supports: []
+    notes: Two on M1 Pro. Stripe granularity unknown (?64 B to ?512 B).
+  - id: c-mh-v2-slc-even-odd
+    text: The SLC and memory controller are split into even and odd halves by cache line, Apple's common pattern
+    loc: p154
+    quote: "the SLC and memory controller are split into Apple’s common pattern of even and odd halves by cache line"
+    derivation: reported
+    supports: []
+    notes: Handley refers to his own discussion elsewhere; not argued on this page.
+
+  - id: c-mh-v2-unbalanced-l1-170
+    text: >-
+      Unbalanced kernels (three loads and one store per cycle) approach almost 170 GB/s in L1, against about 150 GB/s
+      for balanced copies
+    loc: p156
+    quote: "we can approach almost 170 GB/s in L1 for unbalanced operations (specifically three loads plus one store)."
+    method: throughput
+    derivation: measured
+    value: 170
+    unit: GB/s
+    approx: true
+    hedge: almost
+    supports: []
+    notes: Add Op (C=A+B) and FMAC Op (D=A+B|C, no real multiply); depth axis rescaled by hand.
+  - id: c-mh-v2-unbalanced-l2-100
+    text: >-
+      The unbalanced kernels run at about 100 GB/s in L2, the same ~100 GB/s seen for other mixes, which Handley
+      attributes to passing coherence information between L1 and L2 rather than to data bandwidth
+    loc: p156
+    quote: "We also see that these unbalanced ops run at around 100GB/s in L2, the same sort of ~100GB/s we seem to always see"
+    method: throughput
+    derivation: measured
+    value: 100
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: The coherence explanation is hedged ("I think ... ? (Anyone else have a better theory?)").
+  - id: c-mh-v2-shared-load-store-path
+    text: >-
+      DRAM, and probably the NoC and SLC, use one shared path for loads and stores, so running loads alongside stores
+      does not add bandwidth there
+    loc: p157
+    quote: "NoC (and thus SLC) is probably like DRAM – a common path uses for loads and stores, not separate load and store paths, so same effect there."
+    derivation: inferred
+    hedge: probably
+    supports: []
+    notes: The L1-L2 link he guesses to have separate load and store paths, while saying he does not know how it is built.
+  - id: c-mh-v2-add-overwrite-200
+    text: >-
+      With A=A+B, each store lands on the line loaded a cycle earlier, the stores overlap loads at no visible cost,
+      and L1 throughput reaches almost 200 GB/s
+    loc: p158
+    quote: "In this case Apple’s magic L1 cache should be able to kick in, so that the cost of the stores is essentially invisible, being overlapped with loads from the same line. And indeed it does. Damn! Almost 200 GB/s!"
+    method: throughput
+    derivation: measured
+    value: 200
+    unit: GB/s
+    approx: true
+    hedge: almost
+    supports: []
+    notes: Same for FMAC Overwrite; L2 is also slightly better for both.
+
+  - id: c-mh-v2-bw-summary-dram
+    text: DRAM and SLC give about 60-68 GB/s whatever the access pattern
+    loc: p158
+    quote: "DRAM and SLC give you about 60..68GB/s regardless of what you do"
+    method: throughput
+    derivation: measured
+    value: 64
+    unit: GB/s
+    approx: true
+    supports: [slc.load_bw, memctrl.dram_load_bw]
+    notes: Range 60-68 GB/s; value is the midpoint.
+  - id: c-mh-v2-bw-summary-l2-load
+    text: L2 gives about 85 GB/s for loads
+    loc: p158
+    quote: "L2 can give you 85 GB/s (load)"
+    method: throughput
+    derivation: measured
+    value: 85
+    unit: GB/s
+    approx: true
+    supports: [l2.load_bw]
+  - id: c-mh-v2-bw-summary-l2-store
+    text: L2 gives about 100 GB/s for stores
+    loc: p158
+    quote: "L2 can give you 85 GB/s (load), 100GB/s (store)"
+    method: throughput
+    derivation: measured
+    value: 100
+    unit: GB/s
+    approx: true
+    supports: [l2.store_bw]
+  - id: c-mh-v2-bw-summary-l2-copy
+    text: L2 gives about 135 GB/s for copies, and 90-110 GB/s for more unbalanced load/store mixes
+    loc: p158
+    quote: "L2 can give you 85 GB/s (load), 100GB/s (store), 135 GB/s (copy), with worse results (90..110) GB/s as we moved to a more unbalanced mix of loads and stores"
+    method: throughput
+    derivation: measured
+    value: 135
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: >-
+      135 is above the copy figures earlier in the section (~110 GB/s for flips, c-mh-v2-flip-bw; just over 100 GB/s for
+      copies, c-mh-v2-l2-copy-100); the text does not reconcile them.
+  - id: c-mh-v2-bw-summary-l1-copy
+    text: L1 gives about 150 GB/s for copies
+    loc: p158
+    quote: "L1 can give you 110GB/s (load), 100GB/s (store), 150 GB/s (copy)"
+    method: throughput
+    derivation: measured
+    value: 150
+    unit: GB/s
+    approx: true
+    supports: [l1d.copy_bw]
+  - id: c-mh-v2-bw-summary-l1-load
+    text: >-
+      The summary gives L1 load bandwidth as about 110 GB/s, with 100 GB/s for stores and 200 GB/s for the best mix of
+      two loads and one store to a loaded line
+    loc: p158
+    quote: "L1 can give you 110GB/s (load), 100GB/s (store), 150 GB/s (copy), 200GB/s (optimal mix of two loads, one store to the same as a load address)"
+    method: throughput
+    derivation: measured
+    value: 110
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: >-
+      110 GB/s matches the LDP and realistic-code results; the perfect LDPQ figure is ~150 GB/s, 48 B/cycle
+      (c-mh-v2-l1-bw).
+
 new_params:
   l1d.store_bw:          {block: l1d, name: L1D store bandwidth, unit: B/cycle}
+  l1d.copy_bw:           {block: l1d, name: L1D copy bandwidth (load+store), unit: GB/s}
   l2.load_bw:            {block: l2, name: L2 load bandwidth (one core), unit: GB/s}
   l2.store_bw:           {block: l2, name: L2 store bandwidth (one core), unit: GB/s}
   l2.l1_path_width:      {block: l2, name: L1-L2 path width (each direction), unit: B/cycle}
   l2.core_capacity:      {block: l2, name: L2 capacity seen by one core, unit: MiB}
+  l2.replacement:        {block: l2, name: L2 replacement policy}
   slc.load_bw:           {block: slc, name: SLC load bandwidth (one core), unit: GB/s}
   memctrl.dram_load_bw:  {block: memctrl, name: DRAM load bandwidth (one core), unit: GB/s}
 
@@ -746,7 +1090,12 @@ new_mechanisms:
     detection_rule: LDNPQ vs LDPQ sweep is equal in L1, LDNPQ lower in L2 with a higher L1 miss count, higher in DRAM
 
 mechanism_claims:
-  streaming_store_nt: [c-mh-v2-nt-stores-slc, c-mh-v2-full-line-to-dram, c-mh-v2-store-stream-detect, c-mh-v2-nt-store-bypass, c-mh-v2-store-stream-warmup, c-mh-v2-fill2-jumbled, c-mh-v2-stnpq-dram-speed, c-mh-v2-large-store-policy, c-mh-v2-partial-fill]
+  streaming_store_nt: [c-mh-v2-nt-stores-slc, c-mh-v2-full-line-to-dram, c-mh-v2-store-stream-detect,
+                       c-mh-v2-nt-store-bypass, c-mh-v2-store-stream-warmup, c-mh-v2-fill2-jumbled,
+                       c-mh-v2-stnpq-dram-speed, c-mh-v2-large-store-policy, c-mh-v2-partial-fill,
+                       c-mh-v2-copy-store-stream-bypass]
   l2_cachelets: [c-mh-v2-l2-inner-bw, c-mh-v2-l2-cachelets, c-mh-v2-l2-transitions, c-mh-v2-a14-l2-effective]
   dczva_l2_zero: [c-mh-v2-dczva-rate, c-mh-v2-dczva-l2-alloc, c-mh-v2-dczva-with-load, c-mh-v2-dczva-with-store]
-  nt_load_handling: [c-mh-v2-ldnp-l1-ignored, c-mh-v2-nt-load-no-l1-prefetch, c-mh-v2-nt-load-dram-10pct]
+  nt_load_handling: [c-mh-v2-ldnp-l1-ignored, c-mh-v2-nt-load-no-l1-prefetch, c-mh-v2-nt-load-dram-10pct,
+                     c-mh-v2-ldnt-copy-l2, c-mh-v2-nt-load-buffer-model, c-mh-v2-copy-beyond-l2,
+                     c-mh-v2-memmove-nt-dropped, c-mh-v2-l2-random-repl]

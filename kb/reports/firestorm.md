@@ -1,19 +1,19 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 106, claims 441, sources 6, mechanisms 18
+blocks 37, links 35, params 108, claims 471, sources 6, mechanisms 18
 
 ## By status
 
-- inferred: 13
-- measured: 71
+- inferred: 14
+- measured: 72
 - open: 21
 - reported: 1
 
 ## By confidence
 
 - high: 17
-- low: 14
-- medium: 54
+- low: 15
+- medium: 55
 - none: 21
 
 ## Holes (21)
