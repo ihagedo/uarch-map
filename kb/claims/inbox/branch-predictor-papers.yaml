@@ -1,0 +1,18 @@
+# branch-predictor-papers.yaml
+# Adam Tuby and Adam Morrison, 2025; Lorenz Hetterich and Michael Schwarz, 2022
+# The M1 conditional branch predictor reverse engineered, and Spectre on Apple silicon.
+session: branch-predictor-papers
+source: arxiv-2502-10719
+
+new_mechanisms:
+  bpu_isolation:
+    name: Branch predictor context isolation
+    status: absent
+    description: The conditional predictor keeps no privilege or process tag.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      out-of-place mistraining of a victim branch from another privilege level or process, with matching
+      low-32-bit addresses and history, gives the victim ~25 % mispredicts when entries are shared and ~0 % when
+      they are isolated
+

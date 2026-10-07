@@ -287,6 +287,293 @@ claims:
     hedge: apparently
     supports: []
     notes: US9557999B2 (2012); Handley is unsure which placement later designs keep
+  - id: c-mh-v4-loop-8-branches
+    text: >-
+      The 2012 loop buffer accepts loops containing forward conditional branches whose outcomes do not change between
+      iterations, tracking up to 8 of them by offset from the loop start; indirect branches disqualify a loop
+    loc: p068
+    quote: >-
+      we have a table that can record up to 8 conditional branches, recording specifically how many instructions from
+      the start of the loop till the branch
+    method: patent-reading
+    derivation: inferred
+    value: 8
+    unit: branches
+    supports: []
+    notes: US9557999B2 (2012). A misprediction flushes and marks the backward branch as not a loop for a while
+  - id: c-mh-v4-fetch-one-group
+    text: >-
+      In the fetch scheme Handley describes for Apple's cores, only one fetch group (a run of instructions ending at a
+      taken branch) is fetched per cycle, so a 3-instruction loop runs at most 3 instructions per cycle
+    loc: p069
+    quote: >-
+      only one Fetch Group (ie trace of instructions up to a taken branch) is acquired per cycle
+    derivation: inferred
+    supports: []
+    notes: Consistent with fetch.taken_per_cycle = 1; Handley states it as a property of the scheme, not a measurement
+  - id: c-mh-v4-loop-packing
+    text: >-
+      Per a 2012 patent, a short loop body is replicated in the loop buffer as many times as fits, so dispatch is not
+      limited to one iteration (one fetch group) per cycle
+    loc: p069
+    quote: >-
+      the loop body will be replicated in the buffer as many times as will fit. This bypasses the Fetch limit.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US9753733B2 (2012). Dispatch from the buffer is "6 at a time in 2012, 8 at a time now". Neither 2012 patent
+      says how the loop is exited other than by a misprediction
+  - id: c-mh-v4-loop-buffer-96
+    text: >-
+      The 2012 loop-packing patent suggests a loop buffer of 16 rows of 6 slots, about 96 uops, matching the 6-wide
+      decode of A7-class cores
+    loc: p070
+    quote: >-
+      arranged as 16 rows of 6 slots (6 slots because decode for that generation of A7-class CPUs had 6-wide
+      decode); so able to hold about 96 ops
+    method: patent-reading
+    derivation: inferred
+    value: 96
+    unit: uops
+    approx: true
+    supports: []
+    notes: US9753733B2 (2012), A7 generation; no M1 loop-buffer size is given. Handley compares Skylake's 64-uop IDQ
+  - id: c-mh-v4-l0-cache
+    text: >-
+      Per a 2014 patent, instructions can come from four sources: normal fetch with the I-cache and full predictors,
+      a small L0 cache (probably direct mapped) sequenced by a simple local predictor, a loop buffer, and a trace cache
+    loc: p071
+    quote: "an L0 cache (smaller and lower power than the I cache, probably direct mapped)"
+    method: patent-reading
+    derivation: inferred
+    hedge: probably
+    supports: []
+    notes: >-
+      US20150205725A1 (2014). The L0 serves loops with mostly predictable internal branches that fail the loop-buffer
+      tests; Handley guesses its predictor is gshare-like. No details on when the trace cache is used
+  - id: c-mh-v4-l0-size
+    text: >-
+      The L0 size is not given; other patents suggest it is about the size of the loop buffer, itself about the size
+      of the fetch queue: maybe 8 to 12 lines of 16 instructions
+    loc: p072
+    quote: >-
+      it’s much the same size as the Loop Buffer, which is much the same size as the Fetch Queue; so maybe 8 to 12
+      lines each holding 16 instructions, something like that
+    derivation: inferred
+    value: 10
+    unit: lines
+    approx: true
+    hedge: maybe ... something like that
+    supports: []
+    notes: >-
+      Range 8-12 lines of 16 instructions; value is the midpoint. Bears on iq.depth (the fetch queue), but is a guess
+      stated in lines
+  - id: c-mh-v4-loop-table
+    text: >-
+      Per a 2014 patent, a previous-loop table records each loop's start, end and iteration count and the kinds and
+      variability of the branches in its body, and updates itself when these change
+    loc: p072
+    quote: >-
+      a “previous loop table” has now been added to the system. This table records some obvious things like the loop,
+      start, end, and iteration count
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US9524011B2 (2014). Unclear whether the table holds several loops or several branches of one nested loop, or
+      whether it is used on later encounters
+  - id: c-mh-v4-loop-iq-mode
+    text: >-
+      Per the 2014 tiered patent, after two or three iterations a loop runs from the instruction queue with fetch and
+      the I-cache asleep but direction prediction awake; after about 20 iterations it may move to the loop buffer or L0
+    loc: p073
+    quote: >-
+      This puts Fetch and the I-cache to sleep (but Branch Direction Prediction stays awake) and we run the loop out of
+      the Instruction Queue
+    method: patent-reading
+    derivation: inferred
+    value: 20
+    unit: iterations
+    approx: true
+    hedge: 20 iterations or so
+    supports: []
+    notes: >-
+      US9524011B2 (2014). Loop mode starts "perhaps after just two or three iterations". To enter it, fetch must
+      force the loop body into the instruction queue instead of bypassing it to Decode
+  - id: c-mh-v4-loop-exit-predictor
+    text: >-
+      Per a 2014 patent, while a loop runs from the loop buffer or L0 the direction predictor stays on to predict the
+      exit until branch history saturates; loops whose exit keeps mispredicting turn it off from the start
+    loc: p074
+    quote: >-
+      we keep the Branch Direction Predictor alive, to (hopefully) predict the exit condition ... for as long we have
+      not saturated the Branch History vectors
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9471322B2 (2014). Per-loop state is kept in an Early Loop Buffer Mode Table
+
+  - id: c-mh-v4-bit-tables
+    text: >-
+      A Branch Information Table and a Taken Branch Information Table hold each branch's predictor state (RAS top of
+      stack, path histories, targets) from Decode to Retire; at retirement it is sent to the predictors for training
+    loc: p081
+    quote: >-
+      there are two large subtables, the BIT and the TBIT (Taken Branch Information Table) each with subsections for
+      different types of branch
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Detailed from US10175982B1 (2016) in c-mh-v4-bit-60 and c-mh-v4-tbit-96
+  - id: c-mh-v4-ras-two
+    text: >-
+      Per Apple's 2011 RAS patent, there are two return stacks, a small speculative RAS used by fetch and an
+      Execution RAS kept as a linked list, against about five in Intel's design
+    loc: p081
+    quote: >-
+      So Apple have one for Fetch, and another that's modified at Execution. In particular the Execution RAS
+      (implemented in the linked list form)
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: stacks
+    supports: []
+    notes: >-
+      US9354886B2 (2011). The patent's speculative RAS is Handley's MiniRAS. A "first time" bit in the BIT keeps load
+      replay of RET or BR from pushing or popping the Execution RAS twice; the 2013 redesign supersedes this
+  - id: c-mh-v4-ras-linked-guess
+    text: >-
+      Handley's guess: the Execution RAS is a pure linked list in an array of perhaps 90 entries with valid bits, an
+      entry freed when its RET retires, so overflow comes only from very deep call nesting
+    loc: p083
+    quote: >-
+      treat the structure as a pure linked list, implemented with a finite array of node-sized entries (say 90 or so),
+      where each entry has a “valid” bit
+    derivation: inferred
+    value: 90
+    unit: entries
+    approx: true
+    hedge: Here's my guess as to what Apple does
+    supports: []
+    notes: >-
+      "say 90 or so" is illustrative, the size of a node array in a guessed implementation, not a return-stack depth
+      (cf. the 50-entry return stack, c-cc-oryon-m1-ras-50). Handley: "we're already on such a limb"
+  - id: c-mh-v4-ras-at-decode
+    text: >-
+      Per a 2013 patent, the main RAS is maintained at Decode, pushed on calls and popped on returns there, so load
+      replay no longer threatens it
+    loc: p085
+    quote: >-
+      the main RAS (what was previously called the Execution RAS) is now maintained at Decode rather than at Execute
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9405544B2 (2013), described by Handley as a 2014 design
+  - id: c-mh-v4-ras-mini
+    text: >-
+      In the 2013 design the fetch-side MiniRAS only covers returns that follow calls not yet seen by Decode, tracked
+      by call and return counts between Fetch and Decode, so it is much smaller than the main RAS
+    loc: p085
+    quote: >-
+      The MiniRAS is only required if there is a return following a very recent call, so that that the call has not
+      yet propagated to the primary RAS
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9405544B2 (2013)
+  - id: c-mh-v4-predecode-call-ret
+    text: >-
+      Predecode bits mark calls and returns, so for lines not yet in the fetch predictor, fetch takes a return's target
+      from the MiniRAS and pauses after a call until a predictor or execution supplies the target
+    loc: p085
+    quote: >-
+      from the predecode bits, it will know that the Fetch Group it is sending downstream includes a call or a return
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9405544B2 (2013)
+
+  - id: c-mh-v4-pac-ras
+    text: >-
+      Per a 2016 patent, pointer authentication codes in the high bits of return addresses are checked as part of the
+      logic that reads and writes the RAS
+    loc: p086
+    quote: >-
+      PAC (Pointer Authentication) stuff that encodes the 2015 tag in a few high bits of the return address ... always
+      checked as part of logic that reads and writes the RAS
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US10409600B1 (2016). The 2015 forerunner (US10867031B2) used a RAS misprediction to trigger call/return tag
+      checks; Handley is not sure it was ever built
+  - id: c-mh-v4-bp-security-tag
+    text: >-
+      Handley reads the 2018 predictor-security patent as adding a security tag (protection level, process ID, VM ID,
+      high PC bits) to predictor entries; if it does not match the machine state, the prediction is not used
+    loc: p086
+    quote: >-
+      augment that tag with a security tag which holds, among other things, the protection level, the process ID, the
+      VM ID, and some of the high bits of the PC
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20200192673A1; the patent's own claim is c-pat-us20200192673a1-context-encrypted-targets. Handley says such a
+      tag "is in fact implemented to some extent", and high PC bits can separate JIT code from its host.
+
+  - id: c-mh-v4-predecode-offset
+    text: >-
+      Per a 2014 patent, predecode on I-cache fill stores the low 14 bits (page offset) of each PC-relative branch
+      target, so only the upper bits are added at use and a target lookup can start at once, safe under aliasing
+    loc: p088
+    quote: >-
+      Suppose that rather than calculating the entire target address we calculate only the lowest fourteen bits.
+    method: patent-reading
+    derivation: inferred
+    value: 14
+    unit: bits
+    supports: []
+    notes: >-
+      US9940262B2 (2014). Full targets would break when a physically tagged line is shared by processes that map a
+      library at different virtual addresses
+  - id: c-mh-v4-predecode-undef
+    text: >-
+      Per a 2014 patent, predecode replaces every undefined instruction encoding with a single undefined value, so
+      Decode checks for only one
+    loc: p088
+    quote: 'replace them with a single "undefined instruction" value'
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20160011875A1 (2014)
+
+  - id: c-mh-v4-seq-line-power
+    text: >-
+      Per a 2010 patent, the ITLB and tag lookups are skipped when sequential fetch reads from the same I-cache line as
+      in the previous cycle
+    loc: p089
+    quote: >-
+      suppresses the ITLB and tags lookup in the case where sequential Fetch reads instructions from the same I-cache
+      line as was accessed in the previous cycle
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US8914580B2 (2010)
+  - id: c-mh-v4-seq-way-pred
+    text: >-
+      Per a 2013 patent, a sequential way predictor gives the I-cache ways of the next few sequential lines from a
+      fetch PC, so only those ways are precharged and tag lookups are skipped
+    loc: p090
+    quote: >-
+      Way Predictor that, when given a Fetch PC, gives the way information for say the next four sequen-tial cache lines
+    method: patent-reading
+    derivation: inferred
+    hedge: say the next four
+    supports: []
+    notes: >-
+      US9311098B2 (2013). Handley guesses the last ITLB translation is held in a register in Fetch to skip the TLB too
 
 new_params:
   indpred.kind: {block: indpred, name: Indirect predictor type, unit: ""}
@@ -304,4 +591,7 @@ new_mechanisms:
       branch) per cycle would show loop packing
 
 mechanism_claims:
-  loop_modes: [c-mh-v4-loop-buffers-m1, c-mh-v4-loop-detect, c-mh-v4-loop-buffer-after-decode]
+  loop_modes: [c-mh-v4-loop-buffers-m1, c-mh-v4-loop-detect, c-mh-v4-loop-buffer-after-decode, c-mh-v4-loop-8-branches,
+               c-mh-v4-loop-packing, c-mh-v4-loop-buffer-96, c-mh-v4-l0-cache, c-mh-v4-l0-size, c-mh-v4-loop-table,
+               c-mh-v4-loop-iq-mode, c-mh-v4-loop-exit-predictor]
+  bpu_isolation: [c-mh-v4-bp-security-tag]
