@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 108, claims 471, sources 6, mechanisms 18
+blocks 37, links 35, params 109, claims 498, sources 6, mechanisms 19
 
 ## By status
 
-- inferred: 14
-- measured: 72
-- open: 21
+- inferred: 15
+- measured: 73
+- open: 20
 - reported: 1
 
 ## By confidence
 
-- high: 17
-- low: 15
+- high: 18
+- low: 16
 - medium: 55
-- none: 21
+- none: 20
 
-## Holes (21)
+## Holes (20)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -37,7 +37,6 @@ blocks 37, links 35, params 108, claims 471, sources 6, mechanisms 18
 - int_prf.headroom (int_prf): Integer rename headroom
 - dtlb.l1_org (dtlb): L1 dTLB organisation
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
-- prefetch.kinds (prefetch): Prefetcher kinds
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
 ## Open disputes (8)

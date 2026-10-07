@@ -1339,6 +1339,7 @@
         "c-at-l1d-latency",
         "c-7cpu-l1d",
         "c-mh-v1-pointer-chase-3",
+        "c-mh-v2-l1d-latency",
         "c-dj-l1d-latency"
       ],
       "disputes": [],
@@ -1437,13 +1438,15 @@
       "value": null
     },
     "prefetch.kinds": {
-      "claims": [],
+      "claims": [
+        "c-mh-v2-prefetch-kinds"
+      ],
       "disputes": [],
       "block": "prefetch",
       "name": "Prefetcher kinds",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": "AMPM region (strides, dense), large stride, SMS, pointer (content-directed)",
+      "status": "inferred",
+      "confidence": "low"
     },
     "l2.size": {
       "claims": [
@@ -1499,7 +1502,8 @@
     },
     "l2.inner_slice": {
       "claims": [
-        "c-mh-v2-l2-inner-bw"
+        "c-mh-v2-l2-inner-bw",
+        "c-mh-v2-near-l2-3mib"
       ],
       "disputes": [],
       "block": "l2",
@@ -1682,7 +1686,8 @@
     },
     "lsu.address_prediction": {
       "claims": [
-        "c-mh-v1-no-addr-prediction"
+        "c-mh-v1-no-addr-prediction",
+        "c-mh-v2-no-address-prediction"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1939,6 +1944,18 @@
       "status": "inferred",
       "confidence": "low"
     },
+    "prefetch.streams": {
+      "claims": [
+        "c-mh-v2-stride-streams-16"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "Simultaneous stride streams",
+      "unit": "streams",
+      "value": 16,
+      "status": "measured",
+      "confidence": "medium"
+    },
     "rename.fusion_read_limit": {
       "claims": [
         "c-dj-fusion-read-limit"
@@ -1953,6 +1970,7 @@
     },
     "l1d.latency_alu": {
       "claims": [
+        "c-mh-v2-load-alu-4",
         "c-dj-load-alu-latency"
       ],
       "disputes": [],
@@ -1961,7 +1979,7 @@
       "unit": "cycles",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     }
   },
   "claims": {
@@ -7612,6 +7630,378 @@
       "chip": "m1",
       "entered": "handley-vol2-l1"
     },
+    "c-mh-v2-l1d-latency": {
+      "text": "Strided pointer chases take 3 cycles per load within the L1 (up to 128 KiB) and, to first approximation, 4 cycles per load beyond it, the stride prefetcher hiding L2, SLC and DRAM latency",
+      "loc": "p169",
+      "quote": "For the first part of the graph (within L1, so depth up to 128K) every load takes 3 cycles. Once we're past L1 (so loading from L2, then SLC, then DRAM) to first approximation latency is 4 cycles.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "The 4 cycles beyond L1 is a prefetched strided chain (63-65 B strides), not a cache latency. An 8 B linear chain gives the same 3 cycles (c-mh-v2-stride-to-dram)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-ptr-chase-fastpath": {
+      "text": "The 3-cycle pointer-chase latency is a fast path: the loaded value is reused inside the LSU as the next address, saving the cycle needed to move it to the integer unit",
+      "loc": "p164",
+      "quote": "a special load case that can be accelerated because the result of the load will be re-used in the LSU (so we avoid one cycle of overhead moving the load result to the integer unit)",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-load-alu-4": {
+      "text": "Adding zero to each loaded pointer raises the chase to 5 cycles per load: the load takes 4 cycles once its value must go to the integer unit, plus 1 for the add",
+      "loc": "p165",
+      "quote": "The cycles per load jumps to five (blue line). This is expected. The load now takes 4 rather than 3 cycles because we cannot use the fast path",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency_alu"
+      ],
+      "notes": "Handley also says standard loads take 4 cycles, more for vector/FP loads",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-no-address-prediction": {
+      "text": "No load address prediction is seen: dividing each loaded pointer by one (12 cycles per load) gives no speed-up, and a random order within the L1 is no slower than a linear one",
+      "loc": "p166",
+      "quote": "we see no difference until we move beyond the L1 ... load addresses that can be predicted) remains as before - apparently not present in M1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "hedge": "apparently",
+      "supports": [
+        "lsu.address_prediction"
+      ],
+      "notes": "The same sentence calls all zero-cycle loads (register reuse, values stored to the stack) absent, a conclusion carried over and not tested here; vol 1 measures register-matched zero-cycle loads (c-mh-v1-zcl-*)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-ldp-ptr-first": {
+      "text": "Pointer chasing through LDP keeps the 3-cycle fast path only when the next pointer is the first register of the pair; with the payload first, each step is slower",
+      "loc": "p166",
+      "quote": "And only the first register of a load pair can be internally forwarded in the LSU for pointer-chasing acceleration.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "A table gives 3.0 cycles per load with the pointer first and 4.0 with the payload first",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-stride-to-dram": {
+      "text": "A linear chain of 8 B nodes keeps its 3-cycle L1 latency at every depth tested, out to about 1000 MB: the prefetcher covers L2, SLC and DRAM",
+      "loc": "p164",
+      "quote": "Note also that the prefetching is correctly orchestrated not just out to L2 but all the way out to deep DRAM (the largest depth we test is ~1000MB).",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-near-l2-3mib": {
+      "text": "The linear-chain latency curve steps slightly past the near L2 of 3 MiB, where the first access to each line takes 4 rather than 3 cycles",
+      "loc": "p164",
+      "quote": "The prefetcher seems to get the calculation slightly incorrect once we go past the near-L2 (3MiB) so that accessing the line the first time takes 4 rather than 3 cycles",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "MiB",
+      "hedge": "seems to",
+      "supports": [
+        "l2.inner_slice"
+      ],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-stride-max": {
+      "text": "Stride prefetching works for every stride Handley tried up to just under two pages, though with odd variation by stride (e.g. 2 KiB worse than 8 KiB, 272 B much worse than 256 B in DRAM)",
+      "loc": "p171",
+      "quote": "there are stride prefetchers, which all appear to work, right up to a stride of just under two pages.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "hedge": "I don't feel confident saying anything beyond",
+      "supports": [],
+      "notes": "Handley adds that the TLB tests suggest stride prefetching ends between 16K and 32K strides, and later guesses strides are tracked in about 16 bits (a 32 KiB stride is tracked but prefetches poorly)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-stride-streams-16": {
+      "text": "The core sustains at least 16 simultaneous stride prefetch streams; four run cleanly out to deep DRAM",
+      "loc": "p173",
+      "quote": "the system can sustain at least 16 simultaneous stride prefetchers. - it can sustain four stride prefetchers with barely a sweat (even out to deep DRAM!)",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "streams",
+      "hedge": "it seems like",
+      "supports": [
+        "prefetch.streams"
+      ],
+      "notes": "Lower bound. With eight streams, occasional glitches near 16 MB and 64 MB, and stream tracking seems to stop beyond about 256 MB",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-backward-stride": {
+      "text": "A backward linear stride is prefetched as well as a forward one",
+      "loc": "p174",
+      "quote": "Below we see a backward linear stride being prefetched just as well as a forward linear sequence",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-mixed-strides": {
+      "text": "With interleaved chains of different strides and signs that use one element per line, prefetching keeps up for four chains, is acceptable for eight, and falls behind beyond eight",
+      "loc": "p177",
+      "quote": "you're still going to do fine for four such arrays, and you can't really complain even with eight such arrays. But beyond eight you are going to be unhappy",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "streams",
+      "supports": [],
+      "notes": "Strides tested include +8, -40, +72, -104 B",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-spatial-prefetch": {
+      "text": "Chains shuffled randomly within 16 KiB boxes are still prefetched out to DRAM, so some spatial prefetcher exists",
+      "loc": "p179",
+      "quote": "these \"randomized\" patterns are still being prefetched. ... Beyond the brute fact of some sort of spatial prefetcher, it's difficult to say more",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Handley warns the 8 B-node version mostly shows 8 nodes sharing each line, not the prefetcher",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-dram-350": {
+      "text": "A random access out to DRAM costs about 350 cycles",
+      "loc": "p179",
+      "quote": "A random access out to DRAM costs about 350 cycles.",
+      "derivation": "measured",
+      "value": 350,
+      "unit": "cycles",
+      "approx": true,
+      "hedge": "about",
+      "supports": [],
+      "notes": "In cycles, not ns. Handley later says purely random DRAM access is ~300 cycles. The fully random curve itself is not shown",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-stride-lockon": {
+      "text": "The stride prefetcher seems to need about 4 accesses to lock onto a pattern, plus a few more before its prefetches arrive in time",
+      "loc": "p219",
+      "quote": "the stride prefetcher probably requires something like seeing 4 accesses to lock onto the pattern",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "accesses",
+      "approx": true,
+      "hedge": "probably requires something like",
+      "supports": [],
+      "notes": "64 B nodes in a 1 MiB space; little gain until boxes of 512 B (8 nodes)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-region-prefetch": {
+      "text": "Random nodes in randomly ordered boxes still gain a little latency, so a region prefetcher exists, but it is never very aggressive",
+      "loc": "p219",
+      "quote": "this situation is somewhat amenable to a region prefetcher. And it seems that we have something like that. ... (which is apparently never very aggressive; we get some latency reduction but not much)",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "hedge": "it seems that",
+      "supports": [],
+      "notes": "Handley guesses it needs ~4 spatially correlated loads, within perhaps less than a page, to activate",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-hybrid-prefetch": {
+      "text": "The box tests show a hybrid region+stride prefetcher; less certainly, a spatial prefetcher as well, not tuned well against the others",
+      "loc": "p220",
+      "quote": "I think the definite take-away is the existence of a hybrid region+stride predictor; the less definite takeaway is that perhaps there's also a spatial predictor",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "hedge": "I think",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-next-line": {
+      "text": "A next-line prefetcher probably exists, and the 64 B vs 128 B node results hint at a meta-scheme choosing among prefetchers",
+      "loc": "p222",
+      "quote": "is the likely existence of a next-line prefetcher.",
+      "derivation": "inferred",
+      "hedge": "likely",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-three-prefetchers": {
+      "text": "With 16 KiB boxes out to DRAM, three kinds of prefetcher are seen working: stride (forward and backward), hybrid region+stride, and pure region",
+      "loc": "p223",
+      "quote": "We can see three very different prefetchers seem to be present (and functional, all the way out to DRAM)",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": "stride, hybrid region+stride, region",
+      "supports": [],
+      "notes": "Measured counterpart of the patent-based list in c-mh-v2-prefetch-kinds",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-ghb-box": {
+      "text": "Shrinking the box from 16 KiB to 15000 B changes the random-in-box results sharply, which Handley explains by a GHB-like prefetcher history of a little under 256 entries",
+      "loc": "p224",
+      "quote": "My assumption is that the prefetcher is something like a GHB prefetcher ... Suppose that the GHB holds a little under 256 entries.",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": 256,
+      "unit": "entries",
+      "approx": true,
+      "hedge": "My assumption is ... Suppose",
+      "supports": [],
+      "notes": "Upper bound; Handley later floats \"let's say three times as many entries (240)\" for Apple against ~80 for x86 and Arm cores",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-region-to-l2": {
+      "text": "Low-confidence (spatial/region) prefetches go into the L2 but not the L1; stride prefetches go into the L1",
+      "loc": "p225",
+      "quote": "the prefetcher is smart enough that for uncertain cases (so spatial/region prefetching, as opposed to stride prefetching) prefetching is done into L2, but not into L1.",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-slc-spatial": {
+      "text": "Random placements in randomly ordered boxes still run at ~50 cycles per load out to DRAM depths, which Handley reads as data coming from the SLC, perhaps filled by a spatial prefetcher at the memory controller",
+      "loc": "p225",
+      "quote": "still runs at ~50 cycles/load. This suggests to me that the data is being loaded from the SLC. ... One could imagine the memory controller, after every DRAM page is opened, consulting the spatial prefetcher",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": 50,
+      "unit": "cycles",
+      "approx": true,
+      "hedge": "This suggests to me",
+      "supports": [],
+      "notes": "Handley says the opposite for the patents (prefetching stays within the cluster, not the SLC)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-temporal": {
+      "text": "Apple does have a temporal prefetcher or equivalent; AnandTech's tests miss it because they use 16 KiB regions, just beyond its reach, while 15 KiB regions show it",
+      "loc": "p227",
+      "quote": "I think the correct analysis is that Apple does have a Temporal Prefetcher (or equivalent); it just doesn't show up when the tests probe a region size of 16K",
+      "derivation": "inferred",
+      "hedge": "I think",
+      "supports": [],
+      "notes": "Disagrees with AnandTech's reading that Apple has no temporal prefetcher",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-prefetch-kinds": {
+      "text": "Apple's current data prefetch scheme: an access-map (AMPM) prefetcher over regions that detects strides and dense patterns, plus auxiliary large-stride, spatial memory streaming (SMS) and pointer (content-directed) matchers, coordinated ad hoc",
+      "loc": "p228",
+      "quote": "Apple's current scheme appears to be ... AMPM matcher detects strides ... and \"dense\" patterns ... auxiliary matcher detects large stride streams ... detects SMS (Spatial Memory Streaming) patterns ... detects what look like pointers in newly loaded L1 cache lines",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "AMPM region (strides, dense), large stride, SMS, pointer (content-directed)",
+      "hedge": "appears to be",
+      "supports": [
+        "prefetch.kinds"
+      ],
+      "notes": "Synthesis of the prefetcher patents with the box tests",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-ampm-2k": {
+      "text": "Apple's primary prefetcher is an access-map (AMPM) prefetcher keyed on load addresses grouped in 2 KiB regions",
+      "loc": "p228",
+      "quote": "Apple's primary prefetcher is an AMPM prefetcher, based on load addresses clustered in regions of 2kiB.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "KiB",
+      "supports": [],
+      "notes": "US9015422B2 (2013); the 2015 patent may track a moving 2 KiB within 4 KiB",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-prefetch-at-lsu": {
+      "text": "The prefetcher sits at the LSU and sees every virtual load/store address, up to four per cycle, not just cache misses, so streams cross page boundaries",
+      "loc": "p229",
+      "quote": "Apple differs in that their prefetcher sits at the LSU and sees every (virtual) address that streams through. This is up to four addresses a cycle.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "addresses/cycle",
+      "supports": [],
+      "notes": "First seen in US20070294482A1 (2006), which places the prefetch unit in the LSU",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-prefetch-filter": {
+      "text": "Incoming addresses are filtered and queued, and the rest of the prefetch unit processes one address per cycle",
+      "loc": "p233",
+      "quote": "The first thing done to all these addresses is that they are \"filtered\", most are thrown away, the interesting ones are queued, and ultimately the rest of the Prefetch Unit only processes one address per cycle",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 1,
+      "unit": "addresses/cycle",
+      "supports": [],
+      "notes": "US9971694B1 (2015)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-ampm-map": {
+      "text": "Each access map covers a 2 KiB region as 32 two-bit slots, one per 64 B line (demand fetched, prefetched and used, prefetched, or not accessed), matched against predefined patterns",
+      "loc": "p232",
+      "quote": "the regions used by the Prefetch Unit are apparently 2kiB in size. So a single entry for an Access Mapped region has 32 slots (2kiB/64). Each slot is two bits in size",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 32,
+      "unit": "slots",
+      "supports": [],
+      "notes": "US9015422B2 (2013). The patent gives no count of tracked regions; the AMPM paper suggests 50-60",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -9085,6 +9475,26 @@
       ],
       "sim_switch": null,
       "detection_rule": "loads that pick one of eight 16 KiB-apart pages at random on every access run no slower than loads to a fixed page once bank collisions are removed"
+    },
+    "lsu_virtual_prefetch": {
+      "claims": [
+        "c-mh-v2-prefetch-at-lsu",
+        "c-mh-v2-stride-to-dram",
+        "c-mh-v2-ampm-2k",
+        "c-mh-v2-ampm-map",
+        "c-mh-v2-prefetch-filter",
+        "c-mh-v2-prefetch-kinds",
+        "c-mh-v2-region-to-l2"
+      ],
+      "name": "LSU-resident virtual-address prefetcher",
+      "status": "inferred",
+      "description": "The prefetcher trains on every load and store virtual address at the LSU.",
+      "params": [
+        "prefetch.kinds",
+        "prefetch.streams"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a linear pointer chase keeps its L1 latency across page boundaries out to DRAM, and page-strided chains the prefetcher can follow lose the L1 TLB miss cost; a physical-address prefetcher would restart at each page"
     },
     "content_directed_prefetch": {
       "claims": [
