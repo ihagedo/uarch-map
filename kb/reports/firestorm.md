@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 111, claims 524, sources 6, mechanisms 19
+blocks 37, links 35, params 111, claims 551, sources 6, mechanisms 20
 
 ## By status
 
@@ -38,7 +38,7 @@ blocks 37, links 35, params 111, claims 524, sources 6, mechanisms 19
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
-## Open disputes (8)
+## Open disputes (10)
 
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
@@ -46,8 +46,10 @@ blocks 37, links 35, params 111, claims 524, sources 6, mechanisms 19
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]
-- l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-7cpu-l2-latency, c-mh-v1-l2-latency-aside]
+- l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
+- l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-mh-v2-l2-latency-17, c-mh-v1-l2-latency-aside]
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
+- dtlb.l2_org: 3-way, 1024 sets, hashed index vs 12-way, 256 sets at equal rank  [c-mh-v2-tlb2-org, c-mh-v2-tlb2-256x12]
 
 ## Problems (0)
 

@@ -1324,7 +1324,8 @@
     },
     "l1d.assoc": {
       "claims": [
-        "c-mh-v2-l1d-8way"
+        "c-mh-v2-l1d-8way",
+        "c-mh-v2-l1d-8way-tlb"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1484,12 +1485,22 @@
       "claims": [
         "c-7cpu-l2-latency",
         "c-mh-v1-l2-latency-aside",
-        "c-mh-v2-inner-l2-latency"
+        "c-mh-v2-inner-l2-latency",
+        "c-mh-v2-l2-latency-17"
       ],
       "disputes": [
         {
           "claims": [
-            "c-7cpu-l2-latency",
+            "c-mh-v2-l2-latency-17",
+            "c-7cpu-l2-latency"
+          ],
+          "note": "17 vs 18 at equal rank",
+          "resolution": null,
+          "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-mh-v2-l2-latency-17",
             "c-mh-v1-l2-latency-aside"
           ],
           "note": "Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.",
@@ -1501,14 +1512,16 @@
       "name": "L2 hit latency",
       "unit": "cycles",
       "sim_key": "l2_latency",
-      "value": 18,
+      "value": 17,
+      "approx": true,
       "status": "measured",
       "confidence": "medium"
     },
     "l2.inner_slice": {
       "claims": [
         "c-mh-v2-l2-inner-bw",
-        "c-mh-v2-near-l2-3mib"
+        "c-mh-v2-near-l2-3mib",
+        "c-mh-v2-l2-inner"
       ],
       "disputes": [],
       "block": "l2",
@@ -1965,9 +1978,20 @@
     },
     "dtlb.l2_org": {
       "claims": [
-        "c-mh-v2-tlb2-org"
+        "c-mh-v2-tlb2-org",
+        "c-mh-v2-tlb2-256x12"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v2-tlb2-org",
+            "c-mh-v2-tlb2-256x12"
+          ],
+          "note": "3-way, 1024 sets, hashed index vs 12-way, 256 sets at equal rank",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "dtlb",
       "name": "L2 TLB organisation",
       "value": "3-way, 1024 sets, hashed index",
@@ -8387,6 +8411,363 @@
       "chip": "m1",
       "entered": "handley-vol2-latency"
     },
+    "c-mh-v2-tlb2-256x12": {
+      "text": "The M1's 3072-entry L2 TLB is probably 256 sets of 12 ways",
+      "loc": "p208",
+      "quote": "This compares with the M1's design which is 3072 entries, probably 256 sets of 12 ways.",
+      "derivation": "inferred",
+      "value": "12-way, 256 sets",
+      "hedge": "probably",
+      "supports": [
+        "dtlb.l2_org"
+      ],
+      "notes": "Aside while comparing with the 256x16 TLB of US20220066947A1; disagrees with Handley's own 1024x3 (c-mh-v2-tlb2-org)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-page-table-3": {
+      "text": "With 16 KiB pages a superpage covers 256 MiB and a root page 4 TiB, so only three page-table levels are needed",
+      "loc": "p199",
+      "quote": "a superpage will cover 28 bits of address space (256MiB) and a root page will cover 42 bits (4TiB). So (at least for now!) only three levels of page table are",
+      "derivation": "inferred",
+      "value": 3,
+      "unit": "levels",
+      "supports": [],
+      "notes": "Handley expects the page-walk cache to hold the root and recent superpages and the leaf tables to be in the L2",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-mmu-cache": {
+      "text": "The cost of L2 TLB misses suggests Apple uses an MMU (page-walk) cache of some form",
+      "loc": "p230",
+      "quote": "The performance of TLB lookups that miss in the TLB2 suggests that Apple is using an MMU cache of some form, but I did not examine this closely.",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-no-tlb2-prefetcher": {
+      "text": "There is no dedicated L2 TLB prefetcher; the virtual-address data prefetchers touch, and so prefetch, the translations they need",
+      "loc": "p204",
+      "quote": "Overall what we see suggests that Apple has no dedicated TLB2 prefetcher, and relies on the standard prefetchers (which operate in virtual address space, so will automatically touch required mappings, ie will prefetch in TLB entries)",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "hedge": "suggests",
+      "supports": [],
+      "notes": "16 KiB-strided chains beat the expected TLB2+MMU-cache+L2 cost by 10-12 cycles between 48 and ~250 MB",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-no-pte-prefetch": {
+      "text": "No serious TLB prefetching is seen: Apple may keep the extra PTEs from each fetched line (US8397049B2) but does no stride PTE prefetching",
+      "loc": "p230",
+      "quote": "I found no evidence of serious TLB prefetching. ... does not appear to engage in even basic stride PTE prefetching.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "does not appear to",
+      "supports": [],
+      "notes": "US8397049B2 (2009)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-tlb2-shared-guess": {
+      "text": "Handley's preferred design has the L2 TLB, MMU cache and page walkers shared at cluster level, for which he has no direct evidence",
+      "loc": "p202",
+      "quote": "So in my fantasy of how the M1 should be designed, all three of TLB2, the MMU cache, and the Page Walkers (state plus implementation logic) form a shared cluster-level entity!",
+      "derivation": "inferred",
+      "hedge": "my fantasy",
+      "supports": [],
+      "notes": "Handley says \"I want to be true ... but have no direct evidence for\"; the striping patent's diagrams also suggest a shared L2 TLB",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-tlb2-per-cluster": {
+      "text": "A 2013 cluster maintenance patent adds to evidence, without proof, that the L2 TLB and page walkers are per cluster, not per core",
+      "loc": "p217",
+      "quote": "one more data point in the collection of evidence (many substantial pieces, but no smoking gun) that the L2 TLB and associated page-walkers are per-cluster, not per-core.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9418010B2 (2013)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-tlbi-range": {
+      "text": "For a TLB range invalidation, hardware estimates the cycles for walking every entry versus looking up every page in the range and uses the faster",
+      "loc": "p206",
+      "quote": "And so the patent calculates the cycle count for each option, and chooses whichever way will be faster!",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20200218663A1 (2019); Handley does not say whether the M1 implements it",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-asid-16": {
+      "text": "Apple appears to use 16-bit ASIDs",
+      "loc": "p207",
+      "quote": "My guess is that Apple uses a 16b ASID",
+      "method": "vendor-doc",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "bits",
+      "hedge": "My guess",
+      "supports": [],
+      "notes": "From the XNU header osfmk/arm64/proc_reg.h",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-vmid-8": {
+      "text": "Apple probably uses 8-bit VMIDs for now",
+      "loc": "p208",
+      "quote": "ARM VMIDs are likewise either 8 or 16 bits; my guess is that (for now) Apple uses 8 bits.",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "bits",
+      "hedge": "my guess",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-tlb-striping": {
+      "text": "Striping ASID/VMID fields across the L2 TLB's SRAMs lets invalidation by ASID or VMID compare four entries at once, 4x as fast",
+      "loc": "p208",
+      "quote": "the patent describes a non-obvious way of storing data in the L2 TLB such that we can perform the operation 4x as fast",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "x",
+      "chip": "m2",
+      "supports": [],
+      "notes": "US20220066947A1 (2020); Handley says these patents appear not to be implemented on the M1, perhaps on the A15/M2",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-tlb-patent-256x16": {
+      "text": "The striping patent's L2 TLB is 256 sets of 16 ways, built from 8 physical blocks of two ways each",
+      "loc": "p208",
+      "quote": "the L2 TLB describes is apparently 256 sets of 16 ways. ... The physical TLB (the 16 ways) consists of 8 identical physical blocks each handling two ways.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "16-way, 256 sets",
+      "chip": "m2",
+      "supports": [],
+      "notes": "US20220066947A1 (2020); Handley calls the 256x16 \"fairly definite\"",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-splinter-page-sizes": {
+      "text": "A common TLB holds mixed page sizes with a size bit per entry, and the design allows five sizes: 16K, 64K, 2M, 32M and 512M",
+      "loc": "p211",
+      "quote": "has a size bit indicating whether the entry corresponds to a small vs large page. ... In fact the design envisages 5 different page sizes: 16K, 64K, 2M, 32M, and 512M.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "16K, 64K, 2M, 32M, 512M",
+      "chip": "m2",
+      "supports": [],
+      "notes": "US20220075734A1 (2020), for hypervisors using large pages that the guest splinters",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-page-size-presence": {
+      "text": "Per translation context the TLB keeps a five-bit page-size-presence vector, refreshed by full scans, and a priority order so lookups try only the page sizes present",
+      "loc": "p212",
+      "quote": "This creates a \"Page Size Presence\" bitvector five bits long, with 1 set for each present page size.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 5,
+      "unit": "bits",
+      "chip": "m2",
+      "supports": [],
+      "notes": "US20220075735A1 (2020)",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-mmu-cache-patent": {
+      "text": "For two-stage translation Apple names three walk caches, S1TC, S2TC and HTLB, and ties their replacement to tracking which entries a completed walk has made redundant",
+      "loc": "p215",
+      "quote": "Apple calls these S1TC ... S2TC ... and HTLB (Hypervisor TLB), which give a full lookup of a VA, through GPA to PA. All of these caches are present in the SoC.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "m2",
+      "supports": [],
+      "notes": "US11429535B1 (2021). Handley guesses this lives in a per-cluster L2 TLB/walker/MMU and at the SLC for IOMMUs",
+      "source": "handley-vol2",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-accel-tlbi": {
+      "text": "Invalidations sent over the NoC to accelerator TLBs are bundled, up to about 8 per request, and dropped when the accelerator was powered down",
+      "loc": "p216",
+      "quote": "the patent suggests bundling perhaps up to 8 TLB invalidation in one request.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "invalidations",
+      "supports": [],
+      "notes": "US20200379920A1 (2019); not tied to a chip",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-latency-17": {
+      "text": "A chain of randomly placed 64 B nodes in a 1 MiB block (in the L2) takes about 17 cycles per load",
+      "loc": "p218",
+      "quote": "On the far left side we have one 64B node in a 64B box, each box randomly placed. So pure randomness, and about 17 cycle latency.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 17,
+      "unit": "cycles",
+      "approx": true,
+      "hedge": "about",
+      "supports": [
+        "l2.latency"
+      ],
+      "notes": "Handley also expects \"around 16cycles or so\" for a random L2 chain, and gives the inner L2 latency as \"apparently 18 cycles\" (c-mh-v2-inner-l2-latency)",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-inner": {
+      "text": "Bandwidth curves droop at about 3 MiB; Handley reads this as each core having an inner L2 of 3 MiB (a quarter of the 12 MiB L2) plus a slightly slower outer L2",
+      "loc": "p108",
+      "quote": "there's an \"inner L2\" of 3MiB, and an \"outer L2\", that's slightly slower ... So each core has an \"inner L2\" of 3MiB (one quarter of the 12MiB L2).",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "MiB",
+      "hedge": "My guess for this is",
+      "supports": [
+        "l2.inner_slice"
+      ],
+      "notes": "The knee is measured; the four 3 MiB cachelets, each half private and half shared (outer L2 of 4.5 MiB, 7.5 MiB per core), are Handley's guess, restated in c-mh-v2-near-l2-3mib and c-mh-v2-l2-outer",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-outer": {
+      "text": "Beyond its 3 MiB inner L2, a core still has 4.5 MiB of outer L2",
+      "loc": "p206",
+      "quote": "3MiB L2 only reflects the inner L2, we still have 4.5MiB of outer L2.",
+      "derivation": "inferred",
+      "value": 4.5,
+      "unit": "MiB",
+      "supports": [],
+      "notes": "The arithmetic (three times 1.5 MiB, 7.5 MiB per core) is in c-mh-v2-l2-inner",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-segments": {
+      "text": "From several Apple patents, the (inner) L2 is three physical segments of 1 MiB with independent power control, any of which may be asleep (an extra cycle to wake) or off",
+      "loc": "p200",
+      "quote": "based on multiple Apple patents is that the L2 is split into three \"physical segments\" with independent voltage/power control, each 1MiB in size.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 3,
+      "unit": "segments",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-not-24way": {
+      "text": "Handley doubts the usual description of the 3 MiB inner L2 as 24-way set associative, since 24 tag compares per access would cost too much power",
+      "loc": "p200",
+      "quote": "is that it is a 24-way set associative cache. But does this really make sense? ... This is what the internet seems to imagine, but to me it makes no sense.",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-assoc-hash": {
+      "text": "The L2 behaves as three-way associative (one way per segment) with a hashed index, which pathological node spacings collapse onto an eighth of the cache",
+      "loc": "p205",
+      "quote": "the overall cache is always three-way associative (three segments) but pathological address patterns will hash all addresses to only an eighth of the cache",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": 3,
+      "unit": "ways",
+      "supports": [],
+      "notes": "Read from 16K64 chains that run ~20 cycles slower than expected out to ~96 MB",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-cpu-hash": {
+      "text": "The inner and outer L2 may be logical, defined by hash functions that include the CPU ID with a per-CPU line budget, rather than physical structures",
+      "loc": "p205",
+      "quote": "I suspect hash functions are perhaps also used to define the inner and outer L2 caches, so that these are not physical structures.",
+      "derivation": "inferred",
+      "hedge": "I suspect",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-p2p": {
+      "text": "Chips and Cheese's multi-core read bandwidth (four cores get four times one core's L2 bandwidth) suggests a point-to-point L2 connection to each P core",
+      "loc": "p243",
+      "quote": "the P L2 has what looks like point-to-point (rather than a shared) connection to each of the four cores it services",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l2-ifetch-quarter": {
+      "text": "Per Chips and Cheese, sustained L1I bandwidth is 8 instructions (32 B) per cycle, and code fetch from the L2 about a quarter of that",
+      "loc": "p243",
+      "quote": "while the (sustained) L1I bandwidth is 8 instructions (ie 32B) per cycle, the sustained bandwidth from L2 is apparently about a quarter of that.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [],
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l1d-8way-tlb": {
+      "text": "The L1D is indexed by address bits 6-13 (256 sets of 64 B lines) with eight ways, so 16 KiB-spaced nodes all share one set and spill to the L2 after eight",
+      "loc": "p184",
+      "quote": "The eight address bits 6..13 give the set into which to place the line. Each set can hold up to eight lines. That's what 8-way set-associative means!",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Explains why 16 KiB-spaced chains cost 16+ cycles per load from ~36 nodes. Handley later qualifies how ways are chosen (c-mh-v2-l1d-way-hash).",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
+    "c-mh-v2-l1d-way-hash": {
+      "text": "The L1D seems to place each line in a way chosen deterministically from low physical page-address bits (hashed with index bits) rather than by ordinary tag-matched ways, with no way prediction",
+      "loc": "p197",
+      "quote": "we appear to have learned one more fact about the M1's L1D ... like a deterministic algorithm to place lines in sets, rather than the usual ways.",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "hedge": "appear to",
+      "supports": [],
+      "notes": "Spacings of 32K-128K+64 B use all eight ways, 256K/512K+64 B only one, 16K+64 B about four; Handley never sees a way misprediction and cannot name the hash",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-latency"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -9865,6 +10246,7 @@
       "claims": [
         "c-mh-v2-prefetch-at-lsu",
         "c-mh-v2-stride-to-dram",
+        "c-mh-v2-no-tlb2-prefetcher",
         "c-mh-v2-tlb1-prefetch",
         "c-mh-v2-ampm-2k",
         "c-mh-v2-ampm-map",
@@ -9882,6 +10264,20 @@
       ],
       "sim_switch": null,
       "detection_rule": "a linear pointer chase keeps its L1 latency across page boundaries out to DRAM, and page-strided chains the prefetcher can follow lose the L1 TLB miss cost; a physical-address prefetcher would restart at each page"
+    },
+    "l1d_hashed_way": {
+      "claims": [
+        "c-mh-v2-l1d-way-hash",
+        "c-mh-v2-l1d-8way-tlb"
+      ],
+      "name": "L1D way chosen from physical page bits",
+      "status": "speculative",
+      "description": "A line's way seems fixed by a hash of physical page bits.",
+      "params": [
+        "l1d.assoc"
+      ],
+      "sim_switch": null,
+      "detection_rule": "pointer chases with node spacing 2^k+64 B reach the full L1 line count for some k and about one way per set for others, with no extra-cycle way-mispredict outliers"
     },
     "content_directed_prefetch": {
       "claims": [

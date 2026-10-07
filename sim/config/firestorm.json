@@ -180,7 +180,7 @@
     "confidence": "medium"
   },
   "l2.latency": {
-    "value": 18,
+    "value": 17,
     "sim_key": "l2_latency",
     "confidence": "medium"
   },
