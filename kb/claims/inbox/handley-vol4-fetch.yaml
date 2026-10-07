@@ -361,10 +361,353 @@ claims:
     notes: >-
       US10747539B1 diagram. Per its Figure 3, decode forwards branch-related instructions directly to fetch
       and branch prediction (no details given).
+  - id: c-mh-v4-indirect-halt
+    text: >-
+      Per a 2010 Apple patent, when the indirect predictor has no useful target, fetch halts until the branch
+      executes rather than speculating down a likely wrong path
+    loc: p032
+    quote: >-
+      Regardless of details, if we know that we do not have a useful predicted target address, Fetch simply halts.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US8555040B2 (2010). In 2010 the indirect predictor was a direct-mapped, PC-tagged table (a tag miss = no
+      useful target); fetch may run a few more cycles before halting. Whether the M1 still does this is not tested.
+  - id: c-mh-v4-nfp-hysteresis
+    text: >-
+      Apple's 2011 fetch-predictor patent adds hysteresis: an entry is replaced only after the change is seen
+      twice, so alternating branches are wrong half the time instead of always
+    loc: p035
+    quote: >-
+      We can at least improve this to only 50% wrong by implementing hysteresis, ie some sort of delay. For example,
+      we have to see a change from the current prediction twice before we’ll insert a replacement.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20130151823A1. From about 2016, history bits in the tag also let alternating cases be held
+      (c-mh-v4-nfp-two-tags).
+  - id: c-mh-v4-nfp-trained-by-predictors
+    text: >-
+      Prediction is multi-stage: the single-cycle fetch predictor is checked a cycle or more later by slower
+      predictors, which also train it, while retired execution trains the slower predictors
+    loc: p035
+    quote: >-
+      Of interest is that, to keep the feedback loop as short as possible, it is the high quality predictor that
+      trains the Fetch Predictor.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From the 2011 hysteresis patent (US20130151823A1).
+  - id: c-mh-v4-nfp-2way
+    text: >-
+      By the 2017 loop-retrain patent the fetch predictor is at least two-way set associative (no longer
+      direct-mapped) and its lookup uses branch history bits
+    loc: p036
+    quote: >-
+      between 2011 and 2017 - the Fetch Predictor is no longer a direct mapped cache but at least two-way set
+      associative. - some aspects of the Fetch Predictor lookup utilize branch history bits.
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: ways
+    hedge: at least
+    supports: [btb.assoc]
+    notes: >-
+      US10613867B1 (2017). Handley's own M1 guess is a direct-mapped first level (c-mh-v4-m1-nfp-dm).
+  - id: c-mh-v4-nfp-two-tags
+    text: >-
+      Per the scan-on-fill patent the fetch predictor is two-way with two tags per entry, the PC and some branch
+      history; when both ways' PC tags match, the history tag picks the way
+    loc: p037
+    quote: >-
+      That patent tells us that the Fetch Predictor is two way, but also that it utilizes two tags per entry, not
+      just one. The first tag is the PC address, the second tag includes some elements of branch history.
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: ways
+    supports: [btb.assoc]
+    notes: >-
+      US10747539B1 (2016). Retraining waits a cycle because the full tag is not ready. The 2017 return-table
+      patent no longer mentions two tags; Handley guesses history is then hashed into the index.
+  - id: c-mh-v4-loop-retrain-suppress
+    text: >-
+      A 2017 patent suppresses fetch-predictor retraining for branches inside tight loops whose outcomes flip
+      before the slow predictor answers, in place of the 2011 per-entry hysteresis bit
+    loc: p036
+    quote: >-
+      The 2011 patent operated by attaching a bit to each Fetch Prediction entry, essentially marking whether the
+      entry changes frequently; the 2017 patent operates by detecting if the branch to be retrained is within a
+      tight loop.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10613867B1, "Suppressing pipeline redirection indications".
+  - id: c-mh-v4-tage-5-cycles
+    text: As of the 2017 loop-retrain patent, the TAGE direction predictor takes up to five cycles to give a prediction
+    loc: p036
+    quote: >-
+      the predictions of the loop might change within the maximum of (at the time of the patent) five cycles it
+      might take TAGE
+    method: patent-reading
+    derivation: inferred
+    value: 5
+    unit: cycles
+    supports: []
+    notes: US10613867B1
+  - id: c-mh-v4-a6-fetch-32b
+    text: Per the 2012 fetch-width-predictor patent, Apple's maximum fetch width around the A6 was 32 bytes
+    loc: p038
+    quote: "Even as of 2012 (so around A6), Apple's maximum Fetch Width appears to have been 32 bytes."
+    method: patent-reading
+    derivation: inferred
+    value: 32
+    unit: B
+    hedge: appears to have been
+    chip: a6
+    supports: []
+    notes: US20140075156A1. Handley gives 8 instructions, or 16 Thumb instructions in that ARMv7 core.
+  - id: c-mh-v4-nfp-index-tag
+    text: >-
+      Per the 2012 patent, the fetch-predictor index XORs a few higher PC bits into the low bits, and each entry is
+      tagged with higher PC bits so aliased entries are caught
+    loc: p038
+    quote: >-
+      The index into the Fetch table appears to have a few higher order bits xor'd in with the low bits ... Each
+      entry in the Fetch Predictor is tagged by higher order bits of the PC.
+    method: patent-reading
+    derivation: inferred
+    hedge: appears to
+    supports: []
+    notes: US20140075156A1 (2012).
+  - id: c-mh-v4-nfp-overflow-groups
+    text: >-
+      Fetch groups longer than the maximum are split: an extra predictor entry keyed at the cut point covers the
+      rest (e.g. a 30-instruction body becomes 16 + 14)
+    loc: p038
+    quote: >-
+      for the address that corresponds to 16 instructions into the long Fetch Group, create a fake entry that
+      corresponds to the next 14 instructions. ... Apple appears to be following this traditional answer.
+    method: patent-reading
+    derivation: inferred
+    hedge: appears to be
+    supports: []
+    notes: US20140075156A1 (2012).
+  - id: c-mh-v4-nfp-longer-trace
+    text: >-
+      Around a short, predictable forward branch the fetch predictor keeps the longer (not-taken) trace; when the
+      branch is taken the extra instructions are deleted from the instruction queue, without a resteer
+    loc: p039
+    quote: >-
+      The Fetch predictor, in this case, is retrained to the longer trace, but not retrained to the shorter trace,
+      so it will always pull in the longer trace.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20140075156A1 (2012).
+
+  - id: c-mh-v4-sof-fallback
+    text: >-
+      The scan-on-fill predictor is consulted when the next fetch target misses the main fetch predictor: an
+      unconditional exit gives the whole trace, a return uses the RAS, a conditional exit uses static heuristics
+    loc: p039
+    quote: >-
+      suppose I don’t find it; then I look in the Scan-on-Fill predictor and hopefully I can use some of the
+      information there to construct the next trace.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10747539B1 (2016); Handley likens it to Boomerang (2017).
+  - id: c-mh-v4-sof-scan-timing
+    text: >-
+      Scan-on-fill results live in a predictor in the fetch unit, filled on free L1I cycles between a line's
+      prefetch and its first use, so a line used too soon may not yet be scanned
+    loc: p040
+    quote: >-
+      So the Scan-on-Fill processing does not happen when a line enters the L1I, it happens (hopefully!) some time
+      between when a line is prefetched into the L1I and when the line is actually first jumped to.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Handley's correction to the simple "scan at fill" reading; basic predecode does happen at fill (c-mh-v4-predecode-every-line).
+  - id: c-mh-v4-sof-cloudflare
+    text: >-
+      Reading Cloudflare's cold-predictor M1 graph, Handley sees about 8 cycles for the first fetch into a line and
+      about 3 more for each further branch the scan-on-fill predictor supplies (about 11 for two, 17 for four)
+    loc: p042
+    quote: >-
+      So it looks like we always pay the fixed cost of 8 cycles, plus 3 cycles if we can extract the data from the
+      line using the Scan on Fill Predictor.
+    method: secondhand
+    derivation: inferred
+    value: 8
+    unit: cycles
+    approx: true
+    hedge: So it looks like
+    supports: []
+    notes: >-
+      Assumes the lines are already in the L1I ("if we assume the lines are already in L1I?"); he calls
+      Cloudflare's own analysis "totally off".
+  - id: c-mh-v4-sof-zero-bubble
+    text: >-
+      The fetch predictor and the scan-on-fill predictor both redirect with no bubble between taken branches;
+      Handley guesses the scan-on-fill predictor holds maybe 512-1024 entries
+    loc: p042
+    quote: >-
+      Who knows how long this is (maybe 512..1024 items?) ... Both of these provide zero cycle bubbles between taken
+      branches.
+    derivation: inferred
+    hedge: "Who knows how long this is (maybe 512..1024 items?)"
+    supports: []
+  - id: c-mh-v4-early-resteer
+    text: >-
+      A wrong direction, indirect target or return caught by a slower predictor before rename costs about 2-5
+      cycles of refetch, far less than a full flush
+    loc: p042
+    quote: >-
+      This will cost maybe 2..5 cycles depending on exactly where the issue is detected (which in turn depends on
+      which Predictor wants to force a Resteer)
+    derivation: inferred
+    value: 3.5
+    range: [2, 5]
+    unit: cycles
+    approx: true
+    hedge: maybe
+    supports: []
+
+  - id: c-mh-v4-nfp-return-table
+    text: >-
+      Per a 2017 patent, fetch groups ending in a return move to a separate NFP Return table storing neither target
+      nor fetch width (the RAS supplies the target); Handley guesses it is direct-mapped
+    loc: p044
+    quote: >-
+      any NFP entry that terminates in a Return is wasting the storage used for the Target ... Hence those entries are moved to a separate table called the NFP
+      Return table.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10445102B1 (2017), "Next fetch prediction return table".
+  - id: c-mh-v4-nfp-usefulness
+    text: >-
+      Entries in the primary next-fetch predictor carry usefulness bits, a hysteresis bit and target-confidence
+      bits, used to pick the way to replace and to retarget an entry
+    loc: p044
+    quote: >-
+      So entries are defined by a few different “usefulness” bits. + One of these is a hysteresis bit ... + A second
+      such is confidence bits
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10445102B1 (2017); Handley reads the two as one 2-bit counter whose start value sets how many early mispredictions an entry survives.
+  - id: c-mh-v4-nfp-overflow-table
+    text: >-
+      When both ways of a primary next-fetch-predictor set are valid and strong, the new entry goes to an overflow
+      table (the patent's NFP Fast Table), a FIFO without usefulness bits, like a victim cache
+    loc: p045
+    quote: >-
+      If both entries for a particular index in the primary Next Fetch Predictor table are valid and have high
+      strength, then we allocate this additional entry into this overflow table
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10445102B1 (2017).
+  - id: c-mh-v4-nfp-lookup-priority
+    text: >-
+      Each cycle the PC goes to the primary NFP, the Return NFP, the overflow table and the scan-on-fill predictor;
+      on several hits the primary NFP wins, then Return, then overflow, then scan-on-fill
+    loc: p046
+    quote: >-
+      If more than hit gets a hit, the NFP gets highest priority, then the Return NFP, then the overflow table, and
+      finally the Scan-on-Fill table.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10445102B1 (2017); hints of different behaviour under low power or high misprediction, no details.
+  - id: c-mh-v4-m1-nfp-dm
+    text: >-
+      For the M1 Handley guesses a two-level next-fetch predictor: a first level of perhaps 1024 entries,
+      direct-mapped, and a second of at least 8192 entries, probably 2-4 way, unlike the two-way patent design
+    loc: p045
+    quote: >-
+      As of the patent this was two-way set associative, tag probably gshare with recent history; As of M1, perhaps
+      two level with L1 perhaps 1024 entries direct-mapped, and L2 at least 8192 entries, probably two, three or four
+      way associative
+    derivation: inferred
+    value: 1
+    unit: ways
+    hedge: perhaps
+    supports: [btb.assoc]
+    notes: >-
+      Value is the first level's associativity. Disagrees with the 2-way patent readings c-mh-v4-nfp-2way and
+      c-mh-v4-nfp-two-tags. He elsewhere equates the second level with the L1I (c-mh-v4-btb-l1i-8192).
+  - id: c-mh-v4-nfp-slices
+    text: >-
+      Handley speculates the fetch predictor is built in slices: each row has one half for fetch groups ending in a
+      branch (target and width) and a separately tagged half for branch-structure hints about the next groups
+    loc: p047
+    quote: >-
+      So for the Fetch Predictor, I think we have this sort of slice structure. Each row in the Fetch Predictor has
+      - a first half that holds “Fetch Groups that will end in a branch”
+    derivation: inferred
+    hedge: I think
+    supports: []
+    notes: Handley introduces it with "I'm going to out on a limb here", by analogy with his ROB rows.
+
+  - id: c-mh-v4-l2-ilines
+    text: >-
+      Handley expects the L2 to favour keeping instruction lines over data lines; he lists this among Apple's
+      features, though it would not show up in patents
+    loc: p048
+    quote: "slightly prioritize I-lines in the L2 cache over D-lines ... I expect Apple is doing so"
+    derivation: inferred
+    hedge: I expect Apple is doing so
+    supports: []
+    notes: Handley lists "treating I-lines in L2 as critical so that they are retained in the cache longer than D-lines".
+  - id: c-mh-v4-iprefetch-two-tables
+    text: >-
+      Apple's more recent instruction prefetcher extends call-path prefetch (DIP-like) with TAGE-style tables of
+      different path lengths, two so far
+    loc: p044
+    quote: >-
+      their more recent I-Prefetcher (which augments the basic DIP idea of prediction based on a path ... with an idea from TAGE (multiple, for now two, prediction tables using
+      paths of different lengths]
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: tables
+    supports: []
+  - id: c-mh-v4-callgraph-details
+    text: >-
+      In the callgraph-prefetch patent the signature is an aging hash (shift, then XOR in each call target or
+      return address), and each signature prefetches at most two lines, the target line and possibly the next
+    loc: p050
+    quote: >-
+      Apple seems to construct an “aging” hash where on each event (call or return) we shift the history
+      ... Each event can only result in up to two prefetches, of the target line and possibly the target line+1.
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: lines
+    supports: []
+    notes: >-
+      Beyond c-pat-us10642618b1-callgraph-prefetch, per-line usefulness counters plus recency drive replacement, and a
+      Bloom filter screens Miss Table lookups. Far less aggressive than RDIP.
 
 new_params:
   ras.return_bubble: {block: ras, name: Return prediction bubble, unit: cycles}
 
+new_mechanisms:
+  scan_on_fill_nfp:
+    name: Scan-on-fill next-fetch predictor
+    status: inferred
+    description: Prefetched instruction lines are scanned for branches before their first use.
+    params: []
+    sim_switch: null
+    detection_rule: after a predictor flush, later taken branches in a recently filled line redirect faster than the first
+
 mechanism_claims:
-  l1i_coupled_btb: [c-mh-v4-l1i-tier-bubble-2, c-mh-v4-icache-tier-3-cycles, c-mh-v4-btb-l1i-8192, c-mh-v4-cloudflare-l1i-jumps, c-mh-v4-predecode-every-line, c-mh-v4-m1-no-l2-fp, c-mh-v4-m2-l2-fp]
-  decoupled_fetch: [c-mh-v4-decoupled-iq, c-mh-v4-fdip-absent, c-mh-v4-fully-decoupled-no-win, c-mh-v4-iq-guess, c-mh-v4-l2-two-lines, c-mh-v4-m2-not-fully-decoupled, c-mh-v4-not-decoupled]
+  l1i_coupled_btb: [c-mh-v4-l1i-tier-bubble-2, c-mh-v4-icache-tier-3-cycles, c-mh-v4-btb-l1i-8192, c-mh-v4-cloudflare-l1i-jumps, c-mh-v4-predecode-every-line, c-mh-v4-m1-no-l2-fp, c-mh-v4-m2-l2-fp, c-mh-v4-m1-nfp-dm]
+  decoupled_fetch: [c-mh-v4-decoupled-iq, c-mh-v4-fdip-absent, c-mh-v4-fully-decoupled-no-win, c-mh-v4-iq-guess, c-mh-v4-l2-two-lines, c-mh-v4-m2-not-fully-decoupled, c-mh-v4-iprefetch-two-tables, c-mh-v4-callgraph-details, c-mh-v4-not-decoupled]
+  scan_on_fill_nfp: [c-mh-v4-sof-fallback, c-mh-v4-sof-scan-timing, c-mh-v4-sof-cloudflare, c-mh-v4-sof-zero-bubble, c-mh-v4-nfp-lookup-priority]

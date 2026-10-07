@@ -1,26 +1,25 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 113, claims 577, sources 7, mechanisms 22
+blocks 37, links 35, params 113, claims 602, sources 7, mechanisms 23
 
 ## By status
 
-- inferred: 20
+- inferred: 21
 - measured: 75
-- open: 15
+- open: 14
 - reported: 3
 
 ## By confidence
 
 - high: 19
-- low: 23
+- low: 24
 - medium: 56
-- none: 15
+- none: 14
 
-## Holes (15)
+## Holes (14)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
-- btb.assoc (btb): BTB associativity
 - dirpred.kind (dirpred): Direction predictor type
 - dirpred.history (dirpred): Global history length
 - dirpred.capacity (dirpred): Direction predictor capacity
@@ -34,9 +33,10 @@ blocks 37, links 35, params 113, claims 577, sources 7, mechanisms 22
 - btb.l0_footprint (btb): Zero-bubble code footprint
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
-## Open disputes (11)
+## Open disputes (12)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
+- btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
