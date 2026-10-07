@@ -1,0 +1,307 @@
+# handley-vol4-predict.yaml
+# Maynard Handley, 2025
+# Direction, indirect and return prediction, loops and decode, largely read from Apple patents (M1 Explainer vol 4).
+session: handley-vol4-predict
+source: handley-vol4
+
+claims:
+  - id: c-mh-v4-ogehl-2012
+    text: >-
+      Per Apple's 2012 patent, the branch direction predictor of that time was O-GEHL, a perceptron-weighted
+      predictor combining tables of several history lengths
+    loc: p051
+    quote: "The Branch Direction Predictor (as of 2012) was the O-GEHL version of the Perceptron predictor"
+    method: patent-reading
+    derivation: inferred
+    value: o-gehl
+    supports: []
+    notes: US20140089647A1 (2012). Superseded by the TAGE-like design (c-mh-v4-tage)
+  - id: c-mh-v4-bp-confidence-retrain
+    text: >-
+      Per the 2012 patent, each predicted branch carries a confident/weak flag and the table indices used, so the
+      predictor is retrained on mispredictions and on correct but weak predictions, and not otherwise
+    loc: p052
+    quote: >-
+      what the Branch Predictor actually feeds forward, along with the predicted branch outcome (all attached to the
+      Branch instruction) is ... an indication of whether the branch was confidently or weakly predicted
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20140089647A1 (2012). Handley suggests a lower-power variant keeps the indices in a local circular table
+      and sends only a pointer with the branch
+  - id: c-mh-v4-bp-line-rows
+    text: >-
+      Per the 2012 patent, the direction predictor is indexed by the fetch group's cache-line address and each row
+      holds a counter for every instruction slot in the line, so one lookup covers every branch in the fetch group
+    loc: p053
+    quote: >-
+      with a single Fetch Group PC we can identify the appropriate row of the Branch Direction Predictor, which
+      holds prediction data for all possible branches in that line
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20140089647A1 (2012). Handley's example (128 B line, 32 counters per row, 128 rows) is illustrative. Works
+      for the global tables too because all branches in a trace share the same path history
+  - id: c-mh-v4-bp-half-banks
+    text: >-
+      Per the 2012 patent, predictor storage is split into two halves so a fetch group spanning two lines can still
+      read a full line's width, and the unused half is not powered when the group fits in half a line
+    loc: p054
+    quote: "the actual storage is split into two halves, so that one can always access a full line’s width of storage"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20140089647A1 (2012)
+  - id: c-mh-v4-tage
+    text: >-
+      By 2015 Apple's direction predictor is a proper TAGE-like system (patent US10719327B1): tagged tables indexed
+      by PC and increasingly long path history, best-match selection and usefulness bits
+    loc: p054
+    quote: "By 2015 Apple have moved on to a proper TAGE-like system, but they add one interesting twist"
+    method: patent-reading
+    derivation: inferred
+    value: tage-like
+    supports: [dirpred.kind]
+    notes: >-
+      Handley later calls it the M1's TAGE (c-mh-v4-m1-tage)
+  - id: c-mh-v4-tage-assoc
+    text: >-
+      Per the 2015 patent, each TAGE table may be direct-mapped, 2-way or 4-way, with ways and sets chosen per
+      table; Handley guesses 4-way for short-history tables, 2-way for intermediate and direct-mapped for long
+    loc: p056
+    quote: >-
+      Each of the TAGE tables can be implemented not as a direct-mapped cache but as two- or four-way, with
+      different tables having a different number of ways
+    method: patent-reading
+    derivation: inferred
+    hedge: perhaps
+    supports: []
+    notes: >-
+      US10719327B1 (2015); per-table associativity is the patent's novelty. Handley's nine tables and the 4/2/1-way
+      split are his illustration
+  - id: c-mh-v4-tage-sequential
+    text: >-
+      Per the 2015 patent, the TAGE tables are probed partly in sequence rather than all in parallel to save energy;
+      Handley imagines three groups of three tables, a later group probed only if earlier ones miss or are weak
+    loc: p055
+    quote: "to save energy, there is some degree of sequential testing of the different tables rather than full parallel testing"
+    method: patent-reading
+    derivation: inferred
+    hedge: "The details are not given, but one could imagine"
+    supports: []
+    notes: >-
+      US10719327B1 (2015). Handley: not exactly TAGE's best match across all lengths, but close enough at lower
+      power
+  - id: c-mh-v4-tage-power-gating
+    text: >-
+      Per a 2016 patent, deep power-saving modes power off TAGE tables selectively, favouring tables with few
+      useful entries and shorter histories; a re-powered table stays off until training gives it an entry
+    loc: p056
+    quote: >-
+      maintain a measure of how many useful values are in each of the tables ... preferentially cut power to the
+      shorter-history tables
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10223123B1 (2016)
+
+  - id: c-mh-v4-ibp-2013-tables
+    text: >-
+      Per Apple's 2013 indirect predictor patent, two tables are read in parallel: a 1024-entry table indexed by a
+      hash of path history and PC, and a 2-way PC table indexed by PC bits 5..9; a history-table hit wins
+    loc: p057
+    quote: >-
+      the history table has 1024 entries (indexed by a hash of 10 bits of path data and some bits of PC data) ...
+      the PC table has 32 entries
+    method: patent-reading
+    derivation: inferred
+    value: 1024
+    unit: entries
+    supports: []
+    notes: >-
+      US9311100B2 (2013), a cascaded predictor after Driesen and Holzle. Handley says this design "is now replaced by
+      something like ITTAGE/COTTAGE". The PC table is described both as 32 entries and as 2-way with two entries
+      per index
+  - id: c-mh-v4-ibp-2013-training
+    text: >-
+      Per the 2013 patent, a new indirect branch goes into the PC table if a slot is free, else the history table;
+      a PC-table entry that mispredicts is marked not useful and a history-table entry is made for it
+    loc: p058
+    quote: >-
+      When a new indirect branch is encountered, the initial impulse is classify it in the PC-based predictor. ...
+      If a branch already in the PC-based predictor mispredicts, we mark its usefulness as 0
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9311100B2 (2013). Usefulness counters also arbitrate replacement in the history table
+  - id: c-mh-v4-ibp-hysteresis
+    text: >-
+      In the 2013 indirect predictor, history-table entries carry hysteresis: an entry keeps its target after one
+      misprediction and switches only after two in a row
+    loc: p059
+    quote: "The hysteresis value allows entries in the history-based table to make one mistake while retaining the current target."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9311100B2 (2013); Handley calls hysteresis a common Apple feature in caches
+  - id: c-mh-v4-ibp-8kb
+    text: >-
+      Handley estimates the 2013 indirect predictor at about 1000 entries of about 8 bytes, roughly 8 KB, against the
+      64 KB suggested in the ITTAGE paper
+    loc: p059
+    quote: >-
+      the size of this predictor storage is ~1000 entries, call them 8 bytes long ... So we're talking ~8kB for the
+      indirect branch predictor
+    derivation: inferred
+    value: 8
+    unit: KB
+    approx: true
+    hedge: call them 8 bytes long
+    supports: []
+    notes: Handley's own sizing of the 2013 design (6 B of target, 2 B of tag and usefulness per entry)
+  - id: c-mh-v4-ibp-m1-long-history
+    text: >-
+      The 2013 indirect predictor lacks ITTAGE-style very long branch history; Handley assumes the M1 has added it
+    loc: p059
+    quote: >-
+      missing, is sophisticated use of a very long branch history as in IT-TAGE, but I would assume that by now with
+      the M1 that has been corrected
+    derivation: inferred
+    hedge: I would assume
+    supports: []
+    notes: No evidence given; see c-mh-v4-ibp-ittage for the patent statement that the predictor is a TAGE variant
+  - id: c-mh-v4-objc-predictor-not-m1
+    text: >-
+      The register-operand indirect predictor for objc_msgSend (patent US20210240477A1) is not in the A14/M1
+    loc: p059
+    quote: "This patent represents functionality that we know is not in the A14/M1"
+    derivation: inferred
+    value: false
+    supports: []
+    notes: >-
+      Handley does not say how this is known; he links Apple's objc4 runtime header objc-bp-assist.h, which
+      configures the hardware
+  - id: c-mh-v4-objc-predictor-m2
+    text: The register-operand indirect predictor for objc_msgSend appears to be present in the A15/M2
+    loc: p059
+    quote: "functionality that we know is not in the A14/M1, but appears to be present in the A15/M2"
+    derivation: inferred
+    value: true
+    hedge: appears to be
+    chip: m2
+    supports: []
+    notes: Handley believes WebKit's JavaScript dispatcher also uses it
+  - id: c-mh-v4-mop-pred-uop
+    text: >-
+      Per the 2020 patent, Decode compares each BR with one configured hot PC and on a match inserts a predict uop
+      before it; configuration registers also name two key registers, x16 (class) and x1 (selector)
+    loc: p063
+    quote: >-
+      Each branch-to-register (BR) instruction in Decode is compared against the special hot PC. If there’s a match,
+      then a special fake “predict” instruction is inserted before the BR
+    method: patent-reading
+    derivation: inferred
+    chip: m2
+    supports: []
+    notes: >-
+      US20210240477A1; the registers are set at app initialization. On the A15/M2, not the M1
+      (c-mh-v4-objc-predictor-not-m1). A fake dependency through an sts register keeps the predict uop ahead of the
+      BR.
+  - id: c-mh-v4-mop-cache
+    text: >-
+      The predict uop hashes x16 and x1 into a roughly 10-bit index into a Method/Object Predictor (MOP) cache and
+      redirects fetch on a hit; the MOP entry is written from a training entry when the BR retires
+    loc: p064
+    quote: >-
+      create a hash from x16 (the class) and x1 (the method selector), using the usual xor’s and folding ...
+      something like a 10-bit index, which will be looked up in the MOP (Method/Object Predictor) cache
+    method: patent-reading
+    derivation: inferred
+    value: 10
+    unit: bits
+    approx: true
+    hedge: something like
+    chip: m2
+    supports: []
+    notes: US20210240477A1 (2020). The MOP cache entries carry a security tag
+  - id: c-mh-v4-ibp-prev-call-pc
+    text: >-
+      Per a 2020 patent, for the configured hot indirect branch the indirect predictor indexes and tags with the PC
+      of the previous function call instead of the branch's own PC
+    loc: p066
+    quote: >-
+      usually we use the current PC except when that current PC equals the hot PC, in which case we use the prior
+      PC
+    method: patent-reading
+    derivation: inferred
+    chip: m2
+    supports: []
+    notes: >-
+      US11294684B2 (2020). Placed on m2 since it relies on the hot-PC configuration of the objc_msgSend predictor, which
+      Handley places on the A15/M2; he does not name a chip for this patent himself
+  - id: c-mh-v4-ibp-ittage
+    text: Per a 2020 patent, Apple's indirect branch predictor is a TAGE variant, something like ITTAGE or COTTAGE
+    loc: p066
+    quote: "We begin by confirming that the IBP is a TAGE variant, something like ITTAGE or COTTAGE"
+    method: patent-reading
+    derivation: inferred
+    value: ittage-like
+    hedge: something like
+    supports: [indpred.kind]
+    notes: >-
+      US11294684B2 (2020). Handley says the 2013 two-table design "is now replaced by something like ITTAGE/COTTAGE";
+      the 2016 branch-information patent also shows TAGE elements in the indirect predictor (c-mh-v4-ibp-btp-hit)
+
+  - id: c-mh-v4-loop-buffers-m1
+    text: >-
+      The M1 has several kinds of loop buffer, mainly to save energy, since a loop's backward branch already costs it
+      nothing; simpler loops get the more aggressive savings
+    loc: p066
+    quote: >-
+      M1 already has that cost down to zero. Even so M1 incorporates a variety of loop buffers, mainly, but not
+      exclusively to save energy.
+    derivation: inferred
+    supports: []
+    notes: No method given; the section that follows reads Apple's 2012-2014 loop patents
+  - id: c-mh-v4-loop-detect
+    text: >-
+      Per a 2012 patent, a short backward branch starts loop detection; when the loop-back distance repeats with no
+      branches in the body a few times (say three), the loop runs from the loop buffer; nothing is kept across encounters
+    loc: p068
+    quote: "If we increment detection mode successfully enough times (say three times) then we assume we have a loop"
+    method: patent-reading
+    derivation: inferred
+    hedge: say three times
+    supports: []
+    notes: US9557999B2 (2012)
+  - id: c-mh-v4-loop-buffer-after-decode
+    text: >-
+      In the 2012 patent the loop buffer sits after Decode and holds uops, so Decode is skipped too; later patents seem
+      to place it before Decode, running loops from the instruction queue
+    loc: p068
+    quote: "The loop buffer apparently lives after Decode. ... the cost of Decode can also be avoided."
+    method: patent-reading
+    derivation: inferred
+    hedge: apparently
+    supports: []
+    notes: US9557999B2 (2012); Handley is unsure which placement later designs keep
+
+new_params:
+  indpred.kind: {block: indpred, name: Indirect predictor type, unit: ""}
+
+new_mechanisms:
+  loop_modes:
+    name: Tiered loop modes
+    status: speculative
+    description: Loops run from the instruction queue, a loop buffer or an L0 cache.
+    params: []
+    patents: [US9557999B2, US9753733B2, US20150205725A1, US9524011B2, US9471322B2]
+    sim_switch: null
+    detection_rule: >-
+      a loop body shorter than the 8-wide dispatch group sustaining more than one iteration (taken loop-back
+      branch) per cycle would show loop packing
+
+mechanism_claims:
+  loop_modes: [c-mh-v4-loop-buffers-m1, c-mh-v4-loop-detect, c-mh-v4-loop-buffer-after-decode]

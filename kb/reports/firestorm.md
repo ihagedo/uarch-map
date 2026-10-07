@@ -1,26 +1,25 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 113, claims 602, sources 7, mechanisms 23
+blocks 37, links 35, params 114, claims 624, sources 7, mechanisms 24
 
 ## By status
 
-- inferred: 21
+- inferred: 23
 - measured: 75
-- open: 14
+- open: 13
 - reported: 3
 
 ## By confidence
 
 - high: 19
-- low: 24
+- low: 26
 - medium: 56
-- none: 14
+- none: 13
 
-## Holes (14)
+## Holes (13)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
-- dirpred.kind (dirpred): Direction predictor type
 - dirpred.history (dirpred): Global history length
 - dirpred.capacity (dirpred): Direction predictor capacity
 - ras.depth (ras): Return stack depth
