@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 118, claims 736, sources 17, mechanisms 26
+blocks 37, links 35, params 118, claims 761, sources 18, mechanisms 26
 
 ## By status
 
@@ -11,9 +11,9 @@ blocks 37, links 35, params 118, claims 736, sources 17, mechanisms 26
 
 ## By confidence
 
-- high: 21
+- high: 23
 - low: 25
-- medium: 61
+- medium: 59
 - none: 11
 
 ## Holes (11)
@@ -37,7 +37,7 @@ blocks 37, links 35, params 118, claims 736, sources 17, mechanisms 26
 - rename.mov_imm_limit: Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming (c-dj-mov-imm)  [c-dj-mov-imm, c-ox-mov-imm-8]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
-- eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]
+- eu_int.count: measured on the A14  [c-ox-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-lsq-sq-60, c-at-sq]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]

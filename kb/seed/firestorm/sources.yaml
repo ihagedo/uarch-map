@@ -41,6 +41,13 @@ sources:
     author: Frumusanu, Andrei
     year: 2020
     url: https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive
+  cnc-oryon:
+    type: article
+    title: "Qualcomm's Oryon Core: A Long Time in the Making"
+    author: Lam, Chester (Chips and Cheese)
+    year: 2024
+    url: https://chipsandcheese.com/p/qualcomms-oryon-core-a-long-time-in-the-making
+    notes: Some M1 results are M1 Max
   ocxtal-m1-notes:
     type: web
     title: Optimization notes for Apple M1 (insn_bench_aarch64)

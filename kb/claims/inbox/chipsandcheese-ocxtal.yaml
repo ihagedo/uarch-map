@@ -236,6 +236,265 @@ claims:
     value: 1
     unit: instr/cycle
     supports: []
+  - id: c-ox-ld3-latency
+    text: The LD3/ST3 permutation adds two or three cycles of latency
+    loc: "#load-and-store-units"
+    quote: "The latency of the permutation looks to be two or three cycles."
+    derivation: measured
+    value: 2.5
+    unit: cycles
+    approx: true
+    hedge: "looks to be"
+    supports: []
+    notes: "two or three cycles; midpoint given"
+  - id: c-ox-lq-anandtech
+    text: Repeating AnandTech, the load queue has more than 150 entries; the author did not measure it
+    loc: "#load-and-store-units"
+    quote: "I haven't investigated the depths of load queues and store queues. AnandTech's article reports that they have more than 150 and 100 entries, respectively."
+    method: secondhand
+    derivation: reported
+    value: 150
+    unit: entries
+    supports: []
+    contradicts: []
+    notes: >-
+      A repeat of AnandTech (c-at-lq). Lower bound ("more than"); Johnson gives 130 (c-dj-loads)
+  - id: c-ox-sq-anandtech
+    text: Repeating AnandTech, the store queue has more than 100 entries; the author did not measure it
+    loc: "#load-and-store-units"
+    quote: "I haven't investigated the depths of load queues and store queues. AnandTech's article reports that they have more than 150 and 100 entries, respectively."
+    method: secondhand
+    derivation: reported
+    value: 100
+    unit: entries
+    supports: []
+    contradicts: []
+    notes: >-
+      A repeat of AnandTech (c-at-sq). Lower bound ("more than"); Johnson gives 60 (c-dj-stores)
+
+  - id: c-ox-int-units
+    text: Six scalar integer units, all doing basic arithmetic and logic, separate from the load/store units
+    loc: "#scalar-domain"
+    quote: "Table 1 shows the capability of the six execution units in the scalar domain. ... All the six units can process basic arithmetic and logical instructions."
+    method: throughput
+    derivation: measured
+    value: 6
+    unit: units
+    hedge: "Estimated"
+    supports: [eu_int.count]
+  - id: c-ox-int-roles
+    text: >-
+      Scalar unit roles (names arbitrary): all six do ALU ops, shifts, ctz, rev and pre/post-index address
+      updates; X3 and X4 multiply, X3 also multiply-add, bfm and crc32, X4 also divide; X0-X2 flag-setting
+      ops; X0-X1 branches
+    loc: "#scalar-domain"
+    quote: "It has two multiply units in X3 and X4. One of which (X3) can also handle multiply-add instructions. ... The X4 unit, the multiply unit without multiply-add capability, handles divide instructions instead."
+    method: throughput
+    derivation: measured
+    hedge: "Estimated"
+    supports: [eu_int.roles]
+    notes: >-
+      Table 1 marks X0-X2 for flag-setting ops (Johnson's units 1-3); the text below it says "X0, X1, and X3".
+      X3 and X4 match Johnson's units 6 and 5
+  - id: c-ox-alu-1cycle
+    text: Basic ALU ops, including variable shifts, bit reverse and count trailing zeros, are single-cycle on all six units
+    loc: "#scalar-domain"
+    quote: "M1 can process basic arithmetic and logical instructions in all units from X0 to X5 in a single clock cycle. ... variable-width shift, bit reversal, and count trailing zeros are also single-cycle operations."
+    method: throughput
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+  - id: c-ox-shift-form
+    text: Shifted-operand ALU forms add one cycle of latency and run on all six units; the shift is not a separate uop
+    loc: "#scalar-domain"
+    quote: "Shift-form arithmetic and logical instructions increase the latency by one cycle from the base form. ... indicating the shift part is not separated into a uOP."
+    method: throughput
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+  - id: c-ox-madd
+    text: Multiply-add is a single uop on one unit, issuing every cycle with three-cycle latency
+    loc: "#scalar-domain"
+    quote: "The multiply-add operation seems expressed as a single uOP, dispatched to a single unit every cycle and executed in three cycles."
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: cycles
+    hedge: "seems"
+    supports: []
+  - id: c-ox-div-latency
+    text: Integer divide latency is at least seven cycles
+    loc: "#scalar-domain"
+    quote: "The latency of divide instructions seems seven cycles at the minimum."
+    method: throughput
+    derivation: measured
+    value: 7
+    unit: cycles
+    hedge: "seems"
+    supports: []
+    notes: Minimum latency
+  - id: c-ox-div-throughput
+    text: Back-to-back divides issue with one dead slot between them, one divide every two cycles
+    loc: "#scalar-domain"
+    quote: "Consecutive divides are dispatched with a dead slot of one in between, resulting in a throughput of one instruction per two cycles."
+    method: throughput
+    derivation: measured
+    value: 0.5
+    unit: instr/cycle
+    supports: []
+  - id: c-ox-div-pipeline
+    text: >-
+      Divides do not hold up other instructions on their unit, so the divider is probably a separate pipeline
+      that shares only the dispatch queue
+    loc: "#scalar-domain"
+    quote: "divide instructions do not seem to limit or delay the execution of non-divide instructions ... Perhaps divide instruction has a dedicated execution pipeline and shares only the dispatch queue part with others"
+    derivation: inferred
+    hedge: "Perhaps"
+    supports: []
+
+  - id: c-ox-fp-units
+    text: Four SIMD/fp units, all capable of most arithmetic and logic instructions
+    loc: "#simd-fp-domain"
+    quote: "There are four execution ports in the SIMD/fp domain, which I denote V0 to V3. All ports are capable of most of the arithmetic and logic instructions."
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: units
+    supports: [eu_fp.count]
+  - id: c-ox-fp-roles
+    text: >-
+      SIMD/fp unit roles (names arbitrary): only V0 does fp divide, reciprocal, square root, flag-setting fp
+      compare, crypto and fjcvtzs; V0 and V1 do conditional select; all four do almost everything else
+    loc: "#simd-fp-domain"
+    quote: "V0 is a fat unit that handles division and some special instructions. ... Conditional selection instructions are processed in two units, V0 and V1."
+    method: throughput
+    derivation: measured
+    hedge: "Estimated"
+    supports: [eu_fp.roles]
+    notes: V0 and V1 match Johnson's units 14 and 13
+  - id: c-ox-simd-lat-2
+    text: Basic SIMD arithmetic and logic ops have two-cycle latency at four per cycle
+    loc: "#simd-fp-domain"
+    quote: "All execution units, V0~V3, processes basic arithmetic and logical operations with a latency of two cycles and a throughput of four per clock cycle."
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: cycles
+    supports: []
+  - id: c-ox-simd-lat-3
+    text: >-
+      Most other SIMD ops, including saturating, rounding, horizontal, high-narrow, absolute-difference and
+      integer multiply and multiply-accumulate, take three cycles
+    loc: "#simd-fp-domain"
+    quote: "Most others are three-cycle instructions, such as saturating and rounding arithmetic, horizontal, high-narrow form, and absolute difference operations. It is noticeable that integer multiplication and multiply-accumulate are processed in three cycles, too."
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: []
+  - id: c-ox-xfer-fwd
+    text: Moves from scalar to SIMD/fp registers use a load-unit slot, at up to three per cycle
+    loc: "#simd-fp-domain"
+    quote: "The forward transfer, scalar-to-SIMD/fp direction, uses a slot in the load units ... Throughput is three instructions every cycle for the forward"
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: instr/cycle
+    supports: []
+    notes: A plain FMOV uses only the load slot; DUP and INS also take a SIMD/fp slot
+  - id: c-ox-xfer-rev
+    text: Moves from SIMD/fp to scalar registers use dedicated paths, at up to two per cycle
+    loc: "#simd-fp-domain"
+    quote: "the reverse has dedicated paths ... two for the opposite direction"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: instr/cycle
+    supports: []
+    notes: Each takes one SIMD/fp slot and several scalar slots
+  - id: c-ox-xfer-latency
+    text: Register transfers between the scalar and SIMD/fp domains take six cycles in either direction
+    loc: "#simd-fp-domain"
+    quote: "Latency appears to be six cycles in both directions."
+    method: throughput
+    derivation: measured
+    value: 6
+    unit: cycles
+    hedge: "appears to be"
+    supports: []
+  - id: c-ox-xfer-fusion
+    text: A cross-domain transfer can fuse with the operation right after it, hiding one cycle of latency
+    loc: "#simd-fp-domain"
+    quote: "In either direction, a transfer instruction may fuse with an operation immediately after the transfer, where the latency for one cycle is hidden."
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+  - id: c-ox-cvt
+    text: Integer-to-fp conversion into an fp register takes one SIMD/fp slot on any of the four units, three cycles at four per cycle
+    loc: "#simd-fp-domain"
+    quote: "If the write destination is a floating point register, a conversion instruction occupies only one slot in the SIMD/fp domain. In this case, the latency and throughput are three cycles and four per cycle"
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: []
+    notes: >-
+      With a scalar destination latency rises by six cycles and throughput falls to three per cycle; fp-to-int
+      conversions behave the same way
+
+  - id: c-ox-flag-files
+    text: The scalar and SIMD/fp domains have separate condition-flag register files
+    loc: "#condition-flags"
+    quote: "M1 has independent condition flag files for the scalar and SIMD/fp domains."
+    derivation: measured
+    supports: []
+  - id: c-ox-flag-xfer
+    text: Moving flags between the two domains probably costs six cycles each time; chains within one domain cost nothing
+    loc: "#condition-flags"
+    quote: "Flag transfer across domains will probably be penalized for six cycles each time, while in-domain chains have no penalty."
+    derivation: measured
+    value: 6
+    unit: cycles
+    hedge: "probably"
+    supports: []
+    notes: The forward direction has a dedicated path; the reverse shares the register-transfer route
+  - id: c-ox-rob-anandtech
+    text: Repeating AnandTech, the reorder buffer has more than 600 entries; the author did not measure it
+    loc: "#reorder-buffer-and-commit-unit"
+    quote: "According to the AnandTech article, the reorder buffer has more than 600 entries."
+    method: secondhand
+    derivation: reported
+    value: 600
+    unit: entries
+    supports: [retire.rename_queue]
+    notes: Lower bound; the KB maps AnandTech's ROB figure to the rename retire queue (c-at-rob-630)
+
+  - id: c-cc-oryon-m1-clusters
+    source: cnc-oryon
+    text: M1 groups its cores in quad-core clusters that share an L2, with a hybrid (big and little) core arrangement
+    loc: "#system-architecture"
+    quote: "Apple also uses quad core clusters with a shared L2. However, M1 uses a hybrid core arrangement."
+    method: secondhand
+    derivation: reported
+    value: 4
+    unit: cores
+    supports: []
+  - id: c-cc-oryon-m1-c2c
+    source: cnc-oryon
+    text: >-
+      Core-to-core latency on M1 is similar to Snapdragon X Elite within a cluster; cross-cluster transfers
+      are slow, though a bit faster than on X Elite
+    loc: "#system-architecture"
+    quote: "Core to core latency is similar within a cluster. Cross-cluster transfers incur high latency much like on Snapdragon X Elite, though absolute values are a bit better."
+    method: other
+    derivation: measured
+    supports: []
+    notes: >-
+      Cacheline ping-pong between core pairs, run under Asahi Linux on an M1 MacBook Air; the text gives no M1
+      number (Zen 4's 80-90 ns cross-cluster latency is said to be better than M1's)
 
 new_params:
   btb.l0_footprint: {block: btb, name: Zero-bubble code footprint, unit: KiB}
