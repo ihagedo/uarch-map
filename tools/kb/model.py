@@ -126,13 +126,12 @@ class Block:
 
     @property
     def black_box(self):
-        """Nothing known yet: no parameter here or below has a supporting claim."""
+        """No parameter here or below has a value yet."""
         return not any(p.known for p in self.all_params)
 
     @property
     def confidence(self):
-        """Mean confidence of every parameter here and below, holes counting as none,
-        rounded half up. A block without parameters takes the value of its children."""
+        """Mean confidence over every parameter here and below (holes count as none), rounded half up."""
         ps = self.all_params
         if not ps:
             return "none"

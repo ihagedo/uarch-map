@@ -126,7 +126,7 @@ def geometry(kb, layout):
 
 
 def structures(kb, layout):
-    """Structure views (L3); every param, claim, mechanism and block they name must exist."""
+    """L3 views from the layout; fails on any block, param, claim or mechanism the KB lacks."""
     out = {}
     for sid, st in (layout.get("structures") or {}).items():
         for bid in st["blocks"]:
@@ -158,7 +158,7 @@ def structures(kb, layout):
 
 
 def aggregate(params):
-    """Same rule as Block.confidence, over an arbitrary set of parameters (a frame)."""
+    """Block.confidence's rule over any set of params (a frame)."""
     if not params:
         return "none"
     return CONF_NAME[int(sum(CONF_RANK[p.confidence] for p in params) / len(params) + 0.5)]

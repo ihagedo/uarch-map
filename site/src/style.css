@@ -48,7 +48,7 @@ body {
   padding-inline: 16px;
   padding-block: 28px 40px;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);  /* no child (a long select option, a wide card) can widen the page */
+  grid-template-columns: minmax(0, 1fr);  /* min 0: a long select option or wide card cannot widen the page */
   gap: 22px;
 }
 [hidden] { display: none !important; }

@@ -311,6 +311,7 @@
     return { w: W, h: ty + 10 };
   }
 
+  // s wrapped at `chars` a line, `lh` apart; returns the last baseline
   function wrapText(g, x, y, s, chars, lh, cls) {
     const words = String(s).split(/\s+/);
     let lineS = "", yy = y;
@@ -328,7 +329,6 @@
       el("rect", { x, y, width: w, height: h, rx: 10, class: `${cls} body` }, el("g", { class: `conf-${conf || "none"}` }, g));
     const confOf = (...pids) => pids.map((p) => D.params[p]).filter((p) => p.known).map((p) => p.conf)
       .sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "none";
-    // the chip outline
     el("rect", { x: 16, y: 52, width: W - 32, height: 470, rx: 14, class: "chip-outline" }, g);
     txt(g, 32, 76, "Apple M1", "st-h");
     const px = 40, py = 96, pw = 640, ph = 300;

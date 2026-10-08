@@ -23,7 +23,7 @@
   const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace"), strings = $("strings");
   const wide = window.matchMedia("(min-width: 761px)");
   let linkLayer = null;
-  let shown = null; // block and param the dossier currently shows
+  let shown = null; // what the dossier last rendered, to skip identical redraws
 
   const esc = (s) => String(s == null ? "" : s).replace(/[&<>"']/g,
     (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -142,7 +142,6 @@
     el("rect", { x: bx.x, y: bx.y, width: bx.w, height: bx.h, rx: 6, class: "body", "pointer-events": "all" }, g);
     el("text", { x: bx.x + 10, y: bx.y + 19, class: "name" }, g).textContent = clip(b.name, 22);
     if (b.l3) {
-      // a badge on the top-right corner, so it never covers the name
       const z = el("g", { class: "zoom", "data-l3": b.l3, "data-block": bid }, g);
       const zx = bx.x + bx.w - 1, zy = bx.y + 1;
       el("circle", { cx: zx, cy: zy, r: 8.5, class: "zoom-hit" }, z);
@@ -161,7 +160,7 @@
       const r = el("g", { class: `row conf-${p.conf}`, "data-param": pid }, g);
       el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: M.rowH, rx: 3, class: "row-bg anchor" }, r);
       if (p.known) pin(r, p.status, bx.x + 12, ry + M.rowH / 2);
-      // the label gets whatever width the value leaves (10.5px labels ~5.9px a character, values ~6.4px)
+      // label gets the width the value leaves (at 10.5px: ~5.9px/char labels, ~6.4px/char values)
       const room = bx.w - 31 - p.short.length * 6.4 - 8 - (disputed ? 13 : 0);
       el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = clip(p.label, Math.max(5, Math.floor(room / 5.9)));
       el("text", { x: bx.x + bx.w - 10 - (disputed ? 13 : 0), y: ry + 12.5, "text-anchor": "end", class: "value" }, r)
@@ -183,7 +182,6 @@
       el("text", { x: f.x + 16, y: f.y + 30, class: "r-name" }, g).textContent = f.label;
       el("text", { x: f.x + 16, y: f.y + 52, class: "r-count" }, g).textContent =
         `${f.known} of ${f.params.length} parameters known · ${plural(claims.size, "claim")}`;
-      // one cell per parameter, drawn with the same outline code as a box
       const per = Math.max(1, Math.floor((f.w - 32 + 4) / 14));
       f.params.forEach((pid, i) => {
         const p = D.params[pid];
@@ -300,7 +298,7 @@
     };
     if (state.param) {
       const p = D.params[state.param], a = rowEnd(state.param);
-      // the side of an open dispute that lost the value, and contradicting claims, are dashed
+      // dashed: the losing side of an open dispute, and contradicting claims
       const other = new Set(p.disputes.filter((d) => !d.resolution).flatMap((d) => d.claims.slice(1)).concat(p.against));
       if (a) dossier.querySelectorAll(`[id="ev-${state.param}"] .claim`).forEach((card) => {
         const c = card.getBoundingClientRect();
@@ -346,7 +344,7 @@
     dossier.querySelectorAll(".claim").forEach((c) => c.classList.toggle("dim", !fromSource(c.dataset.source)));
   }
 
-  // o.stay: the click came from inside the current view (an L3 value), so keep the view
+  // o.stay: click came from inside the current view (an L3 value), so stay in it
   function select(bid, pid, opts) {
     const o = opts || {};
     if (bid !== state.block) state.mech = null;
