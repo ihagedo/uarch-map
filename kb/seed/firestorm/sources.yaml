@@ -47,3 +47,9 @@ sources:
     author: 7-cpu
     year: 2021
     url: https://www.7-cpu.com/cpu/Apple_M1.html
+  arxiv-2502-10719:
+    type: paper
+    title: Reverse Engineering the Apple M1 Conditional Branch Predictor for Out-of-Place Spectre Mistraining
+    author: arXiv 2502.10719
+    year: 2025
+    url: https://arxiv.org/abs/2502.10719

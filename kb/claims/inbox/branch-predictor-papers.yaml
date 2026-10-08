@@ -4,7 +4,197 @@
 session: branch-predictor-papers
 source: arxiv-2502-10719
 
+claims:
+  - id: c-tm-tage
+    text: >-
+      The M1 cores' conditional branch predictor is taken to be a TAGE variant, a hypothesis drawn from Apple
+      patent filings that the authors say they confirm experimentally
+    loc: p008
+    quote: "Our analysis assumes that M1 cores employ a TAGE conditional branch predictor (§ 2.3). This hypothesis is based on Apple patent filings [2, 42] and we confirm it experimentally."
+    method: patent-reading
+    derivation: inferred
+    value: tage-like
+    supports: [dirpred.kind]
+    notes: >-
+      Patents cited are US 10,719,327 B1 and US 11,321,095 B2. No separate experiment, only that the TAGE-based 25 %
+      aliasing signature and last-provider-component primitive behave as predicted (c-tm-lpc). Both cores.
+  - id: c-tm-bruteforce
+    text: >-
+      Brute-force out-of-place mistraining of a conditional branch on Firestorm succeeded once in about a
+      billion attempts, implying a search space near 2^30
+    loc: p002
+    quote: "We empirically find that brute-force out-of-place mistraining on the M1 can take 1 B attempts to succeed."
+    method: branch-sweep
+    derivation: measured
+    value: 1000000000
+    unit: attempts
+    approx: true
+    supports: []
+    notes: >-
+      A 26-hour run of BHI's code adapted to conditional branches; Icestorm had 4 successes in 650 M (2^27). The
+      authors blame the TAGE multi-component structure, against 2^14-2^17 reported by BHI for Intel cores.
+  - id: c-tm-lpc
+    text: >-
+      Forcing every mistraining attempt into the last (longest-history) TAGE component cuts the brute-force
+      attempts needed on Firestorm 32-fold
+    loc: p008
+    quote: "a brute force search employing our LPC primitive succeeds with 32× and 16× fewer attempts on the Firestorm and Icestorm microarchitectures, respectively"
+    method: branch-sweep
+    derivation: measured
+    value: 32
+    unit: x
+    supports: []
+    notes: >-
+      Table 2: Firestorm 33 successes in 1.1 B trials, search space about 2^25. The primitive trains the
+      branch both ways with histories that differ only in their oldest bit, so only the full-history component
+      can separate them.
+  - id: c-tm-ice-lpc
+    text: Forcing mistraining into the last TAGE component cuts the brute-force attempts needed on Icestorm 16-fold
+    loc: p008
+    quote: "a brute force search employing our LPC primitive succeeds with 32× and 16× fewer attempts on the Firestorm and Icestorm microarchitectures, respectively"
+    method: branch-sweep
+    derivation: measured
+    value: 16
+    unit: x
+    supports: []
+    chip: icestorm
+    notes: >-
+      Table 2: Icestorm 61 successes in 565 M trials, about 2^23; plain brute force gave 4 in 650 M,
+      about 2^27 (Table 1).
+  - id: c-tm-lpc-pc-bit2
+    text: >-
+      In a slide of history-length + 1 branches, moving the first branch 4 bytes (changing PC bit 2) flips the
+      oldest bit of the history register seen by the last branch
+    loc: p007
+    quote: "flipping the last bit of the BHR value can be achieved by moving the first branch in the branch slide 4 bytes ahead or behind in memory"
+    method: branch-sweep
+    derivation: measured
+    supports: []
+    notes: The paper's M1 implementation of its last-provider-component primitive (c-tm-lpc).
+
+  - id: c-tm-counter-3bit
+    text: The direction predictor's saturating prediction counters are 3 bits wide
+    loc: p009
+    quote: "finding the width of the M1 BPU’s saturating prediction counters, which we find is c = 3"
+    method: branch-sweep
+    derivation: measured
+    value: 3
+    unit: bits
+    supports: [dirpred.counter_bits]
+    notes: >-
+      Appendix A.2: a branch with a fixed history whose outcome flips every N iterations mispredicts at
+      4/N, i.e. 2^(c-1) = 4 mispredictions per flip. Core not named; stated for both cores by default.
+  - id: c-tm-pmc-cond-mispredict
+    text: PMC5 with event encoding 0xc5 counts conditional branch mispredictions
+    loc: p019
+    quote: "Overall, we identify PMC5 event 0xc5 as counting conditional branch mispredictions."
+    method: counter
+    derivation: measured
+    supports: []
+    notes: >-
+      Found by sweeping event encodings against a random-outcome branch (50 %) and an N-iteration loop branch (1/N);
+      0xcb and 0xcd gave similar results. Counters PMC2-PMC9 are selected through PMESR0/PMESR1.
+  - id: c-tm-pmc-ind-mispredict
+    text: PMC5 with event encoding 0xc6 counts indirect branch mispredictions, exclusive of the conditional event 0xc5
+    loc: p019
+    quote: "Using analogous experiments, we find that PMC5 event 0xc6 counts indirect branch mispredictions."
+    method: counter
+    derivation: measured
+    supports: []
+    notes: The authors verify 0xc5 and 0xc6 never count the same event. 0xcb and 0xce gave similar results.
+
+  - id: c-tm-history-inputs
+    text: >-
+      The history register takes conditional-branch PC bits 2-24, all 19 bits of the conditional branch offset,
+      indirect-branch PC bits 2-5 and 25-30, and indirect-branch target bits 2-30
+    loc: p010
+    quote: "only bits 2–24 in a conditional branch’s PC address affect the BHR ... only bits 2–5 and 25–30 affect the BHR ... every bit 2–30 affects the BHR ... signed 19-bit field ... all these bits affect the BHR"
+    method: branch-sweep
+    derivation: measured
+    value: "cond PC bits 2-24, cond offset (all 19 bits), indirect PC bits 2-5 and 25-30, indirect target bits 2-30"
+    supports: [dirpred.history_inputs]
+    notes: >-
+      Firestorm, H = 0 (the tested branch right before the spy branch). Bits above 30 could not be swept this way;
+      bits 32-46 are excluded separately (c-tm-high-bits-ignored) and bit 31 is left undetermined.
+  - id: c-tm-high-bits-ignored
+    text: Bits 32-46 of branch PC and target addresses do not affect the history register
+    loc: p011
+    quote: "Figure 7 shows the results for the Firestorm microarchitecture, which show that bits 32–46 do not affect the BHR."
+    method: branch-sweep
+    derivation: measured
+    supports: [dirpred.history_inputs]
+    notes: >-
+      Tested for conditional and indirect branch PC and target bits 26-46. User and kernel addresses differ in
+      these high bits, so a user-space shadow of a kernel path matching it in the low 32 bits reproduces its
+      history.
+  - id: c-tm-history-100
+    text: Firestorm's branch history length is 100 branches
+    loc: p011
+    quote: "We conclude that the Firestorm’s branch history length is 100."
+    method: branch-sweep
+    derivation: measured
+    value: 100
+    unit: branches
+    supports: [dirpred.history]
+    notes: >-
+      PC bit 2 still affects the history 99 branches back, no PC bit does at 100. Distance counts branches that shift
+      the history; not-taken conditional branches do not (c-tm-history-update).
+  - id: c-tm-ice-history-60
+    text: Icestorm's branch history length is 60 branches
+    loc: p011
+    quote: "Icestorm results (not shown) indicate that its history length is 60."
+    method: branch-sweep
+    derivation: measured
+    value: 60
+    unit: branches
+    supports: []
+    chip: icestorm
+  - id: c-tm-bhr-width
+    text: Firestorm's branch history register is 100 bits wide, one bit of shift per history update over 100 branches
+    loc: p013
+    quote: "It follows from the results of § 6.3.6 and § 6.3.5 that the BHR width of Firestorm and Icestorm cores is 100 and 60 bits, respectively."
+    derivation: inferred
+    value: 100
+    unit: bits
+    supports: []
+    notes: The authors derive width = shift per update (1 bit) x history length (100); the history length is in c-tm-history-100.
+  - id: c-tm-ice-bhr-width
+    text: Icestorm's branch history register is 60 bits wide
+    loc: p013
+    quote: "It follows from the results of § 6.3.6 and § 6.3.5 that the BHR width of Firestorm and Icestorm cores is 100 and 60 bits, respectively."
+    derivation: inferred
+    value: 60
+    unit: bits
+    supports: []
+    chip: icestorm
+    notes: Width = 1-bit shift x 60-branch history length, as the authors derive it.
+  - id: c-tm-history-update
+    text: >-
+      Each history update shifts the register by one bit and XORs in the branch's bits; direct unconditional
+      branches shift it, not-taken conditional branches do not
+    loc: p012
+    quote: "demonstrating that non-taken conditional branches do not shift the BHR ... which shows that direct (unconditional) branches do shift the BHR ... all the immediate offset bits except 2 are XORed to the shifted (by one bit) BHR"
+    method: branch-sweep
+    derivation: measured
+    value: "shift 1 bit and XOR in branch bits per update; not-taken conditional branches do not shift"
+    supports: [dirpred.history_update]
+    notes: Firestorm figures (Fig. 10, 11). Taken conditional and indirect branches also shift by one bit (c-tm-pc-shift-xor, c-tm-target-shift-xor).
+
+new_params:
+  dirpred.counter_bits:   {block: dirpred, name: Prediction counter width, unit: bits}
+  dirpred.history_update: {block: dirpred, name: History register update rule, mechanism: path_history_shift_xor}
+  dirpred.history_inputs: {block: dirpred, name: Branch bits folded into history, mechanism: path_history_shift_xor}
+
 new_mechanisms:
+  path_history_shift_xor:
+    name: Path history register (shift-and-XOR)
+    status: measured
+    description: The 100-bit history shifts and XORs in branch address bits, not outcomes.
+    params: [dirpred.history, dirpred.history_update, dirpred.history_inputs]
+    sim_switch: null
+    detection_rule: >-
+      two paths that differ in one bit of one earlier branch's PC or target give a spy branch with opposite
+      outcomes ~0 % mispredicts while the bit is in the history and ~25 % (3-bit counters) once it has aged out
   bpu_isolation:
     name: Branch predictor context isolation
     status: absent
@@ -16,3 +206,5 @@ new_mechanisms:
       low-32-bit addresses and history, gives the victim ~25 % mispredicts when entries are shared and ~0 % when
       they are isolated
 
+mechanism_claims:
+  path_history_shift_xor: [c-tm-history-inputs, c-tm-high-bits-ignored, c-tm-history-100, c-tm-bhr-width, c-tm-history-update, c-tm-lpc-pc-bit2]

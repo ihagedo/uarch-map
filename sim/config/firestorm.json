@@ -35,9 +35,9 @@
     "confidence": "low"
   },
   "dirpred.history": {
-    "value": null,
+    "value": 100,
     "sim_key": "dir_history",
-    "confidence": "none"
+    "confidence": "medium"
   },
   "dirpred.mispredict_penalty": {
     "value": 13,
