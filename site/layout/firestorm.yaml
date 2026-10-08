@@ -39,3 +39,94 @@ bands:
           issue:   [lq, sq, lsu]       # lsu: the unit's own parameters (units, allocation, forwarding)
           execute: [l1d, dtlb]
           retire:  [mshr, prefetch]
+
+structures:
+  retire:
+    label: Retire queue
+    kind: retire
+    blocks: [retire]
+    params: {groups: retire.groups, slots: retire.group_max_uops, issuing: retire.group_issuing_uops,
+             rrq: retire.rename_queue, rate_groups: retire.rate_groups, rate_rrq: retire.rate_renames,
+             branches: retire.inflight_branches}
+    claims: {rules: c-dj-group-boundaries, seven: c-dj-group-size, issuing: c-dj-group-issuing,
+             rrq_cost: c-dj-rename-cost, alt_rule: c-mh-v1-rob-failable-slot}
+    probes:
+      - {filler: nop, window: retire.nop_window, rows: retire.groups, per_row: retire.group_max_uops}
+      - {filler: issuing uops, window: retire.issuing_window, rows: retire.groups, per_row: retire.group_issuing_uops}
+      - {filler: register writes, window: retire.rename_queue, note: rename retire queue}
+      - {filler: branches, window: retire.inflight_branches, note: in-flight branch limit}
+  issue:
+    label: Issue and execute
+    kind: ports
+    blocks: [dispatch, sched_int, sched_fp, sched_ls, eu_int, eu_fp]
+    params: {d_int: dispatch.int_entries, d_mul: dispatch.mul_entries, d_ls: dispatch.ls_entries,
+             d_fp: dispatch.fp_entries, s_int: sched_int.entries_per_queue, s_int_n: sched_int.queues,
+             s_fp: sched_fp.entries_per_queue, s_ls: sched_ls.entries, s_ls_n: sched_ls.queues,
+             n_int: eu_int.count, n_fp: eu_fp.count, n_ls: lsu.ls_units}
+    roles:
+      u1: [{text: flags, claim: c-dj-int-roles}, {text: branch, claim: c-dj-int-roles}, {text: mrs, claim: c-dj-int-roles}]
+      u2: [{text: flags, claim: c-dj-int-roles}, {text: branch, claim: c-dj-int-roles},
+           {text: ptrauth, claim: c-dj-int-roles}]
+      u3: [{text: flags, claim: c-dj-int-roles}, {text: "from fp?", claim: c-dj-int-roles}]
+      u4: [{text: "from fp?", claim: c-dj-int-roles}]
+      u5: [{text: mul, claim: c-dj-int-roles}, {text: div, claim: c-dj-int-roles}]
+      u6: [{text: mul, claim: c-dj-int-roles}, {text: madd, claim: c-dj-int-roles}, {text: crc, claim: c-dj-int-roles}]
+      u7: [{text: store, claim: c-dj-ls-units}]
+      u8: [{text: load, claim: c-dj-ls-units}, {text: store, claim: c-dj-ls-units}]
+      u9: [{text: load, claim: c-dj-ls-units}]
+      u10: [{text: load, claim: c-dj-ls-units}]
+      u13: [{text: fcsel, claim: c-dj-fp-roles}, {text: to gpr, claim: c-dj-fp-roles}]
+      u14: [{text: fcsel, claim: c-dj-fp-roles}, {text: fdiv, claim: c-dj-fp-roles}, {text: sha, claim: c-dj-fp-roles}]
+  lsq:
+    label: Load and store queues
+    kind: lsq
+    blocks: [lq, sq, lsu]
+    params: {lq: lq.entries, sq: sq.entries, alloc: lsu.allocation, units: lsu.ls_units,
+             d_ls: dispatch.ls_entries, s_ls: sched_ls.entries, lsdp: lsu.disambiguation,
+             lsdp_n: lsu.lsdp_entries, flush: lsu.ordering_flush_penalty, stl: lsu.store_load_latency,
+             zcl: lsu.zero_cycle_load}
+    mechanisms: [lsq_at_issue, lsq_early_release]
+    apparent:
+      - {delay: Cache-missing loads, load: c-dj-lsq-lq-130, store: c-dj-lsq-store-107,
+         limit: "loads: load queue; stores: store queue + LS scheduler"}
+      - {delay: Loads missing to DRAM, load: c-mh-v1-lq-dram-125, store: c-mh-v1-sq-dram-100,
+         limit: "loads: load queue; stores: store queue + LS scheduler"}
+      - {delay: FSQRT chain, load: c-dj-lsq-fsqrt-329, store: c-dj-lsq-fsqrt-329,
+         limit: "retire groups, one memory op each; queues free early"}
+      - {delay: FSQRT chain, load: c-mh-v1-lsq-fsqrt-330, store: c-mh-v1-store-fsqrt-not-idempotent,
+         limit: "retire groups, one memory op each; queues free early"}
+      - {delay: FSQRT chain + dependent branch, load: c-dj-lsq-branch-loads-188, store: c-dj-lsq-branch-stores-118,
+         limit: "queue + LS scheduler + LS dispatch"}
+      - {delay: FSQRT chain into a store address, load: c-mh-v1-lq-storeaddr-188, store: c-mh-v1-sq-storeaddr-118,
+         limit: "queue + LS scheduler + LS dispatch"}
+      - {delay: Not described (A14), load: c-at-lq, store: c-at-sq, limit: ""}
+  chip:
+    label: Chip
+    kind: chip
+    blocks: [l2, slc, memctrl]
+    params: {cores: pcluster.cores, clock: pcluster.clock_max, l2_size: l2.size, l2_line: l2.line,
+             l2_lat: l2.latency, l2_inner: l2.inner_slice, l2_core: l2.core_capacity, l2_bw: l2.load_bw,
+             slc_size: slc.size, slc_lat: slc.latency, slc_bw: slc.load_bw,
+             dram: memctrl.dram_latency, dram_bw: memctrl.dram_load_bw}
+  fetch:
+    label: Fetch and prediction
+    kind: frontend
+    blocks: [btb, dirpred, indpred, ras, fetch, ftq, l1i, itlb]
+    params: {l0: btb.l0_entries, foot: btb.l0_footprint, bubble: btb.taken_bubble, l1: btb.l1_entries,
+             assoc: btb.assoc, kind: dirpred.kind, hist: dirpred.history, cap: dirpred.capacity,
+             mis: dirpred.mispredict_penalty, ind: indpred.capacity, ras: ras.depth, l1i: l1i.size,
+             line: l1i.line, itlb: itlb.entries, fw: fetch.width, taken: fetch.taken_per_cycle,
+             ftq: ftq.present, ftqd: ftq.depth, fdip: ftq.fdip, dw: decode.width, iq: iq.depth,
+             ctr: dirpred.counter_bits, ikind: indpred.kind, rbub: ras.return_bubble}
+    mechanisms: [l1i_coupled_btb, decoupled_fetch, path_history_shift_xor, bpu_isolation, loop_modes]
+  dmem:
+    label: Data caches and translation
+    kind: dmem
+    blocks: [l1d, dtlb, prefetch, mshr]
+    params: {size: l1d.size, line: l1d.line, assoc: l1d.assoc, banks: l1d.banks, bank_w: l1d.bank_width,
+             ld_bw: l1d.load_bw, st_bw: l1d.store_bw, ld_n: lsu.loads_per_cycle, st_n: lsu.stores_per_cycle,
+             lat: l1d.latency, lat_alu: l1d.latency_alu, lat_cx: l1d.latency_complex, lat_simd: l1d.latency_simd,
+             l2_lat: l2.latency, slc_lat: slc.latency, dram: memctrl.dram_latency,
+             t1: dtlb.l1_entries, t1_org: dtlb.l1_org, t1_ports: dtlb.l1_lookups_per_cycle, page: dtlb.page_size,
+             t1_miss: dtlb.l1_miss_penalty, t2: dtlb.l2_entries, t2_org: dtlb.l2_org, t2_miss: dtlb.l2_miss_penalty,
+             pf: prefetch.kinds, pf_n: prefetch.streams, mlp: mshr.outstanding}

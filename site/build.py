@@ -125,6 +125,38 @@ def geometry(kb, layout):
     }
 
 
+def structures(kb, layout):
+    """Structure views (L3); every param, claim, mechanism and block they name must exist."""
+    out = {}
+    for sid, st in (layout.get("structures") or {}).items():
+        for bid in st["blocks"]:
+            if bid not in kb.blocks:
+                raise SystemExit(f"layout: structure {sid} names unknown block {bid}")
+        refs = list((st.get("params") or {}).values())
+        refs += [
+            v for pr in st.get("probes", []) for k, v in pr.items() if k in ("window", "rows", "per_row")
+        ]
+        for pid in refs:
+            if pid not in kb.params:
+                raise SystemExit(f"layout: structure {sid} names unknown param {pid}")
+        for mid in st.get("mechanisms") or []:
+            if mid not in kb.mechanisms:
+                raise SystemExit(f"layout: structure {sid} names unknown mechanism {mid}")
+        claims = list((st.get("claims") or {}).values())
+        claims += [
+            cid
+            for row in st.get("apparent") or []
+            for k, cid in row.items()
+            if k in ("load", "store") and cid
+        ]
+        claims += [r["claim"] for rs in (st.get("roles") or {}).values() for r in rs]
+        for cid in claims:
+            if cid not in kb.claims:
+                raise SystemExit(f"layout: structure {sid} names unknown claim {cid}")
+        out[sid] = dict(st)
+    return out
+
+
 def aggregate(params):
     """Same rule as Block.confidence, over an arbitrary set of parameters (a frame)."""
     if not params:
@@ -171,6 +203,10 @@ def view_data(kb, geo):
                 "name": p.name,
                 "label": p.label,
                 "value": fmt(p.value, p.approx),
+                "num": p.value
+                if isinstance(p.value, (int, float)) and not isinstance(p.value, bool)
+                else None,
+                "approx": p.approx,
                 "short": fmt(p.value, p.approx, limit=9),
                 "unit": p.unit or "",
                 "known": p.known,
@@ -206,6 +242,7 @@ def view_data(kb, geo):
                 "filler": c.filler,
                 "chip": c.chip,
                 "notes": c.notes,
+                "approx": c.approx,
             }
             for c in kb.claims.values()
         },
@@ -244,7 +281,12 @@ def main():
     kb = KB.load(core)
     with open(os.path.join(ROOT, "site", "layout", f"{core}.yaml")) as fh:
         layout = yaml.safe_load(fh)
-    data = view_data(kb, geometry(kb, layout))
+    geo = geometry(kb, layout)
+    geo["L3"] = structures(kb, layout)
+    data = view_data(kb, geo)
+    for sid, st in geo["L3"].items():
+        for bid in st["blocks"]:
+            data["blocks"][bid]["l3"] = sid
 
     def read(name):
         with open(os.path.join(SRC, name)) as fh:
@@ -252,11 +294,8 @@ def main():
 
     page = read("page.html")
     payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
-    page = (
-        page.replace("/*STYLE*/", read("style.css"))
-        .replace("/*APP*/", read("app.js"))
-        .replace("{{DATA}}", payload)
-    )
+    app = read("app.js").replace("/*STRUCTURES*/", read("structures.js"))
+    page = page.replace("/*STYLE*/", read("style.css")).replace("/*APP*/", app).replace("{{DATA}}", payload)
     head, body = page.split("<!-- body -->", 1)
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, "index.html"), "w") as fh:

@@ -17,7 +17,8 @@
     "vendor-doc": "Apple documentation", secondhand: "repeated from another source", simulation: "simulation",
     other: "other",
   };
-  const state = { view: "L2", block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS), source: "", mech: null };
+  const state = { view: "L2", l3: null, block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS),
+    source: "", mech: null };
   const $ = (id) => document.getElementById(id);
   const svg = $("map"), wrap = $("map-wrap"), dossier = $("dossier"), workspace = $("workspace"), strings = $("strings");
   const wide = window.matchMedia("(min-width: 761px)");
@@ -78,16 +79,25 @@
   }
 
   function renderMap() {
-    const V = D.views[state.view];
-    svg.setAttribute("viewBox", `0 0 ${V.width} ${V.height}`);
-    svg.style.maxWidth = `${V.width}px`;
     svg.replaceChildren();
     const defs = el("defs", {}, svg);
     const mk = el("marker", { id: "arrow", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 8, markerHeight: 8,
       markerUnits: "userSpaceOnUse", orient: "auto-start-reverse" }, defs);
     el("path", { d: "M0 1 L10 5 L0 9 Z", class: "arrowhead" }, mk);
-    drawColumns(V);
-    if (state.view === "L2") drawStages(V); else drawRegions(V);
+    svg.classList.toggle("l3", state.view === "L3");
+    if (state.view === "L3") {
+      // structure views measure their text, so they draw into a full-width viewBox first
+      svg.setAttribute("viewBox", "0 0 1180 800");
+      const size = drawStructure(state.l3, D.views.L3[state.l3]);
+      svg.setAttribute("viewBox", `0 0 ${size.w} ${size.h}`);
+      svg.style.maxWidth = `${size.w}px`;
+    } else {
+      const V = D.views[state.view];
+      svg.setAttribute("viewBox", `0 0 ${V.width} ${V.height}`);
+      svg.style.maxWidth = `${V.width}px`;
+      drawColumns(V);
+      if (state.view === "L2") drawStages(V); else drawRegions(V);
+    }
     linkLayer = el("g", { class: "links", "aria-hidden": "true" }, svg);
     shown = null;
     refresh();
@@ -131,6 +141,15 @@
     el("rect", { x: bx.x - 4, y: bx.y - 4, width: bx.w + 8, height: bx.h + 8, rx: 9, class: "sel-ring" }, g);
     el("rect", { x: bx.x, y: bx.y, width: bx.w, height: bx.h, rx: 6, class: "body", "pointer-events": "all" }, g);
     el("text", { x: bx.x + 10, y: bx.y + 19, class: "name" }, g).textContent = clip(b.name, 22);
+    if (b.l3) {
+      // a badge on the top-right corner, so it never covers the name
+      const z = el("g", { class: "zoom", "data-l3": b.l3, "data-block": bid }, g);
+      const zx = bx.x + bx.w - 1, zy = bx.y + 1;
+      el("circle", { cx: zx, cy: zy, r: 8.5, class: "zoom-hit" }, z);
+      el("circle", { cx: zx - 1, cy: zy - 1, r: 3.6, class: "zoom-glyph" }, z);
+      el("path", { d: `M${zx + 1.6} ${zy + 1.6} L${zx + 4.4} ${zy + 4.4}`, class: "zoom-glyph" }, z);
+      el("title", {}, z).textContent = `Open the structure view: ${D.views.L3[b.l3].label}`;
+    }
     el("path", { d: `M${bx.x + 8} ${bx.y + M.boxHead - 4.5} H${bx.x + bx.w - 8}`, class: "rule" }, g);
     if (!b.params.length) {
       el("text", { x: bx.x + 10, y: bx.y + M.boxHead + 10, class: "empty" }, g).textContent = "no parameters yet";
@@ -140,9 +159,11 @@
       const ry = bx.y + M.boxHead - 2 + i * M.rowH;
       const disputed = openDispute(p);
       const r = el("g", { class: `row conf-${p.conf}`, "data-param": pid }, g);
-      el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: M.rowH, rx: 3, class: "row-bg" }, r);
+      el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: M.rowH, rx: 3, class: "row-bg anchor" }, r);
       if (p.known) pin(r, p.status, bx.x + 12, ry + M.rowH / 2);
-      el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = clip(p.label, disputed ? 16 : 19);
+      // the label gets whatever width the value leaves (10.5px labels ~5.9px a character, values ~6.4px)
+      const room = bx.w - 31 - p.short.length * 6.4 - 8 - (disputed ? 13 : 0);
+      el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = clip(p.label, Math.max(5, Math.floor(room / 5.9)));
       el("text", { x: bx.x + bx.w - 10 - (disputed ? 13 : 0), y: ry + 12.5, "text-anchor": "end", class: "value" }, r)
         .textContent = p.short;
       if (disputed) disputePin(r, bx.x + bx.w - 13, ry + M.rowH / 2);
@@ -227,17 +248,24 @@
       g.classList.toggle("selected", bid === state.block);
       g.setAttribute("aria-pressed", String(bid === state.block));
     });
-    svg.querySelectorAll(".row").forEach((r) => r.classList.toggle("selected", r.dataset.param === state.param));
+    svg.querySelectorAll(".row, .sp").forEach((r) => r.classList.toggle("selected", r.dataset.param === state.param));
     renderDossier();
     applyFilters();
     drawLinks();
+    const chip = state.view === "L3" && state.l3 === "chip";
     for (const v of ["L1", "L2"]) $(`zoom-${v}`).setAttribute("aria-pressed", String(state.view === v));
+    $("zoom-L0").setAttribute("aria-pressed", String(chip));
+    $("zoom-L3").setAttribute("aria-pressed", String(state.view === "L3" && !chip));
+    const l3 = structureHere();
+    $("zoom-L3").disabled = !l3 || l3 === "chip";
+    $("zoom-L3").title = l3 && l3 !== "chip" ? D.views.L3[l3].label : "Select a block with a structure view";
     for (const c of CONFS) $(`show-${c}`).setAttribute("aria-pressed", String(state.show.has(c)));
     for (const d of DERIVS) $(`deriv-${d}`).setAttribute("aria-pressed", String(state.derivs.has(d)));
     $("source-filter").value = state.source;
     $("clear-filters").hidden = !filtering();
     const explained = new Set(state.mech ? D.mechanisms[state.mech].params : []);
-    svg.querySelectorAll(".row").forEach((r) => r.classList.toggle("mech-hit", explained.has(r.dataset.param)));
+    svg.querySelectorAll(".row, .sp").forEach((r) => r.classList.toggle("mech-hit", explained.has(r.dataset.param)));
+    svg.querySelectorAll(".rules").forEach((r) => r.classList.toggle("selected", r.dataset.mech === state.mech));
     dossier.querySelectorAll(".mech").forEach((m) => m.setAttribute("aria-pressed", String(m.dataset.mech === state.mech)));
     queueStrings();
   }
@@ -251,15 +279,16 @@
 
   function drawStrings() {
     strings.replaceChildren();
-    if (!wide.matches || state.view !== "L2" || dossier.hidden) return;
+    if (!wide.matches || state.view === "L1" || dossier.hidden) return;
     const ws = workspace.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), dr = dossier.getBoundingClientRect();
     const clampY = (y) => Math.min(Math.max(y, dr.top + 8), dr.bottom - 8);
     const frameOf = (pid) => (D.views.L2.boxes[D.params[pid].block] || {}).frame;
     const rowEnd = (pid) => {
-      const bg = svg.querySelector(`.row[data-param="${CSS.escape(pid)}"] .row-bg`);
-      if (!bg) return null;
-      const b = bg.getBoundingClientRect();
-      return b.right < wr.left || b.right > wr.right ? null : [b.right - 2, b.top + b.height / 2];
+      for (const bg of svg.querySelectorAll(`[data-param="${CSS.escape(pid)}"] .anchor`)) {
+        const b = bg.getBoundingClientRect();
+        if (b.right >= wr.left && b.right <= wr.right) return [b.right - 2, b.top + b.height / 2];
+      }
+      return null;
     };
     const tie = (a, b, frame, cls) => {
       const ax = a[0] - ws.left, ay = a[1] - ws.top, bx = b[0] - ws.left, by = b[1] - ws.top;
@@ -312,17 +341,47 @@
       const any = dimGroup(card, b.params, b.conf);
       card.querySelectorAll(".c-row").forEach((r) => r.classList.toggle("dim", any && !visible(D.params[r.dataset.param])));
     });
+    svg.querySelectorAll(".sp").forEach((g) => g.classList.toggle("dim", !visible(D.params[g.dataset.param])));
     dossier.querySelectorAll(".p-row").forEach((r) => r.classList.toggle("dim", !visible(D.params[r.dataset.param])));
     dossier.querySelectorAll(".claim").forEach((c) => c.classList.toggle("dim", !fromSource(c.dataset.source)));
   }
 
+  // o.stay: the click came from inside the current view (an L3 value), so keep the view
   function select(bid, pid, opts) {
     const o = opts || {};
     if (bid !== state.block) state.mech = null;
-    if (state.view !== "L2" && bid) { state.view = "L2"; state.block = bid; state.param = pid || null; renderMap(); }
+    const inL3 = state.view === "L3" && (o.stay || (bid && D.views.L3[state.l3].blocks.includes(bid)));
+    if (state.view !== "L2" && bid && !inL3) { state.view = "L2"; state.block = bid; state.param = pid || null; renderMap(); }
     else { state.block = bid; state.param = pid || null; refresh(); }
-    try { history.replaceState(null, "", bid ? `#${bid}` : location.pathname + location.search); } catch (e) { /* sandboxed */ }
-    if (bid && o.scroll !== false) requestAnimationFrame(() => revealBox(bid));
+    setHash();
+    if (bid && o.scroll !== false && state.view === "L2") requestAnimationFrame(() => revealBox(bid));
+  }
+
+  function setHash() {
+    const h = state.view === "L3" ? `#${state.block || D.views.L3[state.l3].blocks[0]}/structure` : state.block ? `#${state.block}` : "";
+    try { history.replaceState(null, "", h || location.pathname + location.search); } catch (e) { /* sandboxed */ }
+  }
+
+  function structureHere() {
+    if (state.view === "L3") return state.l3;
+    return state.block ? D.blocks[state.block].l3 || null : null;
+  }
+
+  function openStructure(sid, bid) {
+    state.view = "L3";
+    state.l3 = sid;
+    if (bid && bid !== state.block) { state.block = bid; state.param = null; state.mech = null; }
+    if (!state.block) state.block = D.views.L3[sid].blocks[0];
+    renderMap();
+    wrap.scrollTo({ left: 0 });
+    setHash();
+  }
+
+  function closeStructure() {
+    state.view = "L2";
+    renderMap();
+    setHash();
+    if (state.block) requestAnimationFrame(() => revealBox(state.block));
   }
 
   function revealBox(bid) {
@@ -353,9 +412,10 @@
     workspace.classList.toggle("has-dossier", !!bid);
     document.body.classList.toggle("sheet-open", !!bid && !wide.matches);
     if (!bid) { dossier.hidden = true; dossier.innerHTML = ""; shown = null; return; }
-    if (shown && shown.block === bid && shown.param === state.param) return;
+    if (shown && shown.block === bid && shown.param === state.param && shown.mech === state.mech &&
+        shown.view === state.view) return;
     const keepScroll = shown && shown.block === bid ? dossier.scrollTop : 0;
-    shown = { block: bid, param: state.param };
+    shown = { block: bid, param: state.param, mech: state.mech, view: state.view };
     dossier.hidden = false;
     const b = D.blocks[bid];
     const frame = D.views.L2.boxes[bid] && D.views.L2.boxes[bid].frame;
@@ -369,6 +429,11 @@
     h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${b.conf === "none" ? "Hole" : CONF_WORD[b.conf] + " confidence"}</span>` +
       `<span>${known} of ${params.length} parameters known</span><span>${plural(claims.size, "claim")}</span></p>`;
     if (b.blackBox) h += `<p class="blackbox-note">Black box: nothing published yet.</p>`;
+    if (b.l3 && wide.matches) {
+      h += state.view === "L3" && state.l3 === b.l3
+        ? `<p class="d-l3"><button type="button" class="open-l3" data-nav="back">‹ Back to the stage map</button></p>`
+        : `<p class="d-l3"><button type="button" class="open-l3" data-l3="${b.l3}">Open structure view: ${esc(D.views.L3[b.l3].label)}</button></p>`;
+    }
     h += `<section class="d-section"><h3>Parameters</h3><ul class="p-list">` +
       params.map(([pid, p]) => paramHTML(pid, p)).join("") + `</ul></section>`;
     const mechs = Object.entries(D.mechanisms).filter(([, m]) => m.params.some((pid) => D.params[pid].block === bid));
@@ -394,7 +459,7 @@
     const unit = p.known && p.unit ? `<small>${esc(p.unit)}</small>` : "";
     return `<li><button type="button" class="p-row conf-${p.conf}" data-param="${pid}" aria-expanded="${open}">` +
       (p.known ? pinHTML(p.status) : "<span></span>") +
-      `<span class="p-name">${esc(p.name)}</span><span class="p-value">${esc(p.value)}${unit}</span>` +
+      `<span class="p-name">${esc(p.name)}</span><span class="p-value${p.value.length > 16 ? " long" : ""}">${esc(p.value)}${unit}</span>` +
       `<span class="p-meta"><span class="conf-tag conf-${p.conf}">${CONF_WORD[p.conf]}</span>` +
       `<span>${p.known ? DERIV_WORD[p.status] : "No claim yet"}</span><span>${plural(n, "claim")}</span>` +
       (openDispute(p) ? `<span class="flag">${DISPUTE_HTML}Disputed</span>` : "") + `</span></button>` +
@@ -438,9 +503,12 @@
   }
 
   function mechHTML([mid, m]) {
-    return `<button type="button" class="mech" data-mech="${mid}" aria-pressed="${state.mech === mid}">` +
+    const on = state.mech === mid;
+    return `<div class="mech-wrap"><button type="button" class="mech" data-mech="${mid}" aria-pressed="${on}">` +
       `<span class="mech-h">${esc(m.name)}<span class="status-tag">${esc(m.status)}</span></span>` +
-      `<span class="mech-desc">${esc(m.description)}</span></button>`;
+      `<span class="mech-desc">${esc(m.description)}</span></button>` +
+      (on && m.claims.length ? `<div class="mech-claims"><h4 class="ev-h">Claims (${m.claims.length})</h4>` +
+        m.claims.map(claimHTML).join("") + `</div>` : "") + `</div>`;
   }
 
   function linkHTML(other, dir, l) {
@@ -482,17 +550,44 @@
     $("source-filter").innerHTML = out.join("");
   }
 
+/*STRUCTURES*/
+
   svg.addEventListener("click", (e) => {
+    if (e.target.closest("[data-nav=back], [data-nav=core]")) return closeStructure();
+    const zoom = e.target.closest(".zoom");
+    if (zoom) return openStructure(zoom.dataset.l3, zoom.dataset.block);
     const region = e.target.closest(".region");
     if (region) return openRegion(region.dataset.frame);
+    if (state.view === "L3") return structureClick(e.target);
     const box = e.target.closest(".box[data-block]");
     if (!box) return;
     const row = e.target.closest(".row");
     const pid = row ? row.dataset.param : null;
     select(box.dataset.block, pid && state.param === pid ? null : pid);
   });
+  function structureClick(t) {
+    const sp = t.closest(".sp[data-param]");
+    if (sp) {
+      const pid = sp.dataset.param;
+      return select(D.params[pid].block, state.param === pid ? null : pid, { stay: true, scroll: false });
+    }
+    const rules = t.closest(".rules[data-mech]");
+    if (rules) {
+      const mid = rules.dataset.mech;
+      const owner = D.mechanisms[mid].params.map((pid) => D.params[pid].block);
+      if (!owner.includes(state.block)) { state.block = owner[0]; state.param = null; }
+      state.mech = state.mech === mid ? null : mid;
+      refresh();
+    }
+  }
+
   svg.addEventListener("keydown", (e) => {
     if (e.key !== "Enter" && e.key !== " ") return;
+    if (state.view === "L3") {
+      if (e.target.closest("[data-nav=back], [data-nav=core]")) { e.preventDefault(); return closeStructure(); }
+      if (e.target.closest(".sp, .rules")) { e.preventDefault(); return structureClick(e.target); }
+      return;
+    }
     const region = e.target.closest(".region");
     const box = e.target.closest(".box[data-block]");
     if (!region && !box) return;
@@ -501,7 +596,14 @@
     else select(box.dataset.block, null, { scroll: false });
   });
   dossier.addEventListener("click", (e) => {
-    if (e.target.closest("#d-close")) return select(null);
+    if (e.target.closest("#d-close")) {
+      if (state.view !== "L3") return select(null);
+      Object.assign(state, { view: "L2", block: null, param: null, mech: null });
+      renderMap();
+      return setHash();
+    }
+    const open = e.target.closest(".open-l3");
+    if (open) return open.dataset.nav === "back" ? closeStructure() : openStructure(open.dataset.l3, state.block);
     const row = e.target.closest(".p-row");
     if (row) return select(state.block, state.param === row.dataset.param ? null : row.dataset.param, { scroll: false });
     const mech = e.target.closest(".mech");
@@ -514,9 +616,12 @@
     if (card) select(card.dataset.block);
   });
   document.querySelectorAll(".seg button").forEach((btn) => btn.addEventListener("click", () => {
-    if (state.view === btn.dataset.view) return;
+    if (state.view === btn.dataset.view && btn.dataset.view !== "L3") return;
+    if (btn.dataset.view === "L0") return openStructure("chip");
+    if (btn.dataset.view === "L3") return structureHere() && openStructure(structureHere());
     state.view = btn.dataset.view;
     renderMap();
+    setHash();
   }));
   document.querySelectorAll(".chip[data-conf]").forEach((btn) => btn.addEventListener("click", () => {
     const c = btn.dataset.conf;
@@ -535,7 +640,11 @@
     state.source = "";
     refresh();
   });
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && state.block) select(null); });
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (state.view === "L3") closeStructure();
+    else if (state.block) select(null);
+  });
   for (const t of [window, wrap, dossier]) t.addEventListener("scroll", queueStrings, { passive: true });
   window.addEventListener("resize", queueStrings);
 
@@ -543,7 +652,9 @@
   renderSourceFilter();
   renderList();
   renderMap();
-  const fromHash = location.hash.slice(1);
-  if (D.blocks[fromHash] && D.views.L2.boxes[fromHash]) select(fromHash, null);
-  else if (wide.matches) select("retire", "retire.groups");
+  const [fromHash, sub] = decodeURIComponent(location.hash.slice(1)).split("/");
+  if (D.blocks[fromHash] && D.views.L2.boxes[fromHash]) {
+    if (sub === "structure" && D.blocks[fromHash].l3 && wide.matches) { state.block = fromHash; openStructure(D.blocks[fromHash].l3); }
+    else select(fromHash, null);
+  } else if (wide.matches) select("retire", "retire.groups");
 })();
