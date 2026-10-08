@@ -733,14 +733,16 @@
       "confidence": "low"
     },
     "indpred.capacity": {
-      "claims": [],
+      "claims": [
+        "c-zhou-ibtb"
+      ],
       "disputes": [],
       "block": "indpred",
       "name": "Indirect predictor capacity",
       "unit": "entries",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 1024,
+      "status": "measured",
+      "confidence": "medium"
     },
     "ftq.present": {
       "claims": [
@@ -13124,6 +13126,21 @@
       "supports": [],
       "chip": "m1",
       "entered": "johnson"
+    },
+    "c-zhou-ibtb": {
+      "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
+      "loc": "#ibtb-size",
+      "quote": "which means the size of iBTB is 512 entries on icestorm, 1024 entries on firestorm",
+      "method": "counter",
+      "derivation": "measured",
+      "value": 1024,
+      "unit": "entries",
+      "supports": [
+        "indpred.capacity"
+      ],
+      "source": "zhou-m1-bpu",
+      "chip": "m1",
+      "entered": "zhou-m1-bpu"
     }
   },
   "sources": {
@@ -13221,6 +13238,13 @@
       "author": "arXiv 2502.10719",
       "year": 2025,
       "url": "https://arxiv.org/abs/2502.10719"
+    },
+    "zhou-m1-bpu": {
+      "type": "repo",
+      "title": "M1_BPU_Experiments",
+      "author": "Zhou, Chuheng",
+      "year": 2024,
+      "url": "https://github.com/ChuhengZhou/M1_BPU_Experiments"
     },
     "us20210064376a1": {
       "type": "patent",

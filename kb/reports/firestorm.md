@@ -1,27 +1,26 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 118, claims 787, sources 20, mechanisms 26
+blocks 37, links 35, params 118, claims 788, sources 21, mechanisms 26
 
 ## By status
 
 - inferred: 24
-- measured: 83
-- open: 8
+- measured: 84
+- open: 7
 - reported: 3
 
 ## By confidence
 
 - high: 24
 - low: 27
-- medium: 59
-- none: 8
+- medium: 60
+- none: 7
 
-## Holes (8)
+## Holes (7)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
 - dirpred.capacity (dirpred): Direction predictor capacity
-- indpred.capacity (indpred): Indirect predictor capacity
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
 - int_prf.headroom (int_prf): Integer rename headroom

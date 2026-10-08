@@ -84,3 +84,9 @@ sources:
     author: arXiv 2502.10719
     year: 2025
     url: https://arxiv.org/abs/2502.10719
+  zhou-m1-bpu:
+    type: repo
+    title: M1_BPU_Experiments
+    author: Zhou, Chuheng
+    year: 2024
+    url: https://github.com/ChuhengZhou/M1_BPU_Experiments
