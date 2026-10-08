@@ -1683,7 +1683,11 @@
     },
     "dirpred.history_update": {
       "claims": [
-        "c-tm-history-update"
+        "c-tm-history-update",
+        "c-tm-imm-shift-xor",
+        "c-tm-pc-shift-xor",
+        "c-tm-target-shift-xor",
+        "c-tm-not-taken-updates"
       ],
       "disputes": [],
       "block": "dirpred",
@@ -3395,6 +3399,191 @@
       ],
       "notes": "Firestorm figures (Fig. 10, 11). Taken conditional and indirect branches also shift by one bit (c-tm-pc-shift-xor, c-tm-target-shift-xor).",
       "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-imm-shift-xor": {
+      "text": "Bits 0-1 and 3-16 of a conditional branch's offset are XORed, unshifted, into the history register after it shifts by one bit",
+      "loc": "p011",
+      "quote": "We find that bits 0\u20131 and 3\u201316 of a conditional branch\u2019s immediate jump offset use a shift-and-XOR1 update policy.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [
+        "dirpred.history_update"
+      ],
+      "notes": "Firestorm (Fig. 10). The bits are not shifted before the XOR: offset bit i stops affecting the history at H = 100 - i (Fig. 19). Offset bit 2 does not follow the pattern.",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-pc-shift-xor": {
+      "text": "Taken conditional branches XOR their PC bits into the history register after shifting it by one bit",
+      "loc": "p020",
+      "quote": "BHR update policy of taken conditional branch PC address bits is shift-and-XOR with a shift value of 1.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [
+        "dirpred.history_update"
+      ],
+      "notes": "Table 3 lists conditional PC bits 2-4 and 6-24 as following this policy, unshifted. PC bit i stops affecting the history at H = 100 - (i - 2) (Fig. 21). Firestorm.",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-target-shift-xor": {
+      "text": "Indirect branches XOR their target bits into the history register after shifting it by one bit",
+      "loc": "p021",
+      "quote": "BHR update policy of indirect branch target address bits is shift-and-XOR with a shift value of 1.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [
+        "dirpred.history_update"
+      ],
+      "notes": "Table 3 lists target bits 2-20 as following this policy, unshifted. Target bit i stops affecting the history at H = 100 - (i - 2) (Fig. 24). Firestorm.",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-ind-pc-position": {
+      "text": "An indirect branch's PC bit i stops affecting the history register at distance H = 100 - (72 - (i - 2)), much sooner than conditional-branch PC or indirect target bits, which last about 100 branches",
+      "loc": "p021",
+      "quote": "Effect of indirect branch PC address bit i on the BHR is lost at distance H = 100 \u2212 (72 \u2212 (i \u2212 2)) from the spy branch",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Firestorm (Fig. 22, which shows bit 2 at H = 27 and H = 28).",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-not-taken-updates": {
+      "text": "A not-taken conditional branch, though it does not shift the history register, still changes it in some undetermined way",
+      "loc": "p013",
+      "quote": "The results of the experiment (Figure 13) confirm that a non-taken conditional branch does update the BHR in some undetermined manner.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [
+        "dirpred.history_update"
+      ],
+      "notes": "Firestorm (Fig. 13); test uses 100 taken conditional branches spaced 2^32 or more bytes apart so only the switch branch's outcome differs.",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-no-user-kernel-isolation": {
+      "text": "Firestorm does not isolate conditional-predictor state between user space and kernel: a user process can mistrain a kernel branch, and did so to exploit a Spectre v1 gadget in a kext",
+      "loc": "p014",
+      "quote": "userspace/kernel isolation appears to exist on the Icestorm microarchitecture, but it does not exist on Firestorm ... we also successfully use userspace out-of-space mistraining on a Firestorm core to exploit an in-kext Spectre v1 gadget",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Victim branch in a kext reached by sysctl; the attacker trains a user-space shadow of its branch slide matching the kernel addresses in the low 32 bits. Victim misprediction rate 25 % on Firestorm (Fig. 14).",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-ice-user-kernel-isolation": {
+      "text": "Icestorm appears to isolate conditional-predictor state between user space and kernel",
+      "loc": "p014",
+      "quote": "Figure 14 shows the results, indicating that userspace/kernel isolation appears to exist on the Icestorm microarchitecture",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "hedge": "appears to exist",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Footnote 6 says a different mistraining technique might still succeed.",
+      "source": "arxiv-2502-10719",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-no-cross-process-isolation": {
+      "text": "Firestorm does not isolate conditional-predictor state between processes: a process mistrained a branch in another process and exploited a Spectre v1 gadget there",
+      "loc": "p015",
+      "quote": "Figure 15 shows the results, which indicate that cross-BPU isolation does not exist. We further validate these results by successfully using cross-process out-of-space mistraining to exploit a Spectre v1 gadget in another process",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Both processes bound to the same core, with an identical branch slide mapped at the same address (Fig. 15).",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-ice-no-cross-process-isolation": {
+      "text": "Icestorm does not isolate conditional-predictor state between processes",
+      "loc": "p003",
+      "quote": "We also find that no cross-process BPU isolation exists on either microarchitecture.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Fig. 15.",
+      "source": "arxiv-2502-10719",
+      "entered": "branch-predictor-papers"
+    },
+    "c-tm-patent-security-tag": {
+      "text": "Per the authors' reading of Apple's indirect-predictor security patent, BTB entries carry a security tag of the context that made them (exception level against cross-privilege training, a process identifier against cross-process training) and mismatched entries are ignored",
+      "loc": "p014",
+      "quote": "Apple\u2019s mechanism thus dynamically isolates BTB entries of different security contexts. ... Cross-privilege attacks (e.g., process vs. OS) are blocked by storing the privilege level (EL). ... blocked by storing a process identifier.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Patent US 11,321,095 B2, same title as us20200192673a1. Not tested on the M1; the paper notes Apple has no matching patent for the conditional predictor.",
+      "source": "arxiv-2502-10719",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-dimva-inplace-pht": {
+      "source": "dimva22-branch-different",
+      "text": "Nine in-bounds calls train a bounds-check branch enough that the tenth, out-of-bounds call is mispredicted, giving a working in-place Spectre-PHT attack on the M1",
+      "loc": "p011",
+      "quote": "We call the gadget with an in-bound value 9 times to bias the prediction to predict that the provided index is always in bounds. ... In the 10th call to the gadget, we provide an out-of-bounds index",
+      "derivation": "measured",
+      "value": 9,
+      "unit": "training calls",
+      "supports": [],
+      "notes": "M1 Mac mini, macOS 11.2.1; core type not stated. Each value is leaked 4 times to cover imperfect misprediction. Leakage 1109 B/s at 13.66 % error on the M1 (Table 3).",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-dimva-spectre-btb": {
+      "source": "dimva22-branch-different",
+      "text": "An in-place, same-address-space Spectre-BTB attack, mistraining an indirect branch's target, works on the M1",
+      "loc": "p002",
+      "quote": "we show a Spectre-PHT and Spectre-BTB implementation on two iPhones and an M1 Mac mini",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "The authors say no hardware or software mitigation exists for their same-address-space, in-place Spectre-BTB. Core type not stated.",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-dimva-csdb": {
+      "source": "dimva22-branch-different",
+      "text": "On the M1, a CSDB barrier after the bounds check stops Spectre-PHT leakage",
+      "loc": "p017",
+      "quote": "the M1 Mac mini, CSDB is available and stops the leakage in our proof of concept",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "On the A10 and A11 iPhones CSDB has no effect. Core type not stated.",
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-dimva-isb": {
+      "source": "dimva22-branch-different",
+      "text": "An ISB barrier prevents Spectre-PHT exploitation on the M1",
+      "loc": "p017",
+      "quote": "The ISB instruction prevents exploitation on both iPhones and the M1 Mac mini.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m1",
+      "entered": "branch-predictor-papers"
+    },
+    "c-dimva-dmb-dsb": {
+      "source": "dimva22-branch-different",
+      "text": "DMB or DSB on its own does not stop speculative execution past the mispredicted bounds check",
+      "loc": "p017",
+      "quote": "Data Memory Barriers (DMB) or DSB alone do not stop speculative execution.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Stated for the tested devices (A10, A11, M1) together.",
       "chip": "m1",
       "entered": "branch-predictor-papers"
     },
@@ -11725,6 +11914,13 @@
       "year": 2021,
       "url": "https://www.7-cpu.com/cpu/Apple_M1.html"
     },
+    "dimva22-branch-different": {
+      "type": "paper",
+      "title": "Branch Different: Spectre Attacks on Apple Silicon",
+      "author": "Hetterich, Lorenz",
+      "year": 2022,
+      "url": "https://misc0110.net/files/applespectre_dimva22.pdf"
+    },
     "arxiv-2502-10719": {
       "type": "paper",
       "title": "Reverse Engineering the Apple M1 Conditional Branch Predictor for Out-of-Place Spectre Mistraining",
@@ -11914,6 +12110,11 @@
         "c-tm-history-100",
         "c-tm-bhr-width",
         "c-tm-history-update",
+        "c-tm-imm-shift-xor",
+        "c-tm-pc-shift-xor",
+        "c-tm-target-shift-xor",
+        "c-tm-ind-pc-position",
+        "c-tm-not-taken-updates",
         "c-tm-lpc-pc-bit2"
       ],
       "name": "Path history register (shift-and-XOR)",
@@ -11929,6 +12130,11 @@
     },
     "bpu_isolation": {
       "claims": [
+        "c-tm-no-user-kernel-isolation",
+        "c-tm-no-cross-process-isolation",
+        "c-tm-ice-user-kernel-isolation",
+        "c-tm-ice-no-cross-process-isolation",
+        "c-tm-patent-security-tag",
         "c-mh-v4-bp-security-tag"
       ],
       "name": "Branch predictor context isolation",

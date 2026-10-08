@@ -47,6 +47,12 @@ sources:
     author: 7-cpu
     year: 2021
     url: https://www.7-cpu.com/cpu/Apple_M1.html
+  dimva22-branch-different:
+    type: paper
+    title: "Branch Different: Spectre Attacks on Apple Silicon"
+    author: Hetterich, Lorenz
+    year: 2022
+    url: https://misc0110.net/files/applespectre_dimva22.pdf
   arxiv-2502-10719:
     type: paper
     title: Reverse Engineering the Apple M1 Conditional Branch Predictor for Out-of-Place Spectre Mistraining
