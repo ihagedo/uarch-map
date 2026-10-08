@@ -36,7 +36,7 @@ bands:
           decode:  [memctrl]
       - region: lsu
         cells:
-          issue:   [lq, sq, lsu]       # lsu: the unit's own parameters (units, allocation, forwarding)
+          issue:   [lq, sq, lsu]
           execute: [l1d, dtlb]
           retire:  [mshr, prefetch]
 

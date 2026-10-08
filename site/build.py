@@ -234,15 +234,9 @@ def view_data(kb, geo):
                 "source": c.source.id,
                 "loc": c.loc,
                 "deriv": c.derivation,
-                "method": c.method,
                 "value": fmt(c.value, c.approx) if c.value is not None else None,
-                "unit": c.unit or "",
-                "hedge": c.hedge,
                 "quote": c.quote,
-                "filler": c.filler,
                 "chip": c.chip,
-                "notes": c.notes,
-                "approx": c.approx,
             }
             for c in kb.claims.values()
         },

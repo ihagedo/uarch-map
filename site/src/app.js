@@ -10,13 +10,6 @@
   const DERIVS = ["measured", "documented", "inferred", "reported"];
   const CONF_WORD = { high: "High", medium: "Medium", low: "Low", none: "Hole" };
   const DERIV_WORD = { measured: "Measured", documented: "Documented", inferred: "Inferred", reported: "Reported" };
-  const METHOD_WORD = {
-    "wong-probe": "Wong reorder-window probe", counter: "performance counters", "pointer-chase": "pointer chase",
-    "stride-sweep": "stride sweep", "branch-sweep": "branch sweep", throughput: "throughput test",
-    contention: "port contention", "drain-timing": "drain timing", "patent-reading": "reading of a patent",
-    "vendor-doc": "Apple documentation", secondhand: "repeated from another source", simulation: "simulation",
-    other: "other",
-  };
   const state = { view: "L2", l3: null, block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS),
     source: "", mech: null };
   const $ = (id) => document.getElementById(id);
@@ -425,12 +418,12 @@
       `<h2>${esc(b.name)}</h2>` + (b.desc ? `<p class="d-role">${esc(b.desc)}</p>` : "") +
       `<button type="button" class="d-close" id="d-close" aria-label="Close the dossier">×</button></div>`;
     h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${b.conf === "none" ? "Hole" : CONF_WORD[b.conf] + " confidence"}</span>` +
-      `<span>${known} of ${params.length} parameters known</span><span>${plural(claims.size, "claim")}</span></p>`;
-    if (b.blackBox) h += `<p class="blackbox-note">Black box: nothing published yet.</p>`;
+      `<span>${known} of ${params.length} known</span><span>${plural(claims.size, "claim")}</span></p>`;
+    if (b.blackBox) h += `<p class="blackbox-note">Nothing published.</p>`;
     if (b.l3 && wide.matches) {
       h += state.view === "L3" && state.l3 === b.l3
-        ? `<p class="d-l3"><button type="button" class="open-l3" data-nav="back">‹ Back to the stage map</button></p>`
-        : `<p class="d-l3"><button type="button" class="open-l3" data-l3="${b.l3}">Open structure view: ${esc(D.views.L3[b.l3].label)}</button></p>`;
+        ? `<p class="d-l3"><button type="button" class="open-l3" data-nav="back">‹ Stage map</button></p>`
+        : `<p class="d-l3"><button type="button" class="open-l3" data-l3="${b.l3}">${esc(D.views.L3[b.l3].label)} ›</button></p>`;
     }
     h += `<section class="d-section"><h3>Parameters</h3><ul class="p-list">` +
       params.map(([pid, p]) => paramHTML(pid, p)).join("") + `</ul></section>`;
@@ -473,7 +466,7 @@
     }
     if (p.for.length) h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map(claimHTML).join("");
     if (p.against.length) h += `<h4 class="ev-h">Contradicting claims (${p.against.length})</h4>` + p.against.map(claimHTML).join("");
-    if (!p.for.length && !p.against.length) h += `<p class="hole-note">No published value.</p>`;
+    if (!p.for.length && !p.against.length) h += `<p class="hole-note">Nothing published.</p>`;
     return h + `</div>`;
   }
 
@@ -486,18 +479,11 @@
   function claimHTML(cid) {
     const c = D.claims[cid], s = D.sources[c.source];
     const src = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
-    const method = c.method ? METHOD_WORD[c.method] || c.method : "not stated";
     let h = `<article class="claim" data-source="${esc(c.source)}" data-claim="${esc(cid)}"><p class="claim-text">${esc(c.text)}</p>`;
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
-    if (c.hedge) h += `<p class="claim-hedge">Hedge: <q>${esc(c.hedge)}</q></p>`;
-    h += `<dl class="claim-meta"><dt>Source</dt><dd>${src}, ${esc(s.title)}</dd>` +
-      `<dt>Where</dt><dd>${esc(locText(c.loc))}</dd>` +
-      `<dt>Method</dt><dd>${esc(method)}${c.filler ? ` (filler: ${esc(c.filler)})` : ""}</dd>` +
-      `<dt>Derivation</dt><dd><span class="deriv">${pinHTML(c.deriv)}${DERIV_WORD[c.deriv]}</span></dd>` +
-      (c.value != null ? `<dt>Value</dt><dd>${esc(c.value)}${c.unit ? " " + esc(c.unit) : ""}</dd>` : "") +
-      (c.chip && c.chip !== "m1" ? `<dt>Chip</dt><dd>${esc(c.chip)}</dd>` : "") + `</dl>`;
-    if (c.notes) h += `<p class="claim-note">${esc(c.notes)}</p>`;
-    return h + `</article>`;
+    const where = [src, esc(locText(c.loc)), `<span class="deriv">${pinHTML(c.deriv)}${DERIV_WORD[c.deriv]}</span>`];
+    if (c.chip && c.chip !== "m1") where.push(esc(c.chip.toUpperCase()));
+    return h + `<p class="claim-src">${where.join(" · ")}</p></article>`;
   }
 
   function mechHTML([mid, m]) {

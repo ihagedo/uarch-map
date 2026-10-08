@@ -101,9 +101,9 @@
       [["ldr", "mem"], ["add", "iss"], ["nop", "elim"], ["nop", "elim"], ["mov", "elim"], ["nop", "elim"], ["cbz", "br"],
         "A load or store starts a group; a branch ends one."],
       [["nop", "elim"], ["nop", "elim"], ["mov", "elim"], ["nop", "elim"], ["nop", "elim"], ["mov", "elim"], ["nop", "elim"],
-        "Seven only when every uop is eliminated (nop, mov)."],
+        "Seven only when all are eliminated."],
       [["add", "iss"], ["add", "iss"], ["add", "iss"], ["add", "iss"], ["", "empty"], ["", "empty"], ["", "empty"],
-        "About four issuing uops per group."],
+        "About four issuing uops."],
     ];
     examples.forEach((ex, i) => {
       const y = 92 + i * 68;
@@ -116,7 +116,7 @@
     el("title", {}, rules).textContent = "Illustration of Johnson's packing rules, not a trace";
     if (S.claims.alt_rule && D.claims[S.claims.alt_rule]) {
       const c = D.claims[S.claims.alt_rule];
-      const t = txt(rules, x0, 92 + 3 * 68 - 4, `${D.sources[c.source].author} reads it differently: loads, stores and branches all take a group's last slot.`, "st-note");
+      const t = txt(rules, x0, 92 + 3 * 68 - 4, `${D.sources[c.source].author}: loads, stores and branches take the last slot.`, "st-note");
       el("title", {}, t).textContent = `${c.text} (${D.sources[c.source].cite}, ${locText(c.loc)})`;
     }
 
@@ -285,7 +285,6 @@
     if (S.apparent && S.apparent.length) {
       const col = { delay: 16, load: 270, store: 350, src: 430, limit: 580 };
       txt(g, 16, ty, "What a queue probe measures", "st-h");
-      txt(g, 16, ty + 20, "The same fillers give different counts depending on the delay in front of them.", "st-note");
       txt(g, col.delay, ty + 46, "Delay before the fillers", "st-col");
       txt(g, col.load, ty + 46, "Loads", "st-col");
       txt(g, col.store, ty + 46, "Stores", "st-col");
@@ -353,7 +352,7 @@
     const ex = px + pw + 30, ew = W - 32 - ex - 8;
     box(ex, py, ew, ph, "cluster", "none");
     txt(g, ex + 16, py + 26, "E-cluster (Icestorm)", "st-t strong");
-    wrapText(g, ex + 16, py + 52, "The efficiency cores and their own L2. Outside this map; Icestorm claims are kept but set no values here.", 44, 17, "st-note");
+    txt(g, ex + 16, py + 52, "Not mapped", "st-note");
     const sy = py + ph + 26;
     box(px, sy, pw, 76, "cache-box", confOf(P.slc_size, P.slc_lat));
     txt(g, px + 16, sy + 28, "System level cache", "st-t strong");

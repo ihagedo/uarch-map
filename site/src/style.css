@@ -1,6 +1,6 @@
 /* style.css
    Isaac Hagedorn, 2026-10-04
-   Styles for the map page. */
+   Styles for the map page. Hue marks the region; fill and outline mark confidence. */
 :root {
   --bg: #f6f7f9;
   --surface: #ffffff;
@@ -69,7 +69,6 @@ h1 {
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
-.lede { margin: 0; max-width: 62ch; font-size: 16.5px; color: var(--ink-2); }
 .stats { margin: 6px 0 0; display: flex; flex-wrap: wrap; gap: 6px 24px; }
 .stats div { display: flex; align-items: baseline; gap: 6px; }
 .stats dt { order: 2; font-size: 13px; color: var(--ink-2); }
@@ -240,14 +239,9 @@ h1 {
 }
 .claim-text { margin: 0; font-size: 15px; line-height: 1.5; }
 .claim-quote { margin: 0; padding-left: 10px; border-left: 2px solid var(--line); font-style: italic; font-size: 14.5px; color: var(--ink-2); }
-.claim-hedge { margin: 0; font-size: 13.5px; color: var(--ink-2); }
-.claim-hedge q { font-style: italic; color: var(--ink); }
-.claim-meta { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 3px 12px; font-size: 13px; }
-.claim-meta dt { color: var(--ink-3); }
-.claim-meta dd { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
-.claim-meta .deriv { display: inline-flex; align-items: center; gap: 6px; }
-.claim-meta .deriv svg { width: 11px; height: 11px; }
-.claim-note { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+.claim-src { margin: 0; font-size: 13px; color: var(--ink-3); overflow-wrap: anywhere; }
+.claim-src .deriv { display: inline-flex; align-items: center; gap: 5px; }
+.claim-src .deriv svg { width: 11px; height: 11px; }
 
 .mech {
   display: grid; gap: 6px; width: 100%; padding: 12px 14px; border-radius: 8px;
