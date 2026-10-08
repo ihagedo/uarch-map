@@ -710,4 +710,4 @@ new_mechanisms:
 mechanism_claims:
   l1i_coupled_btb: [c-mh-v4-l1i-tier-bubble-2, c-mh-v4-icache-tier-3-cycles, c-mh-v4-btb-l1i-8192, c-mh-v4-cloudflare-l1i-jumps, c-mh-v4-predecode-every-line, c-mh-v4-m1-no-l2-fp, c-mh-v4-m2-l2-fp, c-mh-v4-m1-nfp-dm]
   decoupled_fetch: [c-mh-v4-decoupled-iq, c-mh-v4-fdip-absent, c-mh-v4-fully-decoupled-no-win, c-mh-v4-iq-guess, c-mh-v4-l2-two-lines, c-mh-v4-m2-not-fully-decoupled, c-mh-v4-iprefetch-two-tables, c-mh-v4-callgraph-details, c-mh-v4-not-decoupled]
-  scan_on_fill_nfp: [c-mh-v4-sof-fallback, c-mh-v4-sof-scan-timing, c-mh-v4-sof-cloudflare, c-mh-v4-sof-zero-bubble, c-mh-v4-nfp-lookup-priority]
+  scan_on_fill_nfp: [c-pat-us10747539b1-scan-on-fill, c-mh-v4-sof-fallback, c-mh-v4-sof-scan-timing, c-mh-v4-sof-cloudflare, c-mh-v4-sof-zero-bubble, c-mh-v4-nfp-lookup-priority]

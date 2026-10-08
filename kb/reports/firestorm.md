@@ -1,22 +1,22 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 117, claims 697, sources 9, mechanisms 26
+blocks 37, links 35, params 117, claims 710, sources 16, mechanisms 26
 
 ## By status
 
-- inferred: 23
+- inferred: 24
 - measured: 79
-- open: 12
+- open: 11
 - reported: 3
 
 ## By confidence
 
 - high: 19
-- low: 26
+- low: 27
 - medium: 60
-- none: 12
+- none: 11
 
-## Holes (12)
+## Holes (11)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -25,7 +25,6 @@ blocks 37, links 35, params 117, claims 697, sources 9, mechanisms 26
 - indpred.capacity (indpred): Indirect predictor capacity
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
-- rename.security_tag (rename): Register mapping security tag
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 - btb.l0_footprint (btb): Zero-bubble code footprint

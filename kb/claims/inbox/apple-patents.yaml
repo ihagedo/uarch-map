@@ -2,6 +2,141 @@
 # Apple; Maynard Handley, 2013-2025
 # Apple patents behind the mechanisms on the map, with Handley's reading of each.
 session: apple-patents
+claims:
+  - id: c-pat-us20210064376a1-last-reference
+    source: us20210064376a1
+    text: >-
+      Each mapping update writes a history-file entry naming the replaced physical register, marked as the
+      last reference when no other mapping points to it; at retirement only last references go back to the free list
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v1-620-history-file-patent
+    source: handley-vol1
+    text: >-
+      Handley identifies the shared ~620-entry structure that limits register-writing instructions with the
+      history file of Apple's last-physical-register-reference patent
+    loc: p059
+    quote: "What are these unknown shared ~620 resources?"
+    method: patent-reading
+    derivation: inferred
+    hedge: "the real answer appears to be in this patent"
+    supports: []
+
+  - id: c-mh-v1-virtual-lsq
+    source: handley-vol1
+    text: >-
+      Apparent load/store queue sizes change with the probe's delay (~330, ~125/~100, ~188/~118); Handley explains
+      this as a virtual queue: ordering IDs at rename, queue slots allocated at issue
+    loc: p155
+    method: wong-probe
+    derivation: inferred
+    value: at issue
+    hedge: "What appears to be happening"
+    supports: [lsu.allocation]
+  - id: c-pat-us20200394039a1-two-load-queues
+    source: us20200394039a1
+    text: >-
+      An executing load gets an entry in a load execution queue, held until its data is forwarded and used for
+      replay, and in a larger load retirement queue, held until it retires and used for ordering
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v1-lsq-patent-reading
+    source: handley-vol1
+    text: >-
+      Handley reads the multiple-load-queue patent as allocating load-execution-queue entries at issue and leaving
+      retirement- and store-queue allocation open, and concludes that by the A14/M1 all are allocated at issue
+    loc: p156
+    method: patent-reading
+    derivation: inferred
+    hedge: "The most reasonable analysis is"
+    supports: []
+
+  - id: c-mh-v1-early-load-release
+    source: handley-vol1
+    text: >-
+      With no older stores pending, loads give up their load-queue slots early, so the plain FSQRT-delay probe
+      reaches the ~330 retire-row limit instead of the load queue
+    loc: p156
+    method: wong-probe
+    derivation: inferred
+    hedge: "Apple appears to be doing this"
+    supports: []
+  - id: c-pat-us9535695b2-early-load-completion
+    source: us9535695b2
+    text: >-
+      A load may leave the load queue once it is known not to conflict with any older store still in the store queue
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v1-store-early-release
+    source: handley-vol1
+    text: >-
+      Once a store is non-speculative its data can go to the L1 and its store-queue entry be reused, however far it
+      is from retirement
+    loc: p167
+    method: patent-reading
+    derivation: inferred
+    hedge: "there's a patent confirming this hypothesis"
+    supports: []
+  - id: c-pat-us10228951b1-ooo-store-commit
+    source: us10228951b1
+    text: >-
+      A store may commit to the memory hierarchy ahead of older stores once every older store in the store queue
+      is non-speculative
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v1-register-security-tag
+    source: handley-vol1
+    text: >-
+      Code that reads registers it has not itself written pays a substantial extra cost; Handley's guess is a
+      security tag on each register mapping, checked on access, like the context tags on branch predictor entries
+    loc: p003
+    method: throughput
+    derivation: inferred
+    hedge: "My guess is"
+    value: true
+    supports: [rename.security_tag]
+    notes: Handley later says the tag "does appear to be implemented"
+  - id: c-pat-us20200192673a1-context-encrypted-targets
+    source: us20200192673a1
+    text: >-
+      Indirect branch predictor entries hold target addresses encrypted with machine context, including the
+      branch's program counter, and are decrypted with the current context when read
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    notes: The predictor-side analogue Handley points to for the register tag (vol 4)
+    supports: []
+
+  - id: c-pat-us10747539b1-scan-on-fill
+    source: us10747539b1
+    text: >-
+      A next-fetch predictor built by scanning instruction-cache fills for basic-block exits whose targets resolve
+      in one cycle; it supplies the next fetch address, and the main branch predictor checks it later
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    notes: Handley uses it to describe the fetch pipeline (vol 4)
+    supports: []
+  - id: c-pat-us10642618b1-callgraph-prefetch
+    source: us10642618b1
+    text: >-
+      An instruction prefetcher keyed on a signature of recent call and return targets: misses are recorded under
+      the signature, and a later match triggers a prefetch
+    loc: abstract; claim 1
+    method: patent-reading
+    derivation: inferred
+    notes: Handley calls it Apple's second instruction prefetcher after FDIP (vol 4)
+    supports: []
+
 new_mechanisms:
   lsq_early_release:
     name: Early release of load/store queue entries
@@ -11,3 +146,82 @@ new_mechanisms:
     sim_switch: lsq_early_release
     detection_rule: the same load or store filler gives a larger knee with no older store pending than with one
 
+mechanism_claims:
+  rename_retire_queue: [c-pat-us20210064376a1-last-reference, c-mh-v1-620-history-file-patent]
+  lsq_at_issue: [c-mh-v1-virtual-lsq, c-pat-us20200394039a1-two-load-queues, c-mh-v1-lsq-patent-reading]
+  lsq_early_release: [c-mh-v1-early-load-release, c-pat-us9535695b2-early-load-completion,
+                      c-mh-v1-store-early-release, c-pat-us10228951b1-ooo-store-commit]
+  register_security_tag: [c-mh-v1-register-security-tag, c-pat-us20200192673a1-context-encrypted-targets]
+  decoupled_fetch: [c-pat-us10747539b1-scan-on-fill, c-pat-us10642618b1-callgraph-prefetch]
+
+new_sources:
+  us20210064376a1:
+    type: patent
+    title: Last physical register reference scheme
+    author: Apple
+    year: 2019
+    assignee: Apple
+    number: US20210064376A1
+    url: https://patents.google.com/patent/US20210064376A1/en
+    cited_by: [handley-vol1:p059, handley-vol1:p065, handley-vol1:p115]
+    notes: Year is the filing year Handley gives
+  us20200394039a1:
+    type: patent
+    title: Processor with multiple load queues
+    author: Apple
+    year: 2019
+    assignee: Apple
+    number: US20200394039A1
+    url: https://patents.google.com/patent/US20200394039A1/en
+    cited_by: [handley-vol1:p145, handley-vol1:p156]
+    notes: Year is the filing year Handley gives
+  us9535695b2:
+    type: patent
+    title: Completing load and store instructions in a weakly-ordered memory model
+    author: Apple
+    year: 2013
+    assignee: Apple
+    number: US9535695B2
+    url: https://patents.google.com/patent/US9535695B2/en
+    cited_by: [handley-vol1:p156, handley-vol1:p168]
+    notes: Year is the filing year Handley gives
+  us10228951b1:
+    type: patent
+    title: Out of order store commit
+    author: Apple
+    year: 2015
+    assignee: Apple
+    number: US10228951B1
+    url: https://patents.google.com/patent/US10228951B1/en
+    cited_by: [handley-vol1:p167, handley-vol1:p168]
+    notes: Year is the filing year Handley gives
+  us20200192673a1:
+    type: patent
+    title: Indirect branch predictor security protection
+    author: Apple
+    year: 2018
+    assignee: Apple
+    number: US20200192673A1
+    url: https://patents.google.com/patent/US20200192673A1/en
+    cited_by: [handley-vol4:p086]
+    notes: Year is the filing year Handley gives
+  us10747539b1:
+    type: patent
+    title: Scan-on-fill next fetch target prediction
+    author: Apple
+    year: 2016
+    assignee: Apple
+    number: US10747539B1
+    url: https://patents.google.com/patent/US10747539B1/en
+    cited_by: [handley-vol1:p031, handley-vol4:p017, handley-vol4:p024, handley-vol4:p039]
+    notes: Year is the filing year Handley gives
+  us10642618b1:
+    type: patent
+    title: Callgraph signature prefetch
+    author: Apple
+    year: 2016
+    assignee: Apple
+    number: US10642618B1
+    url: https://patents.google.com/patent/US10642618B1/en
+    cited_by: [handley-vol4:p048]
+    notes: Year is the filing year Handley gives

@@ -363,4 +363,6 @@ mechanism_claims:
   path_history_shift_xor: [c-tm-history-inputs, c-tm-high-bits-ignored, c-tm-history-100, c-tm-bhr-width,
                            c-tm-history-update, c-tm-imm-shift-xor, c-tm-pc-shift-xor, c-tm-target-shift-xor,
                            c-tm-ind-pc-position, c-tm-not-taken-updates, c-tm-lpc-pc-bit2]
-  bpu_isolation: [c-tm-no-user-kernel-isolation, c-tm-no-cross-process-isolation, c-tm-ice-user-kernel-isolation, c-tm-ice-no-cross-process-isolation, c-tm-patent-security-tag]
+  bpu_isolation: [c-tm-no-user-kernel-isolation, c-tm-no-cross-process-isolation, c-tm-ice-user-kernel-isolation,
+                  c-tm-ice-no-cross-process-isolation, c-tm-patent-security-tag,
+                  c-pat-us20200192673a1-context-encrypted-targets]
