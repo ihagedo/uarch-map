@@ -1,19 +1,19 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 117, claims 710, sources 16, mechanisms 26
+blocks 37, links 35, params 118, claims 736, sources 17, mechanisms 26
 
 ## By status
 
 - inferred: 24
-- measured: 79
+- measured: 82
 - open: 11
-- reported: 3
+- reported: 1
 
 ## By confidence
 
-- high: 19
-- low: 27
-- medium: 60
+- high: 21
+- low: 25
+- medium: 61
 - none: 11
 
 ## Holes (11)
@@ -30,10 +30,11 @@ blocks 37, links 35, params 117, claims 710, sources 16, mechanisms 26
 - btb.l0_footprint (btb): Zero-bubble code footprint
 - sched_int.total_entries (sched_int): Integer scheduler entries (total)
 
-## Open disputes (12)
+## Open disputes (13)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
+- rename.mov_imm_limit: Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming (c-dj-mov-imm)  [c-dj-mov-imm, c-ox-mov-imm-8]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - eu_int.count: measured on the A14  [c-dj-int-units, c-at-int-units]

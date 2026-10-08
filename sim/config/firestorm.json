@@ -12,7 +12,7 @@
   "fetch.taken_per_cycle": {
     "value": 1,
     "sim_key": "taken_per_cycle",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "l1i.size": {
     "value": 192,
@@ -22,7 +22,7 @@
   "btb.l0_entries": {
     "value": 1024,
     "sim_key": "btb_l0",
-    "confidence": "low"
+    "confidence": "medium"
   },
   "btb.l1_entries": {
     "value": 8192,
@@ -32,7 +32,7 @@
   "btb.taken_bubble": {
     "value": 2,
     "sim_key": "btb_bubble",
-    "confidence": "low"
+    "confidence": "medium"
   },
   "dirpred.history": {
     "value": 100,
@@ -42,7 +42,7 @@
   "dirpred.mispredict_penalty": {
     "value": 13,
     "sim_key": "mispredict_penalty",
-    "confidence": "medium"
+    "confidence": "high"
   },
   "ras.depth": {
     "value": null,

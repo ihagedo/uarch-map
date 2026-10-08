@@ -41,6 +41,12 @@ sources:
     author: Frumusanu, Andrei
     year: 2020
     url: https://www.anandtech.com/show/16226/apple-silicon-m1-a14-deep-dive
+  ocxtal-m1-notes:
+    type: web
+    title: Optimization notes for Apple M1 (insn_bench_aarch64)
+    author: Suzuki, Hajime (ocxtal)
+    year: 2021
+    url: https://github.com/ocxtal/insn_bench_aarch64/blob/master/optimization_notes_apple_m1.md
   7cpu-m1:
     type: web
     title: Apple M1 (7-cpu.com)

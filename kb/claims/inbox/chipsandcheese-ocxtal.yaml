@@ -4,9 +4,243 @@
 session: chipsandcheese-ocxtal
 source: ocxtal-m1-notes
 
+claims:
+  - id: c-ox-decode-8
+    text: The decoder is eight instructions wide and consumes eight per cycle when instructions arrive without delay
+    loc: "#decoder-and-renamer"
+    quote: "M1 has a decoder with eight instruction width. As long as instructions are fed without delay, the decoder can consume eight of them per cycle."
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    supports: [decode.width]
+  - id: c-ox-mov-elim-8
+    text: Rename eliminates register-to-register movs at up to eight per cycle, scalar and SIMD/fp combined
+    loc: "#decoder-and-renamer"
+    quote: "It can process up to eight inter-register mov instructions in total for scalar and SIMD/fp domains."
+    derivation: measured
+    value: true
+    supports: [rename.mov_elimination]
+  - id: c-ox-chained-mov
+    text: Chains of dependent movs are also eliminated, but only in the scalar domain
+    loc: "#decoder-and-renamer"
+    quote: "Chained movs are also eliminated, for ones in the scalar domain."
+    derivation: measured
+    supports: []
+  - id: c-ox-nop-decoder
+    text: NOPs are removed in the decoder and use no execution unit
+    loc: "#decoder-and-renamer"
+    quote: "NOP instruction is also removed in the decoder and consumes no execution unit."
+    derivation: measured
+    supports: []
+    notes: Johnson counts a nop as one uop (it occupies pipeline width and retire slots) with no issue
+  - id: c-ox-mov-imm-8
+    text: >-
+      Immediate-loading movs run at up to eight per cycle without using an execution unit, probably handled
+      when they enter the reservation station
+    loc: "#decoder-and-renamer"
+    quote: "it processes up to eight immediate-loading mov instructions per cycle, probably when it enqueues them into the reservation station. This makes immediate-loading mov not consume any execution unit."
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    hedge: "probably"
+    supports: []
+    contradicts: [rename.mov_imm_limit]
+    notes: >-
+      Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming
+      (c-dj-mov-imm)
+  - id: c-ox-vector-zero
+    text: Instructions that clear a vector register run at eight per cycle without an execution unit
+    loc: "#decoder-and-renamer"
+    quote: "operations clearing a vector register are processed eight per cycle without any execution unit"
+    derivation: measured
+    value: true
+    supports: [rename.zero_idiom]
+  - id: c-ox-simd-zero-reg
+    text: The author takes zero-cost vector clearing to mean there is a physical zero register in the SIMD/fp domain too
+    loc: "#decoder-and-renamer"
+    quote: "implying there is a physical zero register in the SIMD/fp domain, too"
+    derivation: inferred
+    supports: []
+  - id: c-ox-eor-no-idiom
+    text: >-
+      Clearing a register with EOR gets no special treatment: it executes on a unit like any other
+      instruction and does not break the dependency on its source
+    loc: "#decoder-and-renamer"
+    quote: "M1 does not put a special treat on clearing registers using bitwise xor operation (EOR instruction). ... Dependency breakage from source to destination is also not detected for these operations."
+    derivation: measured
+    supports: []
+
+  - id: c-ox-mispredict
+    text: The branch misprediction penalty is probably 13 or 14 cycles
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "The branch misprediction penalty is probably 13 or 14 cycles."
+    derivation: measured
+    value: 13.5
+    unit: cycles
+    approx: true
+    hedge: "probably"
+    range: [13, 14]
+    supports: [dirpred.mispredict_penalty]
+    notes: "13 or 14 cycles; midpoint given"
+  - id: c-ox-l1i-192
+    text: The L1 instruction cache is 192 KB
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "The level 1 instruction (L1I) cache is 192KB large"
+    method: secondhand
+    derivation: reported
+    value: 192
+    unit: KiB
+    supports: [l1i.size]
+    notes: No measurement given; the notes credit AnandTech for the cache configuration
+  - id: c-ox-fetch-8
+    text: The L1I feeds eight instructions per cycle to the decoder
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "The level 1 instruction (L1I) cache ... feeds 8 instructions to the decoder per cycle."
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    supports: [fetch.width]
+  - id: c-ox-btb-zero-bubble
+    text: When a branch hits both the L1I and the first-level BTB, fetch can redirect to the predicted target every cycle with no bubble
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "When both the L1I cache and the level 1 branch target buffer (L1 BTB) hit, the instruction feeder can jump to the predicted target every cycle without delay."
+    derivation: measured
+    value: 1
+    unit: branches/cycle
+    supports: [fetch.taken_per_cycle]
+  - id: c-ox-btb-miss-bubble
+    text: A taken branch that hits the L1I but misses the first-level BTB delays instruction feeding by two cycles
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "A branch that hits L1I but misses L1 BTB delays the instruction feeding by two clock cycles."
+    derivation: measured
+    value: 2
+    unit: cycles
+    supports: [btb.taken_bubble]
+    notes: >-
+      ocxtal's "L1 BTB" is the KB's zero-bubble tier (btb.l0_*); this is the bubble of the next tier, a branch
+      that hits only the L1I
+  - id: c-ox-btb-1024
+    text: The first-level (zero-bubble) BTB seems to have 1024 entries; its exact configuration is unclear
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "There seem 1024 entries in the first level BTB while the exact configuration is unclear."
+    derivation: measured
+    value: 1024
+    unit: entries
+    hedge: "There seem ... while the exact configuration is unclear"
+    supports: [btb.l0_entries]
+  - id: c-ox-two-branches
+    text: >-
+      Up to two branches per cycle are dispatched and committed, but only when one of the two is a not-taken
+      conditional branch, probably a limit of the instruction feeder
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "M1 can process (dispatch and commit) up to two branch instructions per cycle. However, this throughput is obtained only when one of the two branch instructions is a not-taken conditional one"
+    derivation: measured
+    value: 2
+    unit: branches/cycle
+    hedge: "probably due to the limitation in the instruction feeder"
+    supports: []
+  - id: c-ox-b-no-alu
+    text: >-
+      A plain unconditional B uses no integer unit; BL, BLR and RET each take one slot on a flag-capable
+      integer unit
+    loc: "#instruction-feeder-and-branch-units"
+    quote: "The simplest unconditional branch (B instruction) does not consume integer execution units, but the others including BL, BLR, and RET consume one slot of flag-manipulating integer units."
+    derivation: measured
+    supports: []
+
+  - id: c-ox-ls-units
+    text: Four load/store units, two load-only, one store-only and one for both, giving up to three loads or two stores per cycle
+    loc: "#load-and-store-units"
+    quote: "M1 has four load/store units in total: two for the load, one for the store, and one for both. Thus the maximum throughput is three for load instructions and two for stores."
+    derivation: measured
+    value: 4
+    unit: units
+    supports: [lsu.ls_units]
+  - id: c-ox-ls-128bit
+    text: Each load/store unit has a 128-bit data path serving both the scalar and SIMD/fp register files
+    loc: "#load-and-store-units"
+    quote: "Each load/store unit has a 128-bit data path that accesses both the scalar and SIMD/fp domains."
+    derivation: measured
+    value: 128
+    unit: bits
+    supports: []
+  - id: c-ox-agu-index
+    text: >-
+      The load/store units generate simple signed and unsigned offset addresses without an integer uop;
+      pre- and post-index forms add a uop to write back the updated address
+    loc: "#load-and-store-units"
+    quote: "processing simple signed and unsigned offset forms without integer uOP. However, pre- and post-index forms generate an additional uOP to write the updated address back."
+    derivation: measured
+    supports: []
+  - id: c-ox-load-lat-int
+    text: Load latency is three cycles into scalar registers
+    loc: "#load-and-store-units"
+    quote: "The latency of load operations appears to be three cycles in the scalar and five in the SIMD/fp domain."
+    derivation: measured
+    value: 3
+    unit: cycles
+    hedge: "appears to be"
+    supports: [l1d.latency]
+  - id: c-ox-load-lat-simd
+    text: Load latency is five cycles into SIMD/fp registers
+    loc: "#load-and-store-units"
+    quote: "The latency of load operations appears to be three cycles in the scalar and five in the SIMD/fp domain."
+    derivation: measured
+    value: 5
+    unit: cycles
+    hedge: "appears to be"
+    supports: [l1d.latency_simd]
+  - id: c-ox-load-penalty
+    text: Unaligned loads, cross-cache loads and sign-extending loads each add one cycle of latency
+    loc: "#load-and-store-units"
+    quote: "Unaligned loads, cross-cache loads, and sign extensions put a penalty of one clock cycle."
+    derivation: measured
+    value: 1
+    unit: cycles
+    supports: []
+    notes: In some cases the unaligned penalty seems hidden by the sign-extension one
+  - id: c-ox-page-cross
+    text: A load that crosses a page boundary costs about 28 extra cycles
+    loc: "#load-and-store-units"
+    quote: "The page-crossing penalty is around 28 cycles."
+    derivation: measured
+    value: 28
+    unit: cycles
+    approx: true
+    hedge: "around"
+    supports: []
+  - id: c-ox-store-load
+    text: A load from the address of a preceding store sees five or six cycles of latency, read back through the fill buffer
+    loc: "#load-and-store-units"
+    quote: "Turnaround latency for a load operation from the same address after a store (reading back via the fill buffer) looks like five or six cycles."
+    derivation: measured
+    value: 5.5
+    unit: cycles
+    approx: true
+    hedge: "looks like"
+    range: [5, 6]
+    supports: [lsu.store_load_latency]
+    notes: "five or six cycles; midpoint given"
+  - id: c-ox-no-aliasing
+    text: No memory-aliasing mechanism was seen in the load/store path
+    loc: "#load-and-store-units"
+    quote: "A mechanism like memory aliasing doesn't seem to exist."
+    derivation: measured
+    hedge: "doesn't seem to"
+    supports: []
+  - id: c-ox-ld3-throughput
+    text: The pipelined permute unit in the memory path completes one three-register LD3 or ST3 per cycle
+    loc: "#load-and-store-units"
+    quote: "The permute unit is pipelined and can perform one three-register permute operation (LD3 or ST3) every cycle."
+    derivation: measured
+    value: 1
+    unit: instr/cycle
+    supports: []
+
 new_params:
   btb.l0_footprint: {block: btb, name: Zero-bubble code footprint, unit: KiB}
   sched_int.total_entries: {block: sched_int, name: Integer scheduler entries (total), unit: entries}
+  l1d.latency_simd: {block: l1d, name: L1D hit latency (FP/SIMD load), unit: cycles}
   lsu.store_load_latency: {block: lsu, name: Store-to-load latency (same address), unit: cycles}
 
 new_mechanisms:
@@ -19,4 +253,4 @@ new_mechanisms:
     detection_rule: taken-branch latency steps with code footprint (branch spacing) more than with branch count
 
 mechanism_claims:
-  l1i_coupled_btb: [c-mh-v4-btb-l0]
+  l1i_coupled_btb: [c-ox-btb-1024, c-ox-btb-miss-bubble, c-mh-v4-btb-l0]
