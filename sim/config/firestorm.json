@@ -45,9 +45,9 @@
     "confidence": "high"
   },
   "ras.depth": {
-    "value": null,
+    "value": 50,
     "sim_key": "ras_depth",
-    "confidence": "none"
+    "confidence": "low"
   },
   "ftq.depth": {
     "value": null,

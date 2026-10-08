@@ -48,6 +48,18 @@ sources:
     year: 2024
     url: https://chipsandcheese.com/p/qualcomms-oryon-core-a-long-time-in-the-making
     notes: Some M1 results are M1 Max
+  cnc-golden-cove-caches:
+    type: article
+    title: "Going Armchair Quarterback on Golden Cove's Caches"
+    author: Lam, Chester (Chips and Cheese)
+    year: 2022
+    url: https://chipsandcheese.com/p/going-armchair-quarterback-on-golden-coves-caches
+  cnc-clock-ramp:
+    type: article
+    title: "Addendum: Clock Ramp on ADL, Zen 4, M1, and More"
+    author: Lam, Chester (Chips and Cheese)
+    year: 2022
+    url: https://chipsandcheese.com/2022/10/26/addendum-clock-ramp-on-adl-zen-4-m1-and-more/
   ocxtal-m1-notes:
     type: web
     title: Optimization notes for Apple M1 (insn_bench_aarch64)

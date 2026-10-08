@@ -498,7 +498,8 @@
     },
     "pcluster.clock_max": {
       "claims": [
-        "c-7cpu-clock"
+        "c-7cpu-clock",
+        "c-cc-clk-m1-max-clock"
       ],
       "disputes": [],
       "block": "pcluster",
@@ -506,7 +507,7 @@
       "unit": "GHz",
       "value": 3.2,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "high"
     },
     "fetch.width": {
       "claims": [
@@ -537,6 +538,7 @@
       "claims": [
         "c-at-decode-8",
         "c-ox-decode-8",
+        "c-cc-oryon-m1-decode-8",
         "c-mh-v1-frontend-8",
         "c-mh-v4-decode-32b",
         "c-mh-v4-decode-8",
@@ -569,6 +571,8 @@
       "claims": [
         "c-7cpu-l1i",
         "c-ox-l1i-192",
+        "c-cc-oryon-m1-l1i-192",
+        "c-cc-gcc-l1i-192",
         "c-mh-v4-l1i-192"
       ],
       "disputes": [],
@@ -716,15 +720,17 @@
       "confidence": "high"
     },
     "ras.depth": {
-      "claims": [],
+      "claims": [
+        "c-cc-oryon-m1-ras-50"
+      ],
       "disputes": [],
       "block": "ras",
       "name": "Return stack depth",
       "unit": "entries",
       "sim_key": "ras_depth",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 50,
+      "status": "reported",
+      "confidence": "low"
     },
     "indpred.capacity": {
       "claims": [],
@@ -1369,6 +1375,8 @@
     "l1d.size": {
       "claims": [
         "c-7cpu-l1d-size",
+        "c-cc-oryon-m1-l1d-128",
+        "c-cc-gcc-l1d-128",
         "c-mh-v2-l1d-size"
       ],
       "disputes": [],
@@ -1413,6 +1421,7 @@
         "c-at-l1d-latency",
         "c-7cpu-l1d",
         "c-ox-load-lat-int",
+        "c-cc-gcc-l1d-3c",
         "c-mh-v1-pointer-chase-3",
         "c-mh-v2-l1d-latency",
         "c-dj-l1d-latency"
@@ -1741,26 +1750,39 @@
       "confidence": "medium"
     },
     "btb.l0_footprint": {
-      "claims": [],
+      "claims": [
+        "c-cc-oryon-m1-taken-footprint"
+      ],
       "disputes": [],
       "block": "btb",
       "name": "Zero-bubble code footprint",
       "unit": "KiB",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 4,
+      "status": "measured",
+      "confidence": "medium"
     },
     "sched_int.total_entries": {
       "claims": [
+        "c-cc-oryon-m1-int-sched-134",
         "c-mh-v1-sched-johnson-2x"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-cc-oryon-m1-int-sched-134",
+            "c-mh-v1-sched-johnson-2x"
+          ],
+          "note": "Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "sched_int",
       "name": "Integer scheduler entries (total)",
       "unit": "entries",
-      "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": 134,
+      "status": "reported",
+      "confidence": "low"
     },
     "l1d.latency_simd": {
       "claims": [
@@ -4472,6 +4494,362 @@
       "supports": [],
       "notes": "Cacheline ping-pong between core pairs, run under Asahi Linux on an M1 MacBook Air; the text gives no M1 number (Zen 4's 80-90 ns cross-cluster latency is said to be better than M1's)",
       "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-slc": {
+      "source": "cnc-oryon",
+      "text": "M1 has a system level cache that serves several blocks on the chip, slower than a cache dedicated to one block",
+      "loc": "#system-architecture",
+      "quote": "Both Snapdragon X Elite and M1 have a System Level Cache (SLC) that can service multiple blocks on the chip, at the expense of lower performance than a cache dedicated to one block.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-clock": {
+      "source": "cnc-oryon",
+      "text": "Unlike Oryon, M1 does not run at 4 GHz",
+      "loc": "#core-overview",
+      "quote": "But unlike Kryo and M1, Oryon can run at 4 GHz and beyond.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-taken-footprint": {
+      "source": "cnc-oryon",
+      "text": "M1's taken-branch latency rises as the test's code footprint passes certain sizes; single-cycle taken branches only within a 4 KB footprint",
+      "loc": "#branch-target-caching",
+      "quote": "It also shares traits with M1, which also sees taken branch latency increase as the test exceeds certain code footprint sizes. M1 however only gets single cycle branching within 4 KB.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "KiB",
+      "supports": [
+        "btb.l0_footprint"
+      ],
+      "notes": "The article reads the same footprint behaviour on Oryon as a BTB tied to the instruction cache and contrasts Zen 4, Arm and Intel cores as decoupled; the M1 variant tested is not stated",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-ras-50": {
+      "source": "cnc-oryon",
+      "text": "Firestorm apparently has a 50-entry return stack",
+      "loc": "#indirect-branch-prediction",
+      "quote": "Qualcomm's strategy mirrors that of Apple M1's Firestorm architecture, which apparently has a 50 entry return stack",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 50,
+      "unit": "entries",
+      "hedge": "apparently",
+      "supports": [
+        "ras.depth"
+      ],
+      "notes": "Not measured in the article; given with a link, and the overflow result is credited to Dougall Johnson",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-ras-overflow": {
+      "source": "cnc-oryon",
+      "text": "Johnson found a sharp rise in call+return time on M1 once the return stack overflows, as on Oryon; the article reads this as the core clearing the return stack on overflow",
+      "loc": "#indirect-branch-prediction",
+      "quote": "When return stack capacity is exceeded, Oryon sees a sharp increase in call+return time. ... That's similar to what Dougall discovered on Apple's M1 too, and suggests the core clears the return stack when it overflows",
+      "method": "secondhand",
+      "derivation": "reported",
+      "hedge": "suggests",
+      "supports": [],
+      "notes": "The clearing reading follows the Oryon result; the article does not say it was checked on M1",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-l1i-192": {
+      "source": "cnc-oryon",
+      "text": "Firestorm has a 192 KB L1 instruction cache",
+      "loc": "#fetch-and-decode",
+      "quote": "Oryon and Apple's Firestorm cores use a very similar strategy. Both have a huge 192 KB L1 instruction cache feeding a 8-wide decoder.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-decode-8": {
+      "source": "cnc-oryon",
+      "text": "Firestorm's L1I feeds an eight-wide decoder",
+      "loc": "#fetch-and-decode",
+      "quote": "Oryon and Apple's Firestorm cores use a very similar strategy. Both have a huge 192 KB L1 instruction cache feeding a 8-wide decoder.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [
+        "decode.width"
+      ],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-l1i-miss-fetch": {
+      "source": "cnc-oryon",
+      "text": "Code fetch bandwidth on M1 falls far lower once the code footprint misses the L1i",
+      "loc": "#fetch-and-decode",
+      "quote": "Credit to Dougall for contributing the M1 Max test result. ... Oryon and M1 have much lower code fetch bandwidth after a L1i miss.",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "M1 Max result contributed by Dougall Johnson; the text gives no M1 number (Zen 4 sustains more than 12 bytes per cycle even from L3)",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-int-sched-134": {
+      "source": "cnc-oryon",
+      "text": "Firestorm has 134 scheduler entries for basic integer operations",
+      "loc": "#out-of-order-execution",
+      "quote": "Oryon can bring an incredible 120 scheduler entries to bear for basic integer operations alone. It's just short of Firestorm's 134 entries",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 134,
+      "unit": "entries",
+      "supports": [
+        "sched_int.total_entries"
+      ],
+      "notes": "Taken from Johnson's scheduler diagram, which the article reproduces; whether the count includes the non-scheduling dispatch queue is not stated",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-fp-sched": {
+      "source": "cnc-oryon",
+      "text": "Firestorm's FP/vector schedulers are smaller than Oryon's 192 entries, backed by a non-scheduling queue that delays stalls at rename",
+      "loc": "#out-of-order-execution",
+      "quote": "Firestorm also stands apart in using smaller (though still large in an absolute sense) schedulers, and compensating for that with a non-scheduling queue that can delay a stall at the rename stage.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-agu-sched": {
+      "source": "cnc-oryon",
+      "text": "Firestorm's AGU scheduling queues and non-scheduling queue together hold fewer micro-ops than Oryon's four 16-entry AGU schedulers",
+      "loc": "#out-of-order-execution",
+      "quote": "four 16 entry schedulers are nothing to sneeze at. Together, those schedulers can hold more micro-ops than Firestorm's AGU scheduling and non-scheduling queues combined.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-oryon-m1-l1d-128": {
+      "source": "cnc-oryon",
+      "text": "Firestorm has a 128 KB L1 data cache",
+      "loc": "#cache-and-memory-access",
+      "quote": "Firestorm has a bigger 128 KB L1, but Oryon's L1 is still much larger",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-l1i-192": {
+      "source": "cnc-golden-cove-caches",
+      "text": "M1 has a 192 KB L1 instruction cache",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "Adding the 192 KB L1i and 128 KB L1D gives 320 KB of total capacity.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "notes": "Sizes used for a ChampSim model of M1 Max's caches",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-l1d-128": {
+      "source": "cnc-golden-cove-caches",
+      "text": "M1 has a 128 KB L1 data cache",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "Adding the 192 KB L1i and 128 KB L1D gives 320 KB of total capacity.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "Sizes used for a ChampSim model of M1 Max's caches",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-l1d-3c": {
+      "source": "cnc-golden-cove-caches",
+      "text": "M1's L1D has three-cycle latency",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "On top of that, M1's L1D has 3 cycle latency.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-l2-llc": {
+      "source": "cnc-golden-cove-caches",
+      "text": "Given its size and the system level cache's high latency, M1's L2 acts as the CPU cluster's last-level cache; its latency matches Gracemont's L2 (AnandTech data)",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "From the L2 cache's size and the system level cache's high latency, it looks like M1's L2 functions as a last level cache for the CPU cluster.",
+      "derivation": "inferred",
+      "hedge": "it looks like",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-m1max-slc-48": {
+      "source": "cnc-golden-cove-caches",
+      "text": "M1 Max has a 48 MB system level cache",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "M1 Max's 48 MB system level cache seems to fill the same role as eDRAM on Intel's big iGPU SKUs",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 48,
+      "unit": "MiB",
+      "chip": "m1max",
+      "supports": [],
+      "notes": "M1 Max value for slc.size",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-gcc-m1max-slc-gpu": {
+      "source": "cnc-golden-cove-caches",
+      "text": "M1 Max's SLC sits near the memory controller, with latency too high to suit CPU accesses; it looks aimed at the GPU",
+      "loc": "#use-apple-m1-max-s-caches",
+      "quote": "Because it's placed close to the memory controller, it suffers high latency that makes it non-ideal for CPU accesses. Instead, it looks targeted towards M1 Max's huge integrated GPU.",
+      "derivation": "inferred",
+      "hedge": "looks targeted",
+      "chip": "m1max",
+      "supports": [],
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1-cores": {
+      "source": "cnc-clock-ramp",
+      "text": "M1 has four Firestorm cores",
+      "loc": "#apple-s-m1",
+      "quote": "Its four Firestorm cores feature a very wide and deep architecture running at low clocks",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 4,
+      "unit": "cores",
+      "supports": [],
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1-max-clock": {
+      "source": "cnc-clock-ramp",
+      "text": "M1's Firestorm cores reach a maximum clock of 3.2 GHz",
+      "loc": "#apple-s-m1",
+      "quote": "gradually increase frequency until they reach their maximum 3.2 GHz clock slightly after 100 ms.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 3.2,
+      "unit": "GHz",
+      "supports": [
+        "pcluster.clock_max"
+      ],
+      "notes": "Run by Dougall Johnson on an M1 Mac Mini; the test infers clock from the time to run a known number of dependent integer adds",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1-ramp": {
+      "source": "cnc-clock-ramp",
+      "text": "From idle, Firestorm clocks start rising after about 20 ms and climb gradually to maximum slightly after 100 ms, with much run-to-run variation",
+      "loc": "#apple-s-m1",
+      "quote": "the Firestorm cores start increasing their clocks after about 20 ms, and gradually increase frequency until they reach their maximum 3.2 GHz clock slightly after 100 ms",
+      "method": "other",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "ms",
+      "approx": true,
+      "hedge": "Generally",
+      "supports": [],
+      "notes": "Sometimes just above 2 GHz after 20-30 ms; Mac Mini on wall power",
+      "chip": "m1",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1max-layout": {
+      "source": "cnc-clock-ramp",
+      "text": "M1 Max adds a second quad-core Firestorm cluster and has two Icestorm cores",
+      "loc": "#apple-s-m1-max",
+      "quote": "M1 Max adds another quad core Firestorm cluster, drops the little (Icestorm) core count to two, and massively increases the GPU size.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "chip": "m1max",
+      "supports": [],
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1max-max-clock": {
+      "source": "cnc-clock-ramp",
+      "text": "M1 Max's Firestorm cores ramp to 3.23 GHz in High Power mode",
+      "loc": "#apple-s-m1-max",
+      "quote": "After that, M1 Max stays at 2.67 GHz if it's set to \"Low Power\", or slowly ramps to 3.23 GHz if \"High Power\" is set.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 3.23,
+      "unit": "GHz",
+      "chip": "m1max",
+      "supports": [],
+      "notes": "M1 Max value for pcluster.clock_max; run by Dougall Johnson",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1max-low-power": {
+      "source": "cnc-clock-ramp",
+      "text": "In Low Power mode M1 Max appears capped at 2.67 GHz, with the boost behaviour otherwise unchanged",
+      "loc": "#apple-s-m1-max",
+      "quote": "M1 Max appears to be capped to 2.67 GHz, but boosting behavior doesn't change beyond stopping at 2.67 GHz.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 2.67,
+      "unit": "GHz",
+      "hedge": "appears to be",
+      "chip": "m1max",
+      "supports": [],
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1max-ramp": {
+      "source": "cnc-clock-ramp",
+      "text": "On its best runs M1 Max reaches 2.67 GHz in just over 10 ms from idle",
+      "loc": "#apple-s-m1-max",
+      "quote": "On the best runs, it reaches 2.67 GHz in just over 10 ms.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 10,
+      "unit": "ms",
+      "approx": true,
+      "chip": "m1max",
+      "supports": [],
+      "notes": "3.23 GHz after 43 ms on one run; nearly 100 ms to 3.2 GHz on others",
+      "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cc-clk-m1max-hw-boost": {
+      "source": "cnc-clock-ramp",
+      "text": "Apple may control boosting in hardware, since M1 Max reaches an intermediate frequency step in just over 10 ms",
+      "loc": "#final-words",
+      "quote": "Apple may have hardware control over speed boosting, since M1 Max is able to hit an intermediate frequency step in just over 10 ms.",
+      "derivation": "inferred",
+      "hedge": "may have",
+      "chip": "m1max",
+      "supports": [],
       "entered": "chipsandcheese-ocxtal"
     },
     "c-mh-v1-lsq-fsqrt-330": {
@@ -12802,6 +13180,20 @@
       "url": "https://chipsandcheese.com/p/qualcomms-oryon-core-a-long-time-in-the-making",
       "notes": "Some M1 results are M1 Max"
     },
+    "cnc-golden-cove-caches": {
+      "type": "article",
+      "title": "Going Armchair Quarterback on Golden Cove's Caches",
+      "author": "Lam, Chester (Chips and Cheese)",
+      "year": 2022,
+      "url": "https://chipsandcheese.com/p/going-armchair-quarterback-on-golden-coves-caches"
+    },
+    "cnc-clock-ramp": {
+      "type": "article",
+      "title": "Addendum: Clock Ramp on ADL, Zen 4, M1, and More",
+      "author": "Lam, Chester (Chips and Cheese)",
+      "year": 2022,
+      "url": "https://chipsandcheese.com/2022/10/26/addendum-clock-ramp-on-adl-zen-4-m1-and-more/"
+    },
     "ocxtal-m1-notes": {
       "type": "web",
       "title": "Optimization notes for Apple M1 (insn_bench_aarch64)",
@@ -13163,6 +13555,7 @@
       "claims": [
         "c-ox-btb-1024",
         "c-ox-btb-miss-bubble",
+        "c-cc-oryon-m1-taken-footprint",
         "c-mh-v4-btb-l0",
         "c-mh-v4-l1i-tier-bubble-2",
         "c-mh-v4-icache-tier-3-cycles",
