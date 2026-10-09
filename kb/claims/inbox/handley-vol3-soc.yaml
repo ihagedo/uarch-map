@@ -114,4 +114,229 @@ claims:
     unit: B
     supports: []
     notes: Stated for a 2020 DMA patent; it matches the 128 B L2 line
+  - id: c-mh-v3-cpu-l2-scale-together
+    text: >-
+      Per a 2010 patent, performance states move the CPU, its L2 and perhaps the bus interface together, so no
+      part runs faster or slower than the rest needs
+    loc: p174
+    quote: "if we slow down the CPU we also slow down the L2 cache and maybe the bus interface"
+    method: patent-reading
+    derivation: inferred
+    hedge: "maybe"
+    supports: []
+  - id: c-mh-v3-apsc-dpe
+    text: >-
+      Per a 2013 patent, each CPU complex has an automatic power state controller, which limits how many cores
+      may run at a given voltage and frequency, and a digital power estimator
+    loc: p177
+    quote: "an addition to each complex of two important elements, the APSC (automatic power state controller) and the DPE (digital power estimate) ... The APSC controls things like how how many CPUs can be powered up at a particular voltage"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: The purpose is to keep peak draw within what the battery can supply, not to save energy
+  - id: c-mh-v3-core-powerup-10us
+    text: >-
+      Powering up another core takes up to 10 µs, and during the transition the effective clock of the CPUs is
+      halved to avoid overload spikes
+    loc: p177
+    quote: "when a new core is powered up (a process that takes up to 10 µs), there's a concern ... the effective clocks to the CPUs are halved"
+    method: patent-reading
+    derivation: inferred
+    value: 10
+    unit: µs
+    supports: [pcluster.core_powerup]
+    notes: From the same 2013 patent as the power state controller; an upper bound
+  - id: c-mh-v3-dpe-throttle
+    text: >-
+      Per a 2013 patent, the digital power estimator takes per-core counts of costly events such as vector
+      instructions per cycle, forms a per-core power estimate and sends per-core throttle requests
+    loc: p178
+    quote: "It receives ongoing counts from each CPU of \"significant\" events, eg how many vector ... executed per cycle, aggregates these to a per-CPU instantaneous power estimate, and sends per-CPU throttle requests as necessary."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: A 2011 forerunner tracked SIMD intensity over roughly the last 128 cycles and blocked an occasional SIMD issue
+  - id: c-mh-v3-hw-dvfs
+    text: >-
+      Apple's hardware DVFS is probably this loop: sustained excess in the power estimate lowers the offending
+      core's frequency and voltage, and a spell within budget lets them rise again
+    loc: p179
+    quote: "I assume this, essentially, is what Apple has meant by saying they perform DVFS is hardware as opposed to having an OS driver make these modifications"
+    method: patent-reading
+    derivation: inferred
+    hedge: "I assume"
+    supports: []
+  - id: c-mh-v3-voltage-margin-recovery
+    text: >-
+      Per a 2014 patent, when the estimator sees a core drawing much less power than budgeted (such as
+      integer-only code), its voltage may drop at the same frequency or its frequency may rise at the same voltage
+    loc: p179
+    quote: "if the DPE detects a pattern of substantially lower estimated power than has been budgeted for ... the voltage for that core is allowed to drop slightly (while maintaining frequency), or frequency is allowed to rise while maintaining voltage"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-energy-credits
+    text: >-
+      Per 2016 patents, cores spend from a pool of energy credits; as credits run low, a pseudo-random draw
+      against the remaining credits decides each cycle whether an instruction may execute
+    loc: p183
+    quote: "making it probabilistic, as your credits run low, whether an instruction is allowed to execute in this cycle or not. A random or pseudo-random value is compared to the credits available, and if smaller, execution can proceed."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: The random draw staggers throttling across cores to avoid current spikes. A later 2016 patent lets the P and E complexes pass unused credits to each other
+  - id: c-mh-v3-l2-slc-throttle
+    text: >-
+      Per a 2019 patent, the energy-credit scheme also tracks the L2s and the SLC and can throttle them like the
+      cores, freezing one for a cycle at random
+    loc: p183
+    quote: "2019 adds a slight additional flexibility to this by also tracking the energy usage of the L2's and SLC's and, if appropriate occasionally throttling them in the same way as the cores, by probabilistically freezing it for a cycle."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-clock-dither
+    text: >-
+      Clock dither, for very short pauses, gives a small section of the CPU only every 4th or 8th clock pulse;
+      clock control is full clock gating
+    loc: p185
+    quote: "Clock Dither is Apple's term for very short pauses, when say a small section of the CPU is only given every 4th or 8th clock pulse"
+    method: patent-reading
+    derivation: inferred
+    value: every 4th or 8th pulse
+    hedge: "say"
+    supports: []
+    notes: From a 2017 power-management patent whose time scales run from clock dither through clock gating and sleep to thermal DVFS
+  - id: c-mh-v3-freeze-levels
+    text: >-
+      Power is managed at several levels: per core, cycle by cycle freezing of SIMD pipelines; per cluster,
+      cycle by cycle freezing of cores and cache; and slower temperature-driven DVFS
+    loc: p189
+    quote: "Within each core more fine-grained allocation is deciding cycle by cycle whether to freeze one or more of the SIMD pipelines; meanwhile at the level of an entire cluster, we're deciding cycle by cycle whether to freeze cores and cache"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-simd-power-down
+    text: >-
+      Per a 2016 patent, after a long stretch without SIMD use the SIMD register state moves to a slow low-leakage
+      store and the SIMD unit is powered off; the next SIMD instruction first reverses this
+    loc: p192
+    quote: "we move the SIMD state out of registers to the low-leakage store and cut power to the SIMD unit. On encountering a SIMD instruction we reverse the process"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: State shared with the integer side (he thinks the flags) is kept in both units, so only the copy back to the SIMD side is needed on power-up
+  - id: c-mh-v3-idle-clock-quarter
+    text: >-
+      Per 2011 and 2012 patents, a core stalled on a DRAM load or waiting for an event is not stopped but clocked
+      slowly, one pulse in four, which keeps it alert to interrupts and bus activity
+    loc: p198
+    quote: "the Apple solution is, under these conditions, not to freeze the CPU clock, but to run it more slowly (say at one “CPU” clock transition every four “real” transitions)"
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: clock divider
+    hedge: "say"
+    supports: []
+    notes: A 2016 update sends one immediate pulse when an event arrives, instead of waiting up to 3 or 7 cycles for the next slow pulse
+  - id: c-mh-v3-pll-divider-ramp
+    text: >-
+      Per a 2014 patent, a frequency change runs through a programmable divider: the PLL is retargeted with the
+      divider at 4, then the divider steps down to 1, so the core never sees an overshooting clock
+    loc: p200
+    quote: "divide the frequency by 4 at the same time that we switch the PLL ... change the clock divider to 3, then 2, then finally 1, and ramp the clock increase"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: His 2 to 3 GHz example is illustrative. The divider also has fractional steps (2, 3/2, 4/3, 1) for a smoother ramp and limited inductive current
+  - id: c-mh-v3-cluster-one-freq
+    text: >-
+      All cores of a cluster share one clock frequency: some cores can sit idle, but two cannot run fast while two
+      run slow
+    loc: p207
+    quote: "clusters run at a fixed frequency. So we can, eg, use three cores of a 4-core cluster, but we can't run two of the cores as fast as possible and two as slow as possible"
+    method: patent-reading
+    derivation: inferred
+    value: per cluster
+    supports: [pcluster.clock_domain]
+    notes: Given as a constraint on the 2017 cluster-aware scheduler for the A11 and later
+  - id: c-mh-v3-control-effort
+    text: >-
+      Per a 2017 scheduler patent, each thread group gets a control effort between 0 and 1 that maps to a cluster
+      type (P or E) and a DVFS level for that cluster, then capped by thermal and power limits
+    loc: p208
+    quote: "will result in a control effort, a number between 0 and 1, which is mapped to a cluster (P vs E) and a DVFS level for that cluster"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-ecores-for-os
+    text: >-
+      The OS runs its kernel tasks, daemons, utility work and probably most interrupt handling on the E cores;
+      P cores are for developer code
+    loc: p210
+    quote: "the OS tries to run its kernel tasks, its demons and various utility work, and even, I believe, most interrupt handling, on E cores"
+    derivation: inferred
+    hedge: "I believe"
+    supports: []
+    chip: icestorm
+  - id: c-mh-v3-m1-ecore-1ghz
+    text: The base M1 has four E cores so OS work can spread across them at low frequency, around 1 GHz
+    loc: p210
+    quote: "The low power devices provide 4 E cores primarily so that they can run those cores at low frequency, and so get the OS work done over multiple cores, running at around 1GHz"
+    derivation: inferred
+    value: 1
+    unit: GHz
+    approx: true
+    supports: []
+    chip: icestorm
+    notes: A typical operating point for background work, not the maximum E-core clock
+  - id: c-mh-v3-m1pro-ecore-2ghz
+    text: >-
+      M1 Pro and Max run one E core at 1 GHz when OS work is light, and boost both E cores to 2 GHz once two or
+      more tasks need them
+    loc: p210
+    quote: "The higher power devices (Pro, Max, ...) run a single E core at 1 GHz ... as soon as there are two or more tasks ... the 2 E cores are boosted to 2GHz"
+    derivation: inferred
+    value: 2
+    unit: GHz
+    supports: []
+    chip: m1max
+    notes: Also covers the M1 Pro. He reads this as matching the OS throughput of the base M1's four E cores
 
+new_params:
+  pcluster.clock_domain: {block: pcluster, name: Clock domain}
+  pcluster.core_powerup: {block: pcluster, name: Core power-up time, unit: µs}
+
+new_mechanisms:
+  power_estimator_throttle:
+    name: Digital power estimator throttling
+    status: speculative
+    description: Per-core event counts feed a power estimate and energy credits that block vector or AMX issue for a cycle or two and steer DVFS.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      dense SIMD loops on every core of a cluster show issue bubbles at an unchanged clock that disappear when one
+      core runs the same loop alone
+  idle_clock_division:
+    name: Divided clock while the core waits
+    status: speculative
+    description: A core stalled on DRAM or waiting for an event receives one clock pulse in four instead of a frequency change.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      core cycles counted per unit of wall time fall by about four during long DRAM-bound stalls or WFE waits,
+      with no DVFS change
+  simd_power_down:
+    name: SIMD unit power-down with state offload
+    status: speculative
+    description: After a long stretch without SIMD work the SIMD registers move to a low-leakage store and the SIMD unit loses power.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      the first SIMD instruction after a long integer-only stretch costs a fixed extra delay that recurs after each
+      idle stretch
+
+mechanism_claims:
+  power_estimator_throttle: [c-mh-v3-apsc-dpe, c-mh-v3-dpe-throttle, c-mh-v3-hw-dvfs, c-mh-v3-voltage-margin-recovery,
+    c-mh-v3-energy-credits, c-mh-v3-l2-slc-throttle, c-mh-v3-freeze-levels]
+  idle_clock_division: [c-mh-v3-idle-clock-quarter, c-mh-v3-clock-dither]
+  simd_power_down: [c-mh-v3-simd-power-down]
