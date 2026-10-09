@@ -388,6 +388,99 @@ claims:
     unit: instructions
     hedge: "or even more?"
     supports: []
+  - id: c-mh-v3-wake-state-restore
+    text: >-
+      A core waking from power-down reloads its saved state from the L2 if only that core slept, from the SLC if
+      the whole cluster slept, or even from DRAM
+    loc: p272
+    quote: "memory (maybe L2 if only this core went to sleep, maybe SLC if the cluster went to sleep, maybe even DRAM)"
+    method: patent-reading
+    derivation: inferred
+    hedge: "maybe"
+    supports: []
+    notes: A 2017 patent keeps PC, LR and SP in the core to skip part of this restore
+  - id: c-mh-v3-core-power-toggle
+    text: Per a 2017 patent, a core may switch between powered on and powered down hundreds of times a second
+    loc: p273
+    quote: "The patent makes the interesting claim that a core may toggle between powered-on and powered-down as often as hundreds of times a second!"
+    method: patent-reading
+    derivation: inferred
+    value: hundreds
+    unit: transitions/s
+    supports: []
+  - id: c-mh-v3-fast-ipi
+    text: >-
+      Per a 2017 patent, cores message each other through special registers instead of the interrupt controller,
+      with four kinds of IPI: immediate, deferred, non-waking and retract
+    loc: p273
+    quote: "Some special purposes registers are defined to allow any core to message any other core ... four different types of IPI messages are now defined."
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: IPI types
+    supports: []
+  - id: c-mh-v3-irq-soft-hard-force
+    text: >-
+      Per a 2020 patent, an interrupt is offered to clusters in up to three rounds: soft requests ask only
+      powered-on cores, and hard or force requests may power a core on
+    loc: p275
+    quote: "The “soft” requests attempt to save power. So they skip over all powered down cores and only query cores that are active. “hard” and “force” requests will power on a core if that's required"
+    method: patent-reading
+    derivation: inferred
+    value: 3
+    unit: rounds
+    supports: []
+    notes: He guesses E clusters are asked before P clusters. He does not say which chips use this scheme
+  - id: c-mh-v3-irq-rob-nack
+    text: >-
+      A core turns down an interrupt when in-flight long operations, such as loads to DRAM or PCIe, would delay
+      it too long; a core that accepts flushes everything after the last such instruction
+    loc: p275
+    quote: "the CPU tries to estimate how long till it could service the interrupt, and if that number is too high, returns a NACK"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Same 2020 interrupt patent; the flush uses ROB pointers and the history file to rewind register state
+  - id: c-mh-v3-wkdm-engine
+    text: >-
+      Per a 2016 patent, a WKDM page compression engine sits at the cluster, and Apple's two page compress and
+      decompress instructions reach it through a core's store pipeline, as AMX instructions do
+    loc: p283
+    quote: "This describes a WKDM engine, associated with a cluster ... using essentially the same sort of instruction transport mechanism as AMX (ie instructions flow down a core's store pipeline)"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-lz-engine-l2
+    text: >-
+      Per 2017 and 2019 patents, a cluster has one LZ compression engine at the L2, like AMX, while the ANS
+      entropy-coding lookups run in the NEON unit on SIMD registers
+    loc: p284
+    quote: "To go by the patents, we have a single LZ engine associated with the L2 (like AMX), while the lookups required for the ANS entropy coding are handled in the NEON unit on SIMD registers."
+    method: patent-reading
+    derivation: inferred
+    hedge: "To go by the patents"
+    supports: []
+  - id: c-mh-v3-cluster-l2tlb
+    text: >-
+      Shared at the cluster level are the L2, AMX, the LZ page-compression engine and probably the L2 TLB
+    loc: p287
+    quote: "we have seen that Apple place, at the cluster level ... L2 cache ... AMX ... LZ engine (for page compression) ... probably L2 TLB/MMU"
+    derivation: inferred
+    hedge: "probably"
+    supports: []
+    notes: An earlier aside in the volume also lists the L2 TLB among hardware the four cores of a cluster share
+  - id: c-mh-v3-mul53
+    text: >-
+      Apple's Mul53 extension uses the 53-bit multiplier of an FP64 unit for integer multiplies, with two
+      instructions giving the low and high halves of the 106-bit product
+    loc: p287
+    quote: "An fp64 execute unit includes a 53b multiplier, which can be used as an integer multiplier ... providing two instructions"
+    method: secondhand
+    derivation: reported
+    value: 53
+    unit: bits
+    supports: []
+    notes: Taken from a third-party write-up of Apple's custom instructions
 
 new_params:
   pcluster.clock_domain: {block: pcluster, name: Clock domain}
