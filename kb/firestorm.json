@@ -15596,6 +15596,194 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-core"
     },
+    "c-mh-v8-fill-forward": {
+      "text": "Apple cores forward fill data to waiting loads: once a missed line is known to be coming, the load is scheduled and its bytes go to the LSU as the line fills the L1, perhaps two or three cycles sooner",
+      "loc": "p048",
+      "quote": "the Apple cores implement fill-forwarding. ... This presumably knocks two or three cycles off the latency.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2.5,
+      "unit": "cycles",
+      "range": [
+        2,
+        3
+      ],
+      "hedge": "presumably",
+      "supports": [],
+      "notes": "Described as a side issue in US20230011446A1 (2021)",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-fadd-m1": {
+      "text": "A chain of dependent FADDs runs at one billion per second on the M1, matching a 3-cycle FADD latency",
+      "loc": "p048",
+      "quote": "On M1 the latency of FADD is 3 cycles and frequency is 3GHz, so we expect, and see, 1B instructions per second of this stream.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "FADD V2.4S chain; confirms c-at-fadd-latency",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-m3-fadd-fusion": {
+      "text": "On the M3 the same dependent FADD chain runs at 1.6 billion per second; Handley guesses back-to-back fusion cuts a dependent FADD pair from 6 to 5 cycles, which with the 4:3 clock ratio gives 1.6x",
+      "loc": "p049",
+      "quote": "For M3 the performance is 1.6B instructions per second ... reduce the latency for dependent pairs of FADDs from 6 to 5 cycles",
+      "derivation": "inferred",
+      "value": 5,
+      "unit": "cycles",
+      "hedge": "My guess",
+      "chip": "m3",
+      "supports": [],
+      "notes": "Handley does not say who ran the M3 test; he compares IBM POWER10's back-to-back fusion",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-m1-no-load-op-fusion": {
+      "text": "The M1 has no load-op or op-store fusion",
+      "loc": "p049",
+      "quote": "one set of fusions that was missing from M1 was load-op and op-store fusions",
+      "derivation": "reported",
+      "value": false,
+      "supports": [],
+      "notes": "Aside with no method; adds to the unfused pairs listed in c-dj-no-fusion",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-load-op-patent": {
+      "text": "Per a 2022 patent, a small ALU in the load/store unit applies an op to the loaded value, fusing loads with ADD, XOR, shifts and rotates, and with CBZ or TBZ but not flag-setting compares",
+      "loc": "p049",
+      "quote": "having a small ALU within the load/store unit which can execute the ALU op directly on the loaded value while it\u2019s still in the load/store unit",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "US12008369B1; branch details sit in a Fusion Table indexed by the unused second-register field of the load-pair encoding",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-load-op-rules": {
+      "text": "In the load-op fusion patent the load and op need only be decoded in the same cycle, not be adjacent, and the fused pair may return both the loaded value and the op result",
+      "loc": "p050",
+      "quote": "First the load and op do not need to be adjacent! As long as they are in the same decode group (ie decoded in the same cycle) the fusion will happen.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "As of 2024, LLVM's M4 model listed no load-op fusion pattern",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-tage-lvp-patent": {
+      "text": "Per a 2023 patent, TAGE-style load value or address prediction keeps its prediction tables in the front end, read around rename, and its training tables in the load/store unit",
+      "loc": "p052",
+      "quote": "One, prediction table, sits in the front end, able to provide values at around Rename time. The other, training table, sits in the Load/Store unit.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "US12159142B1; only table indices, not full history, are sent down the pipe",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-m4-three-loads": {
+      "text": "The M4 P core still executes at most three loads per cycle",
+      "loc": "p053",
+      "quote": "the back end is (still, as of the M4) set up to handle only three loads per cycle",
+      "derivation": "reported",
+      "value": 3,
+      "unit": "loads/cycle",
+      "chip": "m4",
+      "supports": [],
+      "notes": "Aside with no method; the same limit as the M1 (lsu.loads_per_cycle)",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-sfb-patent": {
+      "text": "Per a 2022 patent, a fetch-predictor field lets fetch run through a predicted-taken short forward branch whose target is in the same fetch group, up to about 16 instructions, and drop the skipped instructions",
+      "loc": "p056",
+      "quote": "at essentially any length of branch where the branch and the target sit within the same possible Fetch Group (ie are within up to ~16 instructions of each other)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "value": 16,
+      "unit": "instructions",
+      "approx": true,
+      "supports": [],
+      "notes": "US20240028339A1; skipped instructions are removed between the I-cache and the fetch queue",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-short-loop-unroll": {
+      "text": "Per the same patent, a short backward loop is duplicated in the fetch queue so one fetch supplies two iterations",
+      "loc": "p057",
+      "quote": "We have now duplicated the loop body within the Fetch Queue. Essentially one Fetch has given us two iterations round the loop",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "value": 2,
+      "unit": "iterations",
+      "supports": [],
+      "notes": "US20240028339A1; an odd trip count is fixed by the slower predictors without a full flush",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-return-fetch-stack": {
+      "text": "Per the same patent, a Return Fetch Stack, about one entry for now, keeps the instructions after a short call so the return needs no second fetch",
+      "loc": "p060",
+      "quote": "pretty much a single entry \u201cstack\u201d for now, to be used (again based on data being tracked in the Fetch Predictor Table) only for cases of a short call",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "value": 1,
+      "unit": "entries",
+      "supports": [],
+      "notes": "US20240028339A1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-return-trace-not-stored": {
+      "text": "Before the 2022 return-fetch patents, the trace after a return was not held in the fetch predictor, so fetch after a return assumed the maximum length and discarded the excess",
+      "loc": "p061",
+      "quote": "The patent says that the trace following a return is currently not stored in the Fetch Predictor, and so after a return we have to proceed as though the trace is unknown",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US11941401B1. Corrects Handley's earlier assumption that the M1 kept return fetch parameters; he guesses the fetch state machine was too complex. See c-mh-v4-nfp-return-table, c-mh-v4-return-bubble",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-return-params": {
+      "text": "Per a 2022 patent, the fetch-predictor entry for the code after a call goes either onto the RAS with the return address (faster) or into a separate table indexed by the return address (less energy)",
+      "loc": "p062",
+      "quote": "This stores Return Fetch Parameters in a separate piece of storage that is indexed by the return address.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "hedge": "if I have the big picture correct",
+      "supports": [],
+      "notes": "US11941401B1; Handley suggests the faster scheme for P cores and the other for E cores",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
+    "c-mh-v8-bp-bank-hint": {
+      "text": "Per the same patent, the fetch predictor records which branch-predictor bank holds a branch's data, so only that bank wakes to confirm the branch",
+      "loc": "p063",
+      "quote": "the Fetch Predictor stores the appropriate bank holding data for this particular branch and sends it to the Branch Predictor, so only that particular bank needs to wake up",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "US11941401B1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-core"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -17794,6 +17982,17 @@
       ],
       "sim_switch": null,
       "detection_rule": "a loop body shorter than the 8-wide dispatch group sustaining more than one iteration (taken loop-back branch) per cycle would show loop packing"
+    },
+    "fill_forwarding": {
+      "claims": [
+        "c-mh-v8-fill-forward"
+      ],
+      "name": "Fill forwarding to waiting loads",
+      "status": "inferred",
+      "description": "A load that missed the L1 is woken as its line arrives and takes its bytes during the fill, not by replaying afterwards.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "a pointer chase whose nodes hit in L2 shows a load-to-use latency two or three cycles below the L2 hit latency plus an L1 hit"
     }
   }
 }
