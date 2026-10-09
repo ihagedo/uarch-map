@@ -16717,6 +16717,179 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-memory"
     },
+    "c-mh-v8-mispredict-flush": {
+      "text": "Recovery from a misprediction starts when it is detected: one possibly-mispredicting instruction issues per cycle, and a bit vector marking same-cycle issues as older or younger tells recovery which units to flush",
+      "loc": "p147",
+      "quote": "the big idea at the time was to only allow one instruction issue per cycle that could possibly mispredict. Then, relative to that one instruction, earlier instructions that issue in the same cycle get marked in a bit vector",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "have almost certainly changed at some point",
+      "supports": [],
+      "notes": "US11422821B1 (2018), with no chip named. Handley thinks two or more pipelines may now mispredict in one cycle. See c-mh-v8-age-tracking for the same patent's age offsets.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-fusions-2023": {
+      "text": "New fused pairs are integer divide plus multiply-subtract, an ALU op plus a mask, compare plus CSEL (or CSINC), and two-instruction large immediates, which are handled at rename like MOVI",
+      "loc": "p147",
+      "quote": "The pairs added are - integer divide followed by multiply-subtract. ... an ALU operation followed by a mask ... a compare followed by CSEL.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US12217060B1 (2023). The M1's fusions are rename.fusion.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-scvtf-latency": {
+      "text": "SCVTF and DUP from an integer register take about 12 to 13 cycles on the M1",
+      "loc": "p148",
+      "quote": "Both of these seem simple enough but Dougall's M1 latency tables give a latency of around 12..13 cycles.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 12.5,
+      "range": [
+        12,
+        13
+      ],
+      "unit": "cycles",
+      "supports": [],
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-scvtf-fake-load": {
+      "text": "Integer-to-FP instructions such as SCVTF and DUP have long been cracked into a fake load that carries the integer through the full load pipeline, TLB lookup and store-queue check included, into an FP register, then an FP op",
+      "loc": "p148",
+      "quote": "the way this has been handled by Apple for a long time is that an instruction like SCVTF is cracked into two instructions, the first of which is a fake load that moves the data through the load store unit",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Fits c-ox-xfer-fwd (scalar-to-SIMD moves take a load unit slot).",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-xfer-path": {
+      "text": "The LSU gains a register-transfer path separate from its memory path that also does the conversion or lane duplication; the op is cracked at decode for rename and fused again into one op after it",
+      "loc": "p148",
+      "quote": "there is a separate path in the LSU dedicated to Register Transfer, independent of the main LSU Memory path.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US12288066B1 (2023). Handley guesses the latency drops to maybe 5 cycles.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-isb-decode-flush": {
+      "text": "Decoding an ISB flushes everything younger and halts fetch at once, without waiting for the ISB to reach the ROB head; a new instruction that consumes context an unfinished older one may still change is poisoned and flushed",
+      "loc": "p150",
+      "quote": "at the point where we Decode the ISB we immediately flush everything behind the ISB in the pipeline and halt Fetch",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US12229561B1 (2022). Compare c-mh-v8-faster-isb.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-isb-tlbi": {
+      "text": "When a TLBI precedes the ISB, fetch simply waits until the TLBI completes",
+      "loc": "p151",
+      "quote": "the most energy efficient strategy is to delay fetch until the TLBI is competed",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-dsb-early": {
+      "text": "A DSB flushes at decode and completes once older loads and stores are done, not once all older instructions are",
+      "loc": "p151",
+      "quote": "generating the flush as soon as we decode the DSB, and waiting to complete the DSB based on when pending load/stores have completed, not for all instructions to have completed",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-tlbi-dsb-poison": {
+      "text": "After TLBI plus DSB, a younger load or store that needs a remote cache before every remote TLBI has completed is poisoned and flushed or replayed, so local work resumes without waiting for all acknowledgements",
+      "loc": "p151",
+      "quote": "treat a load/store that required a remote cache interaction as poisoned, and flush it (or replay it) once we know all the remote TLBI's have completed",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-remote-tlbi-drain": {
+      "text": "A core receiving a remote TLBI and DSB pauses at rename (or fetch) and drains the affected instructions before it acknowledges, instead of flushing everything at once",
+      "loc": "p152",
+      "quote": "Apple suggests that the remote CPU no longer needs to flush every-thing ASAP. Instead it can pause the pipeline at Allocate/Rename (or earlier, like Fetch)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-translation-barrier": {
+      "text": "A proposed translation barrier instruction would let only the instructions and accesses whose translation could change wait after page-table edits, instead of the heavyweight barriers that flush everything today",
+      "loc": "p153",
+      "quote": "Right now the way this is handled is with heavyweight barriers that flush everything after the page table changes; but the patent points out that this is more aggressive than necessary.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250217207A1 (2025), presumably for a future Armv9 profile; Handley calls it a stake in the ground.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-tlb-sidecar": {
+      "text": "A pre-translate instruction locks entries into a TLB that has a sidecar of variable-size entries, grown by merging contiguous pages",
+      "loc": "p154",
+      "quote": "the TLB (my guess is this is the L2 TLB, not the L1) is split into two parts. One part handles traditional fixed size page lookup, the second part referred to as a \"sidecar\"",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "my guess is",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250094355A1 (2023). Handley sees no real-world sign of this TLB yet.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-companion-cores": {
+      "text": "Besides P and E cores, Apple SoCs carry Chinook-class 64-bit Arm companion cores that run the GPU, ANE and similar blocks; they lack AMX and appear to lack FP/NEON",
+      "loc": "p159",
+      "quote": "Apple has at least three processor lines, the P- and E-cores, and the Chinook class compan-ion cores used to control the GPU, ANE, and similar such items.",
+      "derivation": "inferred",
+      "hedge": "appear not to have FP/NEON",
+      "supports": [],
+      "notes": "No chip named; given as known for Apple SoCs.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-small-core": {
+      "text": "A new companion core, between a Pentium and a PPC 601 in sophistication, has an FP unit, two-way issue and out-of-order completion",
+      "loc": "p159",
+      "quote": "The (presumably new Chinook-level) core seems to be some-where between a Pentium and a PPC 601 in sophistication. There appears to be an FP unit (though perhaps without NEON capabilities) and 2-way issue.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "instr/cycle",
+      "hedge": "presumably ... seems to be",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250094173A1 (2023).",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -18996,6 +19169,22 @@
       ],
       "sim_switch": null,
       "detection_rule": "with many older stores in flight, forwarding from one of the youngest stores takes about 11 cycles instead of about 4"
+    },
+    "early_barrier_completion": {
+      "claims": [
+        "c-mh-v8-isb-decode-flush",
+        "c-mh-v8-isb-tlbi",
+        "c-mh-v8-dsb-early",
+        "c-mh-v8-tlbi-dsb-poison",
+        "c-mh-v8-remote-tlbi-drain",
+        "c-mh-v8-translation-barrier"
+      ],
+      "name": "Early barrier completion",
+      "status": "speculative",
+      "description": "ISB and DSB flush younger work at decode and complete once the relevant older instructions finish, poisoning rare conflicting instructions instead of waiting for the barrier to reach the ROB head.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "an ISB or DSB costs little more than a refetch when no older memory or system-register work is pending, and its cost grows with outstanding older loads and stores rather than with older ALU work"
     },
     "ipv_replacement": {
       "claims": [
