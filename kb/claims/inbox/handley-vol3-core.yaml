@@ -242,9 +242,119 @@ claims:
     derivation: inferred
     supports: []
     notes: US20230017473A1 (2021), filed after the M1 shipped; Handley suggests both this and the FIU scheme may end up implemented.
+  - id: c-mh-v3-drowsy-l2
+    text: >-
+      The L2 is run as a drowsy cache: banks idle for some time sleep at a voltage that retains data and need a cycle
+      or two to wake on access
+    loc: p018
+    quote: "banks that haven't been accessed for some time are put to sleep, with enough voltage to retain data, but requiring a cycle or two to wake up on access"
+    method: patent-reading
+    derivation: inferred
+    value: 1.5
+    range: [1, 2]
+    unit: cycles
+    supports: []
+  - id: c-mh-v3-l2-sleep-by-way
+    text: >-
+      The unit put to sleep is one way of every set: with each way in its own independently powered bank, sleeping a
+      bank leaves the other ways fully active and costs a wake-up cycle for lines in the sleeping way
+    loc: p018
+    quote: "The unit that is actually put to sleep is a way in each set."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Handley's 8-way L2 here is an illustration.
+  - id: c-mh-v3-l2-sleep-leakage
+    text: >-
+      Per a 2014 patent, the idle count before an L2 bank sleeps is set from the part's characterized leakage and the
+      temperature measured just before, so a leakier or hotter L2 sleeps banks sooner
+    loc: p019
+    quote: "Based on the temperature and the leakiness of the L2, an idle count is established."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9513693B2 (2014), L2 cache retention mode.
+  - id: c-mh-v3-l2-12-ways-2014
+    text: >-
+      Per a 2014 patent, Apple's L2 then had 12 ways in three separately powered groups, so a third or two thirds of
+      the cache could be powered down
+    loc: p019
+    quote: "at that time Apple's L2 had 12 ways, and these were split into three separately powered collections, so that either one third or two thirds of the cache could be powered down"
+    method: patent-reading
+    derivation: inferred
+    value: 12
+    unit: ways
+    hedge: "Details have surely changed since then"
+    supports: []
+    notes: US20150309939A1 (2014), selective cache way-group power down.
+  - id: c-mh-v3-l2-thirds
+    text: >-
+      Apple still seems to run the L2 and the L2 TLB in thirds (full, two thirds or one third active), which Handley
+      gives as the reason both sizes are multiples of 3
+    loc: p019
+    quote: "Apple still seems to operate L2 (and TLB2) at a 3-way granularity, that is each of these can run at full capacity, at 2/3, or at 1/3 ... Hence L2 and TLB2 sizes being multiples of 3"
+    method: patent-reading
+    derivation: inferred
+    value: 3
+    unit: groups
+    hedge: "seems to"
+    supports: [l2.power_groups]
+    notes: The idle third is either asleep or powered off. Consistent with the 12 MiB L2 and the 3072-entry L2 TLB.
+  - id: c-mh-v3-l2-powerdown-counters
+    text: >-
+      Per the 2014 patent, three counters of references to each way group pick the third to power down, and three more
+      count hits to the MRU, middle and LRU four ways of all sets to decide whether to power down at all
+    loc: p019
+    quote: "There are two orthogonal sets of three counters. One set counts the number of references to each of the three physical banks. The lowest value tells us which bank will be powered down."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      Modified lines in the chosen group are flushed first; the patent's cost also weighs lines held in L1s and how
+      busy the group has been.
+  - id: c-mh-v3-l2-powerup
+    text: >-
+      A powered-down part of the L2 comes back when the L2 misses often, with further tests for whether the misses
+      involve reused lines rather than compulsory or streaming misses
+    loc: p020
+    quote: "Obviously the first signal is that you are missing frequently in the L2 (suggesting your L2 is too small)"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-slc-dup-tags-l2
+    text: >-
+      The SLC snoop-filters the L2s with duplicate L2 tags of its own, powered by way, so the matching way group of the
+      duplicate tags powers down with the L2's
+    loc: p020
+    quote: "the SLC snoop-filters the L2, using a set of duplicated tags stored with the SLC. These duplicate tags are also powered by way"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9823730B2 (2015), power management of cache duplicate tags.
+  - id: c-mh-v3-sparse-zero-lines
+    text: >-
+      A 2017 patent records all-zero line writes as a bit in the line's tag without writing the data array and serves
+      reads of such lines without reading it; Handley thinks its diagrams look like the L2
+    loc: p020
+    quote: "don’t perform the write, instead note the line (eg by setting a bit in the cache line tag)"
+    method: patent-reading
+    derivation: inferred
+    hedge: "to my eye, look L2-'ish"
+    supports: []
+    notes: US10691610B2 (2017). Vol 2 found no speed difference with all-zero data (c-mh-v2-zero-data).
+  - id: c-mh-v3-sparse-loser-bank
+    text: >-
+      The same patent keeps invalid and all-zero lines in one loser bank that stays powered off until real data must
+      be stored there, and repacks data later to power it down again
+    loc: p021
+    quote: 'maintain one cache bank as the "loser" banks holding the invalid lines and the "all zero" lines'
+    method: patent-reading
+    derivation: inferred
+    supports: []
 
 new_params:
   l2.inclusion:            {block: l2, name: L2 inclusion of L1 contents}
+  l2.power_groups:         {block: l2, name: Separately powered L2 way groups, unit: groups}
 
 new_mechanisms:
   barrier_colors:
@@ -271,8 +381,21 @@ new_mechanisms:
     patents: [US9317102B2, US20140195737A1, US20140189411A1, US10552323B1, US20220066941A1]
     sim_switch: null
     detection_rule: an idle core keeps its L1 contents through the other cores' sharing traffic, and stores to lines no other L1 holds see no snoop delay
+  l2_way_power:
+    name: L2 way-group sleep and power-down
+    status: speculative
+    description: L2 ways sit in three separately powered groups that sleep after an idle count set by leakage and temperature, or power off when use is concentrated.
+    params: [l2.power_groups]
+    patents: [US9513693B2, US20150309939A1]
+    sim_switch: null
+    detection_rule: >-
+      after an idle stretch the first L2 hits take one or two extra cycles, and after long light load the usable L2
+      capacity drops to two thirds or one third until miss pressure restores it
 
 mechanism_claims:
   barrier_colors: [c-mh-v3-barrier-colors, c-mh-v3-barrier-l1-l2]
   load_poison_bits: [c-mh-v3-load-poison, c-mh-v3-wfe-poison, c-mh-v3-lsq-cam-filter]
   l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk, c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2, c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep, c-mh-v3-sleep-invalidate-queue]
+  l2_way_power: [c-mh-v3-drowsy-l2, c-mh-v3-l2-sleep-by-way, c-mh-v3-l2-sleep-leakage, c-mh-v3-l2-12-ways-2014,
+                 c-mh-v3-l2-thirds, c-mh-v3-l2-powerdown-counters, c-mh-v3-l2-powerup]
+  coherence_duplicate_tags: [c-mh-v3-slc-dup-tags-l2]
