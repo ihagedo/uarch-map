@@ -2248,6 +2248,17 @@
       "status": "inferred",
       "confidence": "inferred"
     },
+    "chip.coherence_protocol": {
+      "claims": [
+        "c-mh-v3-moesi"
+      ],
+      "disputes": [],
+      "block": "chip",
+      "name": "Coherence protocol",
+      "value": "MOESI",
+      "status": "inferred",
+      "confidence": "inferred"
+    },
     "slc.line": {
       "claims": [
         "c-mh-v3-l2-line-128",
@@ -11534,6 +11545,130 @@
       "chip": "m1",
       "entered": "handley-vol3-core"
     },
+    "c-mh-v3-moesi": {
+      "text": "Apple has likely used MOESI since at least the A6 and A7, whose Owned state lets a modified line pass directly from one cache to another",
+      "loc": "p038",
+      "quote": "it seems likely that, from at least the A6 and A7 days, Apple was using MOESI as their cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "MOESI",
+      "hedge": "it seems likely",
+      "supports": [
+        "chip.coherence_protocol"
+      ],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-directory": {
+      "text": "Apple's coherence is in effect a directory protocol, the duplicate tags in the coherence point serving as the directory, although Apple calls it snooping",
+      "loc": "p038",
+      "quote": "Apple essentially uses a directory protocol (the Duplicate Tags stored in the Coherence Point, as will be discussed in massive detail when we cover the Fabric/SLC/Memory Controller, are essentially a directory)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-page-unshared-snoop": {
+      "text": "A 2009 patent marks never-shared pages in the page tables, carried through the TLB to the cache, so lines in them skip snoop broadcasts; Handley wonders whether the M1 has it",
+      "loc": "p039",
+      "quote": "Most pages are never shared, so suppose we indicate in the page tables, propagated to the TLB and then to the cache, that pages are not shared.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "So maybe it's present in the M1?",
+      "supports": [],
+      "notes": "US20100235586A1 (2009). Handley guesses it served the dual-package Mac Pro, not phones.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-sharing-tracking": {
+      "text": "A 2011 patent has each device learn from snoop traffic which lines others may hold and suppress snoops for lines no one else can have, refining the tracking granularity per address range from statistics",
+      "loc": "p039",
+      "quote": "if it knows that no other device can be holding a particular line, snoop broadcasts related to that line can be suppressed",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US8856456B2 (2011), aimed at coherence between a CPU and a GPU.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-scalable-coherence": {
+      "text": "A 2020 patent defines a protocol built on MOESI that allows several outstanding transactions per line; each snoop carries the expected state change, so a cache can detect a snoop that arrived out of order and wait",
+      "loc": "p039",
+      "quote": "multiple transactions to a specific cache line may be outstanding ... What Apple do instead is to include, with each Snoop transaction, the state the line is supposed to be in",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20220083472A1 (2020), scalable cache coherency protocol. Handley sees it suited to something the size of an M1 Ultra.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-sideways-fill": {
+      "text": "The same protocol lets fill and copyback messages name a target device, so data moves sideways from cache to cache, merging MOESI with MESIF-style forwarding of clean lines",
+      "loc": "p040",
+      "quote": "This aspect of the protocol is essentially a merging of MOESI (allow sharing of modified lines) and MERSI/MESIF (allow sideways transfer of non-modified lines).",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Extended shared states decide which sharer forwards a clean line; some message pairs are bundled into one.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-inter-cluster-snoop": {
+      "text": "A 2020 patent shortens some inter-cluster transfers: a NoC arbitration node between a cluster and the SLC copies certain snoop responses and returns one to the requester as if from the SLC",
+      "loc": "p040",
+      "quote": "This patent uses a hack to convert some of the four-hop transactions that should route through the SLC to faster three-hop transactions.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US11016913B1 (2020), inter cluster snoop latency reduction.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-cache-as-ram": {
+      "text": "A 2019 patent lets a cache map address ranges onto some of its lines through in-cache registers, so that device DMA can land directly in the cache instead of DRAM",
+      "loc": "p041",
+      "quote": "allow a cache ... to have certain address ranges mapped (via in-cache registers) to some lines of the cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US10922232B1 (2019). The patent covers L1 to L3, with L1 examples; its focus is ordering memory and IO requests to such a cache without deadlock.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-dma-into-l2": {
+      "text": "Unlike Intel's automatic DDIO into the L3, Apple's scheme seems to need a driver to set up the mapping and puts the data in the L2, which Handley thinks the SLC's duplicate tags make possible",
+      "loc": "p042",
+      "quote": "Intel\u2019s scheme goes to L3, whereas Apple\u2019s scheme goes to L2. I\u2019m guessing this is feasible ... because of the duplicate tags",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "I\u2019m guessing",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-slc-dynamic-ram": {
+      "text": "A 2021 patent maps a physical address range into a cache, probably the SLC, on demand, for example for camera frames read by the GPU or encoder; removing the range clears the lines and makes the range invalid",
+      "loc": "p042",
+      "quote": "the ability to map a physical address range into a cache (probably SLC) rather than DRAM",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "probably SLC",
+      "supports": [],
+      "notes": "US20230067307A1 (2021). It also suggests keeping alternate lines of a large buffer in the SLC to interleave hits with DRAM misses.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
     "c-mh-v3-request-path": {
       "text": "A normal memory request passes from the core through L1 and L2 into the Switch, then to Coherence, which checks every other L1/L2, then to the SLC, then to the memory controller",
       "loc": "p070",
@@ -16744,6 +16879,12 @@
         "c-mh-v3-victim-addq",
         "c-mh-v3-parallel-coherence-pipes",
         "c-mh-v3-slc-dup-tags-l2",
+        "c-mh-v3-directory",
+        "c-mh-v3-moesi",
+        "c-mh-v3-scalable-coherence",
+        "c-mh-v3-sideways-fill",
+        "c-mh-v3-inter-cluster-snoop",
+        "c-mh-v3-dma-into-l2",
         "c-mh-v3-request-path",
         "c-mh-v3-duplicate-tags",
         "c-mh-v3-pseudo-l3",
