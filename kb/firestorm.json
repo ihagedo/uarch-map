@@ -2074,7 +2074,8 @@
       "claims": [
         "c-mh-v2-l2-l1-read-32b",
         "c-mh-v2-l1-l2-split-paths",
-        "c-mh-v3-l1-l2-32b"
+        "c-mh-v3-l1-l2-32b",
+        "c-mh-v3-l1-l2-bus-32b"
       ],
       "disputes": [],
       "block": "l2",
@@ -12116,6 +12117,116 @@
       "source": "handley-vol3",
       "entered": "handley-vol3-soc"
     },
+    "c-mh-v3-amx-via-lsu": {
+      "text": "Per a 2016 patent, AMX is one coprocessor per cluster; its instructions pass through the core's load/store pipeline, and AMX loads and stores are translated by the core's TLB",
+      "loc": "p211",
+      "quote": "a coprocessor that's associated with a cluster as a whole ... these instructions flow through the load/store pipeline. Some of them are AMX loads or stores, and these are translated by the TLB",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "He expects AMX loads and stores that cross a page to need two TLB lookups and fall to microcode",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-from-l2": {
+      "text": "AMX loads and stores go to the L2, so AMX reaches data in a core's L1 more slowly than data already in the L2, since L1 lines must first move to the L2",
+      "loc": "p212",
+      "quote": "AMX appears to draw its data from the L2 ... accessing data in an L1 is slower than accessing data in the L2, since L1 data will first have to be transferred to the L2",
+      "derivation": "inferred",
+      "hedge": "appears to",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-stq-nonspec": {
+      "text": "AMX instructions enter the LSU and sit in the store queue; once an entry is non-speculative it is sent to AMX over the L2 bus",
+      "loc": "p228",
+      "quote": "AMX instruction go to the LSU; get stored in the STQ; at the point an entry in the STQ becomes non-speculative it's interpreted as AMX, and a single AMX instruction is sent out over the L2 bus",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "probably",
+      "supports": [],
+      "notes": "Described as the probable first implementation; an earlier passage of the volume guesses the instructions wait in the ROB instead",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-ordering-table": {
+      "text": "Per a 2018 patent, CPU loads and stores are checked against a table of pages with outstanding AMX loads or stores, and any that might clash wait; the table works per page, not per address",
+      "loc": "p227",
+      "quote": "a table that describes memory \u201cregions\u201d that will be affected by AMX loads and stores ... we delay loads and stores that might clash until the table says OK ... Rather it works on a page granularity",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "page",
+      "supports": [],
+      "notes": "The core's load/store queue and dependence predictor do not cover AMX. He thinks one table also serves the LZ coprocessor",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-l2-id-release": {
+      "text": "The L2 holds each AMX transaction ID until the last data beat to or from AMX, then forwards it to the core to release the ordering-table entry, saving a few cycles",
+      "loc": "p228",
+      "quote": "remember all AMX loads/stores happen through L2), it also sends the transaction ID ... the L2 holds onto the ID until the last beat of data to be transferred to/from AMX",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-two-per-cycle": {
+      "text": "Since the core carries two stores per cycle to its last stage, a 2019 patent lets up to two AMX instructions per cycle reach the bus interface unit",
+      "loc": "p229",
+      "quote": "The generic M1 CPU machinery can process two stores (and so, let's assume, two AMX instructions) per cycle ... allow up to two AMX instructions to proceed all the way to the Bus Interface Unit in one cycle",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "instr/cycle",
+      "hedge": "let's assume",
+      "supports": [],
+      "notes": "Two stores per cycle agrees with the measured store rate",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-l1-l2-bus-32b": {
+      "text": "The L1-to-L2 data bus is at least about 32 B wide",
+      "loc": "p229",
+      "quote": "Meanwhile the data bus from L1 to L2 is at least 32B or so.",
+      "derivation": "inferred",
+      "value": 32,
+      "unit": "B/cycle",
+      "approx": true,
+      "hedge": "at least 32B or so",
+      "supports": [
+        "l2.l1_path_width"
+      ],
+      "notes": "Given as a bus width, a lower bound, in an argument that one beat could carry three or four AMX instructions",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
+    "c-mh-v3-amx-bundling": {
+      "text": "Per a 2019 patent, the bus interface unit gathers AMX instructions and sends them to AMX in bundles of three or four per L1-L2 bus transaction",
+      "loc": "p229",
+      "quote": "gather sequential AMX instructions in a buffer in this Bus Interface Unit ... send packed bundles of three (or four, or even more?) instructions to AMX as a single transaction",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 3,
+      "range": [
+        3,
+        4
+      ],
+      "unit": "instructions",
+      "hedge": "or even more?",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-soc"
+    },
     "c-mh-v4-btb-l0": {
       "text": "Relaying James Aslan's graph, the M1 has a zero-bubble BTB (his L0BTB) of 1024 entries, and the whole L1I cache serves as the next tier (his L2BTB)",
       "loc": "p011",
@@ -15579,6 +15690,18 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "device register access and interprocessor interrupt latency stay flat while the memory fabric is saturated"
+    },
+    "coprocessor_ordering_table": {
+      "claims": [
+        "c-mh-v3-amx-ordering-table",
+        "c-mh-v3-amx-l2-id-release"
+      ],
+      "name": "Coprocessor memory-ordering table",
+      "status": "speculative",
+      "description": "CPU loads and stores to a page with outstanding AMX (or LZ) accesses wait until the L2 reports those accesses done.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "a CPU load to a page that an in-flight AMX store targets stalls even at a different address in that page, but not when it goes to another page"
     },
     "power_estimator_throttle": {
       "claims": [
