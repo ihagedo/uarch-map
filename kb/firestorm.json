@@ -10649,6 +10649,116 @@
       "chip": "m1",
       "entered": "handley-vol2-latency"
     },
+    "c-mh-v3-barrier-colors": {
+      "text": "Per a 2012 Apple patent, barriers tag memory requests with a color that changes at each barrier, and no request of a later color completes until every request of the earlier color has",
+      "loc": "p008",
+      "quote": "mark requests as they come in via some tag that changes when a barrier is encountered ... not allow any request with a tag later than N to complete until all requests tagged as N are complete",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9582276B2 (2012), speculative and architectural color values.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-barrier-l1-l2": {
+      "text": "Apple appears to enforce barrier ordering between the L1 and the L2, so the L2 and beyond see the correct order while accesses between the LSU and the L1 stay free to reorder",
+      "loc": "p008",
+      "quote": "what Apple appear to do is implement the barrier between the L1 and L2, ensuring that the outside world (ie L2 and beyond) see correct ordering",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "appear to",
+      "supports": [],
+      "notes": "Handley assumes this orders the cache's MESI state changes and snoop responses.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-pio-strands": {
+      "text": "Per a 2009 patent, a PIO controller labels buffered PIO writes so writes to one peripheral stay in order while writes to different peripherals interleave",
+      "loc": "p009",
+      "quote": "a PIO controller, and a labelling of PIO transactions, that allows for reordering between strands but not within strands",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US8032673B2 (2009). Handley reads the patent's source ID as a destination ID.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-dsb-excluded-region": {
+      "text": "Per a 2020 patent, system registers can mark an address region as IO-like, and a DSB flag selects a strong form that orders all loads and stores or a mild form that need not wait for IO accesses",
+      "loc": "p010",
+      "quote": "one or more system registers that allow defining a region of space as IO-like ... to distinguish between a \u201cstrong\u201d DSB",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20220083338A1 (2020). With the mild form a core can acknowledge a remote DSB before its slow IO accesses complete.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-remote-dsb": {
+      "text": "A DSB that involves other cores reaches them as an interrupt; each appears to discard its front end, drain its back end and all cache transactions, then acknowledge and resume fetch",
+      "loc": "p011",
+      "quote": "the current solution appears to be essentially to throw away everything in the front-end, wait for all instructions in the back end to complete",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "appears to be",
+      "supports": [],
+      "notes": "Local barriers can use the color scheme; DSBs sent to other cores have no such shortcut. Flushing the front end also covers fetched instructions from a page that just became non-executable.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-fused-stxr-barrier": {
+      "text": "Per a 2010 patent, a store-exclusive and the barrier after it are fused into one operation that needs only one trip out to the point of coherency",
+      "loc": "p011",
+      "quote": "The solution is to fuse them together to create a single op (understood by the caches and the fabric) that only requires one such expensive outward trip.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20110208915A1 (2010); Handley calls the details doubtless obsolete. The fusion happens in the LSU when no load or store lies between the two.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-load-poison": {
+      "text": "Per a 2013 patent, each load carries a poison bit that is set if its cache line is modified before the load becomes non-speculative, and the load then recovers by replay or flush",
+      "loc": "p013",
+      "quote": "Every load has associated with it a \"poison bit\", and if the cache line from which the load was read is modified before the load becomes non-speculative, then the poison bit is set",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9383995B2 (2013), extended to non-cacheable loads by US10747535B1 (2016). It keeps an older load from seeing newer data than a younger load to the same address.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-wfe-poison": {
+      "text": "Per a 2014 patent, loads after a WFE may execute before the core wakes; on waking the LSU checks for poisoned loads, so part of the LSU must stay awake to match snooped Modified lines against the load queue",
+      "loc": "p013",
+      "quote": "after we wake up frome the WEV, we check the LSU to see if any loads have poison bits associated with them, and Recover appropriately",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9501284B2 (2014). Handley writes WEV for the wait-for-event instruction.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-lsq-cam-filter": {
+      "text": "Per a 2019 patent, the load/store queue keeps one bit for whether any entry is poisoned, and summary values such as the oldest valid load age, so most searches of the queue can be skipped",
+      "loc": "p014",
+      "quote": "the LSQ tracks a single bit as to whether any entry in the queue is poisoned, and behaves differently in these two cases",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20200264888A1 (2019), CAM filtering based on microarchitectural state.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
     "c-mh-v3-request-path": {
       "text": "A normal memory request passes from the core through L1 and L2 into the Switch, then to Coherence, which checks every other L1/L2, then to the SLC, then to the memory controller",
       "loc": "p070",
@@ -15683,6 +15793,40 @@
       ],
       "sim_switch": null,
       "detection_rule": "loading a line of pointers makes later chases through those pointers faster although no load ever used their addresses"
+    },
+    "barrier_colors": {
+      "claims": [
+        "c-mh-v3-barrier-colors",
+        "c-mh-v3-barrier-l1-l2"
+      ],
+      "name": "Color-tagged barriers at the L1-L2 boundary",
+      "status": "speculative",
+      "description": "Barriers advance a color tag on memory requests, and ordering is enforced between the L1 and the L2, not in the LSU.",
+      "params": [],
+      "patents": [
+        "US9582276B2"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a DMB between stores that hit in the L1 costs little, while one between stores that miss to the L2 waits for the earlier misses"
+    },
+    "load_poison_bits": {
+      "claims": [
+        "c-mh-v3-load-poison",
+        "c-mh-v3-wfe-poison",
+        "c-mh-v3-lsq-cam-filter"
+      ],
+      "name": "Load poison bits for load-load ordering",
+      "status": "speculative",
+      "description": "A load whose line is modified by another core before it becomes non-speculative is poisoned and replayed or flushed.",
+      "params": [],
+      "patents": [
+        "US9383995B2",
+        "US10747535B1",
+        "US9501284B2",
+        "US20200264888A1"
+      ],
+      "sim_switch": null,
+      "detection_rule": "same-address loads on one core take extra machine clears only when another core writes the line between them"
     },
     "slc_victim_fill": {
       "claims": [

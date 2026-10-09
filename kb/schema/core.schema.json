@@ -380,7 +380,7 @@
             "chip": {
               "type": "string",
               "default": "m1",
-              "description": "m1 | m2 | m3 | m4 | a14 | icestorm | generic"
+              "description": "m1 | m2 | m3 | m4 | a14 | icestorm | post-m1 (a later design no chip is named for) | generic"
             },
             "entered": {
               "type": "string"
