@@ -1,0 +1,144 @@
+# handley-vol8-core.yaml
+# Maynard Handley, 2025
+# Corrections to the M1 picture and later-chip changes to the core (AArch64-Explore vol 8).
+session: handley-vol8-core
+source: handley-vol8
+
+claims:
+  - id: c-mh-v8-a15-rob-smaller
+    text: >-
+      Dougall Johnson found the A15/M2 P core has a ROB and some other structures about 10% smaller than the
+      A14/M1, and a slightly larger load/store scheduling queue
+    loc: p009
+    quote: "~10% smaller ROB and some other structures, slightly larger load/store scheduling queue"
+    method: secondhand
+    derivation: reported
+    value: 10
+    unit: "%"
+    approx: true
+    chip: a15
+    supports: []
+    notes: Handley reads this as a rebalancing based on traces from the A14/M1
+  - id: c-mh-v8-a15-tpidrro
+    text: On the A15/M2, reads of special registers such as TPIDRRO_EL0 (thread-local data) are faster
+    loc: p009
+    quote: >-
+      some special purpose registers (TPIDRRO_EL0, used by multiple threads within a single process to access
+      thread-local data) are made faster
+    method: secondhand
+    derivation: reported
+    chip: a15
+    supports: []
+    notes: From Dougall Johnson's list of A15/M2 differences
+  - id: c-mh-v8-a15-adr-rename
+    text: On the A15/M2, ADR and ADRP are handled at rename, like MOV immediate
+    loc: p009
+    quote: "ADR/ADRP, used to access global data, made faster (now handled at Rename, like MOV immediate)"
+    method: secondhand
+    derivation: reported
+    value: true
+    chip: a15
+    supports: []
+    notes: From Dougall Johnson's list; on the M1 adr and adrp are not eliminated (c-dj-mov-elim)
+  - id: c-mh-v8-icestorm-4wide
+    text: Icestorm, the M1's E core, is four wide; its A15 successor Blizzard widens this to five
+    loc: p009
+    quote: "Blizzard (the small core) is now 5-wide rather than 4-wide"
+    method: secondhand
+    derivation: reported
+    value: 4
+    unit: instr/cycle
+    chip: icestorm
+    supports: []
+    notes: Implied by Dougall Johnson's A15 finding as Handley relays it
+  - id: c-mh-v8-a15-blizzard
+    text: The A15/M2 E core (Blizzard) is five wide, with a ROB about 33% larger than its predecessor's
+    loc: p009
+    quote: "Blizzard (the small core) is now 5-wide rather than 4-wide, with a 33% larger ROB"
+    method: secondhand
+    derivation: reported
+    value: 5
+    unit: instr/cycle
+    chip: a15
+    supports: []
+    notes: E core, from Dougall Johnson's list
+  - id: c-mh-v8-icestorm-rob-60
+    text: Icestorm's ROB holds about 60 racks, each rack being 7 slots of which one may hold a failable instruction
+    loc: p009
+    quote: >-
+      For the basic ROB rack (unit of 7 slots, one of which can be a failable instruction) we have ... for E cores:
+      about 60 for M1
+    method: secondhand
+    derivation: reported
+    value: 60
+    unit: groups
+    approx: true
+    chip: icestorm
+    supports: []
+    notes: >-
+      Handley does not say who measured the rack counts; the section relays Dougall Johnson's findings. The same
+      list gives about 330 for the M1 P core, as in retire.groups
+  - id: c-mh-v8-a15-rob-290
+    text: The A15 P core's ROB holds about 290 racks, against about 330 on the M1
+    loc: p009
+    quote: "for P cores: about 330 for M1, 290 for A15, and 270 for A16"
+    method: secondhand
+    derivation: reported
+    value: 290
+    unit: groups
+    approx: true
+    chip: a15
+    supports: []
+    notes: Handley does not say who measured the rack counts; the section relays Dougall Johnson's findings
+  - id: c-mh-v8-a16-rob-270
+    text: The A16 P core's ROB holds about 270 racks, against about 330 on the M1
+    loc: p009
+    quote: "for P cores: about 330 for M1, 290 for A15, and 270 for A16"
+    method: secondhand
+    derivation: reported
+    value: 270
+    unit: groups
+    approx: true
+    chip: a16
+    supports: []
+    notes: Handley does not say who measured the rack counts; the section relays Dougall Johnson's findings
+  - id: c-mh-v8-a15-ecore-rob-75
+    text: The A15 E core's ROB holds about 75 racks, against about 60 on Icestorm
+    loc: p009
+    quote: "for E cores: about 60 for M1, 75 for A15, and 108 for A16"
+    method: secondhand
+    derivation: reported
+    value: 75
+    unit: groups
+    approx: true
+    chip: a15
+    supports: []
+    notes: E core (Blizzard)
+  - id: c-mh-v8-a16-ecore-rob-108
+    text: The A16 E core's ROB holds about 108 racks, against about 60 on Icestorm
+    loc: p009
+    quote: "for E cores: about 60 for M1, 75 for A15, and 108 for A16"
+    method: secondhand
+    derivation: reported
+    value: 108
+    unit: groups
+    approx: true
+    chip: a16
+    supports: []
+    notes: E core
+  - id: c-mh-v8-a16-rack-7
+    text: >-
+      Despite the smaller P-core rack counts on the A15 and A16, Dougall Johnson's NOP measurement still gives 7
+      instructions per rack
+    loc: p009
+    quote: "Although dougall suggests this is not the case, that NOP measurement still gives a 1:7 ratio"
+    method: secondhand
+    derivation: reported
+    value: 7
+    unit: uops
+    chip: a16
+    supports: []
+    notes: >-
+      Handley wonders whether the ROB was split into separate failable and non-failable parts so the total could
+      shrink at the same 1:7 ratio
+
