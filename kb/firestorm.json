@@ -1609,7 +1609,8 @@
         "c-mh-v2-l2-line-128",
         "c-mh-v3-l2-line-patent",
         "c-mh-v3-l2-line-128",
-        "c-mh-v3-line-change"
+        "c-mh-v3-line-change",
+        "c-mh-v8-line-128"
       ],
       "disputes": [],
       "block": "l2",
@@ -2267,7 +2268,8 @@
     "slc.line": {
       "claims": [
         "c-mh-v3-l2-line-128",
-        "c-mh-v3-line-change"
+        "c-mh-v3-line-change",
+        "c-mh-v8-line-128"
       ],
       "disputes": [],
       "block": "slc",
@@ -2361,6 +2363,19 @@
       "unit": "ways",
       "value": 12,
       "status": "inferred",
+      "confidence": "inferred"
+    },
+    "memctrl.peak_bw": {
+      "claims": [
+        "c-mh-v8-m1-bw-66"
+      ],
+      "disputes": [],
+      "block": "memctrl",
+      "name": "Peak DRAM bandwidth (chip)",
+      "unit": "GB/s",
+      "value": 66,
+      "approx": true,
+      "status": "reported",
       "confidence": "inferred"
     },
     "rename.fusion_read_limit": {
@@ -16890,6 +16905,195 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-memory"
     },
+    "c-mh-v8-hw-dvfs": {
+      "text": "Apple's power management acts on predicted rather than past behaviour and changes settings fast enough that dedicated hardware does it, not the OS over long averaging windows",
+      "loc": "p220",
+      "quote": "proactive power handling (predict what the system will do rather than just do what would have been optimal over the most recent past), and the rate at which power settings were changed (fast enough that this required dedicated hardware",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Agrees with c-mh-v3-hw-dvfs and c-cc-clk-m1max-hw-boost.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-slc-dup-tags": {
+      "text": "A request that missed its cluster L2 went to the SLC, which kept a copy of the tags of every relevant cache and tested the address against each set",
+      "loc": "p225",
+      "quote": "The request first goes to the SLC, and in the past the SLC had a set of tags matching each relevant cache in the system, so the request address would be tested against all these sets of cache tags.",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Agrees with c-mh-v3-duplicate-tags. The 2024 directory patent replaces this (c-mh-v8-directory).",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-directory": {
+      "text": "Apple now tracks the lines in all L2-level caches with a coherence directory at the SLC instead of duplicate tags, trading a little area and rare forced invalidations for lower power",
+      "loc": "p227",
+      "quote": "So the main significance of the patent is that it tells us Apple is now using a directory.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250103496A1 (2024). Handley reads it as preparation for more L2-level caches on large chips.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-directory-overflow": {
+      "text": "The directory is a hashed table of 4-slot sets; when a fifth line maps to a full set, one existing line, probably chosen at random, is invalidated in its L2",
+      "loc": "p226",
+      "quote": "where each index refers to 4 slots. Now we can handle up to 4 hash collisions for any index ... So we're forced to throw away one of those pre-existing lines",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "ways",
+      "hedge": "probably choosing a random slot",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-directory-way-bits": {
+      "text": "The SLC tells an L2 which directory way holds each new line; the L2 keeps those bits in its tags and returns them on invalidation, so the SLC need not search the set",
+      "loc": "p228",
+      "quote": "include a few bits that state which of the four ways (ie which of the four slots) is being used by the directory to hold this address",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-retry-queue": {
+      "text": "A request that meets a busy line in the snoop queue or directory used to be sent back to the buffer in front of the memory controller and SLC; it now waits in a retry queue inside them, with separate queues per client class",
+      "loc": "p228",
+      "quote": "the request would be \"rejected\", meaning that it would have to go back to buffer sitting in front of the memory controller/SLC ... The modification of this patent is to create a dedicated retry queue",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250103520A1 (2024). Requests are checked in parallel against cache tags, the directory, memory-controller queues and the snoop queue. Separate IO and CPU retry queues keep IO from slowing the CPU.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-line-128": {
+      "text": "The system line is 128 B, two CPU lines; 128 B lines move between the SLC and the L2, and 64 B lines between the L2 and the L1",
+      "loc": "p229",
+      "quote": "the system cache line length is 128B. This means a system line is two CPU lines. The system seems to handle this by transferring 128B lines to and from the CPU L2, while the CPU L2 transfers 64B lines",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "l2.line",
+        "slc.line"
+      ],
+      "notes": "Agrees with c-mh-v2-l2-line-128 and c-mh-v3-l2-line-128. Elsewhere he guesses a sectored SLC with lines of about 512 B (c-mh-v8-slc-line-512).",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-64b-dirty": {
+      "text": "Every cache up to the SLC now tracks dirtiness per 64 B half-line, where some earlier 128 B-line L2s did not, which trims DRAM write traffic",
+      "loc": "p229",
+      "quote": "in the past some of the L2 caches that used 128B lines might not track dirtiness at the 64B level, but now all caches in the system do.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "From the retry-queue patent. A 2023 patent (US12007901B2) already tracks some SLC line state per half-line, mainly for remote atomics.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m1-bw-66": {
+      "text": "The base M chip of the first two generations has two memory controllers, and the M1 has about 66 GB/s of DRAM bandwidth",
+      "loc": "p229",
+      "quote": "the M has two, the Pro has four, and the Max has eight. ... meant the relevant A and M1 had 33 and 66GB/s, while Pro and Max were at 200 and 400",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 66,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [
+        "memctrl.peak_bw"
+      ],
+      "notes": "He counts 64-bit controllers; c-mh-v3-m1-one-mc-unit counts one unit on the M1. The M1 uses LPDDR4X-4266, a 68.256 GB/s peak (c-mh-v2-lpddr4x-peak).",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m1pro-bw": {
+      "text": "The M1 Pro has four memory controllers and about 200 GB/s of DRAM bandwidth",
+      "loc": "p229",
+      "quote": "the M has two, the Pro has four, and the Max has eight. ... while Pro and Max were at 200 and 400",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 200,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "chip": "m1pro",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m1max-bw": {
+      "text": "The M1 Max has eight memory controllers and about 400 GB/s of DRAM bandwidth, but the CPU clusters cannot use all of it; only the GPU can",
+      "loc": "p229",
+      "quote": "while Pro and Max were at 200 and 400; also for Max not all this bandwidth was available to the CPU clusters, only the GPUs could fully exploit it",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 400,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "chip": "m1max",
+      "notes": "Agrees with c-mh-v2-m1max-core-100 and c-mh-v3-fabric-100gbs (about 100 GB/s per CPU cluster).",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m4-bw": {
+      "text": "The M4 has two memory controllers and about 120 GB/s of DRAM bandwidth",
+      "loc": "p230",
+      "quote": "M4 has two memory controllers and bandwidth of 140 GB/s (actually 120, probably using slightly slower DRAM)",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 120,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "chip": "m4",
+      "notes": "His scheme gives 140 GB/s; the real 120 GB/s he puts down to slightly slower DRAM.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m4pro-bw": {
+      "text": "The M4 Pro has four memory controllers and about 280 GB/s of DRAM bandwidth",
+      "loc": "p230",
+      "quote": "M4 Pro has four controllers and bandwidth of 280 GB/s",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 280,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "chip": "m4pro",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-m4max-bw": {
+      "text": "The full M4 Max has eight memory controllers and about 560 GB/s; the binned M4 Max disables two, leaving six and about 420 GB/s",
+      "loc": "p230",
+      "quote": "M4 Max cheap has 6 controllers and bandwidth of 420 GB/s M4 Max expensive has 8 controllers and bandwidth of 560 GB/s",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 560,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [],
+      "chip": "m4max",
+      "notes": "The binned part's 36 GB is six 6 GB DRAMs. Handley credits a new split of work between network and memory controller with making controllers easy to disable, probably at startup.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -18905,7 +19109,8 @@
         "c-mh-v3-strands",
         "c-mh-v3-dt-split",
         "c-mh-v3-2013-ccu",
-        "c-mh-v3-remote-cache-slc"
+        "c-mh-v3-remote-cache-slc",
+        "c-mh-v8-slc-dup-tags"
       ],
       "name": "Coherence point with duplicate tags",
       "status": "inferred",
@@ -19020,7 +19225,8 @@
         "c-mh-v3-voltage-margin-recovery",
         "c-mh-v3-energy-credits",
         "c-mh-v3-l2-slc-throttle",
-        "c-mh-v3-freeze-levels"
+        "c-mh-v3-freeze-levels",
+        "c-mh-v8-hw-dvfs"
       ],
       "name": "Digital power estimator throttling",
       "status": "speculative",
@@ -19185,6 +19391,19 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "an ISB or DSB costs little more than a refetch when no older memory or system-register work is pending, and its cost grows with outstanding older loads and stores rather than with older ALU work"
+    },
+    "coherence_directory": {
+      "claims": [
+        "c-mh-v8-directory",
+        "c-mh-v8-directory-overflow",
+        "c-mh-v8-directory-way-bits"
+      ],
+      "name": "Coherence directory at the SLC",
+      "status": "speculative",
+      "description": "A hashed, set-associative directory at the SLC records which L2-level caches hold each line, replacing duplicate tags; a set overflow invalidates a line in its L2.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "lines cached in several L2s are invalidated well below the L2s' combined capacity when their addresses crowd one directory set"
     },
     "ipv_replacement": {
       "claims": [
