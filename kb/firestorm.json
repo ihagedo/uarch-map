@@ -11428,6 +11428,112 @@
       "chip": "m1",
       "entered": "handley-vol3-core"
     },
+    "c-mh-v3-l2-inclusive-2013": {
+      "text": "Around 2013 and 2014 (the A7 and A8 generation) the L2 was inclusive, so replacement avoided lines also held in an L1; whether it still is remains unclear",
+      "loc": "p031",
+      "quote": "if your L2 is inclusive (as it was say around 2013..2014 so around A7, A8 generation; unclear today) then you should not replace a line that is an inclusive line",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "unclear today",
+      "chip": "a7",
+      "supports": [],
+      "source": "handley-vol3",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-line-state-bits": {
+      "text": "Apple's per-line state includes bits marking a line as part of a stream, brought in by a prefetcher, or having made a trip (into the L1, evicted to the L2, back into the L1)",
+      "loc": "p032",
+      "quote": "Along with the other data stored by Apple for each cache line we have bits that indicate ... the line has made a \u201ctrip\u201d",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-l2-lru-placement": {
+      "text": "Per a 2013 patent, an incoming L2 line is placed at an LRU position chosen from its history, low for lines not expected to be reused and high (LRU7 in an 8-way example) for likely useful ones",
+      "loc": "p032",
+      "quote": "If we place a new line at LRU0, that\u2019s saying that we will accept the line in the L2, but we\u2019re not very confident it will be useful",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9563575B2 (2013). Lines enter the L2 as L1 victims, so arrival alone does not show usefulness. Vol 2 timing suggested random L2 replacement on the M1 (c-mh-v2-l2-random-repl).",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-l2-stream-lru0": {
+      "text": "A streaming line evicted from the L1 enters the L2 at LRU0 and moves up one step if reused, so a long stream replaces only earlier stream lines and can displace about an eighth, or perhaps a quarter, of the L2",
+      "loc": "p034",
+      "quote": "the stream can only wipe out one 1/8th (or maybe 1/4) of the L2 cache, it can\u2019t remove the other 7/8th of useful material in the cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "or maybe 1/4",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-l2-prefetch-slots": {
+      "text": "Prefetched lines that have not been used get the four lowest LRU slots, on the view that they are low-confidence prefetches and should be used soon if at all",
+      "loc": "p034",
+      "quote": "Prefetches we are slightly more tolerant of. They get the four lowest slots to hang around in",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-l2-trip-lines": {
+      "text": "Even lines that have made a trip can occupy only three quarters of the L2 until a hit in the L2 promotes them to LRU7",
+      "loc": "p034",
+      "quote": "even the probably useful trip lines only get access to 3/4 of the cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-true-lru": {
+      "text": "The 2013 replacement patent assumes true LRU ordering but does not say how it is built",
+      "loc": "p035",
+      "quote": "The patents talks about using a \u201ctrue LRU\u201d, but does not explain how this is done.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Handley's alternative, a random choice among lines below a desirability score, is his own proposal.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-l2-cpu-quota": {
+      "text": "Per a 2014 follow-up, each L2 line also records which CPU last accessed it, each CPU has a line quota, and replacement takes the least recently used line among CPUs over quota",
+      "loc": "p035",
+      "quote": "adds to the other per-line state, an ID for which CPU most recently accessed each line. Each CPU has a cache line quota",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US20150309944A1 (2014), methods for cache line eviction.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
+    "c-mh-v3-superways": {
+      "text": "Handley reads a 2020 patent as grouping the ways of a highly associative cache into a few super-ways ranked by LRU, a hash fixing each line's slot within a super-way, which saves LRU bits and suits powering down the coldest way group",
+      "loc": "p037",
+      "quote": "we can save a whole lot of LRU-ordering bits by use of the super-ways; and we can make the cache shutdown mechanism more efficient",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "all the above is conjecture!",
+      "supports": [],
+      "notes": "US11144476B2 (2020), LRU ranking in a multi-port cache. His 256 sets, 128 ways and four super-ways of 32 are made-up numbers.",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-core"
+    },
     "c-mh-v3-request-path": {
       "text": "A normal memory request passes from the core through L1 and L2 into the Switch, then to Coherence, which checks every other L1/L2, then to the SLC, then to the memory controller",
       "loc": "p070",
@@ -16583,6 +16689,32 @@
       ],
       "sim_switch": null,
       "detection_rule": "one pass over a footprint larger than the L1 leaves little for a second pass to hit in the L2, while repeated passes build up L2 hits"
+    },
+    "l2_insertion_priority": {
+      "claims": [
+        "c-mh-v3-l2-inclusive-2013",
+        "c-mh-v3-line-state-bits",
+        "c-mh-v3-l2-lru-placement",
+        "c-mh-v3-l2-stream-lru0",
+        "c-mh-v3-l2-prefetch-slots",
+        "c-mh-v3-l2-trip-lines",
+        "c-mh-v3-true-lru",
+        "c-mh-v3-l2-cpu-quota",
+        "c-mh-v3-superways"
+      ],
+      "name": "L2 insertion position by line history",
+      "status": "speculative",
+      "description": "L2 victims enter at LRU positions chosen by stream, prefetch and trip bits, so streams and unused prefetches cycle through a few ways.",
+      "params": [
+        "l2.replacement"
+      ],
+      "patents": [
+        "US9563575B2",
+        "US20150309944A1",
+        "US11144476B2"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a streaming pass over many MiB evicts only an eighth to a quarter of a resident L2 working set"
     },
     "slc_victim_fill": {
       "claims": [
