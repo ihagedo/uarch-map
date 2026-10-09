@@ -1,0 +1,208 @@
+# handley-vol3-memory.yaml
+# Maynard Handley, 2025
+# Memory controllers, the fabric and the SLC (AArch64-Explore vol 3).
+session: handley-vol3-memory
+source: handley-vol3
+
+claims:
+  - id: c-mh-v3-request-path
+    text: >-
+      A normal memory request passes from the core through L1 and L2 into the Switch, then to Coherence, which checks
+      every other L1/L2, then to the SLC, then to the memory controller
+    loc: p070
+    quote: "It flows from the CPU through L1, through L2, into the Switch which sends it to Coherence."
+    derivation: inferred
+    hedge: "as a mental model"
+    supports: []
+    notes: Four layers in order Switch, Coherence, SLC, memory controller; Apple has moved more of the upper three into the NoC itself
+
+  - id: c-mh-v3-device-bypass
+    text: >-
+      Device-memory requests from the core bypass L1 and L2 and go straight to the Switch, which routes them to the
+      target hardware without passing Coherence, the SLC or the memory controller
+    loc: p070
+    quote: "Device Memory messages bypass Coherence, the SLC and the Memory Controller because they have nothing to do with any of that stuff."
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-slc-mc-frontend
+    text: >-
+      The SLC is best seen as a front end to the memory controller rather than a conventional cache: a write that lands
+      in the SLC counts as written to DRAM
+    loc: p070
+    quote: "the SLC should not be thought of as a traditional style cache, it should be thought of as a front-end to the memory controller, so writing to the SLC is as good as writing to DRAM"
+    derivation: inferred
+    supports: []
+    notes: Same view as c-mh-v2-slc-memory-side
+
+  - id: c-mh-v3-dma-write-slc
+    text: >-
+      A request from an IO block that misses in Coherence is checked against the SLC; a write is stored in the SLC and
+      a read that misses there goes on to the memory controller
+    loc: p070
+    quote: "if the request is a write, store in SLC; if it's a read that does not match in SLC go to the memory"
+    derivation: inferred
+    hedge: "I think the way that works is"
+    supports: []
+
+  - id: c-mh-v3-uncacheable-caching
+    text: >-
+      Even requests to uncacheable ranges can be cached in full by the SLC, because it is a memory-side cache, and in
+      part by the CPU caches through the Coherence tags
+    loc: p071
+    quote: "The SLC caching always works because the SLC is a memory-side cache; the CPU-side caching works because we’ve put some smarts into Coherence."
+    derivation: inferred
+    supports: []
+    notes: The SLC side mainly helps IO blocks and saves energy; the Coherence side mainly helps the CPU
+
+  - id: c-mh-v3-cpu-qos-fixed
+    text: The priority of CPU memory requests used to be fixed and fairly low; a recent patent makes it somewhat more dynamic
+    loc: p071
+    quote: "What priority does the CPU get? I think that used to be fixed and fairly low"
+    derivation: inferred
+    hedge: "I think"
+    supports: []
+
+  - id: c-mh-v3-qos-five
+    text: >-
+      Apple's patents mostly describe five QoS settings in three priority bands; two of the bands hold one realtime and
+      one non-realtime setting, which can age differently
+    loc: p071
+    quote: "The Apple patents mostly talk about 5 QoS Settings which (more or less) represent three priority bands."
+    method: patent-reading
+    derivation: inferred
+    value: 5
+    unit: QoS classes
+    hedge: "(more or less)"
+    supports: []
+
+  - id: c-mh-v3-qos-bands
+    text: >-
+      The QoS bands are: high, RT Red; mid, RT Yellow and NRT Low Latency; low, RT Green and NRT Bulk
+    loc: p081
+    quote: "We have, according to the patents, 3+2 QoS classes, which we can think of as forming three bands,"
+    method: patent-reading
+    derivation: inferred
+    value: 3
+    unit: bands
+    supports: []
+
+  - id: c-mh-v3-qos-evolution
+    text: >-
+      Fabric priority evolved from keeping realtime traffic glitch-free (PA Semi to early A7), to bandwidth reservation,
+      and by about 2020 to also guaranteeing minimum progress
+    loc: p071
+    quote: "now (as of 2020) we’re preserving these previous two desiderata, while also adding minimum progress guarantees."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-fabric-credits
+    text: >-
+      In the current (about 2020) design a requester needs credits to enter the fabric and then the memory controller,
+      which enforces bandwidth and flow control and lets fabric queues stay small
+    loc: p071
+    quote: "To enter the fabric (and then to enter the memory controller) requires credits."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Small fabric queues save area and power and cut latency (less bufferbloat)
+
+  - id: c-mh-v3-fabric-arbitration
+    text: >-
+      Inside the fabric and memory controller, arbiters at routing points use grant counters and QoS levels to keep
+      latency low and guarantee minimum progress
+    loc: p072
+    quote: "Once in the fabric (or memory controller) arbitration takes over at various routing points ... counters (grants) and flow markings (QoS levels) to ensure low latency and minimum progress"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-six-vcs
+    text: >-
+      The current fabric uses three virtual channels (RealTime, Low Latency, Bulk), each in a posted and a non-posted
+      form, six in all
+    loc: p074
+    quote: "the three virtual channels I listed above come as posted and non-posted versions, so there are in fact six basic Apple virtual channels."
+    method: patent-reading
+    derivation: inferred
+    value: 6
+    unit: virtual channels
+    supports: []
+    notes: The virtual channels replace the older QoS-plus-flowID tagging; Handley calls the scheme PCIe-inspired
+
+  - id: c-mh-v3-flowid-gone
+    text: The separate flow IDs once used to tag streams such as GPU request streams appear to be gone in the most recent designs
+    loc: p074
+    quote: "The distinct flowIDs, used apparently to tag things like different streams of GPU requests, appear to be gone in the most recent designs."
+    method: patent-reading
+    derivation: inferred
+    hedge: "appear to be gone"
+    supports: []
+
+  - id: c-mh-v3-vc-ordering
+    text: Ordering is fixed within a virtual channel, as in PCIe
+    loc: p075
+    quote: "I believe that for both Apple and PCIe, ordering must remain fixed within a Virtual Channel."
+    derivation: inferred
+    hedge: "I believe"
+    supports: []
+    notes: Patents differ on whether each virtual channel has its own hardware queue; Handley guesses separate queues for routing but not at the memory controller
+
+  - id: c-mh-v3-credits-dram
+    text: >-
+      For DRAM, credits act as both flow control and bandwidth allocation: a requester's credits set how many requests it
+      may queue at the memory controller before it is throttled
+    loc: p076
+    quote: "the credits of each ... essentially control how many requests the ... can queue up at the Memory Controller before it is throttled, and so the credits act as bandwidth allocation."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: There is no dedicated pool of memory controller slots per requester
+
+  - id: c-mh-v3-gen2-credits
+    text: >-
+      The second-generation fabric (about 2012 to 2018) used credits only for flow control between the Coherence Point
+      and the memory controller queues
+    loc: p076
+    quote: "The second generation Fabric (~2012 to ~2018) used credits for flow control between the Coherence Point (essentially the start of processing all memory requests) and the Memory Controller proper"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a7
+
+  - id: c-mh-v3-gen3-credits
+    text: The third-generation fabric (after about 2018) uses credits end to end for bandwidth allocation and flow control
+    loc: p076
+    quote: "The third generation (post ~2018) Fabric uses credits end-to-end throughout the Fabric for bandwidth allocation and flow control."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+new_mechanisms:
+  coherence_duplicate_tags:
+    name: Coherence point with duplicate tags
+    status: inferred
+    description: Before the SLC, a coherence point holds copies of every cache's L2 tags and states, a tag-only pseudo-L3 that orders same-address requests.
+    params: []
+    sim_switch: null
+    detection_rule: a read of a line held modified in the other cluster returns faster than a DRAM access
+  fabric_qos_credits:
+    name: Credit-gated fabric with QoS bands
+    status: inferred
+    description: Requests carry one of five QoS classes in three bands on six virtual channels; credits gate entry to the fabric and memory controller.
+    params: []
+    sim_switch: null
+    detection_rule: not visible to a single-core probe; under bulk GPU traffic a latency-bound CPU miss slows less than CPU streaming bandwidth falls
+  pio_network:
+    name: Separate PIO network
+    status: inferred
+    description: Device-memory accesses and short control messages such as interprocessor interrupts use a flat network that skips coherence, the SLC and DRAM.
+    params: []
+    sim_switch: null
+    detection_rule: device register access and interprocessor interrupt latency stay flat while the memory fabric is saturated
+
+mechanism_claims:
+  coherence_duplicate_tags: [c-mh-v3-request-path]
+  fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration, c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits]
+  pio_network: [c-mh-v3-device-bypass]
