@@ -595,7 +595,7 @@ claims:
     loc: p199
     quote: "the TLB2 is probably not set associative. Or, to be more precise, it's organized as 1024 entries that are each three ways. So you perform a hash of the virtual address down to a number in the range 0..1023"
     method: pointer-chase
-    derivation: inferred
+    derivation: derived
     value: 3-way, 1024 sets, hashed index
     hedge: "probably"
     supports: [dtlb.l2_org]

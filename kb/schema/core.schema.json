@@ -172,6 +172,7 @@
               "enum": [
                 "measured",
                 "documented",
+                "derived",
                 "inferred",
                 "reported",
                 "open"
@@ -179,10 +180,13 @@
             },
             "confidence": {
               "enum": [
-                "high",
-                "medium",
-                "low",
-                "none"
+                "confirmed",
+                "corroborated",
+                "single",
+                "derived",
+                "inferred",
+                "conjecture",
+                "unknown"
               ]
             },
             "mechanism": {
@@ -241,6 +245,44 @@
             },
             "note": {
               "type": "string"
+            },
+            "conjecture": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "text",
+                "basis"
+              ],
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": [
+                    "number",
+                    "string",
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "range": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "minItems": 2,
+                  "maxItems": 2
+                },
+                "basis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "approx": {
+                  "type": "boolean"
+                }
+              }
             }
           }
         }
@@ -300,6 +342,7 @@
               "enum": [
                 "measured",
                 "documented",
+                "derived",
                 "inferred",
                 "reported"
               ]

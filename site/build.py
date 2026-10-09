@@ -40,6 +40,19 @@ def fmt(value, approx=False, limit=None):
     return s
 
 
+def conjecture_short(p):
+    """A conjecture's bound for a map box: '64-128?' or '~160?'; a plain hole stays a dash."""
+    c = p.conjecture
+    if not c:
+        return fmt(None)
+    if c.get("range"):
+        lo, hi = c["range"]
+        return f"{lo:g}-{hi:g}?"
+    if c.get("value") is None:
+        return "?"
+    return f"{'~' if c.get('approx') else ''}{c['value']}?"
+
+
 def box_height(block):
     return BOX_HEAD + max(1, len(block.params)) * ROW_H + BOX_FOOT
 
@@ -160,7 +173,7 @@ def structures(kb, layout):
 def aggregate(params):
     """Block.confidence's rule over any set of params (a frame)."""
     if not params:
-        return "none"
+        return "unknown"
     return CONF_NAME[int(sum(CONF_RANK[p.confidence] for p in params) / len(params) + 0.5)]
 
 
@@ -207,11 +220,12 @@ def view_data(kb, geo):
                 if isinstance(p.value, (int, float)) and not isinstance(p.value, bool)
                 else None,
                 "approx": p.approx,
-                "short": fmt(p.value, p.approx, limit=9),
+                "short": fmt(p.value, p.approx, limit=9) if p.known else conjecture_short(p),
                 "unit": p.unit or "",
                 "known": p.known,
                 "status": p.status,
                 "conf": p.confidence,
+                "conj": p.conjecture,
                 "simKey": p.sim_key,
                 "mechanism": p.mechanism.id if p.mechanism else None,
                 "for": [c.id for c in p.supporting],

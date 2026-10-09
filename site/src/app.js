@@ -6,10 +6,12 @@
   const D = JSON.parse(document.getElementById("map-data").textContent);
   const M = D.views.metrics;
   const NS = "http://www.w3.org/2000/svg";
-  const CONFS = ["high", "medium", "low", "none"];
-  const DERIVS = ["measured", "documented", "inferred", "reported"];
-  const CONF_WORD = { high: "High", medium: "Medium", low: "Low", none: "Hole" };
-  const DERIV_WORD = { measured: "Measured", documented: "Documented", inferred: "Inferred", reported: "Reported" };
+  const CONFS = ["confirmed", "corroborated", "single", "derived", "inferred", "conjecture", "unknown"];
+  const DERIVS = ["measured", "documented", "derived", "inferred", "reported"];
+  const CONF_WORD = { confirmed: "Confirmed", corroborated: "Corroborated", single: "One source", derived: "Derived",
+    inferred: "Inferred", conjecture: "Conjecture", unknown: "Unknown" };
+  const DERIV_WORD = { measured: "Measured", documented: "Documented", derived: "Derived", inferred: "Inferred",
+    reported: "Reported" };
   const state = { view: "L2", l3: null, block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS),
     source: "", mech: null };
   const $ = (id) => document.getElementById(id);
@@ -41,6 +43,10 @@
   function pin(g, deriv, x, y) {
     if (deriv === "measured") el("circle", { cx: x, cy: y, r: 3.4, class: "pin pin-measured" }, g);
     else if (deriv === "documented") el("circle", { cx: x, cy: y, r: 3, class: "pin pin-documented" }, g);
+    else if (deriv === "derived") {
+      el("circle", { cx: x, cy: y, r: 3, class: "pin pin-derived" }, g);
+      el("path", { d: `M${x} ${y - 3} A3 3 0 0 0 ${x} ${y + 3} Z`, class: "pin pin-derived-half" }, g);
+    }
     else if (deriv === "inferred") el("rect", { x: x - 2.9, y: y - 2.9, width: 5.8, height: 5.8,
       transform: `rotate(45 ${x} ${y})`, class: "pin pin-inferred" }, g);
   }
@@ -51,6 +57,8 @@
     const body = {
       measured: '<circle class="pin-measured" cx="6" cy="6" r="3.6"/>',
       documented: '<circle class="pin-documented" cx="6" cy="6" r="3.2"/>',
+      derived: '<circle class="pin-derived" cx="6" cy="6" r="3.2"/><path class="pin-derived-half" d="M6 2.8 A3.2 3.2 0 0 0 6 9.2 Z"/>',
+
       inferred: '<rect class="pin-inferred" x="3" y="3" width="6" height="6" transform="rotate(45 6 6)"/>',
     }[deriv];
     return body ? `<svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true">${body}</svg>` : "<span></span>";
@@ -160,7 +168,7 @@
         .textContent = p.short;
       if (disputed) disputePin(r, bx.x + bx.w - 13, ry + M.rowH / 2);
       el("title", {}, r).textContent = `${p.name}: ` +
-        (p.known ? `${p.value}${p.unit ? " " + p.unit : ""}` : "no claim yet") + ` (${CONF_WORD[p.conf].toLowerCase()})`;
+        (p.known ? `${p.value}${p.unit ? " " + p.unit : ""}` : p.conj ? `conjecture ${p.short}` : "nothing published") + ` (${CONF_WORD[p.conf].toLowerCase()})`;
     });
   }
 
@@ -417,7 +425,7 @@
     let h = `<div class="d-head"><p class="eyebrow"><span class="dot"></span>${b.region ? esc(b.region) + " · " : ""}${esc(b.stage)}</p>` +
       `<h2>${esc(b.name)}</h2>` + (b.desc ? `<p class="d-role">${esc(b.desc)}</p>` : "") +
       `<button type="button" class="d-close" id="d-close" aria-label="Close the dossier">×</button></div>`;
-    h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${b.conf === "none" ? "Hole" : CONF_WORD[b.conf] + " confidence"}</span>` +
+    h += `<p class="d-summary"><span class="conf-tag conf-${b.conf}">${CONF_WORD[b.conf]}</span>` +
       `<span>${known} of ${params.length} known</span><span>${plural(claims.size, "claim")}</span></p>`;
     if (b.blackBox) h += `<p class="blackbox-note">Nothing published.</p>`;
     if (b.l3 && wide.matches) {
@@ -450,9 +458,10 @@
     const unit = p.known && p.unit ? `<small>${esc(p.unit)}</small>` : "";
     return `<li><button type="button" class="p-row conf-${p.conf}" data-param="${pid}" aria-expanded="${open}">` +
       (p.known ? pinHTML(p.status) : "<span></span>") +
-      `<span class="p-name">${esc(p.name)}</span><span class="p-value${p.value.length > 16 ? " long" : ""}">${esc(p.value)}${unit}</span>` +
+      `<span class="p-name">${esc(p.name)}</span><span class="p-value${p.value.length > 16 ? " long" : ""}">` +
+      `${esc(p.known ? p.value : p.conj ? p.short : p.value)}${unit}</span>` +
       `<span class="p-meta"><span class="conf-tag conf-${p.conf}">${CONF_WORD[p.conf]}</span>` +
-      `<span>${p.known ? DERIV_WORD[p.status] : "No claim yet"}</span><span>${plural(n, "claim")}</span>` +
+      `<span>${p.known ? DERIV_WORD[p.status] : "Nothing published"}</span><span>${plural(n, "claim")}</span>` +
       (openDispute(p) ? `<span class="flag">${DISPUTE_HTML}Disputed</span>` : "") + `</span></button>` +
       (open ? evidenceHTML(pid, p) : "") + `</li>`;
   }
@@ -466,7 +475,10 @@
     }
     if (p.for.length) h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map(claimHTML).join("");
     if (p.against.length) h += `<h4 class="ev-h">Contradicting claims (${p.against.length})</h4>` + p.against.map(claimHTML).join("");
-    if (!p.for.length && !p.against.length) h += `<p class="hole-note">Nothing published.</p>`;
+    if (p.conj) {
+      h += `<p class="hole-note">${esc(p.conj.text)}</p>`;
+      if (p.conj.basis.length) h += `<h4 class="ev-h">Based on (${p.conj.basis.length})</h4>` + p.conj.basis.map(claimHTML).join("");
+    } else if (!p.for.length && !p.against.length) h += `<p class="hole-note">Nothing published.</p>`;
     return h + `</div>`;
   }
 

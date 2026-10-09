@@ -2,191 +2,191 @@
   "fetch.width": {
     "value": 8,
     "sim_key": "fetch_width",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "decode.width": {
     "value": 8,
     "sim_key": "decode_width",
-    "confidence": "high"
+    "confidence": "confirmed"
   },
   "fetch.taken_per_cycle": {
     "value": 1,
     "sim_key": "taken_per_cycle",
-    "confidence": "high"
+    "confidence": "corroborated"
   },
   "l1i.size": {
     "value": 192,
     "sim_key": "l1i_kib",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "btb.l0_entries": {
     "value": 1024,
     "sim_key": "btb_l0",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "btb.l1_entries": {
     "value": 8192,
     "sim_key": "btb_l1",
-    "confidence": "low"
+    "confidence": "inferred"
   },
   "btb.taken_bubble": {
     "value": 2,
     "sim_key": "btb_bubble",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "dirpred.history": {
     "value": 100,
     "sim_key": "dir_history",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "dirpred.mispredict_penalty": {
     "value": 13,
     "sim_key": "mispredict_penalty",
-    "confidence": "high"
+    "confidence": "corroborated"
   },
   "ras.depth": {
     "value": 50,
     "sim_key": "ras_depth",
-    "confidence": "low"
+    "confidence": "inferred"
   },
   "ftq.depth": {
     "value": null,
     "sim_key": "ftq_depth",
-    "confidence": "none"
+    "confidence": "conjecture"
   },
   "iq.depth": {
     "value": null,
     "sim_key": "iq_depth",
-    "confidence": "none"
+    "confidence": "conjecture"
   },
   "rename.width": {
     "value": 8,
     "sim_key": "rename_width",
-    "confidence": "high"
+    "confidence": "corroborated"
   },
   "int_prf.total": {
     "value": 380,
     "sim_key": "int_prf",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "fp_prf.total": {
     "value": 432,
     "sim_key": "fp_prf",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "flags_prf.total": {
     "value": 128,
     "sim_key": "flags_prf",
-    "confidence": "high"
+    "confidence": "corroborated"
   },
   "dispatch.int_entries": {
     "value": 24,
     "sim_key": "dispatch_int",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "dispatch.ls_entries": {
     "value": 10,
     "sim_key": "dispatch_ls",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "sched_int.entries_per_queue": {
     "value": 13,
     "sim_key": "sched_int",
-    "confidence": "low"
+    "confidence": "derived"
   },
   "sched_fp.entries_per_queue": {
     "value": 18,
     "sim_key": "sched_fp",
-    "confidence": "low"
+    "confidence": "derived"
   },
   "sched_ls.entries": {
     "value": 48,
     "sim_key": "sched_ls",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "eu_int.count": {
     "value": 6,
     "sim_key": "int_units",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "eu_fp.count": {
     "value": 4,
     "sim_key": "fp_units",
-    "confidence": "high"
+    "confidence": "confirmed"
   },
   "retire.groups": {
     "value": 330,
     "sim_key": "retire_groups",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "retire.group_max_uops": {
     "value": 7,
     "sim_key": "retire_group_size",
-    "confidence": "low"
+    "confidence": "derived"
   },
   "retire.rename_queue": {
     "value": 623,
     "sim_key": "rename_retire",
-    "confidence": "high"
+    "confidence": "confirmed"
   },
   "retire.rate_groups": {
     "value": 8,
     "sim_key": "retire_rate",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "retire.inflight_branches": {
     "value": 144,
     "sim_key": "branch_window",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "lq.entries": {
     "value": 130,
     "sim_key": "lq",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "sq.entries": {
     "value": 60,
     "sim_key": "sq",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "l1d.size": {
     "value": 128,
     "sim_key": "l1d_kib",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "l1d.line": {
     "value": 64,
     "sim_key": "l1d_line",
-    "confidence": "high"
+    "confidence": "corroborated"
   },
   "l1d.latency": {
     "value": 3,
     "sim_key": "l1d_latency",
-    "confidence": "high"
+    "confidence": "confirmed"
   },
   "dtlb.l1_entries": {
     "value": 160,
     "sim_key": "dtlb_l1",
-    "confidence": "medium"
+    "confidence": "corroborated"
   },
   "mshr.outstanding": {
     "value": null,
     "sim_key": "mlp",
-    "confidence": "none"
+    "confidence": "unknown"
   },
   "l2.size": {
     "value": 12,
     "sim_key": "l2_mib",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "l2.latency": {
     "value": 17,
     "sim_key": "l2_latency",
-    "confidence": "medium"
+    "confidence": "single"
   },
   "memctrl.dram_latency": {
     "value": 91,
     "sim_key": "dram_latency_ns",
-    "confidence": "medium"
+    "confidence": "single"
   }
 }

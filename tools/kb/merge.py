@@ -15,7 +15,7 @@ import yaml
 import jsonschema
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-RANK = {"measured": 0, "documented": 1, "inferred": 2, "reported": 3}
+RANK = {"measured": 0, "documented": 1, "derived": 2, "inferred": 3, "reported": 4}
 TOL = 0.05
 
 
@@ -101,7 +101,7 @@ def merge(core):
     }
     problems = []
 
-    descriptions = {}
+    descriptions, conjectures = {}, {}
     for seed in load_yaml_dir(os.path.join(ROOT, "kb", "seed", core, "*.yaml")):
         kb["isa"] = seed.get("isa", kb["isa"]) or kb["isa"]
         kb["blocks"] += seed.get("blocks", [])
@@ -112,6 +112,7 @@ def merge(core):
         for k, v in (seed.get("mechanisms") or {}).items():
             kb["mechanisms"][k] = {"claims": [], **v}
         descriptions.update(seed.get("descriptions") or {})
+        conjectures.update(seed.get("conjectures") or {})
     by_id = {b["id"]: b for b in kb["blocks"]}
     for bid, text in descriptions.items():
         if bid in by_id:
@@ -175,10 +176,15 @@ def merge(core):
         ]
         if not supporting:
             p["status"] = "open"
-            p["confidence"] = "none"
             p.setdefault("value", None)
             p["disputes"] = p.get("disputes", [])
+            p["confidence"] = "unknown"
+            if pid in conjectures:
+                p["confidence"] = "conjecture"
+                p["conjecture"] = {"basis": [], **conjectures[pid]}
             continue
+        if pid in conjectures:
+            problems.append(f"conjecture for {pid}, which now has a value; drop it")
 
         def key(item):
             cid, c = item
@@ -236,24 +242,27 @@ def merge(core):
         p["disputes"] = disputes
         open_disputes = [d for d in disputes if not d.get("resolution")]
 
-        authors = set()
-        agreeing = 0
+        # each author counts once, at their strongest agreeing claim
+        by_author = {}
         for _, c in supporting:
-            src = kb["sources"].get(c["source"], {})
-            if c["derivation"] not in ("measured", "documented"):
-                continue  # repeats and inferences are not independent sources
             if c.get("value") is None or agree(best, c):
-                agreeing += 1
-                authors.add(author_of(src))
-        derivs = {c["derivation"] for _, c in supporting}
-        if (len(authors) >= 2 and agreeing >= 2) or ({"measured", "documented"} <= derivs):
-            conf = "high"
-        elif derivs & {"measured", "documented"}:
-            conf = "medium"
+                a = author_of(kb["sources"].get(c["source"], {}))
+                by_author[a] = min(by_author.get(a, 9), RANK[c["derivation"]])
+        measured = {a for a, r in by_author.items() if r <= RANK["documented"]}
+        documented = any(r == RANK["documented"] for r in by_author.values())
+        independent = {a for a, r in by_author.items() if r <= RANK["derived"]}
+        if len(measured) >= 3 or (documented and len(measured) >= 2):
+            conf = "confirmed"
+        elif measured and len(independent) >= 2:
+            conf = "corroborated"
+        elif measured:
+            conf = "single"
+        elif independent:
+            conf = "derived"
         else:
-            conf = "low"
-        if open_disputes and conf == "high":
-            conf = "medium"
+            conf = "inferred"
+        if open_disputes and conf == "confirmed":
+            conf = "corroborated"
         p["confidence"] = conf
 
     block_ids = {b["id"] for b in kb["blocks"]}
@@ -279,6 +288,12 @@ def merge(core):
         for cid in m["claims"]:
             if cid not in kb["claims"]:
                 problems.append(f"mechanism {mid} cites unknown claim {cid}")
+    for pid, cj in conjectures.items():
+        if pid not in kb["params"]:
+            problems.append(f"conjecture for unknown param {pid}")
+        for cid in cj.get("basis") or []:
+            if cid not in kb["claims"]:
+                problems.append(f"conjecture for {pid} cites unknown claim {cid}")
 
     with open(os.path.join(ROOT, "kb", "schema", "core.schema.json")) as fh:
         schema = json.load(fh)

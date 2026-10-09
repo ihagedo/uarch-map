@@ -22,15 +22,19 @@
     </div>
     <div class="filters" role="group" aria-label="Filter by confidence">
       <span class="tool-label">Confidence</span>
-      <button type="button" class="chip" id="show-high" data-conf="high" aria-pressed="true"><svg class="swatch conf-high" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>High</button>
-      <button type="button" class="chip" id="show-medium" data-conf="medium" aria-pressed="true"><svg class="swatch conf-medium" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Medium</button>
-      <button type="button" class="chip" id="show-low" data-conf="low" aria-pressed="true"><svg class="swatch conf-low" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Low</button>
-      <button type="button" class="chip" id="show-none" data-conf="none" aria-pressed="true"><svg class="swatch conf-none" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Holes</button>
+      <button type="button" class="chip" id="show-confirmed" data-conf="confirmed" aria-pressed="true"><svg class="swatch conf-confirmed" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Confirmed</button>
+      <button type="button" class="chip" id="show-corroborated" data-conf="corroborated" aria-pressed="true"><svg class="swatch conf-corroborated" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Corroborated</button>
+      <button type="button" class="chip" id="show-single" data-conf="single" aria-pressed="true"><svg class="swatch conf-single" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>One source</button>
+      <button type="button" class="chip" id="show-derived" data-conf="derived" aria-pressed="true"><svg class="swatch conf-derived" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Derived</button>
+      <button type="button" class="chip" id="show-inferred" data-conf="inferred" aria-pressed="true"><svg class="swatch conf-inferred" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Inferred</button>
+      <button type="button" class="chip" id="show-conjecture" data-conf="conjecture" aria-pressed="true"><svg class="swatch conf-conjecture" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Conjecture</button>
+      <button type="button" class="chip" id="show-unknown" data-conf="unknown" aria-pressed="true"><svg class="swatch conf-unknown" viewBox="0 0 16 12" aria-hidden="true"><rect class="body" x="1" y="1" width="14" height="10" rx="2"/></svg>Unknown</button>
     </div>
     <div class="filters" role="group" aria-label="Filter by derivation">
       <span class="tool-label">Derivation</span>
       <button type="button" class="chip" id="deriv-measured" data-deriv="measured" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><circle class="pin-measured" cx="6" cy="6" r="3.6"/></svg>Measured</button>
       <button type="button" class="chip" id="deriv-documented" data-deriv="documented" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><circle class="pin-documented" cx="6" cy="6" r="3.2"/></svg>Documented</button>
+      <button type="button" class="chip" id="deriv-derived" data-deriv="derived" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><circle class="pin-derived" cx="6" cy="6" r="3.2"/><path class="pin-derived-half" d="M6 2.8 A3.2 3.2 0 0 0 6 9.2 Z"/></svg>Derived</button>
       <button type="button" class="chip" id="deriv-inferred" data-deriv="inferred" aria-pressed="true"><svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true"><rect class="pin-inferred" x="3" y="3" width="6" height="6" transform="rotate(45 6 6)"/></svg>Inferred</button>
       <button type="button" class="chip" id="deriv-reported" data-deriv="reported" aria-pressed="true">Reported</button>
     </div>
@@ -63,10 +67,13 @@
     <div class="legend-group">
       <h2>Confidence</h2>
       <ul>
-        <li><svg class="swatch conf-high" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>High</b> two sources agree</span></li>
-        <li><svg class="swatch conf-medium" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Medium</b> one measurement</span></li>
-        <li><svg class="swatch conf-low" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Low</b> one report or inference</span></li>
-        <li><svg class="swatch conf-none" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Hole</b> nothing published</span></li>
+        <li><svg class="swatch conf-confirmed" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Confirmed</b> three or more measurements agree</span></li>
+        <li><svg class="swatch conf-corroborated" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Corroborated</b> two sources agree</span></li>
+        <li><svg class="swatch conf-single" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>One source</b> one measurement</span></li>
+        <li><svg class="swatch conf-derived" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Derived</b> computed from measurements</span></li>
+        <li><svg class="swatch conf-inferred" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Inferred</b> patent, analogy or a repeat</span></li>
+        <li><svg class="swatch conf-conjecture" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Conjecture</b> unpublished, bounded by related claims</span></li>
+        <li><svg class="swatch conf-unknown" viewBox="0 0 28 18" aria-hidden="true"><rect class="body" x="1.5" y="1.5" width="25" height="15" rx="3"/></svg><span><b>Unknown</b> unpublished, nothing to go on</span></li>
       </ul>
     </div>
     <div class="legend-group">
@@ -74,6 +81,7 @@
       <ul>
         <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><circle class="pin pin-measured" cx="7" cy="7" r="4"/></svg><span><b>Measured</b></span></li>
         <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><circle class="pin pin-documented" cx="7" cy="7" r="3.5"/></svg><span><b>Documented</b> by Apple</span></li>
+        <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><circle class="pin pin-derived" cx="7" cy="7" r="3.5"/><path class="pin pin-derived-half" d="M7 3.5 A3.5 3.5 0 0 0 7 10.5 Z"/></svg><span><b>Derived</b></span></li>
         <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><rect class="pin pin-inferred" x="4" y="4" width="6" height="6" transform="rotate(45 7 7)"/></svg><span><b>Inferred</b></span></li>
         <li><span class="swatch swatch-empty" aria-hidden="true"></span><span><b>Reported</b> no pin</span></li>
         <li><svg class="swatch" viewBox="0 0 14 14" aria-hidden="true"><path class="pin pin-dispute" d="M7 2 L12 11 L2 11 Z"/></svg><span><b>Disputed</b></span></li>

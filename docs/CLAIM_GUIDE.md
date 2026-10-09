@@ -23,7 +23,7 @@ claims:
                                        # throughput | contention | drain-timing | patent-reading | vendor-doc |
                                        # secondhand | simulation | other
     filler: nop                        # for wong-probe claims
-    derivation: measured               # measured | documented | inferred | reported
+    derivation: measured               # measured | documented | derived | inferred | reported
     value: 2228
     unit: instructions
     approx: true
@@ -69,6 +69,8 @@ Derivation:
 
 - **measured**: the author ran an experiment on the hardware and says so.
 - **documented**: Apple states it (optimization guide, driver, patent that names the mechanism).
+- **derived**: a number the author computes or fits from measurements under a stated model rather
+  than reading it off directly (118 stores minus 58 scheduler entries gives a 60-entry queue).
 - **inferred**: a mechanism proposed to explain a measurement, usually via a patent.
 - **reported**: a number repeated from another source with no independent measurement.
   Handley reproducing a Chips and Cheese graph is `reported` with `method: secondhand`.
@@ -98,17 +100,25 @@ Derivation:
 
 ## How the merge decides
 
-- Value: the best-ranked supporting claim. Measured beats documented beats inferred beats
-  reported. Ties go, in order, to a claim with a method, one with a value, a stated figure over a
+- Value: the best-ranked supporting claim. Measured beats documented beats derived beats inferred
+  beats reported. Ties go, in order, to a claim with a method, one with a value, a stated figure over a
   range midpoint, the more specific number (623 before 630), the earlier publication, and then
   file order.
 - Status: the best derivation among supporting claims, else open.
-- Confidence: high when two measured or documented claims from different authors agree, or a
-  measurement meets Apple's documentation; medium for one measured or documented claim; low for
-  inferred or reported claims only; none for a hole. A repeat or an inference is not a second source.
+- Confidence counts authors whose claims agree with the value, each at their strongest claim:
+  - confirmed: three or more authors measured it, or Apple documents it and another author's
+    measurement agrees;
+  - corroborated: two or more authors, at least one of them measuring or documenting it;
+  - single: one author's measurement or document;
+  - derived: only derived claims;
+  - inferred: only inferences or repeats;
+  - conjecture: a hole that related claims bound (`kb/seed/firestorm/conjectures.yaml`);
+  - unknown: a hole with nothing to go on.
 - Agreement: values within 5 %, or one inside the other claim's `range`.
 - Dispute: two supporting claims of equal rank disagree by more than 5 %, or a claim lists the param
-  in `contradicts`. An open dispute caps confidence at medium.
+  in `contradicts`. An open dispute caps confidence at corroborated.
+- A conjecture gives a bound and the claims it rests on, never a value. The merge flags one whose
+  param has since gained a claim.
 
 ## Reading order
 

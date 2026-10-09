@@ -60,7 +60,7 @@ claims:
     loc: p004
     quote: "the best way to summarize is something like there are ... 2 load-only pipelines ... 1 store-only pipeline ... 1 ambidextrous pipeline"
     method: throughput
-    derivation: inferred
+    derivation: derived
     value: 4
     unit: units
     supports: [lsu.ls_units]
@@ -110,7 +110,7 @@ claims:
     loc: p005
     quote: "one TLB lookup per cycle, but that TLB lookup result can service multiple requestors that all have the same page number"
     method: throughput
-    derivation: inferred
+    derivation: derived
     value: 1
     unit: lookups/cycle
     supports: [dtlb.l1_lookups_per_cycle]
@@ -389,7 +389,7 @@ claims:
     loc: p057
     quote: "So, at a physical level, the cache consists of 16 banks, each bank is 16B wide."
     method: stride-sweep
-    derivation: measured
+    derivation: derived
     value: 16
     unit: B
     supports: [l1d.bank_width]

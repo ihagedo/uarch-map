@@ -137,7 +137,7 @@ claims:
       Johnson's diagram
     loc: p070
     quote: "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases"
-    derivation: inferred
+    derivation: derived
     value: 48
     unit: entries
     supports: [sched_ls.entries]
@@ -149,7 +149,7 @@ claims:
     text: Load/store scheduling is split into four queues of 12 entries each
     loc: p070
     quote: "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases"
-    derivation: inferred
+    derivation: derived
     value: 4
     unit: queues
     supports: [sched_ls.queues]
@@ -192,7 +192,7 @@ claims:
     text: The two integer MUL queues are paired and hold about 13 entries each
     loc: p071
     quote: "Given the numbers, an obvious guess is that on the integer side ... the two MUL queues are paired (each 13 in size)"
-    derivation: inferred
+    derivation: derived
     value: 13
     unit: entries
     approx: true
@@ -206,7 +206,7 @@ claims:
     text: The two integer branch queues are paired, at about 13 entries each (perhaps one of 12 and one of 14)
     loc: p071
     quote: "two two BR queues are paired (maybe one of size 12, one of size 14, or both of size 13)"
-    derivation: inferred
+    derivation: derived
     value: 13
     unit: entries
     approx: true
@@ -381,7 +381,7 @@ claims:
     text: Each FP/SIMD scheduler queue holds 18 entries, sized for the long dependency chains and latencies of FP code
     loc: p078
     quote: "for FP/SIMD both long dependency chains and long instruction latencies are common, hence we see each Scheduler Queue as a hefty 18 entries in size"
-    derivation: inferred
+    derivation: derived
     value: 18
     unit: entries
     supports: [sched_fp.entries_per_queue]

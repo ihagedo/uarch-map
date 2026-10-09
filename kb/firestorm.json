@@ -494,7 +494,7 @@
       "unit": "cores",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "pcluster.clock_max": {
       "claims": [
@@ -507,7 +507,7 @@
       "unit": "GHz",
       "value": 3.2,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "fetch.width": {
       "claims": [
@@ -532,7 +532,7 @@
       "sim_key": "fetch_width",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "decode.width": {
       "claims": [
@@ -551,7 +551,7 @@
       "sim_key": "decode_width",
       "value": 8,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "fetch.taken_per_cycle": {
       "claims": [
@@ -565,7 +565,7 @@
       "sim_key": "taken_per_cycle",
       "value": 1,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "l1i.size": {
       "claims": [
@@ -582,7 +582,7 @@
       "sim_key": "l1i_kib",
       "value": 192,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1i.line": {
       "claims": [],
@@ -591,8 +591,20 @@
       "name": "L1I line size",
       "unit": "B",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v2-l1d-line-dczva",
+          "c-mh-v2-l2-line-128-bw",
+          "c-7cpu-l1i"
+        ],
+        "range": [
+          64,
+          128
+        ],
+        "text": "Likely the 64 B line of the L1D or the 128 B line of the L2; no test of the L1I line is published."
+      }
     },
     "itlb.entries": {
       "claims": [],
@@ -601,8 +613,17 @@
       "name": "iTLB entries",
       "unit": "entries",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v4-pa-in-fp",
+          "c-mh-v4-seq-line-power",
+          "c-mh-v2-dtlb"
+        ],
+        "value": "\u2264160",
+        "text": "Likely no larger than the 160-entry L1 dTLB, since the fetch predictor holds physical addresses and most fetches skip the iTLB."
+      }
     },
     "btb.l0_entries": {
       "claims": [
@@ -616,7 +637,7 @@
       "sim_key": "btb_l0",
       "value": 1024,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "btb.l1_entries": {
       "claims": [
@@ -629,7 +650,7 @@
       "sim_key": "btb_l1",
       "value": 8192,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "btb.taken_bubble": {
       "claims": [
@@ -643,7 +664,7 @@
       "sim_key": "btb_bubble",
       "value": 2,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "btb.assoc": {
       "claims": [
@@ -667,7 +688,7 @@
       "unit": "ways",
       "value": 2,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "dirpred.kind": {
       "claims": [
@@ -680,7 +701,7 @@
       "name": "Direction predictor type",
       "value": "tage-like",
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "dirpred.history": {
       "claims": [
@@ -693,7 +714,7 @@
       "sim_key": "dir_history",
       "value": 100,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dirpred.capacity": {
       "claims": [],
@@ -702,8 +723,8 @@
       "name": "Direction predictor capacity",
       "unit": "entries",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "unknown"
     },
     "dirpred.mispredict_penalty": {
       "claims": [
@@ -717,7 +738,7 @@
       "sim_key": "mispredict_penalty",
       "value": 13,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "ras.depth": {
       "claims": [
@@ -730,7 +751,7 @@
       "sim_key": "ras_depth",
       "value": 50,
       "status": "reported",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "indpred.capacity": {
       "claims": [
@@ -742,7 +763,7 @@
       "unit": "entries",
       "value": 1024,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "ftq.present": {
       "claims": [
@@ -753,7 +774,7 @@
       "name": "Decoupled fetch present",
       "value": false,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "ftq.depth": {
       "claims": [],
@@ -763,8 +784,16 @@
       "unit": "entries",
       "sim_key": "ftq_depth",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v4-not-decoupled",
+          "c-mh-v4-fully-decoupled-no-win"
+        ],
+        "value": 0,
+        "text": "Probably none, if fetch is not decoupled from prediction as Handley argues."
+      }
     },
     "ftq.fdip": {
       "claims": [
@@ -775,7 +804,7 @@
       "name": "Fetch-directed prefetch present",
       "value": false,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "iq.depth": {
       "claims": [],
@@ -785,8 +814,16 @@
       "unit": "entries",
       "sim_key": "iq_depth",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v4-iq-guess",
+          "c-mh-v4-iq-bypass"
+        ],
+        "value": "\u2265120",
+        "text": "Handley guesses the queue covers an L1I miss that hits in L2, at least 120 instructions (8 x 15)."
+      }
     },
     "rename.width": {
       "claims": [
@@ -801,7 +838,7 @@
       "sim_key": "rename_width",
       "value": 8,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "rename.mov_elimination": {
       "claims": [
@@ -816,7 +853,7 @@
       "name": "Register move elimination",
       "value": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "rename.zero_idiom": {
       "claims": [
@@ -829,7 +866,7 @@
       "name": "Zero idiom elimination",
       "value": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "rename.mov_imm_limit": {
       "claims": [
@@ -853,7 +890,7 @@
       "unit": "per 8 instr",
       "value": 2,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "rename.fusion": {
       "claims": [
@@ -864,7 +901,7 @@
       "name": "Fusion rules",
       "value": "flag-ALU+b.cc, ALU+cbz/cbnz, aese+aesmc, aesd+aesimc, aes+eor, pmull+eor, amx+amx",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "rename.security_tag": {
       "claims": [
@@ -876,7 +913,7 @@
       "mechanism": "register_security_tag",
       "value": true,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "int_prf.total": {
       "claims": [
@@ -903,7 +940,7 @@
       "value": 380,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "int_prf.headroom": {
       "claims": [],
@@ -912,8 +949,17 @@
       "name": "Integer rename headroom",
       "unit": "registers",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v1-int-prf-add",
+          "c-dj-int-prf"
+        ],
+        "value": 350,
+        "approx": true,
+        "text": "About 380 physical registers less the 31 architectural ones, if nothing else holds registers."
+      }
     },
     "fp_prf.total": {
       "claims": [
@@ -939,7 +985,7 @@
       "value": 432,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "flags_prf.total": {
       "claims": [
@@ -954,7 +1000,7 @@
       "value": 128,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "dispatch.int_entries": {
       "claims": [
@@ -969,7 +1015,7 @@
       "value": 24,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dispatch.mul_entries": {
       "claims": [
@@ -981,7 +1027,7 @@
       "unit": "entries",
       "value": 12,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dispatch.ls_entries": {
       "claims": [
@@ -996,7 +1042,7 @@
       "sim_key": "dispatch_ls",
       "value": 10,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "sched_int.entries_per_queue": {
       "claims": [
@@ -1010,8 +1056,8 @@
       "sim_key": "sched_int",
       "value": 13,
       "approx": true,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "sched_int.queues": {
       "claims": [
@@ -1023,7 +1069,7 @@
       "unit": "queues",
       "value": 6,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "sched_fp.entries_per_queue": {
       "claims": [
@@ -1035,8 +1081,8 @@
       "unit": "entries",
       "sim_key": "sched_fp",
       "value": 18,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "sched_ls.entries": {
       "claims": [
@@ -1051,7 +1097,7 @@
       "sim_key": "sched_ls",
       "value": 48,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "eu_int.count": {
       "claims": [
@@ -1078,7 +1124,7 @@
       "sim_key": "int_units",
       "value": 6,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "eu_int.roles": {
       "claims": [
@@ -1091,7 +1137,7 @@
       "name": "Integer unit roles",
       "value": "1-6 alu, ubfm/sbfm; 1-3 flags; 1-2 branch, adr, msr/mrs nzcv; 1 mrs; 2 indirect branch, ptrauth; 3-4 mov-from-simd/fp?; 5-6 mul; 5 div; 6 madd, crc, bfm/extr",
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "eu_fp.count": {
       "claims": [
@@ -1107,7 +1153,7 @@
       "sim_key": "fp_units",
       "value": 4,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "eu_fp.roles": {
       "claims": [
@@ -1120,7 +1166,7 @@
       "name": "FP/SIMD unit roles",
       "value": "11-14 fp/simd; 13-14 fcsel, to-gpr; 14 fcmp/e, fdiv, frecpe, frsqrte, fjcvtzs, ursqrte, urecpe, sha",
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "retire.model": {
       "claims": [
@@ -1132,7 +1178,7 @@
       "mechanism": "retire_groups",
       "value": "coalesced retire queue + rename retire queue",
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "retire.groups": {
       "claims": [
@@ -1148,7 +1194,7 @@
       "value": 330,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "retire.group_max_uops": {
       "claims": [
@@ -1162,8 +1208,8 @@
       "sim_key": "retire_group_size",
       "mechanism": "retire_groups",
       "value": 7,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "retire.group_issuing_uops": {
       "claims": [
@@ -1177,7 +1223,7 @@
       "value": 4,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "retire.nop_window": {
       "claims": [
@@ -1192,7 +1238,7 @@
       "value": 2228,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "retire.issuing_window": {
       "claims": [
@@ -1205,7 +1251,7 @@
       "value": 1000,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "retire.rename_queue": {
       "claims": [
@@ -1225,7 +1271,7 @@
       "value": 623,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "retire.rate_groups": {
       "claims": [
@@ -1239,7 +1285,7 @@
       "sim_key": "retire_rate",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "retire.rate_renames": {
       "claims": [
@@ -1253,7 +1299,7 @@
       "unit": "entries/cycle",
       "value": 16,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "retire.inflight_branches": {
       "claims": [
@@ -1267,7 +1313,7 @@
       "value": 144,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lq.entries": {
       "claims": [
@@ -1293,7 +1339,7 @@
       "sim_key": "lq",
       "value": 130,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "sq.entries": {
       "claims": [
@@ -1305,7 +1351,7 @@
       "disputes": [
         {
           "claims": [
-            "c-dj-lsq-sq-60",
+            "c-dj-stores",
             "c-at-sq"
           ],
           "note": "measured on the A14, probe not described",
@@ -1318,8 +1364,9 @@
       "unit": "entries",
       "sim_key": "sq",
       "value": 60,
+      "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "lsu.allocation": {
       "claims": [
@@ -1331,8 +1378,8 @@
       "name": "LSQ allocation point",
       "mechanism": "lsq_at_issue",
       "value": "at issue",
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "lsu.ls_units": {
       "claims": [
@@ -1348,7 +1395,7 @@
       "value": 4,
       "unit": "units",
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "lsu.forwarding": {
       "claims": [
@@ -1359,7 +1406,7 @@
       "name": "Store-to-load forwarding",
       "value": "store queue, plus register file when store and load share an address register",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.disambiguation": {
       "claims": [
@@ -1372,7 +1419,7 @@
       "name": "Memory disambiguation predictor",
       "value": "store/load PC-pair predictor",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.size": {
       "claims": [
@@ -1388,7 +1435,7 @@
       "sim_key": "l1d_kib",
       "value": 128,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.line": {
       "claims": [
@@ -1403,7 +1450,7 @@
       "sim_key": "l1d_line",
       "value": 64,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "l1d.assoc": {
       "claims": [
@@ -1416,7 +1463,7 @@
       "unit": "ways",
       "value": 8,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "l1d.latency": {
       "claims": [
@@ -1435,7 +1482,7 @@
       "sim_key": "l1d_latency",
       "value": 3,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "l1d.latency_complex": {
       "claims": [
@@ -1447,7 +1494,7 @@
       "unit": "cycles",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.load_bw": {
       "claims": [
@@ -1462,7 +1509,7 @@
       "value": 48,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dtlb.l1_entries": {
       "claims": [
@@ -1489,7 +1536,7 @@
       "sim_key": "dtlb_l1",
       "value": 160,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "corroborated"
     },
     "dtlb.l1_org": {
       "claims": [
@@ -1500,7 +1547,7 @@
       "name": "L1 dTLB organisation",
       "value": "5-way set associative, indexed by VA bits 14-18",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dtlb.l2_entries": {
       "claims": [
@@ -1514,7 +1561,7 @@
       "unit": "entries",
       "value": 3072,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "confirmed"
     },
     "mshr.outstanding": {
       "claims": [],
@@ -1524,8 +1571,8 @@
       "unit": "misses",
       "sim_key": "mlp",
       "status": "open",
-      "confidence": "none",
-      "value": null
+      "value": null,
+      "confidence": "unknown"
     },
     "prefetch.kinds": {
       "claims": [
@@ -1536,7 +1583,7 @@
       "name": "Prefetcher kinds",
       "value": "AMPM region (strides, dense), large stride, SMS, pointer (content-directed)",
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "l2.size": {
       "claims": [
@@ -1550,7 +1597,7 @@
       "sim_key": "l2_mib",
       "value": 12,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.line": {
       "claims": [
@@ -1564,7 +1611,7 @@
       "unit": "B",
       "value": 128,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "l2.latency": {
       "claims": [
@@ -1600,7 +1647,7 @@
       "value": 17,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.inner_slice": {
       "claims": [
@@ -1615,7 +1662,7 @@
       "value": 3,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "slc.size": {
       "claims": [
@@ -1628,7 +1675,7 @@
       "unit": "MiB",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "slc.latency": {
       "claims": [
@@ -1641,7 +1688,7 @@
       "value": 90,
       "approx": true,
       "status": "reported",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "memctrl.dram_latency": {
       "claims": [
@@ -1654,7 +1701,7 @@
       "sim_key": "dram_latency_ns",
       "value": 91,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.loads_per_cycle": {
       "claims": [
@@ -1668,7 +1715,7 @@
       "unit": "loads/cycle",
       "value": 3,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "lsu.stores_per_cycle": {
       "claims": [
@@ -1682,7 +1729,7 @@
       "unit": "stores/cycle",
       "value": 2,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "dtlb.l1_miss_penalty": {
       "claims": [
@@ -1694,7 +1741,7 @@
       "unit": "cycles",
       "value": 6,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dtlb.l2_miss_penalty": {
       "claims": [
@@ -1708,7 +1755,7 @@
       "value": 25,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "dirpred.counter_bits": {
       "claims": [
@@ -1719,8 +1766,8 @@
       "name": "Prediction counter width",
       "unit": "bits",
       "value": 3,
-      "status": "measured",
-      "confidence": "medium"
+      "status": "derived",
+      "confidence": "derived"
     },
     "dirpred.history_update": {
       "claims": [
@@ -1736,7 +1783,7 @@
       "mechanism": "path_history_shift_xor",
       "value": "shift 1 bit and XOR in branch bits per update; not-taken conditional branches do not shift",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dirpred.history_inputs": {
       "claims": [
@@ -1749,7 +1796,7 @@
       "mechanism": "path_history_shift_xor",
       "value": "cond PC bits 2-24, cond offset (all 19 bits), indirect PC bits 2-5 and 25-30, indirect target bits 2-30",
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "btb.l0_footprint": {
       "claims": [
@@ -1761,7 +1808,7 @@
       "unit": "KiB",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "sched_int.total_entries": {
       "claims": [
@@ -1784,7 +1831,7 @@
       "unit": "entries",
       "value": 134,
       "status": "reported",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "l1d.latency_simd": {
       "claims": [
@@ -1796,7 +1843,7 @@
       "unit": "cycles",
       "value": 5,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.store_load_latency": {
       "claims": [
@@ -1811,7 +1858,7 @@
       "value": 6,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "sched_ls.queues": {
       "claims": [
@@ -1823,8 +1870,8 @@
       "name": "Load-store scheduler queue count",
       "unit": "queues",
       "value": 4,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "lsu.lsdp_entries": {
       "claims": [
@@ -1839,7 +1886,7 @@
       "value": 74,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.ordering_flush_penalty": {
       "claims": [
@@ -1852,7 +1899,7 @@
       "value": 25,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.zero_cycle_load": {
       "claims": [
@@ -1864,7 +1911,7 @@
       "mechanism": "zero_cycle_loads",
       "value": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "lsu.address_prediction": {
       "claims": [
@@ -1876,7 +1923,7 @@
       "name": "Load address prediction",
       "value": false,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "int_prf.banks": {
       "claims": [
@@ -1888,7 +1935,7 @@
       "unit": "banks",
       "value": 4,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "dispatch.fp_entries": {
       "claims": [
@@ -1912,7 +1959,7 @@
       "value": 12,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dispatch.int_buffers": {
       "claims": [
@@ -1924,7 +1971,7 @@
       "unit": "buffers",
       "value": 2,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dispatch.accept_width": {
       "claims": [
@@ -1937,7 +1984,7 @@
       "unit": "instr/cycle",
       "value": 8,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dispatch.queue_inflow": {
       "claims": [
@@ -1949,7 +1996,7 @@
       "unit": "instr/cycle",
       "value": 1,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "int_prf.imm_regs": {
       "claims": [
@@ -1963,7 +2010,7 @@
       "value": 36,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.store_bw": {
       "claims": [
@@ -1976,7 +2023,7 @@
       "unit": "B/cycle",
       "value": 32,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.copy_bw": {
       "claims": [
@@ -1990,7 +2037,7 @@
       "value": 150,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.load_bw": {
       "claims": [
@@ -2005,7 +2052,7 @@
       "value": 85,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.store_bw": {
       "claims": [
@@ -2019,7 +2066,7 @@
       "value": 100,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.l1_path_width": {
       "claims": [
@@ -2031,8 +2078,8 @@
       "name": "L1-L2 path width (each direction)",
       "unit": "B/cycle",
       "value": 32,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "l2.core_capacity": {
       "claims": [
@@ -2046,7 +2093,7 @@
       "value": 7.5,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l2.replacement": {
       "claims": [
@@ -2057,7 +2104,7 @@
       "name": "L2 replacement policy",
       "value": "random",
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "slc.load_bw": {
       "claims": [
@@ -2072,7 +2119,7 @@
       "value": 64,
       "approx": true,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "memctrl.dram_load_bw": {
       "claims": [
@@ -2088,7 +2135,7 @@
       "value": 64,
       "approx": true,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     },
     "l1d.banks": {
       "claims": [
@@ -2100,7 +2147,7 @@
       "unit": "banks",
       "value": 16,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.bank_width": {
       "claims": [
@@ -2111,8 +2158,8 @@
       "name": "L1D bank width",
       "unit": "B",
       "value": 16,
-      "status": "measured",
-      "confidence": "medium"
+      "status": "derived",
+      "confidence": "derived"
     },
     "dtlb.l1_lookups_per_cycle": {
       "claims": [
@@ -2123,8 +2170,8 @@
       "name": "L1 dTLB lookups per cycle",
       "unit": "lookups/cycle",
       "value": 1,
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "dtlb.page_size": {
       "claims": [
@@ -2136,29 +2183,19 @@
       "unit": "KiB",
       "value": 16,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "dtlb.l2_org": {
       "claims": [
         "c-mh-v2-tlb2-org",
         "c-mh-v2-tlb2-256x12"
       ],
-      "disputes": [
-        {
-          "claims": [
-            "c-mh-v2-tlb2-org",
-            "c-mh-v2-tlb2-256x12"
-          ],
-          "note": "3-way, 1024 sets, hashed index vs 12-way, 256 sets at equal rank",
-          "resolution": null,
-          "resolved_by": null
-        }
-      ],
+      "disputes": [],
       "block": "dtlb",
       "name": "L2 TLB organisation",
       "value": "3-way, 1024 sets, hashed index",
-      "status": "inferred",
-      "confidence": "low"
+      "status": "derived",
+      "confidence": "derived"
     },
     "prefetch.streams": {
       "claims": [
@@ -2170,7 +2207,7 @@
       "unit": "streams",
       "value": 16,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "ras.return_bubble": {
       "claims": [
@@ -2182,7 +2219,7 @@
       "unit": "cycles",
       "value": 1,
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "indpred.kind": {
       "claims": [
@@ -2194,7 +2231,7 @@
       "unit": "",
       "value": "ittage-like",
       "status": "inferred",
-      "confidence": "low"
+      "confidence": "inferred"
     },
     "rename.fusion_read_limit": {
       "claims": [
@@ -2206,7 +2243,7 @@
       "unit": "regs per 6 instr",
       "value": 4,
       "status": "measured",
-      "confidence": "medium"
+      "confidence": "single"
     },
     "l1d.latency_alu": {
       "claims": [
@@ -2219,7 +2256,7 @@
       "unit": "cycles",
       "value": 4,
       "status": "measured",
-      "confidence": "high"
+      "confidence": "corroborated"
     }
   },
   "claims": {
@@ -3482,7 +3519,7 @@
       "loc": "p009",
       "quote": "finding the width of the M1 BPU\u2019s saturating prediction counters, which we find is c = 3",
       "method": "branch-sweep",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 3,
       "unit": "bits",
       "supports": [
@@ -4890,7 +4927,7 @@
       "loc": "p125",
       "quote": "2 load units - 1 store unit - 1 ambidextrous unit so that it can run either 3 loads/cycle or 2 stores/cycle",
       "method": "throughput",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 4,
       "unit": "units",
       "supports": [
@@ -4985,7 +5022,7 @@
       "loc": "p158",
       "quote": "the M1 has a pool of ~130 genuine Load Queue entries (ie LRQ entries)",
       "method": "wong-probe",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 130,
       "unit": "entries",
       "approx": true,
@@ -5056,7 +5093,7 @@
       "loc": "p166",
       "quote": "many stores can progress past Rename even when the Store Queue (of size ~60 entries) is full",
       "method": "wong-probe",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 60,
       "unit": "entries",
       "approx": true,
@@ -5106,7 +5143,7 @@
       "loc": "p161",
       "quote": "this apparently monolithic queue is actually four queues each 12 entries in size",
       "method": "wong-probe",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 4,
       "unit": "queues",
       "hedge": "My guess is",
@@ -5371,7 +5408,7 @@
       "loc": "p186",
       "quote": "I added the gold line to both curves to show how we're still really dealing with ~74 entries in the LSDP.",
       "method": "throughput",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 74,
       "unit": "entries",
       "approx": true,
@@ -6372,7 +6409,7 @@
       "text": "The ROB is best modelled as about 330 rows of instruction slots",
       "loc": "p119",
       "quote": "the ROB is best thought of as consisting of ~330 \"rows\" where each row can hold 7 instructions.",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 330,
       "unit": "groups",
       "approx": true,
@@ -6389,7 +6426,7 @@
       "text": "Each ROB row holds up to 7 instructions, only the last (failable) slot doing real recovery work",
       "loc": "p119",
       "quote": "only the failable slot of a 7-entry row of the ROB actually matters; the other 6 slots just hold",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 7,
       "unit": "uops",
       "supports": [
@@ -6414,7 +6451,7 @@
       "text": "Retire clears 8 ROB rows per cycle, so between 8 and 56 instructions",
       "loc": "p119",
       "quote": "So a better way to think of Retire is that Retire can clear 8 ROB rows per cycle.",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 8,
       "unit": "groups/cycle",
       "supports": [
@@ -6443,7 +6480,7 @@
       "quote": "I think it's legitimate to see clearing 70 FABS from the ROB as taking 4 cycles, so 17.5 clearances/cycle. Probably best to read that as 16 per cycle.",
       "method": "wong-probe",
       "filler": "fabs",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 16,
       "unit": "entries/cycle",
       "hedge": "Probably best to read that as 16 per cycle.",
@@ -6461,7 +6498,7 @@
       "quote": "It appears that HF slots and registers are both freed at 16/cycle, there's no faster path for HF slots that are not freeing a physical register.",
       "method": "wong-probe",
       "filler": "fmov",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 16,
       "unit": "entries/cycle",
       "hedge": "It appears",
@@ -6669,7 +6706,7 @@
       "text": "Load/store scheduling holds 48 entries as four separate 12-entry queues, not the single 48-entry queue of Johnson's diagram",
       "loc": "p070",
       "quote": "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 48,
       "unit": "entries",
       "supports": [
@@ -6684,7 +6721,7 @@
       "text": "Load/store scheduling is split into four queues of 12 entries each",
       "loc": "p070",
       "quote": "the monolithic 48 entry Load/Store Scheduling Queue is in fact 4 separate 12 entry queues, just like the other cases",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 4,
       "unit": "queues",
       "supports": [
@@ -6735,7 +6772,7 @@
       "text": "The two integer MUL queues are paired and hold about 13 entries each",
       "loc": "p071",
       "quote": "Given the numbers, an obvious guess is that on the integer side ... the two MUL queues are paired (each 13 in size)",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 13,
       "unit": "entries",
       "approx": true,
@@ -6752,7 +6789,7 @@
       "text": "The two integer branch queues are paired, at about 13 entries each (perhaps one of 12 and one of 14)",
       "loc": "p071",
       "quote": "two two BR queues are paired (maybe one of size 12, one of size 14, or both of size 13)",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 13,
       "unit": "entries",
       "approx": true,
@@ -6967,7 +7004,7 @@
       "text": "Each FP/SIMD scheduler queue holds 18 entries, sized for the long dependency chains and latencies of FP code",
       "loc": "p078",
       "quote": "for FP/SIMD both long dependency chains and long instruction latencies are common, hence we see each Scheduler Queue as a hefty 18 entries in size",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 18,
       "unit": "entries",
       "supports": [
@@ -7469,7 +7506,7 @@
       "text": "Two load units and the load/store unit give three loads per cycle, over three 16 B load paths from the L1D to the LSU; a load vector pair is cracked in the LSU into two 16 B cache transactions",
       "loc": "p095",
       "quote": "two dedicated load units, and one ambidextrous unit, so we can perform 3 ... three load paths from the L1D to the LSU, each 16B wide",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 3,
       "unit": "loads/cycle",
       "supports": [
@@ -7940,7 +7977,7 @@
       "text": "With one store unit and one load/store unit, the core can process at most two stores per cycle",
       "loc": "p119",
       "quote": "the core has one store unit, and one ambidextrous unit, so we\u2019d expect the maximum rate at which stores can be processed is two per cycle.",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 2,
       "unit": "stores/cycle",
       "supports": [
@@ -8367,7 +8404,7 @@
       "text": "The L1 and L2 must be joined by separate read and write paths, each 32 B wide",
       "loc": "p147",
       "quote": "I think we have to assume separate read and write paths from L1 to L2, each 32B in width.",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 32,
       "unit": "B/cycle",
       "hedge": "I think we have to assume",
@@ -8739,7 +8776,7 @@
       "loc": "p004",
       "quote": "the best way to summarize is something like there are ... 2 load-only pipelines ... 1 store-only pipeline ... 1 ambidextrous pipeline",
       "method": "throughput",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 4,
       "unit": "units",
       "supports": [
@@ -8799,7 +8836,7 @@
       "loc": "p005",
       "quote": "one TLB lookup per cycle, but that TLB lookup result can service multiple requestors that all have the same page number",
       "method": "throughput",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 1,
       "unit": "lookups/cycle",
       "supports": [
@@ -9109,7 +9146,7 @@
       "loc": "p057",
       "quote": "So, at a physical level, the cache consists of 16 banks, each bank is 16B wide.",
       "method": "stride-sweep",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 16,
       "unit": "B",
       "supports": [
@@ -10180,7 +10217,7 @@
       "loc": "p199",
       "quote": "the TLB2 is probably not set associative. Or, to be more precise, it's organized as 1024 entries that are each three ways. So you perform a hash of the virtual address down to a number in the range 0..1023",
       "method": "pointer-chase",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": "3-way, 1024 sets, hashed index",
       "hedge": "probably",
       "supports": [
@@ -12246,7 +12283,7 @@
       "loc": "#completion-and-the-reorder-buffer-rob",
       "quote": "Firestorm coalesces uops into retire groups, which all retire together. A retire group may contain up to seven uops.",
       "method": "wong-probe",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": 7,
       "unit": "uops",
       "supports": [
@@ -12790,7 +12827,7 @@
       "loc": "p001",
       "quote": "discovered that load and store queue entries are allocated when the ops issue from the scheduler",
       "method": "wong-probe",
-      "derivation": "inferred",
+      "derivation": "derived",
       "value": "at issue",
       "supports": [
         "lsu.allocation"
@@ -12967,7 +13004,7 @@
       "quote": "By this logic (subtracting 58 for the size of the scheduler and dispatch queue), the store queue has only 60 entries.",
       "method": "wong-probe",
       "filler": "store",
-      "derivation": "measured",
+      "derivation": "derived",
       "value": 60,
       "unit": "entries",
       "supports": [

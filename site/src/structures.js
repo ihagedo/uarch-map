@@ -27,14 +27,14 @@
   function pval(g, x, y, pid, opts) {
     const o = opts || {};
     const p = D.params[pid];
-    const v = p.known ? (o.raw ? p.value : (p.approx ? "~" : "") + fmtN(p.num != null ? p.num : p.value)) : "?";
+    const v = p.known ? (o.raw ? p.value : (p.approx ? "~" : "") + fmtN(p.num != null ? p.num : p.value)) : p.conj ? p.short : "?";
     const s = el("g", { class: `sp conf-${p.conf}`, "data-param": pid, tabindex: "0", role: "button",
       "aria-label": `${p.name}: ${p.known ? p.value : "hole"}` }, g);
     const t = txt(s, x + 4, y, v + (o.unit ? ` ${o.unit}` : ""), `sp-text${o.big ? " big" : ""}`);
     const w = t.getComputedTextLength() + 8, h = o.big ? 24 : 18;
     s.insertBefore(el("rect", { x, y: y - h + (o.big ? 6 : 5), width: w, height: h, rx: 4, class: "body anchor" }), t);
     if (openDispute(p)) disputePin(s, x + w + 6, y - (o.big ? 6 : 5));
-    el("title", {}, s).textContent = `${p.name}: ${p.known ? p.value + (p.unit ? " " + p.unit : "") : "no claim yet"}` +
+    el("title", {}, s).textContent = `${p.name}: ${p.known ? p.value + (p.unit ? " " + p.unit : "") : p.conj ? "conjecture " + p.short : "nothing published"}` +
       ` (${CONF_WORD[p.conf].toLowerCase()})`;
     return w + (openDispute(p) ? 12 : 0);
   }
@@ -48,7 +48,7 @@
     const last = wrapText(s, x + 6, y, p.known ? p.value : "?", chars, 17, "sp-text");
     box.setAttribute("width", Math.min(chars * 7.8, s.getBBox().width + 12));
     box.setAttribute("height", last - y + 20);
-    el("title", {}, s).textContent = `${p.name}: ${p.known ? p.value : "no claim yet"} (${CONF_WORD[p.conf].toLowerCase()})`;
+    el("title", {}, s).textContent = `${p.name}: ${p.known ? p.value : p.conj ? "conjecture " + p.short : "nothing published"} (${CONF_WORD[p.conf].toLowerCase()})`;
     return last;
   }
 
@@ -181,14 +181,14 @@
       el("rect", { x: 8, y: y0 - 6, width: W - 16, height: laneH, rx: 10, class: "lane" }, g);
       L.dispatch.forEach(([label, pid], k) => {
         const y = y0 + 14 + k * 54;
-        el("rect", { x: cx.d, y, width: 200, height: 44, rx: 6, class: `stage-box body` }, el("g", { class: pid ? `conf-${D.params[pid].conf}` : "conf-none" }, g));
+        el("rect", { x: cx.d, y, width: 200, height: 44, rx: 6, class: `stage-box body` }, el("g", { class: pid ? `conf-${D.params[pid].conf}` : "conf-unknown" }, g));
         txt(g, cx.d + 10, y + 18, label, "st-t");
         if (pid) pval(g, cx.d + 10, y + 37, pid, { unit: "entries" });
         else txt(g, cx.d + 10, y + 37, "no claim", "st-hole");
       });
       const sy = y0 + 14;
       const sconf = L.sched.map(([pid]) => D.params[pid]).filter((p) => p.known)
-        .map((p) => p.conf).sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "none";
+        .map((p) => p.conf).sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "unknown";
       el("rect", { x: cx.s, y: sy, width: 220, height: 64, rx: 6, class: "stage-box body" }, el("g", { class: `conf-${sconf}` }, g));
       txt(g, cx.s + 10, sy + 18, `${L.label} schedulers`, "st-t");
       let sx = cx.s + 10;
@@ -260,8 +260,8 @@
     const bw = 96, bh = 58, gap = 12, by = 96;
     steps.forEach(([name, note, pid], i) => {
       const x = x0 + i * (bw + gap);
-      const conf = pid ? D.params[pid].conf : "medium";
-      el("rect", { x, y: by, width: bw, height: bh, rx: 6, class: "stage-box body" }, el("g", { class: `conf-${pid ? conf : "none"} flow` }, g));
+      const conf = pid ? D.params[pid].conf : "single";
+      el("rect", { x, y: by, width: bw, height: bh, rx: 6, class: "stage-box body" }, el("g", { class: `conf-${pid ? conf : "unknown"} flow` }, g));
       txt(g, x + 8, by + 18, name, "st-t strong");
       if (pid) pval(g, x + 8, by + 44, pid, { raw: !D.params[pid].num });
       else if (note) txt(g, x + 8, by + 44, note, "st-note");
@@ -325,9 +325,9 @@
   function drawChipView(g, S) {
     const P = S.params, W = 1180;
     const box = (x, y, w, h, cls, conf) =>
-      el("rect", { x, y, width: w, height: h, rx: 10, class: `${cls} body` }, el("g", { class: `conf-${conf || "none"}` }, g));
+      el("rect", { x, y, width: w, height: h, rx: 10, class: `${cls} body` }, el("g", { class: `conf-${conf || "unknown"}` }, g));
     const confOf = (...pids) => pids.map((p) => D.params[p]).filter((p) => p.known).map((p) => p.conf)
-      .sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "none";
+      .sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "unknown";
     el("rect", { x: 16, y: 52, width: W - 32, height: 470, rx: 14, class: "chip-outline" }, g);
     txt(g, 32, 76, "Apple M1", "st-h");
     const px = 40, py = 96, pw = 640, ph = 300;
@@ -350,7 +350,7 @@
     line(g, px + 32, ly + 82, ["one core sees an inner", { pid: P.l2_inner }, "MiB and can use", { pid: P.l2_core },
       "MiB; loads at", { pid: P.l2_bw }, "GB/s"]);
     const ex = px + pw + 30, ew = W - 32 - ex - 8;
-    box(ex, py, ew, ph, "cluster", "none");
+    box(ex, py, ew, ph, "cluster", "unknown");
     txt(g, ex + 16, py + 26, "E-cluster (Icestorm)", "st-t strong");
     txt(g, ex + 16, py + 52, "Not mapped", "st-note");
     const sy = py + ph + 26;
@@ -369,7 +369,7 @@
   function drawFrontendView(g, S) {
     const P = S.params, W = 1180;
     const conf = (...pids) => pids.map((p) => D.params[p]).filter((p) => p.known).map((p) => p.conf)
-      .sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "none";
+      .sort((a, b) => CONFS.indexOf(a) - CONFS.indexOf(b))[0] || "unknown";
     const box = (x, y, w, h, c) => el("rect", { x, y, width: w, height: h, rx: 8, class: "stage-box body" },
       el("g", { class: `conf-${c}` }, g));
 

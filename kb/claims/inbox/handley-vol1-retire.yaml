@@ -593,7 +593,7 @@ claims:
     text: The ROB is best modelled as about 330 rows of instruction slots
     loc: p119
     quote: "the ROB is best thought of as consisting of ~330 \"rows\" where each row can hold 7 instructions."
-    derivation: inferred
+    derivation: derived
     value: 330
     unit: groups
     approx: true
@@ -604,7 +604,7 @@ claims:
     text: Each ROB row holds up to 7 instructions, only the last (failable) slot doing real recovery work
     loc: p119
     quote: "only the failable slot of a 7-entry row of the ROB actually matters; the other 6 slots just hold"
-    derivation: inferred
+    derivation: derived
     value: 7
     unit: uops
     supports: [retire.group_max_uops]
@@ -623,7 +623,7 @@ claims:
     text: Retire clears 8 ROB rows per cycle, so between 8 and 56 instructions
     loc: p119
     quote: "So a better way to think of Retire is that Retire can clear 8 ROB rows per cycle."
-    derivation: inferred
+    derivation: derived
     value: 8
     unit: groups/cycle
     supports: [retire.rate_groups]
@@ -648,7 +648,7 @@ claims:
       Probably best to read that as 16 per cycle.
     method: wong-probe
     filler: fabs
-    derivation: measured
+    derivation: derived
     value: 16
     unit: entries/cycle
     hedge: "Probably best to read that as 16 per cycle."
@@ -664,7 +664,7 @@ claims:
       are not freeing a physical register.
     method: wong-probe
     filler: fmov
-    derivation: measured
+    derivation: derived
     value: 16
     unit: entries/cycle
     hedge: It appears

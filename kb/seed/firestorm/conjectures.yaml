@@ -1,0 +1,25 @@
+# conjectures.yaml
+# Isaac Hagedorn, 2026-10-09
+# Bounds for params nothing published measures, from related claims; never values.
+conjectures:
+  l1i.line:
+    range: [64, 128]
+    text: Likely the 64 B line of the L1D or the 128 B line of the L2; no test of the L1I line is published.
+    basis: [c-mh-v2-l1d-line-dczva, c-mh-v2-l2-line-128-bw, c-7cpu-l1i]
+  itlb.entries:
+    value: "≤160"
+    text: Likely no larger than the 160-entry L1 dTLB, since the fetch predictor holds physical addresses and most fetches skip the iTLB.
+    basis: [c-mh-v4-pa-in-fp, c-mh-v4-seq-line-power, c-mh-v2-dtlb]
+  ftq.depth:
+    value: 0
+    text: Probably none, if fetch is not decoupled from prediction as Handley argues.
+    basis: [c-mh-v4-not-decoupled, c-mh-v4-fully-decoupled-no-win]
+  iq.depth:
+    value: "≥120"
+    text: Handley guesses the queue covers an L1I miss that hits in L2, at least 120 instructions (8 x 15).
+    basis: [c-mh-v4-iq-guess, c-mh-v4-iq-bypass]
+  int_prf.headroom:
+    value: 350
+    approx: true
+    text: About 380 physical registers less the 31 architectural ones, if nothing else holds registers.
+    basis: [c-mh-v1-int-prf-add, c-dj-int-prf]

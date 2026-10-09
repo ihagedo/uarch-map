@@ -118,7 +118,7 @@ claims:
     loc: "#completion-and-the-reorder-buffer-rob"
     quote: "Firestorm coalesces uops into retire groups, which all retire together. A retire group may contain up to seven uops."
     method: wong-probe
-    derivation: inferred
+    derivation: derived
     value: 7
     unit: uops
     supports: [retire.group_max_uops]
@@ -513,7 +513,7 @@ claims:
     loc: p001
     quote: "discovered that load and store queue entries are allocated when the ops issue from the scheduler"
     method: wong-probe
-    derivation: inferred
+    derivation: derived
     value: at issue
     supports: [lsu.allocation]
     notes: >-
@@ -676,7 +676,7 @@ claims:
     quote: "By this logic (subtracting 58 for the size of the scheduler and dispatch queue), the store queue has only 60 entries."
     method: wong-probe
     filler: store
-    derivation: measured
+    derivation: derived
     value: 60
     unit: entries
     supports: [sq.entries]

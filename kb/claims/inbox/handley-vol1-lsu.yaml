@@ -43,7 +43,7 @@ claims:
     loc: p125
     quote: "2 load units - 1 store unit - 1 ambidextrous unit so that it can run either 3 loads/cycle or 2 stores/cycle"
     method: throughput
-    derivation: inferred
+    derivation: derived
     value: 4
     unit: units
     supports: [lsu.ls_units]
@@ -131,7 +131,7 @@ claims:
     loc: p158
     quote: "the M1 has a pool of ~130 genuine Load Queue entries (ie LRQ entries)"
     method: wong-probe
-    derivation: inferred
+    derivation: derived
     value: 130
     unit: entries
     approx: true
@@ -190,7 +190,7 @@ claims:
     loc: p166
     quote: "many stores can progress past Rename even when the Store Queue (of size ~60 entries) is full"
     method: wong-probe
-    derivation: inferred
+    derivation: derived
     value: 60
     unit: entries
     approx: true
@@ -233,7 +233,7 @@ claims:
     loc: p161
     quote: "this apparently monolithic queue is actually four queues each 12 entries in size"
     method: wong-probe
-    derivation: inferred
+    derivation: derived
     value: 4
     unit: queues
     hedge: "My guess is"
@@ -458,7 +458,7 @@ claims:
     loc: p186
     quote: "I added the gold line to both curves to show how we're still really dealing with ~74 entries in the LSDP."
     method: throughput
-    derivation: measured
+    derivation: derived
     value: 74
     unit: entries
     approx: true

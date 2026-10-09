@@ -61,7 +61,7 @@ claims:
       the LSU; a load vector pair is cracked in the LSU into two 16 B cache transactions
     loc: p095
     quote: "two dedicated load units, and one ambidextrous unit, so we can perform 3 ... three load paths from the L1D to the LSU, each 16B wide"
-    derivation: inferred
+    derivation: derived
     value: 3
     unit: loads/cycle
     supports: [lsu.loads_per_cycle]
@@ -455,7 +455,7 @@ claims:
     text: With one store unit and one load/store unit, the core can process at most two stores per cycle
     loc: p119
     quote: "the core has one store unit, and one ambidextrous unit, so we’d expect the maximum rate at which stores can be processed is two per cycle."
-    derivation: inferred
+    derivation: derived
     value: 2
     unit: stores/cycle
     supports: [lsu.stores_per_cycle]
@@ -805,7 +805,7 @@ claims:
     text: The L1 and L2 must be joined by separate read and write paths, each 32 B wide
     loc: p147
     quote: "I think we have to assume separate read and write paths from L1 to L2, each 32B in width."
-    derivation: inferred
+    derivation: derived
     value: 32
     unit: B/cycle
     hedge: "I think we have to assume"

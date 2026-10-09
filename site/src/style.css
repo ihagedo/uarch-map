@@ -127,19 +127,15 @@ h1 {
 
 .box { --hue: var(--edge); cursor: pointer; outline: none; }
 .box .body, .swatch .body { stroke-width: 1; }
-.conf-high .body {
-  fill: color-mix(in srgb, var(--hue) 30%, var(--surface)); stroke: var(--hue); stroke-width: 1.6;
-}
-.conf-medium .body {
-  fill: color-mix(in srgb, var(--hue) 14%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface));
-}
-.conf-low .body {
-  fill: color-mix(in srgb, var(--hue) 5%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface));
-  stroke-dasharray: 5 3;
-}
-.conf-none .body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
+.conf-confirmed .body { fill: color-mix(in srgb, var(--hue) 36%, var(--surface)); stroke: var(--hue); stroke-width: 2.2; }
+.conf-corroborated .body { fill: color-mix(in srgb, var(--hue) 25%, var(--surface)); stroke: var(--hue); stroke-width: 1.4; }
+.conf-single .body { fill: color-mix(in srgb, var(--hue) 14%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); }
+.conf-derived .body { fill: color-mix(in srgb, var(--hue) 8%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 9 3; }
+.conf-inferred .body { fill: color-mix(in srgb, var(--hue) 4%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 4 3; }
+.conf-conjecture .body { fill: none; stroke: color-mix(in srgb, var(--hue) 60%, var(--ink-3)); stroke-width: 1.3; stroke-dasharray: 1 2.5; }
+.conf-unknown .body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
 .box .name { font-size: 12px; font-weight: 600; fill: var(--ink); }
-.box.conf-none .name { fill: var(--ink-2); font-weight: 500; }
+.box.conf-unknown .name, .box.conf-conjecture .name { fill: var(--ink-2); font-weight: 500; }
 .box .rule { stroke: color-mix(in srgb, var(--hue) 25%, var(--line)); stroke-width: 1; }
 .box .sel-ring { fill: none; stroke: none; }
 .box:hover .body { stroke: var(--hue); }
@@ -147,7 +143,8 @@ h1 {
 .box.selected .sel-ring { stroke: var(--ink); stroke-width: 2.5; stroke-dasharray: none; }
 .row .label { font-size: 10.5px; fill: var(--ink-2); }
 .row .value { font: 500 10.5px var(--font-num); fill: var(--ink); }
-.row.conf-none .label, .row.conf-none .value { fill: var(--ink-3); }
+.row.conf-unknown .label, .row.conf-unknown .value, .row.conf-conjecture .label, .row.conf-conjecture .value { fill: var(--ink-3); }
+.row.conf-conjecture .value { font-style: italic; }
 .row .row-bg { fill: transparent; }
 .row:hover .row-bg { fill: var(--hue); fill-opacity: 0.1; }
 .row.selected .row-bg, .row.mech-hit .row-bg { fill: var(--hue); fill-opacity: 0.25; }
@@ -156,6 +153,8 @@ h1 {
 .pin-measured { fill: var(--ink); stroke: none; }
 .pin-documented { fill: none; stroke: var(--ink); stroke-width: 1.4; }
 .pin-inferred { fill: var(--ink-2); stroke: none; }
+.pin-derived { fill: var(--surface); stroke: var(--ink); stroke-width: 1.2; }
+.pin-derived-half { fill: var(--ink); stroke: none; }
 .pin-dispute { fill: var(--dispute); stroke: none; }
 
 .region .r-name { font-size: 17px; font-weight: 700; fill: var(--ink); }
@@ -199,10 +198,15 @@ h1 {
   padding: 2px 8px; border-radius: 5px; font-size: 13px; font-weight: 600; color: var(--ink);
   border: 1px solid color-mix(in srgb, var(--hue) 70%, var(--surface));
 }
-.conf-tag.conf-high { background: color-mix(in srgb, var(--hue) 30%, var(--surface)); border: 1.5px solid var(--hue); }
-.conf-tag.conf-medium { background: color-mix(in srgb, var(--hue) 14%, var(--surface)); }
-.conf-tag.conf-low { background: color-mix(in srgb, var(--hue) 5%, var(--surface)); border-style: dashed; }
-.conf-tag.conf-none { background: transparent; border: 1px dotted var(--ink-3); color: var(--ink-2); font-weight: 500; }
+.conf-tag.conf-confirmed, .card.conf-confirmed { background: color-mix(in srgb, var(--hue) 36%, var(--surface)); border: 2px solid var(--hue); }
+.conf-tag.conf-corroborated, .card.conf-corroborated { background: color-mix(in srgb, var(--hue) 25%, var(--surface)); border: 1.5px solid var(--hue); }
+.conf-tag.conf-single, .card.conf-single { background: color-mix(in srgb, var(--hue) 14%, var(--surface)); }
+.conf-tag.conf-derived, .card.conf-derived { background: color-mix(in srgb, var(--hue) 8%, var(--surface)); border: 1.5px dashed color-mix(in srgb, var(--hue) 70%, var(--surface)); }
+.conf-tag.conf-inferred, .card.conf-inferred { background: color-mix(in srgb, var(--hue) 4%, var(--surface)); border-style: dashed; }
+.conf-tag.conf-conjecture, .card.conf-conjecture {
+  background: transparent; border: 1.3px dotted color-mix(in srgb, var(--hue) 60%, var(--ink-3)); color: var(--ink-2); font-weight: 500; font-style: italic;
+}
+.conf-tag.conf-unknown, .card.conf-unknown { background: transparent; border: 1px dotted var(--ink-3); color: var(--ink-2); font-weight: 500; }
 .blackbox-note {
   margin: 0; padding: 10px 12px; border: 1px dashed var(--ink-3); border-radius: 8px;
   font-size: 14px; color: var(--ink-2);
@@ -225,7 +229,8 @@ h1 {
 .p-row .p-value { font: 600 14px var(--font-num); white-space: nowrap; }
 .p-row .p-value small { font: 400 12px var(--font-ui); color: var(--ink-3); margin-left: 4px; }
 .p-row .p-meta { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--ink-2); }
-.p-row.conf-none .p-name, .p-row.conf-none .p-value { color: var(--ink-3); }
+.p-row.conf-unknown .p-name, .p-row.conf-unknown .p-value, .p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value { color: var(--ink-3); }
+.p-row.conf-conjecture .p-value { font-style: italic; }
 .evidence { display: grid; gap: 10px; padding: 6px 0 10px 22px; }
 .ev-h { margin: 4px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .ev-flag, .flag { display: inline-flex; align-items: center; gap: 6px; }
@@ -306,14 +311,11 @@ h1 {
   border: 1px solid color-mix(in srgb, var(--hue) 70%, var(--surface));
   cursor: pointer; text-align: left;
 }
-.card.conf-high { background: color-mix(in srgb, var(--hue) 30%, var(--surface)); border: 1.6px solid var(--hue); }
-.card.conf-medium { background: color-mix(in srgb, var(--hue) 14%, var(--surface)); }
-.card.conf-low { background: color-mix(in srgb, var(--hue) 5%, var(--surface)); border-style: dashed; }
-.card.conf-none { background: transparent; border: 1px dashed var(--ink-3); }
 .card .c-name { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; font-size: 15px; }
 .card .c-row { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--ink-2); }
 .card .c-row .v { font-family: var(--font-num); color: var(--ink); white-space: nowrap; }
-.card .c-row.conf-none, .card .c-row.conf-none .v { color: var(--ink-3); }
+.card .c-row.conf-unknown, .card .c-row.conf-unknown .v, .card .c-row.conf-conjecture, .card .c-row.conf-conjecture .v { color: var(--ink-3); }
+.card .c-row.conf-conjecture .v { font-style: italic; }
 
 @media (prefers-reduced-motion: reduce) {
   .box, .row, .card, .p-row { transition: none; }
@@ -359,7 +361,8 @@ h1 {
 .sp .body { stroke-width: 1; }
 .sp-text { font: 600 13px var(--font-num); fill: var(--ink); }
 .sp-text.big { font-size: 18px; }
-.sp.conf-none .sp-text { fill: var(--ink-3); }
+.sp.conf-unknown .sp-text, .sp.conf-conjecture .sp-text { fill: var(--ink-3); }
+.sp.conf-conjecture .sp-text { font-style: italic; }
 .sp:hover .body { stroke: var(--hue); }
 .sp.selected .body, .sp.mech-hit .body { stroke: var(--ink); stroke-width: 2; }
 .sp:focus-visible .body { stroke: var(--link); stroke-width: 1.5; }
@@ -378,7 +381,7 @@ h1 {
 .ex-op { font: 600 12px var(--font-num); fill: var(--ink); }
 .lane { fill: color-mix(in srgb, var(--hue) 4%, var(--surface)); stroke: var(--line); }
 .stage-box { stroke-width: 1; }
-.stage-box.conf-none { fill: var(--surface); stroke: var(--ink-3); stroke-dasharray: 2 3; }
+.stage-box.conf-unknown { fill: var(--surface); stroke: var(--ink-3); stroke-dasharray: 2 3; }
 .unit-body { fill: var(--surface); stroke: color-mix(in srgb, var(--hue) 60%, var(--line)); }
 .unit-id { font: 700 13px var(--font-num); fill: var(--ink); }
 .unit-role { font-size: 12.5px; font-weight: 600; fill: var(--ink-2); }
@@ -396,7 +399,7 @@ h1 {
 .status-text { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; fill: var(--ink-3); }
 .chip-outline { fill: none; stroke: var(--edge); stroke-width: 1.5; }
 .cluster.body { stroke-width: 1.2; }
-.conf-none .cluster.body, .conf-none .cache-box.body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
+.conf-unknown .cluster.body, .conf-unknown .cache-box.body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
 .core-tile { cursor: pointer; outline: none; }
 .core-body { fill: var(--surface); stroke: var(--c-backend); stroke-width: 1.4; }
 .core-tile:hover .core-body, .core-tile:focus-visible .core-body { fill: color-mix(in srgb, var(--c-backend) 10%, var(--surface)); stroke-width: 2; }

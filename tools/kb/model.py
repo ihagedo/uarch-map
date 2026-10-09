@@ -9,9 +9,17 @@ import os
 from dataclasses import dataclass, field
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-CONF_RANK = {"none": 0, "low": 1, "medium": 2, "high": 3}
+CONF_RANK = {
+    "unknown": 0,
+    "conjecture": 1,
+    "inferred": 2,
+    "derived": 3,
+    "single": 4,
+    "corroborated": 5,
+    "confirmed": 6,
+}
 CONF_NAME = {v: k for k, v in CONF_RANK.items()}
-DERIV_RANK = {"measured": 0, "documented": 1, "inferred": 2, "reported": 3}
+DERIV_RANK = {"measured": 0, "documented": 1, "derived": 2, "inferred": 3, "reported": 4}
 
 
 @dataclass(eq=False)
@@ -71,12 +79,13 @@ class Param:
     unit: str | None = None
     approx: bool = False
     status: str = "open"
-    confidence: str = "none"
+    confidence: str = "unknown"
     sim_key: str | None = None
     mechanism: "Mechanism" = None
     supporting: list = field(default_factory=list)
     contradicting: list = field(default_factory=list)
     disputes: list = field(default_factory=list)
+    conjecture: dict | None = None
 
     @property
     def label(self):
@@ -131,10 +140,10 @@ class Block:
 
     @property
     def confidence(self):
-        """Mean confidence over every parameter here and below (holes count as none), rounded half up."""
+        """Mean confidence over every parameter here and below (a hole counts as unknown), rounded half up."""
         ps = self.all_params
         if not ps:
-            return "none"
+            return "unknown"
         mean = sum(CONF_RANK[p.confidence] for p in ps) / len(ps)
         return CONF_NAME[int(mean + 0.5)]
 
@@ -229,7 +238,8 @@ class KB:
                 unit=v.get("unit"),
                 approx=bool(v.get("approx")),
                 status=v.get("status", "open"),
-                confidence=v.get("confidence", "none"),
+                confidence=v.get("confidence", "unknown"),
+                conjecture=v.get("conjecture"),
                 sim_key=v.get("sim_key"),
                 mechanism=self.mechanisms.get(v.get("mechanism")),
             )
