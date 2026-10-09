@@ -179,6 +179,128 @@ claims:
     derivation: inferred
     supports: []
 
+  - id: c-mh-v3-2010-five-ports
+    text: >-
+      The first Apple design (2010) feeds the memory controller through five independent ports, realtime, two GPU, CPU
+      and non-realtime, with no network beyond that and no SLC
+    loc: p078
+    quote: "We have nothing like a SoC! We have five independent paths that flow data into the memory"
+    method: patent-reading
+    derivation: inferred
+    value: 5
+    unit: ports
+    supports: []
+    chip: a5
+    notes: From US20120072677A1, which Handley places at the A4 or A5. Camera and display sit on the realtime port
+
+  - id: c-mh-v3-2010-port-roles
+    text: In the 2010 design the GPU ports favour bandwidth over latency and the CPU port favours latency over bandwidth
+    loc: p078
+    quote: "the two port for the GPU are obvious. However they prioritize bandwidth over latency. - the CPU port prioritize latency over bandwidth."
+    method: patent-reading
+    derivation: inferred
+    hedge: "I think"
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-2010-mc-queues
+    text: >-
+      Inside the 2010 memory controller a switch routes five inputs to seven outputs, and requests then pass three queue
+      levels: MCIU, presorting queues (PSQ) and the memory interface (MIF)
+    loc: p080
+    quote: "The MCIUs (Memory Channel Interface Units) are queues feeding the PSQs (Presorting Queues) which feed the third level of queues in the MIF (Memory Interface Unit)."
+    method: patent-reading
+    derivation: inferred
+    value: 3
+    unit: queue levels
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-2010-bw-ports
+    text: In the 2010 design bandwidth is shared by giving each of the five ports a proportion programmed into the memory controller
+    loc: p081
+    quote: "For this initial 2010 design, bandwidth is allocated to the five ports"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-2010-inband-upgrade
+    text: >-
+      When a flow ID's QoS rises, the memory controller raises every queued request of that flow to the new QoS (an
+      in-band upgrade)
+    loc: p082
+    quote: "The memory controller, when it sees a change in the QoS of a flowID, will upgrade all queued items with that flowID to the new QoS."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+    notes: A flow ID is a few source bits plus a few grouping bits; from 2012 Apple calls it a group ID
+
+  - id: c-mh-v3-2010-aiu-arb
+    text: >-
+      The 2010 interface unit always serves RT Red and RT Yellow requests first; otherwise it serves the ports by weighted
+      round robin with weights from bandwidth-sharing registers
+    loc: p083
+    quote: "as long as there (RT Red and RT Yellow) requests present, they are always serviced first."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-2010-aging
+    text: The three later queue levels of the 2010 memory controller raise a request's QoS once it has waited past a set count
+    loc: p083
+    quote: "The three subsequent queue levels all use counter based arbitration, so that if a given request remains in a queue for longer than a certain count, the request will have its QoS upgraded."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-mc-affinity
+    text: >-
+      The memory controller sorts requests into affinity buckets (same DRAM page, or a different bank or rank), and its
+      last stage picks read or write mode and which bucket to send to DRAM
+    loc: p083
+    quote: "These are sorted in different buckets of affine operations (while still tagged with their QoS)"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From the 2010 patents (US8510521B2); Handley expects the details to change with every SoC
+
+  - id: c-mh-v3-2011-nrt-throttle
+    text: >-
+      A 2011 change caps the non-realtime requests held in the memory controller's internal queues while realtime
+      traffic is present, and keeps the cap for a while after it leaves
+    loc: p085
+    quote: "use a counter to limit the number of NRT transactions enqueued in these later stages when RT traffic is present."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+    notes: From US9141568B2
+
+  - id: c-mh-v3-2011-dwrr
+    text: >-
+      In 2011 bandwidth among high-QoS requesters is split by deficit-weighted round robin, with tokens per epoch that
+      the memory controller counts but does not report back
+    loc: p085
+    quote: "The primary idea here is to service the ... using deficit-weighted round robin."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a5
+
+  - id: c-mh-v3-credit-return
+    text: >-
+      In the most recent designs a credit is spent when a request is made and returned when it is fulfilled, so credits
+      also give flow control, and throttling happens at entry to the fabric
+    loc: p085
+    quote: "credits in the most recent designs (as opposed to the tokens of this 2011 design) are spent when an ... makes a request, and returned when the request is fulfilled"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
 new_mechanisms:
   coherence_duplicate_tags:
     name: Coherence point with duplicate tags
@@ -204,5 +326,5 @@ new_mechanisms:
 
 mechanism_claims:
   coherence_duplicate_tags: [c-mh-v3-request-path]
-  fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration, c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits]
+  fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration, c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits, c-mh-v3-credit-return]
   pio_network: [c-mh-v3-device-bypass]
