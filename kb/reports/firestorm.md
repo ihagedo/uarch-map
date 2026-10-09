@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 123, claims 933, sources 22, mechanisms 39
+blocks 37, links 35, params 124, claims 946, sources 22, mechanisms 40
 
 ## By status
 
 - derived: 10
 - inferred: 21
 - measured: 82
-- open: 7
+- open: 8
 - reported: 3
 
 ## By confidence
@@ -18,9 +18,9 @@ blocks 37, links 35, params 123, claims 933, sources 22, mechanisms 39
 - derived: 10
 - inferred: 24
 - single: 47
-- unknown: 2
+- unknown: 3
 
-## Holes (7)
+## Holes (8)
 
 - l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
@@ -29,6 +29,7 @@ blocks 37, links 35, params 123, claims 933, sources 22, mechanisms 39
 - iq.depth (iq): Fetch-to-decode queue depth
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
+- l2.inclusion (l2): L2 inclusion of L1 contents
 
 ## Open disputes (13)
 

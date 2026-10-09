@@ -105,6 +105,146 @@ claims:
     derivation: inferred
     supports: []
     notes: US20200264888A1 (2019), CAM filtering based on microarchitectural state.
+  - id: c-mh-v3-l2-dup-tags
+    text: >-
+      Per a 2010 patent, the L2 holds duplicate tags for the L1s of its cores behind a coherence point on the fabric,
+      where the 2006 design routed every snoop from one core straight to the L2 and the other core
+    loc: p015
+    quote: "we now have a Coherence Point on the fabric ... Now the L2 holds duplicate tags for the L1’s of the various cores attached to it"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US9317102B2 (2010), compared with US7752474B2 (2006).
+  - id: c-mh-v3-l2-snoop-filter
+    text: >-
+      With its duplicate L1 tags the L2 filters out most snoops as irrelevant to the other cores, which saves energy
+      and may let the L1 handle its now rare snoops on a slower path
+    loc: p015
+    quote: "a snoop from one core can be handled by the L2 (which can filter out most snoops as being irrelevant to any other core, and so can discard them)"
+    method: patent-reading
+    derivation: inferred
+    hedge: "maybe even allows"
+    supports: []
+  - id: c-mh-v3-l1-line-counters
+    text: >-
+      Per the 2010 patent, the L1 counts its valid and modified lines, presumably to decide how soon the cache can be
+      put to sleep
+    loc: p015
+    quote: "the L1 now has various counters of things like how many valid blocks and how many modified blocks it contains"
+    method: patent-reading
+    derivation: inferred
+    hedge: "presumably"
+    supports: []
+  - id: c-mh-v3-l1-flush-walk
+    text: >-
+      Flushing the L1 in the 2006 and 2010 designs walks every way of every set, presumably one per cycle, and can stop
+      early only once the modified-line count reaches zero
+    loc: p015
+    quote: "flushing the cache seemed to require cycling through every way of every set (presumably one per cycle) asking that way to flush itself if it is modified"
+    method: patent-reading
+    derivation: inferred
+    hedge: "seemed to require ... presumably"
+    supports: []
+  - id: c-mh-v3-snoop-while-l1-sleeps
+    text: >-
+      Because the L2 filters snoops, a sleeping core's L1 can stay powered but unclocked and mostly need not be woken
+      to answer snoops
+    loc: p015
+    quote: "snoops can be handled by the L2 while the L1 sleeps, and mostly without having to wake the L1"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      Handley's power ladder: clock gating for very short naps, a retained (unclocked, likely undervolted) L1 for
+      longer sleeps, then flush and power off.
+  - id: c-mh-v3-l1-flush-engine
+    text: >-
+      Per a 2013 patent, an asynchronous flush engine copies a core's modified L1 lines to the L2 while the core is
+      partly powered down, then the core powers off fully
+    loc: p015
+    quote: "Now we have a separate asynchronous engine that allows the main CPU to partially power down while the engine copies all modified lines out to L2, before fully powering down the core."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20140195737A1 (2013). The L1 and the engine must keep handling snoops on not yet written lines until power
+      off.
+  - id: c-mh-v3-flush-engine-in-l2
+    text: >-
+      The flush engine belongs to the L2, not to each core: it pulls modified lines out of an L1, finding them through
+      the L2's duplicate L1 tags, so one engine serves the whole cluster
+    loc: p016
+    quote: "the flush engine is associated with the L2 core rather than the L1 cores. Thus, in a sense, it pulls modified lines from the L1"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-l2-flush-to-slc
+    text: >-
+      When all the L2's clients sleep, the flush engine walks the L2 tags and pushes modified lines to the SLC until it
+      has matched the maintained count of modified lines, and then the whole L2 can shut down
+    loc: p016
+    quote: "if all the clients of the L2 go to sleep, then after a while it makes sense to also shut down the entire L2 ... the flush engine gets repurposed for that job"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-dup-tag-power
+    text: >-
+      Per a 2013 patent, once a core's L1 has lost power the L2 also powers off the duplicate tags it keeps for that
+      L1, since there is nothing left to snoop
+    loc: p016
+    quote: "once an L1 client has lost power, there's no point in snooping for that client any more ... Apple pulls the power on the duplicate tags"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20140189411A1 (2013), power control for cache structures.
+  - id: c-mh-v3-flush-without-sleep
+    text: >-
+      Per a 2018 patent, one extra bit in the flush control register, which Handley assumes is at L2 level, lets the
+      sleep flush machinery flush caches for software maintenance without putting the core to sleep
+    loc: p016
+    quote: "we add one extra bit to this control register so that the flush machinery goes through everything as before, except with that bit set, it omits the steps that before would put the CPU to sleep"
+    method: patent-reading
+    derivation: inferred
+    hedge: "I assume L2-level"
+    supports: []
+    notes: US10552323B1 (2018). Handley thinks it serves I-cache and L1 maintenance, perhaps not TLB.
+  - id: c-mh-v3-sleep-invalidate-queue
+    text: >-
+      Per a 2020 patent, a unit outside the core, which Handley assumes is the L2, records I-cache and TLB
+      invalidations for a sleeping core and feeds them to it on waking, flushing the whole I-cache or TLB if the record
+      overflows
+    loc: p017
+    quote: "external to the CPU (I assume the L2 since it's doing this sort of work in various other cases) records the various I-cache and TLB invalidation requests"
+    method: patent-reading
+    derivation: inferred
+    hedge: "I assume"
+    supports: []
+    notes: US20220066941A1 (2020), storage array invalidation maintenance.
+  - id: c-mh-v3-fiu-throttle
+    text: >-
+      Per a 2018 patent, cache and TLB maintenance requests for a core wait in a per-cluster Fabric Interface Unit, and
+      a core that has taken enough of them refuses more until counters show it has made progress on normal code
+    loc: p017
+    quote: "something the patent calls The FIU, Fabric Interface Unit, which is a per-processor-complex object ... successive maintenance requests are held in a queue in the FIU, not the CPU"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US11080188B1 (2018). Handley reads it as protection against a guest OS flooding other cores with maintenance
+      requests.
+  - id: c-mh-v3-deferred-invalidate-poison
+    text: >-
+      Per a 2021 patent, a cache marks lines hit by invalidation requests as poisoned and synchronizes them in the
+      background, stalling only accesses to poisoned lines and any barrier that needs full synchronization
+    loc: p018
+    quote: "rather than the cache handling each invalidation request immediately, it marks the relevant cache line as “poisoned”"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20230017473A1 (2021), filed after the M1 shipped; Handley suggests both this and the FIU scheme may end up implemented.
+
+new_params:
+  l2.inclusion:            {block: l2, name: L2 inclusion of L1 contents}
 
 new_mechanisms:
   barrier_colors:
@@ -123,7 +263,16 @@ new_mechanisms:
     patents: [US9383995B2, US10747535B1, US9501284B2, US20200264888A1]
     sim_switch: null
     detection_rule: same-address loads on one core take extra machine clears only when another core writes the line between them
+  l2_snoop_filter:
+    name: L2 duplicate L1 tags (snoop filter and flush engine)
+    status: speculative
+    description: The L2 keeps duplicate tags of its cores' L1s, filters snoops for them, and drives a flush engine that pulls dirty L1 lines before a core powers down.
+    params: [l2.inclusion]
+    patents: [US9317102B2, US20140195737A1, US20140189411A1, US10552323B1, US20220066941A1]
+    sim_switch: null
+    detection_rule: an idle core keeps its L1 contents through the other cores' sharing traffic, and stores to lines no other L1 holds see no snoop delay
 
 mechanism_claims:
   barrier_colors: [c-mh-v3-barrier-colors, c-mh-v3-barrier-l1-l2]
   load_poison_bits: [c-mh-v3-load-poison, c-mh-v3-wfe-poison, c-mh-v3-lsq-cam-filter]
+  l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk, c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2, c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep, c-mh-v3-sleep-invalidate-queue]
