@@ -488,6 +488,173 @@ claims:
     supports: [ras.return_bubble]
     notes: Restates c-mh-v4-return-bubble.
 
+  - id: c-mh-v8-l1d-8way
+    text: The L1D is 8-way set associative
+    loc: p134
+    quote: >-
+      we'll assume the number of ways is 8 (as it is for L1D, though it's 12 for L1I, and varies for different models
+      of L2)
+    derivation: inferred
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: Agrees with c-mh-v2-l1d-8way and c-mh-v2-l1d-8way-tlb.
+
+  - id: c-mh-v8-l1i-12way
+    text: The L1I is 12-way set associative
+    loc: p134
+    quote: >-
+      we'll assume the number of ways is 8 (as it is for L1D, though it's 12 for L1I, and varies for different models
+      of L2)
+    derivation: inferred
+    value: 12
+    unit: ways
+    supports: [l1i.assoc]
+    notes: L2 associativity, he adds, varies from model to model.
+
+  - id: c-mh-v8-ipv-replacement
+    text: >-
+      Cache replacement order is updated through small insertion/promotion vectors, one picked per line by its
+      prefetched and critical bits, with the vectors tuned offline on benchmarks
+    loc: p142
+    quote: >-
+      The trick is that which IPV is selected is based on properties of the cache line. So a cache line may be marked
+      as Prefetch'ed (the P bit 42) and/or as Critical (CR bit 44).
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: >-
+      US12222875B1 (2023); the patent tunes the vectors with a genetic algorithm. Handley thinks it is realistically
+      the L2, the L1s using an approximation to LRU (c-mh-v8-l1-plru).
+
+  - id: c-mh-v8-deny-list
+    text: >-
+      Prefetched lines carry a bit in the L1 (and usefully the L2) that demand use clears; a line evicted with the bit
+      still set goes into a deny list that later prefetch candidates are checked against
+    loc: p143
+    quote: >-
+      First is we need a bit in the cache (certainly L1, but it's helpful to have it also in L2) indicating that a line
+      was brought in by a prefetcher.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US12306762B1 (2023).
+
+  - id: c-mh-v8-deny-list-entry
+    text: >-
+      The deny list is a hashed table, not a Bloom filter; each entry holds a short partial tag, a valid bit and a
+      count that gives a line perhaps four unused prefetches before it is denied
+    loc: p143
+    quote: >-
+      an entry is very small: a few bits of tag (which, along with the implicit index hash together approxi-mate the
+      address), a valid bit, and a count. ... maybe four
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: unused prefetches
+    approx: true
+    hedge: "maybe four"
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-deny-list-ration
+    text: >-
+      The deny list also rations prefetch: partly counted addresses go to the back of the prefetch queue, and when
+      bandwidth is short, as when a waking CPU prefetches aggressively into empty caches, they are dropped
+    loc: p143
+    quote: >-
+      a prefetch address that matches in the Deny List, but is not yet at full count might always be moved to the end
+      of the list of lines being prefetched
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-hsq-two-queues
+    text: >-
+      The store queue is split in two: a primary queue holds the oldest stores and writes them to the L1, and a
+      secondary queue holds younger stores and can only pass them to the primary queue
+    loc: p144
+    quote: >-
+      So what Apple proposes is two separate store queues. The first is like what we have today, and stores the oldest
+      writes. ... has no ability to interface with the L1 cache, only to move stores to the primary store queue
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US12298915B1 (2023). The secondary queue still answers load searches, more slowly.
+
+  - id: c-mh-v8-hsq-search-width
+    text: Only the primary store queue is searched by three loads at once; the secondary queue serves one load search at a time
+    loc: p144
+    quote: >-
+      only the first queue supports full three-wide load searching; the second queue provides for only a single load
+      search at a time
+    method: patent-reading
+    derivation: inferred
+    value: 3
+    unit: loads/cycle
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-hsq-fast-4
+    text: The primary queue finds a matching store in about 4 cycles, helped by an index of address hashes
+    loc: p144
+    quote: >-
+      including via the equivalent of an "index" [eg a table of address hashes], so that a hit against a store occurs
+      in around 4 cycles
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: cycles
+    approx: true
+    supports: []
+    chip: post-m1
+    notes: On the M1, forwarding from the store queue takes about 4 to 5 cycles (c-mh-v1-forwarding-lam).
+
+  - id: c-mh-v8-hsq-slow-11
+    text: The secondary queue compares addresses one block at a time and finds a matching store in about 11 cycles
+    loc: p144
+    quote: >-
+      just a fairly mechanical comparison of addresses one block at a time, so that a hit against a store occurs in
+      around 11 cycles
+    method: patent-reading
+    derivation: inferred
+    value: 11
+    unit: cycles
+    approx: true
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-hsq-banks
+    text: The primary store queue is built from two SRAM banks and the secondary from one
+    loc: p145
+    quote: "It does say that the fast queue consists of two SRAM banks, while the slow queue is a single SRAM bank."
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: banks
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-hsq-split-loads
+    text: >-
+      A load only partly covered by queued stores takes what it can from the store queues, even from both, and the
+      rest from the cache, rather than waiting for the stores to reach the L1
+    loc: p145
+    quote: >-
+      suppose part of a load is present in the store queue but not the rest (eg store was 16b, load is 32b). This is
+      handled by extracting as much as possible of the data from the store queue
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+
+new_params:
+  l1i.assoc: {block: l1i, name: L1I associativity, unit: ways}
+
 new_mechanisms:
   biased_branch_filter:
     name: Biased-branch filtering in the front end
@@ -509,6 +676,39 @@ new_mechanisms:
     params: []
     sim_switch: null
     detection_rule: a loop body joined by always-taken branches sustains more than one taken branch per cycle
+  prefetch_deny_list:
+    name: Prefetch deny list
+    status: speculative
+    description: >-
+      Addresses of prefetched lines evicted unused enter a small counted table that pushes back or drops later
+      prefetches to them.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      a pattern whose prefetched lines are never used stops adding DRAM traffic after a few repetitions, and resumes
+      once the lines are used on demand
+  hierarchical_store_queue:
+    name: Hierarchical store queue
+    status: speculative
+    description: >-
+      A primary store queue holds the oldest stores, serves three load searches at once and writes to the L1; younger
+      stores wait in a slower secondary queue searched one load at a time.
+    params: [sq.entries, lsu.store_load_latency]
+    sim_switch: null
+    detection_rule: >-
+      with many older stores in flight, forwarding from one of the youngest stores takes about 11 cycles instead of
+      about 4
+  ipv_replacement:
+    name: Criticality-aware replacement vectors
+    status: speculative
+    description: >-
+      Cache replacement order is updated by small insertion/promotion vectors chosen by each line's prefetched and
+      critical bits.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      in a contended set, prefetched lines never used are evicted before demand lines of the same age, and
+      page-table or instruction lines outlast both
 
 mechanism_claims:
   lsq_at_issue: [c-mh-v8-virtual-alloc]
@@ -519,3 +719,7 @@ mechanism_claims:
   biased_branch_filter: [c-mh-v8-bias-m3-m4, c-mh-v8-bias-bits, c-mh-v8-bias-table, c-mh-v8-bias-skip-tage,
     c-mh-v8-light-branch-unit, c-mh-v8-biased-indirect, c-mh-v8-biased-csel]
   trace_cache: [c-mh-v8-trace-cache, c-mh-v8-trace-well-biased, c-mh-v8-fetch-pred-sizes, c-mh-v8-trace-groups]
+  prefetch_deny_list: [c-mh-v8-deny-list, c-mh-v8-deny-list-entry, c-mh-v8-deny-list-ration]
+  hierarchical_store_queue: [c-mh-v8-hsq-two-queues, c-mh-v8-hsq-search-width, c-mh-v8-hsq-fast-4, c-mh-v8-hsq-slow-11,
+    c-mh-v8-hsq-banks, c-mh-v8-hsq-split-loads]
+  ipv_replacement: [c-mh-v8-ipv-replacement]
