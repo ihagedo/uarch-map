@@ -1371,6 +1371,7 @@
     "lsu.allocation": {
       "claims": [
         "c-mh-v1-virtual-lsq",
+        "c-mh-v8-virtual-alloc",
         "c-dj-lsq-alloc-issue"
       ],
       "disputes": [],
@@ -1576,7 +1577,8 @@
     },
     "prefetch.kinds": {
       "claims": [
-        "c-mh-v2-prefetch-kinds"
+        "c-mh-v2-prefetch-kinds",
+        "c-mh-v8-prefetch-kinds"
       ],
       "disputes": [],
       "block": "prefetch",
@@ -2301,7 +2303,8 @@
     "pcluster.clock_domain": {
       "claims": [
         "c-mh-v3-cluster-clock-shared",
-        "c-mh-v3-cluster-one-freq"
+        "c-mh-v3-cluster-one-freq",
+        "c-mh-v8-cluster-one-clock"
       ],
       "disputes": [],
       "block": "pcluster",
@@ -16085,6 +16088,106 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-core"
     },
+    "c-mh-v8-cluster-one-clock": {
+      "text": "All cores of an Apple cluster run at one frequency, apart from sleeping cores, so reaching the L2 or another core never crosses a clock domain; a SoC-wide controller sets each cluster's frequency, voltage and L2 power savings",
+      "loc": "p105",
+      "quote": "Apple (at least to the extent they describe things in patents) provide a power budget for a cluster ... The whole reason we run the Apple cluster at a single frequency (apart from sleeping cores)",
+      "derivation": "inferred",
+      "value": "per cluster",
+      "supports": [
+        "pcluster.clock_domain"
+      ],
+      "notes": "Agrees with c-mh-v3-cluster-one-freq. Said while contrasting Nuvia's per-cluster power controllers.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-virtual-alloc": {
+      "text": "Apple already appears to give out ordering identifiers at rename and the physical load/store queue slot only at execution",
+      "loc": "p109",
+      "quote": "ordering identifiers (which are just numbers) at Allocate, and allocating the ultimate resource at the point of execution. We've seen that Apple already seem to be doing this with LSU slots",
+      "derivation": "inferred",
+      "value": "at issue",
+      "hedge": "seem to be",
+      "supports": [
+        "lsu.allocation"
+      ],
+      "notes": "Restates c-mh-v1-virtual-lsq; agrees with c-dj-lsq-alloc-issue.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-three-engines": {
+      "text": "Apple now seems to run instruction prefetch, fetch and full branch prediction as three decoupled address-generation engines",
+      "loc": "p106",
+      "quote": "Apple seem to now be using three decoupled address-generation engines to perform I-fetch/branch prediction.",
+      "derivation": "inferred",
+      "hedge": "seem to",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "Said in a summary written around the Neoverse V2 launch, so no chip is named. The M1 goes only as far as an instruction queue (c-mh-v4-decoupled-iq).",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-prefetch-lsu": {
+      "text": "Apple's data prefetchers track addresses in virtual space and train on every load and store, in order, at the LSU rather than on the stream of L1 misses",
+      "loc": "p111",
+      "quote": "Apple have the same functionality (tracking in virtual space, not physical space; Apple are ahead in capturing all load/stores in order at the LSU",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Restates c-mh-v2-prefetch-at-lsu. He ranks Apple and Arm's Neoverse V2 about level on prefetch algorithms.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-prefetch-kinds": {
+      "text": "Apple's AMPM prefetcher covers the cases of SMS and best-offset prefetching, and its content-directed prefetcher is a stronger form of a correlated miss cache for walking pointer structures",
+      "loc": "p111",
+      "quote": "My understanding is that Apple's AMPM scheme handles the same sort of cases as SMS ... and BO (fancy version of a next line prefetcher); and Apple's Content Directed Prefetcher is a more powerful form of CMC",
+      "derivation": "inferred",
+      "hedge": "My understanding is",
+      "supports": [
+        "prefetch.kinds"
+      ],
+      "notes": "Consistent with c-mh-v2-prefetch-kinds, which also lists a large-stride prefetcher.",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-cdp-lsu": {
+      "text": "Training at the LSU lets Apple's prefetching use the values loaded, not only addresses, to spot pointer chasing early; this comes from the 2016 content-directed prefetch patent, whose filtering step seems to need LSU information",
+      "loc": "p111",
+      "quote": "if you do your prefetching based on what you see at the LSU (as Apple does, but apparently no-one else) you can also train on the content of what is loaded",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-prefetch-wake": {
+      "text": "After the L2 has been powered down and lost its contents, Apple runs the prefetchers more aggressively once it powers up again",
+      "loc": "p112",
+      "quote": "the way Apple runs the prefetchers more aggressively after the L2 cache is powered up after having been powered down and lost its contents",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Given as existing Apple behaviour with no chip named. The deny-list patent repeats it for a CPU waking from sleep with empty caches (c-mh-v8-deny-list-ration).",
+      "source": "handley-vol8",
+      "chip": "m1",
+      "entered": "handley-vol8-memory"
+    },
+    "c-mh-v8-spec-ipc-v2": {
+      "text": "Eyeballing published SPEC2017 results, the M1 and M2 are mostly slightly ahead of Arm's Neoverse V2 on IPC, but not dramatically",
+      "loc": "p112",
+      "quote": "Apple is mostly still slightly ahead on IPC (as of M1 and M2), but not dramatically so",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m2",
+      "notes": "Apple results from the TomyLemon Apple-CPU-Benchmarks collection. Large x264 and exchange2 leads he puts down to compilers.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-memory"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -17449,6 +17552,7 @@
         "c-mh-v1-late-alloc-58",
         "c-mh-v1-sq-dram-108",
         "c-mh-v1-sq-late-alloc-60",
+        "c-mh-v8-virtual-alloc",
         "c-dj-lsq-alloc-issue",
         "c-dj-lsq-store-107",
         "c-dj-lsq-branch-loads-188",
@@ -17495,7 +17599,8 @@
         "c-mh-v4-m2-not-fully-decoupled",
         "c-mh-v4-iprefetch-two-tables",
         "c-mh-v4-callgraph-details",
-        "c-mh-v4-not-decoupled"
+        "c-mh-v4-not-decoupled",
+        "c-mh-v8-three-engines"
       ],
       "name": "Decoupled fetch with fetch-directed prefetch",
       "status": "absent",
@@ -17867,7 +17972,8 @@
         "c-mh-v2-prefetch-kinds",
         "c-mh-v2-region-to-l2",
         "c-mh-v3-prefetch-no-slc",
-        "c-mh-v3-prefetch-two-targets"
+        "c-mh-v3-prefetch-two-targets",
+        "c-mh-v8-prefetch-lsu"
       ],
       "name": "LSU-resident virtual-address prefetcher",
       "status": "inferred",
@@ -17897,7 +18003,9 @@
       "claims": [
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
-        "c-at-pointer-prefetch"
+        "c-at-pointer-prefetch",
+        "c-mh-v8-prefetch-kinds",
+        "c-mh-v8-cdp-lsu"
       ],
       "name": "Content-directed (data memory-dependent) prefetch",
       "status": "inferred",
