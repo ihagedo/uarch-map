@@ -656,9 +656,184 @@ claims:
     supports: []
     notes: From US20220083369A1. A false hash match only delays an unrelated write by about a hundred cycles
 
+  - id: c-mh-v3-victim-fill
+    text: >-
+      Lines allocate in L1; an L1 victim moves to the L2 and an L2 victim moves to the SLC, so the L2 is a victim cache for
+      L1 and the SLC holds L2 victims; prefetches into the L2 are the exception
+    loc: p119
+    quote: "When a line in L1 is eventually replaced, it will be moved to L2 (ie L2 is a victim cache for L1), and likewise when a line in L2 is replaced, that line will be moved to SLC."
+    derivation: inferred
+    value: L2 victims
+    hedge: "As far as I can tell"
+    supports: [slc.allocation]
+    notes: Fits c-7cpu-slc-exclusive and the cached region past L2 out to ~16 MiB in c-mh-v2-slc-size
+
+  - id: c-mh-v3-slc-pending
+    text: >-
+      On a miss the SLC allocates the line at once in a pending state; later requests to it wait in a replay buffer until
+      the data arrive, so no miss queue has to be searched
+    loc: p120
+    quote: "the line is marked as “pending”. Then any subsequent request for this line will also see it as pending. All requests to pending lines go into a replay buffer"
+    method: patent-reading
+    derivation: inferred
+    hedge: "at least, as of 2012"
+    supports: []
+    notes: From US20140089600A1
+
+  - id: c-mh-v3-slc-device-alloc
+    text: >-
+      By default, reads from blocks other than the CPU allocate their lines in the SLC, probably modulated for blocks with
+      their own caches and for streaming flows
+    loc: p120
+    quote: "by default non-CPU requests are allocated in the SLC on read of a line"
+    method: patent-reading
+    derivation: inferred
+    hedge: "suggests"
+    supports: []
+
+  - id: c-mh-v3-groupid-16
+    text: Requests carry a group (flow) ID; the 2012 sticky-allocation patent suggests 16 of them, 4 bits, perhaps more on newer chips
+    loc: p120
+    quote: "this next patent suggests there are 16 of these, 4 bits, though of course this may have risen in more modern SoCs"
+    method: patent-reading
+    derivation: inferred
+    value: 16
+    unit: group IDs
+    hedge: "this may have risen in more modern SoCs"
+    supports: []
+    chip: a7
+
+  - id: c-mh-v3-slc-sticky
+    text: SLC lines record the requester's group ID and a sticky bit; a sticky line stays until it is marked non-sticky
+    loc: p121
+    quote: "lines marked as sticky will persist until they are marked non-sticky."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9311251B2
+
+  - id: c-mh-v3-slc-replacement
+    text: >-
+      SLC replacement takes an invalid line first, then an LRU dirty line, and otherwise a random line, drawing again if
+      that line is sticky
+    loc: p121
+    quote: "first priority is to use invalid lines. Next in (negative) priority is LRU lines that are dirty. ... If it’s sticky, we generate a new random number and try again."
+    method: patent-reading
+    derivation: inferred
+    value: invalid, then LRU dirty, then random non-sticky
+    supports: [slc.replacement]
+    notes: Dirty LRU lines go first because a recently written line is less likely to be touched again than a recently read one
+
+  - id: c-mh-v3-slc-frame-relabel
+    text: >-
+      All SLC data of one GPU frame share a flow ID; for the next frame the GPU can relabel those lines to a new ID, or a
+      hit by the new ID takes them over
+    loc: p121
+    quote: "the GPU can tell the SLC to relabel all flowID X lines as now belonging to flowID Y"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Video capture, video decode and the display pipe use flow IDs the same way
+
+  - id: c-mh-v3-slc-quotas
+    text: >-
+      A group ID may have an SLC quota capping its lines, giving three levels of persistence: sticky lines, then the
+      group's quota, then general replacement
+    loc: p121
+    quote: "groupIDs may have SLC quotas associated with them, so that given groupID cannot use more than a certain number of lines."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US20140075118A1; quotas may oversubscribe the cache
+
+  - id: c-mh-v3-slc-hints
+    text: >-
+      Requests can carry SLC hints: do-not-allocate, de-allocate (a hit line becomes LRU dirty and goes first), and a
+      per-group sticky-replace hint
+    loc: p121
+    quote: "a do-not-allocate hint, which means what it says. ... a de-allocate hint. ... a (per flowID) sticky-replace hint."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US20140075125A1
+
+  - id: c-mh-v3-cpu-no-slc-alloc
+    text: CPU and GPU misses never allocate lines in the SLC; the do-not-allocate hint is for other hardware blocks
+    loc: p121
+    quote: "I think this is for HW devices, and that CPU/GPU misses would never allocate in the SLC anyway."
+    derivation: inferred
+    hedge: "I think"
+    supports: []
+    notes: Consistent with c-mh-v3-victim-fill
+
+  - id: c-mh-v3-quota-drop
+    text: >-
+      When a quota is ended, its dirty lines can be invalidated without write-back, suiting per-frame scratch data such as
+      shadow or normal textures
+    loc: p122
+    quote: "dirty lines of a quota that has ended can simply be dropped by having every line invalidated, so they are not even written back to RAM."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-slc-driver
+    text: >-
+      An SLC driver sets the quotas: device drivers register their memory streams (data stream IDs) and properties with
+      it
+    loc: p123
+    quote: "Based on this information, the SLC Driver determines the quotas (and other options) for the SLC."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US20210034527A1
+
+  - id: c-mh-v3-slc-driver-goal
+    text: >-
+      The SLC driver sizes quotas to cut DRAM traffic, in effect energy, using each stream's hits per second per quota line
+      and rebalancing coarsely; Handley thinks a marginal-gain rule would do better
+    loc: p123
+    quote: "it's optimizing for reducing the traffic that has to go to DRAM rather than hitting in the SLC (which is essentially optimizing for energy)."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-slc-purpose
+    text: >-
+      The SLC is built mainly for low-energy communication between blocks; the system still uses it as an L3 for the CPU
+      when nothing else needs it
+    loc: p125
+    quote: "The SLC should be seen primarily as a means to facilitate communication at lower energy."
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-spec-read-2012
+    text: >-
+      In the 2012 design a read may enter the memory controller queues during the SLC tag lookup, if it has low-latency
+      QoS, no ordering hazard, few speculative reads ahead of it and a group ID unlikely to hit in the SLC
+    loc: p126
+    quote: "while a read request is performing the SLC Tags lookup, the request is also allowed to move to (entry to) the Memory Controller Queues."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a7
+    notes: From US9201796B2. The read goes no further down the queues until the SLC miss is confirmed
+
+  - id: c-mh-v3-partial-dirty
+    text: >-
+      The 2012 SLC keeps partial-line writes in a partial-dirty state, reusing the line's ECC bits as a byte mask; a read
+      that hits such a line forces a merge through DRAM
+    loc: p127
+    quote: "we re-purpose the ECC bits protecting the line as a bitmask describing which bytes of the line (for a partial dirty line) are valid."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a7
+    notes: From US20140089602A1. Handley expects newer designs to have explicit mask bits
+
 new_params:
   slc.line: {block: slc, name: SLC line size, unit: B}
   slc.allocation: {block: slc, name: SLC allocation policy, mechanism: slc_victim_fill}
+  slc.replacement: {block: slc, name: SLC replacement policy, mechanism: slc_sticky_quota}
 
 new_mechanisms:
   slc_victim_fill:
@@ -675,6 +850,20 @@ new_mechanisms:
     params: []
     sim_switch: null
     detection_rule: a read of a line held modified in the other cluster returns faster than a DRAM access
+  slc_sticky_quota:
+    name: SLC sticky lines and group quotas
+    status: inferred
+    description: SLC lines carry a group ID and a sticky bit; driver-set quotas cap each group, and replacement skips sticky lines.
+    params: [slc.replacement]
+    sim_switch: null
+    detection_rule: not visible to CPU-only probes; a GPU or media working set within its quota survives a CPU sweep larger than the SLC
+  slc_speculative_read:
+    name: DRAM read issued alongside the SLC lookup
+    status: inferred
+    description: A latency-sensitive read enters the memory controller pipeline while the coherence and SLC tag checks run, and is killed if either hits.
+    params: [memctrl.dram_latency, slc.latency]
+    sim_switch: null
+    detection_rule: DRAM-miss latency exceeds SLC-hit latency by no more than the memory controller's own DRAM access time
   fabric_qos_credits:
     name: Credit-gated fabric with QoS bands
     status: inferred
@@ -691,8 +880,11 @@ new_mechanisms:
     detection_rule: device register access and interprocessor interrupt latency stay flat while the memory fabric is saturated
 
 mechanism_claims:
-  slc_victim_fill: [c-mh-v3-victim-request]
+  slc_victim_fill: [c-mh-v3-victim-fill, c-mh-v3-victim-request, c-mh-v3-cpu-no-slc-alloc, c-mh-v3-slc-device-alloc]
   coherence_duplicate_tags: [c-mh-v3-request-path, c-mh-v3-duplicate-tags, c-mh-v3-pseudo-l3, c-mh-v3-strands, c-mh-v3-remote-cache-slc]
+  slc_sticky_quota: [c-mh-v3-slc-sticky, c-mh-v3-slc-replacement, c-mh-v3-slc-quotas, c-mh-v3-slc-hints,
+    c-mh-v3-slc-frame-relabel, c-mh-v3-quota-drop, c-mh-v3-slc-driver, c-mh-v3-slc-driver-goal, c-mh-v3-groupid-16]
+  slc_speculative_read: [c-mh-v3-spec-read-2012]
   fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration,
     c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits, c-mh-v3-credit-return, c-mh-v3-buffer-at-source,
     c-mh-v3-l2-cpu-qos, c-mh-v3-bw-controller]
