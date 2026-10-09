@@ -141,4 +141,320 @@ claims:
     notes: >-
       Handley wonders whether the ROB was split into separate failable and non-failable parts so the total could
       shrink at the same 1:7 ratio
+  - id: c-mh-v8-noc-networks
+    text: >-
+      Per a 2021 patent, the NoC is split into several independent address+data networks, for example IO
+      (ordered, coherent, high latency), CPU (ordered, coherent, low latency) and GPU/NPU/ISP (relaxed order,
+      non-coherent)
+    loc: p010
+    quote: >-
+      Split the existing NoC (which is already multiple networks, for address vs data, with a separate network for
+      IO/interrupts) into multiple “address+data” networks.
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 3
+    unit: networks
+    supports: []
+    notes: US20220334997A1; the networks may also differ in topology
+  - id: c-mh-v8-mc-hash-bits
+    text: >-
+      Per a 2021 patent, physical addresses are hashed across the memory controllers so sequential streams spread
+      widely, and each routing step (chip, slice, row, side, then inside the controller) drops the address bits it
+      has used
+    loc: p013
+    quote: >-
+      the physical memory address space is hashed then spread over multiple memory controllers ... the address
+      bit(s) that forced that routing decision are dropped
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20220342588A1
+  - id: c-mh-v8-mc-shutdown
+    text: >-
+      Per the same patent, on-chip logic reports how busy each memory controller is to the OS, which can shut idle
+      controllers down after moving their remaining pages, or leave their DRAM in self-refresh
+    loc: p015
+    quote: "certain memory controllers can be shut down (to save energy, of course) in low usage situations"
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20220342588A1
+  - id: c-mh-v8-power-levels
+    text: >-
+      Per a 2021 patent, power is managed at four time scales: clock dithering against undervolt events at about
+      150 cycles, then frequency from current tracking, then voltage per island, then temperature
+    loc: p017
+    quote: >-
+      On the fastest time scale (which is still of the order of ~150 cycles) we see that the primary goal is to
+      respond to an undervolt (UVD) event.
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 150
+    unit: cycles
+    approx: true
+    supports: []
+    notes: US20220137692A1; the patent lets each level tell the central controller what it plans next
+  - id: c-mh-v8-mc-gen4
+    text: >-
+      Per a 2021 patent, the memory controller's bank selection now weighs each requester's bandwidth QoS as well as
+      its latency QoS, so a requester confined to one bank still gets bandwidth
+    loc: p020
+    quote: "coupling, to some extent, the bank selection stage to the virtual channel selection stage based not only on an ... latency QoS but also on an ... bandwidth QoS"
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20220357879A1 (Memory Bank Hotspotting); Handley calls it a step toward a fourth-generation controller
+  - id: c-mh-v8-m3pro-dram-150
+    text: The M3 Pro has about 150 GB/s of DRAM bandwidth, from three memory channels
+    loc: p020
+    quote: "the M3 Pro has ~150GB/s of DRAM bandwidth, corresponding to three “memory channels”"
+    method: secondhand
+    derivation: reported
+    value: 150
+    unit: GB/s
+    approx: true
+    chip: m3pro
+    supports: []
+    notes: Handley gives no source for the figure; die shots show two DRAM packages on one side and one on the other
+  - id: c-mh-v8-mc-rt-credits
+    text: >-
+      Per a 2021 patent, real-time requests get a separate transaction table in the memory controller with their
+      own DRAM bandwidth credits
+    loc: p022
+    quote: "The separate real time queue comes with separate DRAM bandwidth credits"
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20230060508A1; Handley guesses the GPUs of the M1 Pro and Max could otherwise hog DRAM bandwidth
+  - id: c-mh-v8-mc-ranks
+    text: >-
+      Two 2023 patents are the first Apple memory-controller patents to handle DRAM ranks, grouping requests by
+      rank and staying on one rank when bandwidth matters
+    loc: p025
+    quote: "these are the first Apple Memory Controller patents I have seen that reference rank!"
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20240095194A1 and US20240094917A1; Handley reads them as a route to larger DRAM capacity
+  - id: c-mh-v8-m3pro-three-slc
+    text: >-
+      The M3 Pro has three SLC and memory-controller units, not four, so addresses must be routed by a factor of
+      three
+    loc: p025
+    quote: "the M3 Pro now comes with three, not four, SLC’s and memory controllers"
+    derivation: inferred
+    value: 3
+    unit: units
+    chip: m3pro
+    supports: []
+    notes: A 2023 routing patent (US20240104017A1) shows how to route by multiples of 3 (and 15)
+  - id: c-mh-v8-realtime-lines
+    text: >-
+      Per a 2022 patent, a physical address range can be marked real-time: its lines may be reserved in the L1, L2
+      and SLC and its NoC transactions get maximum priority
+    loc: p028
+    quote: >-
+      mark some lines in the various caches (L1, L2, SLC) as reserved for realtime lines, and we can give NoC
+      transactions to these addresses maximum priority
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US11886340B1; Handley links it to the Vision Pro
+  - id: c-mh-v8-zero-pattern
+    text: >-
+      Per a patent extending one that masks zero bytes on NoC transfers, caches track common data patterns and send
+      a pattern index instead of the data
+    loc: p033
+    quote: "when such a pattern needs to be transferred, the pattern index can be ... rather than the data"
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: >-
+      US11442855B2; Handley reads a figure as mapping some addresses into a pattern space, which would give
+      zero-content pages but not zero-content lines
+  - id: c-mh-v8-slc-states
+    text: >-
+      SLC lines need only Invalid, Modified and Valid states; Exclusive and Shared are not needed because no
+      requester inside the SLC modifies data
+    loc: p033
+    quote: "cache lines only requires states like Invalid, Modified, and Valid. States like Exclusive or Shared are about some ... within the cache"
+    derivation: inferred
+    supports: []
+    notes: Stated while reading US20220365881A1 (2021)
+  - id: c-mh-v8-slc-line-512
+    text: >-
+      Handley guesses SLC lines are about 512 B, run as a sectored cache with one tag and per-sector valid flags,
+      for example four 128 B sectors
+    loc: p033
+    quote: "SLC cache lines are probably long. My guess is that they perhaps 512B long"
+    derivation: inferred
+    value: 512
+    unit: B
+    hedge: "My guess is that they perhaps"
+    supports: []
+    notes: >-
+      There is no SLC line param; c-7cpu-slc-line and c-mh-v2-l2-line-128-bw give 128 B for the SLC, which would
+      match one sector here
+  - id: c-mh-v8-slc-partial-valid
+    text: >-
+      Per a 2021 patent, each SLC half-line has a 3-bit state; a partial state marks invalid granules (say 8 B), and
+      the line is shifted to free room for per-granule valid and modified masks
+    loc: p034
+    quote: >-
+      split the cache line into two halves, upper and lower. Each half gets three bits of tag, so eight states are
+      available.
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 3
+    unit: bits
+    hedge: "I’m somewhat guessing the exact numbers used by Apple"
+    supports: []
+    notes: US20220365881A1; Handley thinks the main use is remote atomics executed in the SLC
+  - id: c-mh-v8-l1d-no-way-mispredict
+    text: >-
+      Tests show no L1D way prediction, or else a predictor that stays perfect even on a random stream of accesses
+    loc: p034
+    quote: >-
+      Experimentally there seems to be no way prediction for the L1D (or whatever they are doing seems to be a
+      perfect predictor even when one tries to generate a random stream of accesses!)
+    derivation: measured
+    hedge: "seems to be"
+    supports: []
+    notes: Restates the vol 2 result (c-mh-v2-way-pred-test, c-mh-v2-way-pred-hashed)
+  - id: c-mh-v8-way-confirm
+    text: >-
+      Per a 2021 patent, the way predictor keeps a copy of the predicted way's tag, and a per-line bit cleared on
+      eviction or a TLB change lets a repeat hit skip the cache tag compare
+    loc: p035
+    quote: >-
+      so we’ve basically replaced transporting and comparing a tag (multiple bits, perhaps 40 or so) with a single
+      bit
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 1
+    unit: bits
+    supports: []
+    notes: US11487667B1; Handley thinks it suits I-caches best
+  - id: c-mh-v8-l1-plru
+    text: Apple's L1 replacement is at least pseudo-LRU, possibly full LRU tracking
+    loc: p038
+    quote: "Apple is definitely doing something at least pseudo-LRU-like, possibly fully LRU tracking."
+    derivation: inferred
+    value: pseudo-LRU
+    hedge: "possibly fully LRU tracking"
+    supports: []
+    notes: >-
+      No method given. Differs from vol 2's reading that an L1D line's way comes from physical page bits
+      (c-mh-v2-l1d-way-hash)
+  - id: c-mh-v8-critical-lines
+    text: >-
+      Per a 2022 patent, L2 lines carry a criticality field that travels with the line to the L1 and the SLC (where
+      the DSID field is reused); page-table leaves and the heads of the I-fetch and load miss queues are critical
+    loc: p038
+    quote: >-
+      lines in the L2 have an additional field that describes how “critical” they are. This field moves around with
+      the line as it travels down to L1 or out to SLC
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US20230060225A1
+  - id: c-mh-v8-l2-lru-patent
+    text: >-
+      Per the same patent, the L2 uses strict LRU and places new lines at chosen points in the order, keeping
+      critical lines longer and letting non-temporal or unused prefetched lines go first
+    loc: p039
+    quote: >-
+      the L2 uses a strict LRU scheme, but then uses the ideas suggested above to place new lines in an “appropriate”
+      place in the LRU ordering
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    hedge: "the patent seems to suggest"
+    supports: []
+    notes: >-
+      US20230060225A1 (2022). Differs from the random replacement Handley inferred for the M1 L2
+      (c-mh-v2-l2-random-repl); the patent postdates the M1
+  - id: c-mh-v8-thrash-detect
+    text: >-
+      Per a 2022 patent, one controller watches L1 and L2 metrics (prefetch usefulness, pointer-chase hit rates,
+      thrashing) and adjusts prefetch aggressiveness, L1 write allocation and the L1 insertion policy
+    loc: p043
+    quote: >-
+      We have the sort of total control we have come to expect from Apple, a single controller that’s tracking both
+      L1 and L2 and collecting various metrics.
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US11886354B1; when thrashing, writes may go to L2 instead of allocating in L1
+  - id: c-mh-v8-variable-latency
+    text: >-
+      Per a 2022 patent, a large cache can have a hit latency that depends on distance, about one cycle to the
+      nearest blocks and four to the farthest, with far blocks winning return collisions to bound the worst case
+    loc: p045
+    quote: >-
+      they suggest that reasonable values for current caches are the nearest blocks are one cycle away, the farthest
+      blocks four cycles away
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 4
+    unit: cycles
+    supports: []
+    notes: US11893241B1; Handley discusses it as a way to keep a large SLC fast
+  - id: c-mh-v8-slc-quota
+    text: >-
+      The SLC has long enforced per-client quotas; per a 2022 patent, quotas are now adjusted each epoch from usage
+      statistics such as traffic and hit rates
+    loc: p047
+    quote: >-
+      track these various statistics over some epoch, and at the end of each epoch adjust quotas to reflect the
+      patterns just seen
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    supports: []
+    notes: US11914521B1; the patent says the scheme also applies to L1 and L2
+  - id: c-mh-v8-age-tracking
+    text: >-
+      Per a 2018 patent, scheduler entries hold short age offsets from a base timestamp, and the older-or-younger
+      bitmaps across pipelines needed for a flush are built only when a flush happens
+    loc: p047
+    quote: >-
+      a short offset relative to a base timestamp is used for the timestamp of an instruction within the scheduling
+      queue
+    method: patent-reading
+    derivation: inferred
+    hedge: "As far as I can tell"
+    supports: []
+    notes: US11422821B1
+  - id: c-mh-v8-writeback-pool
+    text: >-
+      Per a 2021 patent, results beyond the register file's write ports go to a temporary pool and drain later
+      instead of stalling; six integer results plus three load pairs would need 12 writes in one cycle
+    loc: p048
+    quote: >-
+      all six integer execution units generate a result, along with three load pair instructions. In theory this
+      means we need to write back 6 + 2*3=12results in one cycle
+    method: patent-reading
+    derivation: inferred
+    chip: post-m1
+    value: 12
+    unit: writes/cycle
+    supports: []
+    notes: US20230011446A1
 
+mechanism_claims:
+  l1d_way_lookup: [c-mh-v8-l1d-no-way-mispredict]
