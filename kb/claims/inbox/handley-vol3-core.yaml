@@ -490,6 +490,158 @@ claims:
     hedge: "an obvious way to think about this"
     supports: []
     notes: His example assumes a 64 B line; nobody states the actual selection.
+  - id: c-mh-v3-l2-incl-instr-2007
+    text: Per a 2007 patent, the L2 is inclusive for instructions
+    loc: p027
+    quote: "what that says, among other things is that the L2 is ... inclusive for instructions"
+    method: patent-reading
+    derivation: inferred
+    hedge: "may or may still hold"
+    supports: []
+    notes: US7702858B2 (2007). Handley sees no point in it, unless as a way to keep instruction lines in the L2 longer.
+  - id: c-mh-v3-l2-victim-data-2007
+    text: >-
+      Per the same 2007 patent, the L2 is a victim cache for data: lines fill the L1 directly from their source and
+      reach the L2 only when evicted from the L1
+    loc: p027
+    quote: "victim for data. In other words a data line is loaded directly from its source (let’s say DRAM) into L1, without being stored in L2."
+    method: patent-reading
+    derivation: inferred
+    hedge: "may or may still hold"
+    supports: []
+    notes: A line reloaded from the L2 then sits in both caches.
+  - id: c-mh-v3-l2-pending-tag-2013
+    text: >-
+      Per a 2013 patent, on a miss in both L1 and L2 the L2 allocates a tag marked pending without the data, and the
+      L1 copy is marked clean-evict so it is copied to the L2 when the L1 evicts it
+    loc: p028
+    quote: "a tag is allocated for the line, but the data is not copied into the line. The tag is marked with a “pending” bit."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20150149722A1 (2013), delaying cache data array updates.
+  - id: c-mh-v3-selective-victim
+    text: >-
+      Per a companion 2013 patent, each L1 set tracks how actively its lines are used, and clean lines from little-used
+      sets are dropped rather than copied to the L2, as they also are when L1-L2 traffic is heavy
+    loc: p028
+    quote: "under these conditions of low usage, when a clean line is to be overwritten in L1, it is not copied up to L2"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20150149721A1, granted as US9298620B2 (2013). The pending L2 tag then turns invalid, so no useful L2 line is
+      lost to it.
+  - id: c-mh-v3-l2-dup-tags-unclear
+    text: >-
+      Whether the L2 keeps duplicate L1 tags is unclear: the 2013 victimization patent does not use them, while the
+      2013 flush-engine patent states plainly that the L2 has them
+    loc: p029
+    quote: "The main issue that is uncertain is whether L2 has duplicate tags like the SLC ... patent very definitely states that there are L1 duplicate tags in the L2"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-l1-2048-lines
+    text: The L1 data cache holds 2048 lines
+    loc: p029
+    quote: "There are 2048 lines in the L1."
+    derivation: derived
+    value: 2048
+    unit: lines
+    supports: []
+    notes: Equals 128 KiB in 64 B lines (l1d.size, l1d.line).
+  - id: c-mh-v3-flush-dirty-only
+    text: >-
+      The 2013 flush engine writes back only dirty L1 lines before power-off, extracting them by telling the L1 each
+      line has been snooped, a method that cannot move clean lines
+    loc: p029
+    quote: "The 2013 Flush Engine patent suggests that only dirty lines are written back to L2 ... indicating that the line has been snooped, so that it needs to be written to the L2"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-dram-fill-l1-only
+    text: >-
+      Handley's summary of the current flow: data fetched from DRAM is installed in the L1 only, not in the L2 or the
+      SLC
+    loc: p029
+    quote: "when the L1 makes a request for data that has to come all the way from DRAM, that data + will NOT be installed in the SLC + will NOT be installed in the L2"
+    method: patent-reading
+    derivation: inferred
+    value: non-inclusive, non-exclusive
+    hedge: "seems to be something like"
+    supports: [l2.inclusion]
+    notes: He calls the picture somewhat unsatisfactory and likely to have changed many times.
+  - id: c-mh-v3-l1-victim-to-l2
+    text: >-
+      A line cast out of the L1 may go to the L2 as a victim if it looks useful and the L1-L2 path is not backed up,
+      and an L2 castout may likewise go to the SLC as a victim
+    loc: p029
+    quote: "it could be sent to L2 as a victim cache, depending on whether the line appears to be useful and if transporting it to L2 is not too expensive"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-full-line-write-l2
+    text: >-
+      A newly created 64 B line written quickly by a core appears to be written whole to the L2 without allocating in
+      the L1; partial writes update the L1 copy
+    loc: p029
+    quote: "a completely newly created line (64B of rapidly written data) is created on the L1. This appears to be written as a complete line to L2 without allocating in L1."
+    method: patent-reading
+    derivation: inferred
+    hedge: "appears to be"
+    supports: []
+  - id: c-mh-v3-l2-writeback-path
+    text: >-
+      A modified line cast out of the L2 is written back either straight to the memory controller or to the SLC, which
+      writes it to DRAM later
+    loc: p030
+    quote: "when a modified line is cast out of L2, it has to be a writeback of course. Under some conditions could go straight to the Memory Controller"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-prefetch-two-targets
+    text: >-
+      The prefetch unit beside the L1 issues two streams, a high-confidence one into the L1 and a lower-confidence or
+      later one into the L2; L2 prefetches never used carry a prefetch bit and are not saved to the SLC
+    loc: p030
+    quote: "prefetches are generated in the Prefetch Unit (associated with L1) as two different streams, one targeting the L1 (high confidence, needed immediately), one targeting the L2"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Whether L1-targeted lines also allocate in the L2 Handley does not know.
+  - id: c-mh-v3-prefetch-no-slc
+    text: >-
+      The newest prefetcher targets only the L1 and L2, not the SLC, and fetches TLB entries only as a side effect of
+      translating its virtual-address stream
+    loc: p030
+    quote: "The newest prefetcher design seems to have no interest in the SLC; it targets only L1 and L2"
+    method: patent-reading
+    derivation: inferred
+    hedge: "seems to"
+    supports: []
+    notes: Agrees with vol 2 (c-mh-v2-prefetch-not-slc, c-mh-v2-no-tlb2-prefetcher).
+  - id: c-mh-v3-slc-victim-allocator
+    text: >-
+      Per a 2018 patent, each cluster's L2 has an Allocator whose counters (L2 demand misses, dirty share of evictions,
+      prefetch accuracy, streaming prefetches) decide whether L2 victims go to the SLC or bypass it
+    loc: p030
+    quote: "each cluster L2 has dedicated hardware called an Allocator containing multiple counters tracking various things"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US10963392B1 (2018). With little expected reuse, clean victims are dropped and dirty ones go straight to DRAM,
+      bypassing the SLC.
+  - id: c-mh-v3-clean-victim-modes
+    text: >-
+      Handley expects the M1 to track line usefulness at both L1 and L2 and not to write clean victims that have not
+      proved useful out to the next cache, toggling between keeping and dropping clean victims
+    loc: p031
+    quote: "One expects that in the M1 the best aspects of all these designs are used at both the L1 and L2 levels"
+    method: patent-reading
+    derivation: inferred
+    hedge: "One expects"
+    supports: []
 
 new_params:
   l2.inclusion:            {block: l2, name: L2 inclusion of L1 contents}
@@ -531,11 +683,28 @@ new_mechanisms:
     detection_rule: >-
       after an idle stretch the first L2 hits take one or two extra cycles, and after long light load the usable L2
       capacity drops to two thirds or one third until miss pressure restores it
+  l2_victim_fill:
+    name: L2 as a selective victim cache for L1 data
+    status: speculative
+    description: DRAM fills go to the L1 only; L1 castouts enter the L2 as victims, clean ones only when their set has shown reuse and the L1-L2 path is free.
+    params: [l2.inclusion]
+    patents: [US7702858B2, US20150149722A1, US20150149721A1, US10963392B1]
+    sim_switch: null
+    detection_rule: one pass over a footprint larger than the L1 leaves little for a second pass to hit in the L2, while repeated passes build up L2 hits
 
 mechanism_claims:
   barrier_colors: [c-mh-v3-barrier-colors, c-mh-v3-barrier-l1-l2]
   load_poison_bits: [c-mh-v3-load-poison, c-mh-v3-wfe-poison, c-mh-v3-lsq-cam-filter]
-  l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk, c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2, c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep, c-mh-v3-sleep-invalidate-queue, c-mh-v3-l2-covering-tags-hint, c-mh-v3-snoop-levels]
+  l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk,
+                    c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2,
+                    c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep,
+                    c-mh-v3-sleep-invalidate-queue, c-mh-v3-l2-covering-tags-hint, c-mh-v3-l2-dup-tags-unclear,
+                    c-mh-v3-flush-dirty-only, c-mh-v3-snoop-levels]
   l2_way_power: [c-mh-v3-drowsy-l2, c-mh-v3-l2-sleep-by-way, c-mh-v3-l2-sleep-leakage, c-mh-v3-l2-12-ways-2014,
                  c-mh-v3-l2-thirds, c-mh-v3-l2-powerdown-counters, c-mh-v3-l2-powerup]
+  l2_victim_fill: [c-mh-v3-l2-incl-instr-2007, c-mh-v3-l2-victim-data-2007, c-mh-v3-l2-pending-tag-2013,
+                   c-mh-v3-selective-victim, c-mh-v3-dram-fill-l1-only, c-mh-v3-l1-victim-to-l2,
+                   c-mh-v3-l2-writeback-path, c-mh-v3-slc-victim-allocator, c-mh-v3-clean-victim-modes]
   coherence_duplicate_tags: [c-mh-v3-slc-neither-incl-excl, c-mh-v3-coherence-point, c-mh-v3-four-hop, c-mh-v3-three-hop, c-mh-v3-ctt-queues, c-mh-v3-victim-addq, c-mh-v3-parallel-coherence-pipes, c-mh-v3-slc-dup-tags-l2]
+  streaming_store_nt: [c-mh-v3-full-line-write-l2]
+  lsu_virtual_prefetch: [c-mh-v3-prefetch-no-slc, c-mh-v3-prefetch-two-targets]
