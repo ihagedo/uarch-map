@@ -1036,8 +1036,176 @@ claims:
       The binned part's 36 GB is six 6 GB DRAMs. Handley credits a new split of work between network and memory
       controller with making controllers easy to disable, probably at startup.
 
+  - id: c-mh-v8-noc-classes
+    text: >-
+      Three logical, four physical networks reach the memory controllers: CPU, IO and, possibly doubled, GPU; the CPU
+      and IO networks keep order within a virtual channel, while the GPU network may reorder except for the same address
+    loc: p230
+    quote: >-
+      we have three logical, four physical networks to the memory controllers, one for CPU, one for IO, possibly two
+      (ie extra bandwidth) for GPU
+    method: patent-reading
+    derivation: inferred
+    hedge: "possibly"
+    supports: []
+    chip: post-m1
+    notes: >-
+      A clarification from recent patents, with no start date given. Handley guesses the ANE sits on the IO network.
+      Compare c-mh-v8-noc-networks.
+
+  - id: c-mh-v8-credit-throttle
+    text: >-
+      Low-latency IP blocks accept a bandwidth cap for their latency privileges, enforced by credit circuits that
+      throttle as credits run low; the CPU is a special case
+    loc: p230
+    quote: >-
+      The CPU is a special case, but generally all low latency IP blocks include credit tracking circuits that track
+      how much band-width they're using and throttle as the credits become low.
+    derivation: inferred
+    supports: []
+    notes: Background to the eviction-accounting patent; agrees with c-mh-v3-credits-dram.
+
+  - id: c-mh-v8-eviction-accounting
+    text: >-
+      An SLC writeback caused by one client's read allocation is no longer charged to that client's bandwidth credits,
+      as it was before
+    loc: p231
+    quote: >-
+      In the past this writeback traffic was counted as bandwidth against the read-initiating IP-block. ... in this
+      scenario the writeback no longer counts against the read-initiating IP block
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US12353913B1 (2025). Handley suspects a quiet bug fix.
+
+  - id: c-mh-v8-slc-victim
+    text: For the CPU the SLC is a victim cache, so CPU reads do not allocate lines in it
+    loc: p231
+    quote: >-
+      My understanding is that the CPU treats the the SLC as a victim cache, so that reads would never allocate in the
+      SLC.
+    derivation: inferred
+    value: L2 victims
+    hedge: "My understanding is"
+    supports: [slc.allocation]
+    notes: Agrees with c-mh-v3-victim-fill, c-mh-v3-cpu-no-slc-alloc and c-7cpu-slc-exclusive.
+
+  - id: c-mh-v8-nsm-gateway
+    text: >-
+      Transactions to non-DRAM targets (configuration, telemetry) now pass through a central gateway with its own
+      buffers, arbitration and routing, where before arbitration and queues were replicated near each requester for
+      every source and destination pair
+    loc: p231
+    quote: "the required arbitration and buffering/queues of transactions had to be replicated in or near each ... to provide a centralized gateway consisting of buffers"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: >-
+      Motivated by coming chiplets. On small chips the gateway can sit in the memory controller and share its network
+      interface. Earlier design: c-mh-v3-pio-flat.
+
+  - id: c-mh-v8-noc-two-lanes
+    text: >-
+      Apple adds NoC bandwidth with a second parallel lane rather than a wider one; most switches serve one lane and a
+      few can route between the lanes
+    loc: p238
+    quote: >-
+      a second, more flexible, option is to create a second parallel NoC also 64B wide. This is more flexible in the
+      sense that the two now have some independence ... This is the path Apple is taking.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20250097166A1 (2024). The 64 B lane width is Handley's working assumption, not a known figure.
+
+  - id: c-mh-v8-m2-dram-100
+    text: >-
+      The M2 reaches about 100 GB/s to DRAM from the CPU or the GPU; the M2 Pro reaches twice that, but one CPU cluster
+      still tops out at 100 GB/s
+    loc: p239
+    quote: >-
+      M2 maxes out at 100GB/s to DRAM, whether from CPU or GPU cluster. M2 Pro maxes out at twice that, but a single
+      CPU cluster still maxes out at 100GB/s.
+    method: secondhand
+    derivation: reported
+    value: 100
+    unit: GB/s
+    approx: true
+    supports: []
+    chip: m2
+
+  - id: c-mh-v8-m2max-cluster-100
+    text: On the M2 Max the GPU can reach 400 GB/s, but one P-cluster still tops out at 100 GB/s
+    loc: p239
+    quote: >-
+      M2 Max maxes out at 400GB/s, attainable for GPU, but once again a single P cluster maxes out at 100GB/s.
+    method: secondhand
+    derivation: reported
+    value: 100
+    unit: GB/s
+    approx: true
+    supports: []
+    chip: m2max
+
+  - id: c-mh-v8-dual-noc-port
+    text: >-
+      Each P-cluster now connects to the NoC through two ports, each good for something like 100 GB/s, roughly doubling
+      the cluster's bandwidth to DRAM
+    loc: p240
+    quote: >-
+      each (presumably just P) CPU cluster now has two ports (P1 and P2) con-necting to the NoC, not just one.
+      Presumably one port maxes out at something like 100GB/s
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: ports
+    hedge: "presumably"
+    supports: []
+    chip: post-m1
+    notes: US12277074B1 (2023). Handley ties it to six-core P-clusters.
+
+  - id: c-mh-v8-noc-port-split
+    text: >-
+      DRAM traffic picks a port by the memory-controller address hash, so each port serves half the controllers;
+      traffic aimed at an IP block, such as software interrupts and some snoops, is hardwired to the first port
+    loc: p241
+    quote: >-
+      Essentially you choose the port based on that hash, so each port serves half the present memory controllers.
+      ... This is hardwire routed to P1.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+
+  - id: c-mh-v8-m1-one-noc-port
+    text: Before the dual-port patent every IP block, the CPU cluster included, connected to the NoC through one port
+    loc: p241
+    quote: >-
+      whereas before every IP block (treating a "cluster" of 8..10 GPUs or so as a single IP block) had a single port
+    derivation: inferred
+    value: 1
+    unit: ports
+    supports: [pcluster.noc_ports]
+    notes: Agrees with c-mh-v3-cluster-one-requester.
+
+  - id: c-mh-v8-noc-rings
+    text: >-
+      The NoC is built from rings: a simple version is one bidirectional ring, and Apple today apparently uses two
+      unidirectional rings running in opposite directions, doubling bandwidth without adding latency
+    loc: p245
+    quote: "This is apparently where Apple is today. Note that the first ring was bidirectional (which doesn't help with throughput, but can help with latency). The two rings are unidirectional in opposing directions"
+    method: patent-reading
+    derivation: inferred
+    hedge: "apparently"
+    supports: []
+    chip: post-m1
+    notes: From the dual-port patent's drawings. Handley suggests the single bidirectional ring may be what A-series chips use.
+
 new_params:
   l1i.assoc: {block: l1i, name: L1I associativity, unit: ways}
+  pcluster.noc_ports: {block: pcluster, name: NoC ports per cluster, unit: ports}
   memctrl.peak_bw: {block: memctrl, name: Peak DRAM bandwidth (chip), unit: GB/s}
 
 new_mechanisms:
@@ -1134,4 +1302,7 @@ mechanism_claims:
   coherence_directory: [c-mh-v8-directory, c-mh-v8-directory-overflow, c-mh-v8-directory-way-bits]
   coherence_duplicate_tags: [c-mh-v8-slc-dup-tags]
   ipv_replacement: [c-mh-v8-ipv-replacement]
+  slc_victim_fill: [c-mh-v8-slc-victim]
+  fabric_qos_credits: [c-mh-v8-credit-throttle, c-mh-v8-eviction-accounting]
+  pio_network: [c-mh-v8-nsm-gateway]
   power_estimator_throttle: [c-mh-v8-hw-dvfs]
