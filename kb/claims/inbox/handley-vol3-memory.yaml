@@ -830,6 +830,169 @@ claims:
     chip: a7
     notes: From US20140089602A1. Handley expects newer designs to have explicit mask bits
 
+  - id: c-mh-v3-coherency-bypass
+    text: >-
+      A read starts down the memory controller pipeline before coherence is resolved, and the SLC tag check runs in
+      parallel with entry to the DRAM queues; the read is killed if either check hits
+    loc: p128
+    quote: "once in the Memory Controller we then begin the SLC tag checking in parallel with moving the request on to the Memory Controller DRAM queues."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US10802968B2, the third step after the 2012 and 2013 speculative-read patents
+
+  - id: c-mh-v3-dt-split
+    text: >-
+      The duplicate tags are split into a single-ported tag RAM, mostly read, and a dual-ported state RAM for the
+      frequently changing MOESI bits
+    loc: p128
+    quote: "And so what was a single SRAM structure gets split into two parts, each optimized for its particular task."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US20150006803A1
+
+  - id: c-mh-v3-2013-ccu
+    text: >-
+      In 2013 the Coherence Point is split by address into two units, CCU A and B, and a modified line passing from one CPU
+      to another goes through it
+    loc: p129
+    quote: "requests come into the Coherence point and are split (by address) between the two units CCU A and B which look at the Duplicate Tags."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a7
+    notes: From US20140192801A1; Handley says later designs improve the copyback path
+
+  - id: c-mh-v3-cmd-data-pack
+    text: >-
+      Commands and data travel on separate wires; a line takes two data beats, and the return arbiter pairs a short
+      command with the second beat of a long one
+    loc: p130
+    quote: "transfer of commands goes down one set of wires, transfer of data down a second set of wires"
+    method: patent-reading
+    derivation: inferred
+    hedge: "Perhaps, again at this stage, the standard line length is 64B, and the data fabric width is 32B?"
+    supports: []
+    chip: a7
+
+  - id: c-mh-v3-line-change
+    text: Around 2015 the L2 line, and probably the line across the rest of the SoC, changed from 64 B to 128 B
+    loc: p130
+    quote: "around 2015 I think, the line length for L2 (and I think the rest of the SoC outside the core) changes from 64B to 128B."
+    derivation: inferred
+    value: 128
+    unit: B
+    hedge: "I think"
+    supports: [l2.line, slc.line]
+    notes: He cannot tell whether the data fabric widened to 64 B (two beats per line) or stayed at 32 B (four beats)
+
+  - id: c-mh-v3-rowhammer
+    text: The memory controller detects and handles Rowhammer-style repeated row accesses
+    loc: p131
+    quote: "a modification of the Memory Controller to detect and handle Rowhammer type security attacks"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9478263B2
+
+  - id: c-mh-v3-phy-calibration
+    text: >-
+      The memory controller PHY calibrates its read delay and reference voltage at run time and recalibrates periodically,
+      so DRAM can run at slightly lower voltage or refresh slightly less often
+    loc: p131
+    quote: "Optimizing this signal detection allows the DRAM either to run at slightly lower voltage, or to go slightly longer before being refreshed."
+    method: patent-reading
+    derivation: inferred
+    hedge: "I think"
+    supports: []
+    notes: From US9477259B2 and US10019387B2; earlier designs looked offsets up in tables
+
+  - id: c-mh-v3-slc-way-power
+    text: >-
+      The SLC tracks how much of its capacity is really in use and powers down ways to match; a later version adds
+      hysteresis and staggered power-up
+    loc: p131
+    quote: "track how large a fraction of the SLC is “really” being used - limit the number of active ways to match that fraction"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9218040B2 and US8984227B2. The SLC version predates the similar L2 scheme
+
+  - id: c-mh-v3-slc-drowsy
+    text: >-
+      SLC SRAMs sit on separate voltage planes at retention voltage when idle; requests to a sleeping region are gathered
+      and served together once enough arrive or enough time passes
+    loc: p131
+    quote: "Individual SRAMs are on independent voltage planes and can be powered down to a retention voltage when not being accessed."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US8977817B2. Delaying requests is acceptable at this level of cache, not in an L1 or L2
+
+  - id: c-mh-v3-slc-drowsy-qos
+    text: >-
+      In the later drowsy scheme high-QoS requests are never delayed; each sector wakes on a timer to serve low-QoS
+      requests and returns to retention after an idle interval
+    loc: p131
+    quote: "We start with the obvious decision that high QoS requests are not delayed."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9400544B2
+
+  - id: c-mh-v3-split-paths
+    text: >-
+      Write data is stored once in a buffer at fabric entry and moved once to the SLC or DRAM; only the small control
+      packet, holding a pointer to the data, is routed and arbitrated
+    loc: p134
+    quote: "the data payload (which can be large, eg 64B or 128B) is written once to a buffer, then moved once from that buffer to either the SLC or DRAM."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9860841B2, which Handley places at the A9 or A10. IO and CPU data use separate buffers
+
+  - id: c-mh-v3-return-no-coherence
+    text: Most return traffic from the memory controller does not pass through Coherence
+    loc: p135
+    quote: "Some simplifications are possible because most of the return packets from the Memory Controller do not need to pass through Coherence."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-pio-network
+    text: >-
+      A second network, the PIO network, carries device-memory and most uncacheable requests; it is not snooped and does
+      not pass through the SLC or memory controller
+    loc: p135
+    quote: "there is a whole second network on the SoC, called the PIO network. ... The PIO network is not snooped"
+    method: patent-reading
+    derivation: inferred
+    hedge: "I think the best way to think of PIO is"
+    supports: []
+
+  - id: c-mh-v3-pio-flat
+    text: >-
+      The PIO network is flat: every block connects through arbitrated queues to one routing hub, with no coherence, SLC or
+      memory controller on the way
+    loc: p136
+    quote: "Essentially we have a flat network now, every ... connects (via queues, which, as always, can be arbitrated via QoS, age, etc) to a single routing blob"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-pio-control
+    text: >-
+      The PIO network carries control messages between CPUs such as interprocessor interrupts, and looks built for short
+      low-latency messages rather than bulk data
+    loc: p136
+    quote: "I think that in this version of the design this PIO network is used to pass “control” messages between CPUs (things like interprocessor interrupts)."
+    method: patent-reading
+    derivation: inferred
+    hedge: "I think"
+    supports: []
+    notes: It does not seem to connect to the fabric's data buffers; the patent is unclear on uncacheable traffic
+
 new_params:
   slc.line: {block: slc, name: SLC line size, unit: B}
   slc.allocation: {block: slc, name: SLC allocation policy, mechanism: slc_victim_fill}
@@ -864,6 +1027,13 @@ new_mechanisms:
     params: [memctrl.dram_latency, slc.latency]
     sim_switch: null
     detection_rule: DRAM-miss latency exceeds SLC-hit latency by no more than the memory controller's own DRAM access time
+  slc_power_gating:
+    name: SLC way power-down and drowsy SRAM
+    status: inferred
+    description: The SLC powers down ways to match the share in use and holds idle SRAM at retention voltage, batching low-QoS requests until it wakes.
+    params: [slc.size]
+    sim_switch: null
+    detection_rule: SLC-range latency or capacity right after an idle period differs from that after a warm-up sweep of the same footprint
   fabric_qos_credits:
     name: Credit-gated fabric with QoS bands
     status: inferred
@@ -881,11 +1051,13 @@ new_mechanisms:
 
 mechanism_claims:
   slc_victim_fill: [c-mh-v3-victim-fill, c-mh-v3-victim-request, c-mh-v3-cpu-no-slc-alloc, c-mh-v3-slc-device-alloc]
-  coherence_duplicate_tags: [c-mh-v3-request-path, c-mh-v3-duplicate-tags, c-mh-v3-pseudo-l3, c-mh-v3-strands, c-mh-v3-remote-cache-slc]
+  coherence_duplicate_tags: [c-mh-v3-request-path, c-mh-v3-duplicate-tags, c-mh-v3-pseudo-l3, c-mh-v3-strands,
+    c-mh-v3-dt-split, c-mh-v3-2013-ccu, c-mh-v3-remote-cache-slc]
   slc_sticky_quota: [c-mh-v3-slc-sticky, c-mh-v3-slc-replacement, c-mh-v3-slc-quotas, c-mh-v3-slc-hints,
     c-mh-v3-slc-frame-relabel, c-mh-v3-quota-drop, c-mh-v3-slc-driver, c-mh-v3-slc-driver-goal, c-mh-v3-groupid-16]
-  slc_speculative_read: [c-mh-v3-spec-read-2012]
+  slc_speculative_read: [c-mh-v3-coherency-bypass, c-mh-v3-spec-read-2012]
+  slc_power_gating: [c-mh-v3-slc-way-power, c-mh-v3-slc-drowsy, c-mh-v3-slc-drowsy-qos]
   fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration,
     c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits, c-mh-v3-credit-return, c-mh-v3-buffer-at-source,
     c-mh-v3-l2-cpu-qos, c-mh-v3-bw-controller]
-  pio_network: [c-mh-v3-device-bypass]
+  pio_network: [c-mh-v3-pio-network, c-mh-v3-pio-flat, c-mh-v3-pio-control, c-mh-v3-device-bypass]
