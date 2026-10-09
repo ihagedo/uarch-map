@@ -351,10 +351,150 @@ claims:
     method: patent-reading
     derivation: inferred
     supports: []
+  - id: c-mh-v3-a10-shared-l2
+    text: >-
+      A 2017 patent describes the A10, whose efficiency cores used the performance cores' L2 as their own, so that L2
+      had to stay powered whenever the efficiency cores ran
+    loc: p022
+    quote: "it describes the A10 (and only the A10). The idea is we have performance cores with an associated L2, and efficiency cores that use the L2 of the performance cores as their L2."
+    method: patent-reading
+    derivation: inferred
+    chip: a10
+    supports: []
+    notes: US10147464B1 (2017). Running the shared L2 at its own frequency means buffering between clock domains.
+  - id: c-mh-v3-cluster-shared-frequency
+    text: >-
+      Cores that share an L2 must either all run at one frequency or pay a much higher L2 access cost for buffering
+      across clock domains
+    loc: p022
+    quote: "When cores share an L2 (and other hardware), either they all run at the same frequency, or the cost to access the L2 is substantially higher because of buffering across clock domains."
+    derivation: inferred
+    supports: []
+    notes: Handley asks whether four is the right number of cores per shared L2 and frequency domain.
+  - id: c-mh-v3-slc-neither-incl-excl
+    text: >-
+      Apple's cache levels are neither inclusive nor exclusive; the SLC keeps tags for the contents of every L2 but not
+      the data, so reading such a line means asking that L2
+    loc: p022
+    quote: "What Apple do, however, is neither exclusive nor inclusive. ... This definitely happens for the SLC, which has tags that give the contents of all the L2s, but not the lines"
+    method: patent-reading
+    derivation: inferred
+    value: non-inclusive, non-exclusive
+    supports: [slc.inclusion]
+    notes: For lookup the SLC contains the L2s, for data it does not. 7-cpu suggests an exclusive SLC (c-7cpu-slc-exclusive).
+  - id: c-mh-v3-l2-covering-tags-hint
+    text: >-
+      There are hints that the L2 likewise keeps covering tags for the L1s without holding all their data, but no
+      patent Handley found says so unequivocally
+    loc: p022
+    quote: "There are hints that the L2 also does this relative to the L1 (so it has covering tags, but may not include the L1 line data)"
+    method: patent-reading
+    derivation: inferred
+    value: non-inclusive, non-exclusive
+    hedge: "There are hints"
+    supports: [l2.inclusion]
+    notes: He adds that this may have changed over the years.
+  - id: c-mh-v3-snoop-levels
+    text: >-
+      Core-to-core snooping mostly stays inside a cluster, handled by that cluster's L2 for its four cores, while
+      snoops between clusters or between different IP blocks are filtered at the SLC level
+    loc: p023
+    quote: "core to core snooping will mostly occur within a core cluster, and can be handled well by having the L2 for that cluster snoop for all 4 processors of the cluster"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-coherence-point
+    text: >-
+      The snooping attributed to the SLC is done by the Coherence Point, once closely tied to the SLC and increasingly
+      a separate unit
+    loc: p023
+    quote: "The snooping is performed by what’s called the Coherence Point, which in the past was closely associated with the SLC, but has become more and more a separate entity."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-four-hop
+    text: >-
+      Per a 2013 patent, a request for a line held in another CPU's cache goes to the SLC, whose duplicate tags locate
+      it; the line moves from that cache to the SLC and then to the requester, a four-hop protocol
+    loc: p023
+    quote: "If you count the interactions, you can call this a “four hop” protocol."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20150067246A1 (2013), black box duplicate tags. Passing through the SLC lets it keep a copy, which matters
+      less as L2s have grown.
+  - id: c-mh-v3-three-hop
+    text: >-
+      A 2020 patent adds a three-hop protocol in which the SLC tells the owning CPU to send the line straight to the
+      requester, bypassing the SLC
+    loc: p023
+    quote: "a 2020 patent for a new Apple three hop cache protocol ... then E sends the data directly to P bypassing the SLC"
+    method: patent-reading
+    derivation: inferred
+    hedge: "This may or may not be in the M1"
+    supports: []
+    notes: Handley says it may be only for the M2 and later. See c-mh-v3-scalable-coherence.
+  - id: c-mh-v3-ctt-queues
+    text: >-
+      In the 2013 duplicate-tag design every request enters a Current Transaction Table and is checked against the
+      duplicate tags; a miss goes on to the memory interface, a hit is routed to the cache holding the line
+    loc: p024
+    quote: "All memory requests first hit the CTT (Current Transaction Table). The simplest sort of request will be placed in the IRQ (Incoming Request Queue), and have the request address tested against the DTs (Duplicate Tags)."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      Data returned from another cache passes through a copyback queue to the requester; a state machine keeps the
+      steps in order.
+  - id: c-mh-v3-victim-addq
+    text: >-
+      A modified victim's address waits in a victim address queue, removed from the duplicate tags, until its data is
+      safe in the SLC or DRAM, and requests to that address are held meanwhile
+    loc: p024
+    quote: "From now until we’re done, if another request comes in matching an address in Victim AddQ, the new request is paused until the address in VictimAddQ is no longer present"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v3-parallel-coherence-pipes
+    text: >-
+      Per a 2018 patent, an incoming snoop is checked against a cache's own tags and its duplicate tags at the same
+      time
+    loc: p025
+    quote: 'The patent says "look at both simultaneously", with a bunch of complications that then result'
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: >-
+      US20200081838A1 (2018). Complications: both tag sets hit, the line is locked by a load exclusive, or the request
+      has passed the global ordering point.
+  - id: c-mh-v3-slc-four-slices
+    text: >-
+      The 2018 patent's figure, probably close to the current SLC, shows one pool of request queues feeding four
+      arbiters that route requests to four slices
+    loc: p026
+    quote: 'Four arbitrators (in principle there could be more, but four seems reasonable for an M1 class SoC) route these requests to one of four "slices".'
+    method: patent-reading
+    derivation: inferred
+    value: 4
+    unit: slices
+    hedge: "four seems reasonable for an M1 class SoC"
+    supports: []
+  - id: c-mh-v3-slc-slice-hash
+    text: >-
+      Handley's guess is that physical address bits 6 and 7 pick the slice in the simplest case, or a hash of more
+      bits, which on Pro, Max and Ultra also spreads lines across SLCs
+    loc: p026
+    quote: "use bits 6 and 7 to choose one of the 4 arbitrators and slices. But of course one can use a more complicated hash that uses more address bits."
+    derivation: inferred
+    hedge: "an obvious way to think about this"
+    supports: []
+    notes: His example assumes a 64 B line; nobody states the actual selection.
 
 new_params:
   l2.inclusion:            {block: l2, name: L2 inclusion of L1 contents}
   l2.power_groups:         {block: l2, name: Separately powered L2 way groups, unit: groups}
+  slc.inclusion:           {block: slc, name: SLC inclusion of L2 contents}
 
 new_mechanisms:
   barrier_colors:
@@ -395,7 +535,7 @@ new_mechanisms:
 mechanism_claims:
   barrier_colors: [c-mh-v3-barrier-colors, c-mh-v3-barrier-l1-l2]
   load_poison_bits: [c-mh-v3-load-poison, c-mh-v3-wfe-poison, c-mh-v3-lsq-cam-filter]
-  l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk, c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2, c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep, c-mh-v3-sleep-invalidate-queue]
+  l2_snoop_filter: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter, c-mh-v3-l1-line-counters, c-mh-v3-l1-flush-walk, c-mh-v3-snoop-while-l1-sleeps, c-mh-v3-l1-flush-engine, c-mh-v3-flush-engine-in-l2, c-mh-v3-l2-flush-to-slc, c-mh-v3-dup-tag-power, c-mh-v3-flush-without-sleep, c-mh-v3-sleep-invalidate-queue, c-mh-v3-l2-covering-tags-hint, c-mh-v3-snoop-levels]
   l2_way_power: [c-mh-v3-drowsy-l2, c-mh-v3-l2-sleep-by-way, c-mh-v3-l2-sleep-leakage, c-mh-v3-l2-12-ways-2014,
                  c-mh-v3-l2-thirds, c-mh-v3-l2-powerdown-counters, c-mh-v3-l2-powerup]
-  coherence_duplicate_tags: [c-mh-v3-slc-dup-tags-l2]
+  coherence_duplicate_tags: [c-mh-v3-slc-neither-incl-excl, c-mh-v3-coherence-point, c-mh-v3-four-hop, c-mh-v3-three-hop, c-mh-v3-ctt-queues, c-mh-v3-victim-addq, c-mh-v3-parallel-coherence-pipes, c-mh-v3-slc-dup-tags-l2]
