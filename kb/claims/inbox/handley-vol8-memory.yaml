@@ -232,8 +232,290 @@ claims:
     chip: m4
     notes: Same count as on the M1 (eu_fp.count).
 
+  - id: c-mh-v8-bias-m3-m4
+    text: >-
+      Apple began exploiting strongly biased branches around 2020; the first patent's tweak is maybe in the M3, and
+      the later front-end redesign built on it maybe in the M4
+    loc: p117
+    quote: >-
+      from an initial idea (a nice tweak which maybe is in the M3) to the substantial redesign which is maybe in the
+      M4
+    method: patent-reading
+    derivation: inferred
+    hedge: "maybe"
+    supports: []
+    chip: m3
+    notes: The M4-era pieces are c-mh-v8-biased-indirect, c-mh-v8-biased-csel and c-mh-v8-trace-cache.
+
+  - id: c-mh-v8-bias-bits
+    text: >-
+      A front-end bias predictor marks strongly biased branches in the predecoded I-cache line with a bias bit and a
+      direction bit; the front end treats them as an unconditional branch or a NOP until the branch executes
+    loc: p118
+    quote: >-
+      we also mark these strongly pre-dicted branches (one bit) and their branch direction (one bit). ... A strongly
+      biased taken branch is almost equivalent to a goto
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m3
+    notes: US20230244494A1 (2022), maybe in the M3 (c-mh-v8-bias-m3-m4).
+
+  - id: c-mh-v8-bias-table
+    text: The bias predictor is a table indexed by a hash of the PC, with a two-bit state per entry
+    loc: p119
+    quote: >-
+      we have a table, indexed by a hash of the PC, and a state machine that updates the (two bit) contents of each
+      table entry
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: bits
+    supports: []
+    chip: m3
+    notes: >-
+      A bias misprediction resets the entry to not-biased and clears the I-cache bits. The patent is vague; Handley
+      would add the ASID to the hash and a micro-tag.
+
+  - id: c-mh-v8-bias-skip-tage
+    text: >-
+      Strongly biased branches skip the TAGE check after fetch, saving power; Handley infers they are also kept out of
+      TAGE training and the global history, though the patent does not say so
+    loc: p119
+    quote: >-
+      don't bother to run TAGE after fetch to check the TAGE prediction (power saving). ... Apple don't explicitly
+      mention doing this, but everything else about the design suggests this is an additional feature.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m3
+    notes: Same patent as c-mh-v8-bias-bits.
+
+  - id: c-mh-v8-m1-two-branch-units
+    text: The M1 and M2 have two branch pipelines, each with the full machinery for recovering from a misprediction
+    loc: p121
+    quote: >-
+      (at least for M1 and M2) we have two branch handling pipelines, and both of them need ... a large amount of
+      circuitry to deal with a misprediction
+    derivation: inferred
+    value: 2
+    unit: units
+    supports: []
+    notes: Agrees with eu_int.roles (branches on units 1 and 2) and c-at-branches.
+
+  - id: c-mh-v8-light-branch-unit
+    text: >-
+      Confidently predicted branches go to a lightweight branch unit that only checks the prediction; a wrong one is
+      replayed on a single heavyweight unit that handles recovery
+    loc: p121
+    quote: >-
+      Instead we provide one or two lightweight branch execution units and a heavyweight unit. We preferen-tially send
+      branches to the lightweight unit, only sending them to the heavyweight unit if we're not confident
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m3
+    notes: >-
+      US20230244495A1 (2022), maybe in the M3. Handley guesses the branch stays in its scheduling queue for a cycle,
+      as in speculative scheduling, so it can be reissued on the paired heavyweight pipeline.
+
+  - id: c-mh-v8-m3-branch-pipes
+    text: The M3 has two branch pipelines, one heavyweight and one lightweight
+    loc: p121
+    quote: >-
+      The general consensus seems to be that the M3 and M4 both have only two branch pipelines (so one heavyweight and
+      one lightweight)
+    method: secondhand
+    derivation: reported
+    value: 2
+    unit: units
+    hedge: "seems to be"
+    supports: []
+    chip: m3
+
+  - id: c-mh-v8-m4-branch-pipes
+    text: The M4 has two branch pipelines, one heavyweight and one lightweight
+    loc: p121
+    quote: >-
+      The general consensus seems to be that the M3 and M4 both have only two branch pipelines (so one heavyweight and
+      one lightweight)
+    method: secondhand
+    derivation: reported
+    value: 2
+    unit: units
+    hedge: "seems to be"
+    supports: []
+    chip: m4
+
+  - id: c-mh-v8-biased-indirect
+    text: >-
+      Indirect branches found strongly biased after execution are recorded in a table at the I-cache entrance and
+      rewritten as direct branches, hidden from the ITTAGE predictor and checked on the lightweight branch unit
+    loc: p122
+    quote: >-
+      We track, after execution, whether each indirect branch is strongly biased. If so we place a record in a table at
+      the entrance to the I-cache, and rewrite indirect control transfer instructions
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: US20250036416A1 (2023). Handley places this round of biased-branch patents maybe in the M4.
+
+  - id: c-mh-v8-biased-csel
+    text: >-
+      CSELs that almost always pick the same input are recorded in a table at the L1I entrance and rewritten as plain
+      moves that execute in zero cycles at rename, checked later when the CSEL executes
+    loc: p123
+    quote: >-
+      rewrite the instructions as the non-conditional variant. This allows the non-conditional variant (basically a
+      mov to execute in zero cycles without having to wait for the condition flag to be evaluated).
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: Added at the end of the first biased-branch patent; Handley places this use maybe in the M4.
+
+  - id: c-mh-v8-trace-cache
+    text: >-
+      A trainer copies traces, straight-line code joined by one or two stable taken branches, from the instruction
+      queue into a trace cache; a hit in the trace next-fetch predictor overrides the normal one and fetches the trace
+    loc: p129
+    quote: >-
+      sees a sequence that looks like a trace (so non-branches separated by one or two stable taken branches) it flags
+      this sequence and the trace is copied from the instruction queue to the Trace Cache
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: US20250021332A1 (2023); traces of about 16 instructions. Handley places the trace cache maybe in the M4.
+
+  - id: c-mh-v8-trace-well-biased
+    text: >-
+      Traces may also hold well-biased branches (about 95% one way), which stay in the predictors; ones that
+      mispredict too often go into a Bloom filter and are kept out of traces
+    loc: p132
+    quote: >-
+      The final piece of all this support for well-biased (~95%) branches is some machinery to count how often they
+      mispredict and, if they mispredict too often, place them in a Bloom filter
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: A pre-hashed history field in the trace predictor adds several branch outcomes to the history in one cycle.
+
+  - id: c-mh-v8-fetch-pred-sizes
+    text: >-
+      With the trace cache the 1024-entry L0 and 2048-entry L1 fetch predictors presumably remain, joined by an L0
+      trace fetch predictor of perhaps 256 entries
+    loc: p132
+    quote: >-
+      Presumably we still have the old 1024 entry L0 Fetch Predictor and the 2048 entry L1 Fetch Predictor, but we also
+      have a (?256 entry?) L0 Trace Fetch Predictor
+    derivation: inferred
+    value: 256
+    unit: entries
+    approx: true
+    hedge: "Presumably ... (?256 entry?)"
+    supports: []
+    chip: m4
+    notes: The 1024-entry L0 matches btb.l0_entries on the M1; the 2048-entry L1 matches c-mh-v4-m2-l2-fp (M2).
+
+  - id: c-mh-v8-trace-groups
+    text: >-
+      Handling two branches a cycle gives fetch or trace groups of about 12 instructions, about 18 if a third of the
+      branches are ultra-biased
+    loc: p132
+    quote: >-
+      allowing for Fetch/Trace Groups of about ~12 in length. But it's actually slightly better than that. If we allow
+      say a third of these to be ultra-biased branches then we get to about ~18 in length
+    derivation: inferred
+    value: 12
+    unit: instructions
+    approx: true
+    supports: []
+    chip: m4
+
+  - id: c-mh-v8-pred-stages
+    text: >-
+      Behind the single-cycle next-fetch predictor sit a simple history-based predictor that takes two cycles and
+      costs one cycle when it corrects, then TAGE and ITTAGE predictors that take 3 to 5 cycles
+    loc: p133
+    quote: >-
+      a slower large and simple history-based branch predictor that takes two cycles and can (if necessary) correct a
+      mistake made by the Next Fetch Predictor, wasting only a cycle ... taking anywhere from 3 to 5 cycles
+    derivation: inferred
+    value: 4
+    range: [3, 5]
+    unit: cycles
+    supports: []
+    notes: Restates the staged scheme of c-mh-v4-nfp-trained-by-predictors; agrees with c-mh-v4-tage-5-cycles.
+
+  - id: c-mh-v8-nfp-hysteresis
+    text: >-
+      Apple's next-fetch predictors have so far repeated what happened the last time a PC was seen, softened by
+      hysteresis that changes an entry only after two wrong uses
+    loc: p133
+    quote: >-
+      The existing Apple designs have all been basically to repeat what was done last time this program counter
+      address was encountered.
+    derivation: inferred
+    supports: []
+    notes: Agrees with c-mh-v4-nfp-hysteresis.
+
+  - id: c-mh-v8-nfp-history
+    text: >-
+      The next-fetch predictor gains, beside its history-free table, a table indexed by a hash of recent branch PCs
+      (source path) and tagged by recent branch targets (target path), split into taken and not-taken tables
+    loc: p134
+    quote: "The index into the table is based on the source path, but the tag in the table is based on the target path."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US12353882B1 (2023); no chip named.
+
+  - id: c-mh-v8-return-bubble
+    text: >-
+      A fetch group ending in a return used to cost one cycle while the return address was read from the RAS; later
+      designs remove that cycle
+    loc: p124
+    quote: >-
+      if a sequential run ended with return, this used to mean a one cycle delay looking up the return address in the
+      Return Address Stack
+    derivation: inferred
+    value: 1
+    unit: cycles
+    supports: [ras.return_bubble]
+    notes: Restates c-mh-v4-return-bubble.
+
+new_mechanisms:
+  biased_branch_filter:
+    name: Biased-branch filtering in the front end
+    status: speculative
+    description: >-
+      Branches, indirect branches and CSELs that always go one way are marked at the I-cache, handled as jumps, NOPs
+      or moves, kept out of the main predictors and checked on a lightweight branch unit.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      adding many always-taken branches does not raise the misprediction rate of history-dependent branches, while the
+      first flip of such a branch costs a full mispredict
+  trace_cache:
+    name: Trace cache built on stable taken branches
+    status: speculative
+    description: >-
+      Straight-line runs joined by stable taken branches are copied from the instruction queue into a trace cache, so
+      one fetch can cross several taken branches.
+    params: []
+    sim_switch: null
+    detection_rule: a loop body joined by always-taken branches sustains more than one taken branch per cycle
+
 mechanism_claims:
   lsq_at_issue: [c-mh-v8-virtual-alloc]
   lsu_virtual_prefetch: [c-mh-v8-prefetch-lsu]
   content_directed_prefetch: [c-mh-v8-prefetch-kinds, c-mh-v8-cdp-lsu]
   decoupled_fetch: [c-mh-v8-three-engines]
+  l1i_coupled_btb: [c-mh-v8-nfp-hysteresis, c-mh-v8-pred-stages]
+  biased_branch_filter: [c-mh-v8-bias-m3-m4, c-mh-v8-bias-bits, c-mh-v8-bias-table, c-mh-v8-bias-skip-tage,
+    c-mh-v8-light-branch-unit, c-mh-v8-biased-indirect, c-mh-v8-biased-csel]
+  trace_cache: [c-mh-v8-trace-cache, c-mh-v8-trace-well-biased, c-mh-v8-fetch-pred-sizes, c-mh-v8-trace-groups]
