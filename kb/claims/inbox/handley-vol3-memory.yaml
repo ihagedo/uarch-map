@@ -301,6 +301,135 @@ claims:
     derivation: inferred
     supports: []
 
+  - id: c-mh-v3-l2-cpu-qos
+    text: >-
+      The L2 sets the QoS of each core's memory requests from its count of that core's outstanding requests: few
+      outstanding means latency mode and high QoS, many means bandwidth mode and low QoS
+    loc: p088
+    quote: "The L2 keeps track of the number of outstanding memory requests (with characterization of prefetch vs demand, read vs write, and code vs data) for each core."
+    method: patent-reading
+    derivation: inferred
+    hedge: "perhaps A6? level design, but probably continuing forward"
+    supports: []
+    notes: >-
+      From US8751746B2. Dirty castouts and most prefetches go out at low priority, instruction demand misses at the
+      highest. No count of outstanding misses is given
+
+  - id: c-mh-v3-tournament
+    text: >-
+      Fabric queues find their highest-priority entry each cycle by a tournament of pairwise comparisons over log2(N)
+      rounds, the same scheme as the core's scheduling queues
+    loc: p090
+    quote: "a tournament scheme whereby each entry is compared with its neighbor, the winner of each pair being compared against the next pair"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: From US9009369B2
+
+  - id: c-mh-v3-no-cwf-split
+    text: A 2018 patent suggests the memory system does not split multi-beat reads to send the critical word first
+    loc: p092
+    quote: "suggest that there’s no attempt being made (yet?) to split multi-beat read transactions to allow for critical word first."
+    method: patent-reading
+    derivation: inferred
+    hedge: "(yet?)"
+    supports: []
+    notes: From US10649922B2. Apple patented critical-word-first forwarding and splitting in 2010; Handley cannot tell whether either is used now
+
+  - id: c-mh-v3-l1-l2-32b
+    text: The L1 to L2 path appears to be 32 B wide, moving 64 B L1 lines
+    loc: p092
+    quote: "the L1 to L2 width appears to be 32B (transferring 64B lines)"
+    derivation: inferred
+    value: 32
+    unit: B/cycle
+    hedge: "appears to be"
+    supports: [l2.l1_path_width]
+    notes: Agrees with c-mh-v2-l2-l1-read-32b
+
+  - id: c-mh-v3-l2-line-128
+    text: The L2 line, and the line used across the rest of the SoC, appears to be 128 B
+    loc: p092
+    quote: "the L2 and System line width appears to be 128B"
+    derivation: inferred
+    value: 128
+    unit: B
+    hedge: "appears to be"
+    supports: [l2.line, slc.line]
+
+  - id: c-mh-v3-m1-dram-banks
+    text: >-
+      The M1 has at least two DRAM banks in the sense of separately powerable DRAM devices; the Pro, Max and Ultra have
+      more
+    loc: p092
+    quote: "on either the M1 (which has at least two such “banks”) to the Pro, Max, and Ultra, all providing ever more DRAM banks"
+    derivation: inferred
+    value: 2
+    unit: banks
+    hedge: "at least"
+    supports: []
+    notes: >-
+      He suggests Apple could power some down in a low-power mode, as a 2010 Intel Mac patent (US8799553B2) remaps
+      memory on the fly; he does not know if it is used
+
+  - id: c-mh-v3-dram-hash
+    text: >-
+      Apple may combine address bits (a permutation hash) rather than extract fixed bits to pick the DRAM channel, rank
+      and bank; a 2010 patent makes the interleave selection programmable
+    loc: p093
+    quote: "Apple might employ more sophisticated addressing hashes than the basic “extract n bits from location m”"
+    method: patent-reading
+    derivation: inferred
+    hedge: "might"
+    supports: []
+    notes: From US20120137090A1, which lets the OS vary the permutation
+
+  - id: c-mh-v3-slc-behind-mc
+    text: >-
+      The SLC is owned and controlled by the memory controller and sits behind it, outside coherency; to every other
+      block it looks like DRAM that responds faster
+    loc: p094
+    quote: "it's just a strange piece of DRAM that responds faster than normal DRAM."
+    derivation: inferred
+    supports: []
+
+  - id: c-mh-v3-three-generations
+    text: >-
+      Apple's fabric has had three generations: a memory controller with almost no NoC (2010), a layered memory controller
+      and NoC that adds the SLC (2012), and a third that moves much of the layering into the NoC
+    loc: p094
+    quote: "Moving functionality down into the NoC means that there are now fewer layers of queues"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: In the third generation each queue arbiter weighs more factors instead of one feature per layer
+
+  - id: c-mh-v3-slc-a7
+    text: >-
+      The SLC first appears in a 2012 patent; the A7 die shows a large SRAM block that is presumably the SLC, and the A6
+      has none
+    loc: p095
+    quote: "The A7 die shot shows a large block of SRAM that is presumably the SLC; we do not see such a block on the A6 die."
+    derivation: inferred
+    hedge: "presumably"
+    supports: []
+    chip: a7
+    notes: The patent is US20140059297A1, System cache with sticky allocation
+
+  - id: c-mh-v3-2012-xbars
+    text: >-
+      The 2012 NoC has at least two crossbar levels: a central switch feeding either an IO crossbar or a coherence
+      crossbar between GPU and CPU
+    loc: p100
+    quote: "at least two cross-bar switch levels (a “central” level feeding out to either an IO crossbar or a “Coherence” crossbar that switches between GPU and CPU"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a7
+
+new_params:
+  slc.line: {block: slc, name: SLC line size, unit: B}
+
 new_mechanisms:
   coherence_duplicate_tags:
     name: Coherence point with duplicate tags
@@ -326,5 +455,5 @@ new_mechanisms:
 
 mechanism_claims:
   coherence_duplicate_tags: [c-mh-v3-request-path]
-  fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration, c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits, c-mh-v3-credit-return]
+  fabric_qos_credits: [c-mh-v3-qos-five, c-mh-v3-qos-bands, c-mh-v3-fabric-credits, c-mh-v3-fabric-arbitration, c-mh-v3-six-vcs, c-mh-v3-credits-dram, c-mh-v3-gen3-credits, c-mh-v3-credit-return, c-mh-v3-l2-cpu-qos]
   pio_network: [c-mh-v3-device-bypass]
