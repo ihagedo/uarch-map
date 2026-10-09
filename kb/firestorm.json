@@ -2223,6 +2223,16 @@
       "status": "inferred",
       "confidence": "inferred"
     },
+    "slc.allocation": {
+      "claims": [],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC allocation policy",
+      "mechanism": "slc_victim_fill",
+      "status": "open",
+      "value": null,
+      "confidence": "unknown"
+    },
     "ras.return_bubble": {
       "claims": [
         "c-mh-v4-return-bubble"
@@ -11070,6 +11080,262 @@
       "source": "handley-vol3",
       "entered": "handley-vol3-memory"
     },
+    "c-mh-v3-duplicate-tags": {
+      "text": "The Coherence Point holds duplicate tags (line address and MOESI state) for every block's cache; for a two-level cache they mirror the L2",
+      "loc": "p101",
+      "quote": "So it has a set of Duplicate Tags ... If the cache has two levels, the tags describe the L2 contents",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "A request that matches a duplicate tag is sent down to the owning cache; one that matches none goes on to the SLC",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-pseudo-l3": {
+      "text": "Where Intel's L3 holds tags and data and is inclusive, Apple's coherence point is a tag-only pseudo-L3 whose data stay in the blocks' own caches",
+      "loc": "p102",
+      "quote": "Apple constructs a pseudo-L3 as (tags+ [data is whatever\u2019s in the various compute caches])",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-uncached-l2-ways": {
+      "text": "A read to an uncacheable IO range fetches a full line into the L2, but only a few L2 ways may hold such lines",
+      "loc": "p104",
+      "quote": "that full line is stored in the L2, but only a small number of ways of the L2 are allowed to hold the data.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US9043554B2; the lines are expected to stream with little reuse",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-uncached-write-gather": {
+      "text": "Writes to uncacheable ranges are gathered into full lines, which then go to the fabric bypassing L1 and L2",
+      "loc": "p104",
+      "quote": "tries to gather them to a full cache line before the entire cache line is sent out.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-flush-engine": {
+      "text": "Apple cores have a flush engine: the core can cut power at once while a lower-power block flushes modified L1 lines to the L2 before the L1 powers off",
+      "loc": "p105",
+      "quote": "allowing a lower power logic block to flush modified lines in the L1 to L2, before the L1 also cuts power.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US9128857B2",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-remote-cache-slc": {
+      "text": "Unused or partly powered-down private caches, for example spare CPU L2, can extend the SLC, with the duplicate tags then acting as SLC tags",
+      "loc": "p106",
+      "quote": "The idea is to use that private Compute Cache as an extension of the SLC, with the Duplicate tags now acting as SLC tags",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US9280471B2; Apple's example lends spare CPU L2 to the GPU",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-remote-cache-latency": {
+      "text": "Fetching a line from a remote private cache through the SLC might take about 50 ns, against about 100 ns to DRAM",
+      "loc": "p106",
+      "quote": "maybe 50 ns or so (?) to get the data via a trip all the way to the SLC then rerouted to a private cache, rather than 100ns to DRAM",
+      "derivation": "inferred",
+      "value": 50,
+      "unit": "ns",
+      "approx": true,
+      "hedge": "maybe 50 ns or so (?)",
+      "supports": [],
+      "notes": "A guess, not a measurement. The 100 ns DRAM figure fits c-7cpu-dram-latency (L2 latency plus 91 ns)",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-slc-io-proxy": {
+      "text": "The SLC can act as a cache controller for small caches in IO blocks outside the coherence domain, turning one request into the simpler commands such a cache needs",
+      "loc": "p107",
+      "quote": "creating a fake cache controller in the SLC to manage the IO cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "what I think this 2016 patent is about",
+      "supports": [],
+      "notes": "From US10402326B1",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-bw-controller": {
+      "text": "A central bandwidth management controller watches fabric statistics (latency, bandwidth use, queue depths) and tells limiter circuits in front of each IP block to slow down; it can also change fabric speed, with hysteresis",
+      "loc": "p107",
+      "quote": "central Bandwidth Management Controller that tracks various statistics related to the fabric",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US20140086070A1",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-coherence-no-qos": {
+      "text": "In the 2012 design the Coherence Point ignores QoS and keeps short queues; most buffering sits in the QoS-ordered Switch, and credits pass among Switch, Coherence and memory controller so a request moves on only when a slot opens",
+      "loc": "p110",
+      "quote": "So Apple drops worrying about QoS at the Coherence point. ... make the Coherence Point queues not very deep",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "a7",
+      "notes": "From US20140181419A1",
+      "source": "handley-vol3",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-buffer-at-source": {
+      "text": "The 2018 redesign moves most buffering out of the Switch into each source block, before requests enter the fabric",
+      "loc": "p110",
+      "quote": "the 2018 redesign, at which point the buffering mostly moves to the next stage, in each source ... before the data even is allowed into the Fabric.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-two-pipelines": {
+      "text": "The 2012 design has two pipelines from Coherence through the SLC to the memory controller, split by hashed address (for example even and odd lines), each arbitrating only its own half",
+      "loc": "p110",
+      "quote": "a striking pattern is the existence of two pipelines from Coherence through the SLC to the Memory Controller.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "pipelines",
+      "supports": [],
+      "chip": "a7",
+      "notes": "The split may extend to two memory channels. Barriers and the shared return path still tie the two pipelines together",
+      "source": "handley-vol3",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-eight-pipelines": {
+      "text": "The 2018 redesign splits the Coherence to SLC to memory controller path across 8 or more address-interleaved pipelines",
+      "loc": "p110",
+      "quote": "The 2018 redesign takes this far further, splitting across 8 or more such pipelines.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "pipelines",
+      "supports": [],
+      "notes": "A lower bound, not tied to a chip. Compare c-mh-v2-slc-even-odd, which splits the M1 SLC and memory controller into even and odd halves",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-display-qos": {
+      "text": "The display controller raises its request QoS when its local buffer runs low and lowers it once the buffer passes a safety level; a later patent moves the thresholds when the memory controller is busy",
+      "loc": "p112",
+      "quote": "If the buffer fullness sinks too low, we increase QoS; then when the buffer fullness rises above a safety level, we reduce QoS.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US8963938B2 and US9019291B2. Each request is kept at the lowest QoS that does the job so the memory controller can sort for bandwidth",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-merge-escalate": {
+      "text": "When the memory controller merges a new request with a queued one for the same line, it raises the queued request's priority so a high-QoS request does not wait at low priority",
+      "loc": "p113",
+      "quote": "a high QoS request that comes in might be attached to a pre-existing low QoS request for that line, and then just sit in the queue at low priority!",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US20140244920A1 and US9135177B2",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-victim-request": {
+      "text": "Besides reads and writes, a cache can send a victim request: the line moves from one cache to another (L2 to SLC) with ownership, and since it need not be dirty it need not reach DRAM",
+      "loc": "p115",
+      "quote": "victim request (address, line of data, plus a flag saying \u201cmove ownership of this address+data from cache A to cache B\u201d)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-2012-cp-64": {
+      "text": "The 2012 Coherence Point has two queues, each a table of outstanding transactions; the patent's example holds 64, each with one address or two for a victim",
+      "loc": "p115",
+      "quote": "in the 2012 patent, the example given is 64 pending transactions",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 64,
+      "unit": "transactions",
+      "supports": [],
+      "chip": "a7",
+      "source": "handley-vol3",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-strands": {
+      "text": "The Coherence Point keeps same-address transactions in order by linking matching entries into lists (strands); only unlinked entries or list heads may move on to the SLC",
+      "loc": "p115",
+      "quote": "If we find a match, we create a linked list of transactions, so that the earliest transaction points to the next later one",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US20140173218A1. Handley guesses the next item waits until the SLC confirms the one before",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-fabric-interrupts": {
+      "text": "Device interrupts become fabric messages ordered behind the device's earlier writes, so those writes are globally visible by the time the CPU takes the interrupt",
+      "loc": "p116",
+      "quote": "the interrupt is converted into a fabric message, just like other fabric messages.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US9152588B2",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-retry-queue": {
+      "text": "A cache such as the L2 or SLC links same-address requests and internal operations in a retry queue; scheduling by priority and age never breaks into a linked list",
+      "loc": "p117",
+      "quote": "a cache (think L2 or SLC) can have both external requests and internal operations (like flushing out data prior to powering down some part of the cache).",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US20200050548A1",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
+    "c-mh-v3-write-table": {
+      "text": "A requester's write buffer is split into a pending-request buffer holding data and a small write table holding hashed addresses of writes in flight, which later requests check for ordering",
+      "loc": "p118",
+      "quote": "the write buffer is now split into two buffers",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "From US20220083369A1. A false hash match only delays an unrelated write by about a hundred cycles",
+      "source": "handley-vol3",
+      "chip": "m1",
+      "entered": "handley-vol3-memory"
+    },
     "c-mh-v4-btb-l0": {
       "text": "Relaying James Aslan's graph, the M1 has a zero-bubble BTB (his L0BTB) of 1024 entries, and the whole L1I cache serves as the next tier (his L2BTB)",
       "loc": "p011",
@@ -14413,9 +14679,28 @@
       "sim_switch": null,
       "detection_rule": "loading a line of pointers makes later chases through those pointers faster although no load ever used their addresses"
     },
+    "slc_victim_fill": {
+      "claims": [
+        "c-mh-v3-victim-request"
+      ],
+      "name": "SLC filled by L2 victims",
+      "status": "inferred",
+      "description": "CPU lines move from L1 to L2 to the SLC as each level evicts them, so a CPU miss does not allocate in the SLC.",
+      "params": [
+        "slc.allocation",
+        "slc.size",
+        "l2.size"
+      ],
+      "sim_switch": null,
+      "detection_rule": "the cached region seen by one core extends to about the L2 share plus the SLC, not to the larger of the two"
+    },
     "coherence_duplicate_tags": {
       "claims": [
-        "c-mh-v3-request-path"
+        "c-mh-v3-request-path",
+        "c-mh-v3-duplicate-tags",
+        "c-mh-v3-pseudo-l3",
+        "c-mh-v3-strands",
+        "c-mh-v3-remote-cache-slc"
       ],
       "name": "Coherence point with duplicate tags",
       "status": "inferred",
@@ -14434,7 +14719,9 @@
         "c-mh-v3-credits-dram",
         "c-mh-v3-gen3-credits",
         "c-mh-v3-credit-return",
-        "c-mh-v3-l2-cpu-qos"
+        "c-mh-v3-buffer-at-source",
+        "c-mh-v3-l2-cpu-qos",
+        "c-mh-v3-bw-controller"
       ],
       "name": "Credit-gated fabric with QoS bands",
       "status": "inferred",
