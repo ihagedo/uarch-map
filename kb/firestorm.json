@@ -5951,6 +5951,88 @@
       "chip": "m1",
       "entered": "fractal"
     },
+    "c-fr-ice-ibp": {
+      "text": "Icestorm's indirect predictor behaves like Firestorm's: targets from another privilege level or ASID are fetched but not executed",
+      "loc": "p011",
+      "quote": "We repeated our IBP experiments on the efficiency core (e-core) and found no difference in behavior.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "sp26-fractal",
+      "entered": "fractal"
+    },
+    "c-fr-cbp-no-isolation": {
+      "text": "Firestorm's conditional predictor is isolated neither by privilege level nor by ASID: user code mistrained a kernel-mode branch's speculative fetch and execution, and one ASID mistrained another's",
+      "loc": "p011",
+      "quote": "We found that we were able to reliably mistrain the CBP across privilege levels and ASIDs on both the p-core and e-core, including the case of a kernel mode receiver tracking speculative executions.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Agrees with c-tm-no-user-kernel-isolation and c-tm-no-cross-process-isolation. Conditional branch (beq) in place of the indirect one.",
+      "source": "sp26-fractal",
+      "chip": "m1",
+      "entered": "fractal"
+    },
+    "c-fr-ice-cbp-no-priv-isolation": {
+      "text": "Icestorm's conditional predictor is not isolated by privilege level; user code mistrains kernel-mode branches",
+      "loc": "p013",
+      "quote": "We demonstrated that the CBP is not privilege separated on either the P core or the E core.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Contradicts c-tm-ice-user-kernel-isolation. The authors suspect macOS did not keep the earlier study's kext code on the pinned core; here everything ran bare metal.",
+      "source": "sp26-fractal",
+      "entered": "fractal"
+    },
+    "c-fr-ice-cbp-no-asid-isolation": {
+      "text": "Icestorm's conditional predictor is not isolated by ASID",
+      "loc": "p011",
+      "quote": "reliably mistrain the CBP across privilege levels and ASIDs on both the p-core and e-core",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Agrees with c-tm-ice-no-cross-process-isolation.",
+      "source": "sp26-fractal",
+      "entered": "fractal"
+    },
+    "c-fr-phantom-fetch": {
+      "text": "On Firestorm a NOP placed where a trained indirect or conditional branch was still sends fetch to the trained target, within one context and across privilege level and ASID",
+      "loc": "p011",
+      "quote": "We conclude that Phantom speculation is present on M1 in the form of Phantom fetches, where user code can cause speculative fetches during kernel code without branches present in the instruction stream.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "The dispatch branch is replaced by a nop with everything else unchanged.",
+      "source": "sp26-fractal",
+      "chip": "m1",
+      "entered": "fractal"
+    },
+    "c-fr-phantom-no-exec": {
+      "text": "Targets reached by Phantom fetch on a non-branch are never speculatively executed, in any context tested",
+      "loc": "p011",
+      "quote": "However, these instructions can only be fetched, not speculatively executed.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Firestorm, for both indirect and conditional training, same context included.",
+      "source": "sp26-fractal",
+      "chip": "m1",
+      "entered": "fractal"
+    },
+    "c-fr-ice-phantom": {
+      "text": "Icestorm shows the same Phantom behaviour, fetch of the trained target in every context tested but no execution",
+      "loc": "p011",
+      "quote": "We find that for both the IBP and CBP on both pcore and e-core, Phantom fetches succeeded ... However, Phantom execution never succeeded.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "sp26-fractal",
+      "entered": "fractal"
+    },
     "c-gf-firestorm-only": {
       "text": "Only the four Firestorm cores of the M1 have the DMP",
       "loc": "p002",
@@ -21722,6 +21804,9 @@
         "c-tm-ice-no-cross-process-isolation",
         "c-tm-patent-security-tag",
         "c-pat-us20200192673a1-context-encrypted-targets",
+        "c-fr-cbp-no-isolation",
+        "c-fr-ice-cbp-no-priv-isolation",
+        "c-fr-ice-cbp-no-asid-isolation",
         "c-mh-v4-bp-security-tag",
         "c-ien-pht-shared-pcore",
         "c-ien-pht-shared-ecore"
@@ -21770,7 +21855,8 @@
         "c-fr-ibp-priv-fetch",
         "c-fr-ibp-shared-entries",
         "c-fr-ibp-fetch-race",
-        "c-fr-ibp-asid"
+        "c-fr-ibp-asid",
+        "c-fr-ice-ibp"
       ],
       "name": "Indirect target context check",
       "status": "measured",
@@ -21778,6 +21864,19 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "train an indirect branch in one context and run an identically placed copy at another EL or ASID; the trained target's I-cache line comes back fetched (Flush+Reload hit) while a load at the target stays at SLC latency"
+    },
+    "phantom_fetch": {
+      "claims": [
+        "c-fr-phantom-fetch",
+        "c-fr-phantom-no-exec",
+        "c-fr-ice-phantom"
+      ],
+      "name": "Phantom fetch on non-branches",
+      "status": "measured",
+      "description": "A non-branch at the address of a trained branch redirects fetch to the trained target, which is fetched but never executed.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "train a branch, replace it with a NOP at the same address and run it; the old target's I-cache line comes back fetched while a load at the target stays at SLC latency"
     },
     "zero_cycle_loads": {
       "claims": [
