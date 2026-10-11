@@ -1,0 +1,37 @@
+# handley-vol7.yaml
+# Maynard Handley, 2025
+# The ANE as a client of the SLC (AArch64-Explore vol 7).
+session: handley-vol7
+source: handley-vol7
+
+claims:
+  - id: c-mh-v7-ane-slc-hints
+    text: >-
+      Per the patent on the ANE compiler, a memory optimization module generates hints that control how the SLC handles
+      the ANE's data transfers
+    loc: p040
+    quote: >-
+      a Memory Optimization module that, among other things, generates hints to control how the SLC handles ANE data
+      transfers
+    method: patent-reading
+    derivation: inferred
+    hedge: "It’s unclear if the ANE uses the full set of options available as aggressively as the GPU"
+    supports: []
+    notes: >-
+      A 2018 compiler patent, US11640316B2, embeds SLC hints in the ANE's DMA instructions. Handley sees the SLC as the
+      cache that holds input slices shared by several ANE units.
+  - id: c-mh-v7-ane-prefetch-slc
+    text: >-
+      Per a 2022 patent, the ANE's task manager, which Handley takes to be its Arm companion core, prefetches the data
+      for the next layer from DRAM into the SLC
+    loc: p106
+    quote: >-
+      the Neural Task Manager (which I am assuming is the ANE ARM companion core), co-ordinating the movement of
+      prefetch data from system DRAM into the SLC
+    method: patent-reading
+    derivation: inferred
+    hedge: "It seems like much of this work is done by"
+    chip: post-m1
+    supports: []
+    notes: US20230289291A1, cache prefetch for neural processor circuit. The compiler supplies the prefetch hints.
+

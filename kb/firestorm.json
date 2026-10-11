@@ -18079,6 +18079,32 @@
       "chip": "m1",
       "entered": "handley-vol6"
     },
+    "c-mh-v7-ane-slc-hints": {
+      "text": "Per the patent on the ANE compiler, a memory optimization module generates hints that control how the SLC handles the ANE's data transfers",
+      "loc": "p040",
+      "quote": "a Memory Optimization module that, among other things, generates hints to control how the SLC handles ANE data transfers",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "It\u2019s unclear if the ANE uses the full set of options available as aggressively as the GPU",
+      "supports": [],
+      "notes": "A 2018 compiler patent, US11640316B2, embeds SLC hints in the ANE's DMA instructions. Handley sees the SLC as the cache that holds input slices shared by several ANE units.",
+      "source": "handley-vol7",
+      "chip": "m1",
+      "entered": "handley-vol7"
+    },
+    "c-mh-v7-ane-prefetch-slc": {
+      "text": "Per a 2022 patent, the ANE's task manager, which Handley takes to be its Arm companion core, prefetches the data for the next layer from DRAM into the SLC",
+      "loc": "p106",
+      "quote": "the Neural Task Manager (which I am assuming is the ANE ARM companion core), co-ordinating the movement of prefetch data from system DRAM into the SLC",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "It seems like much of this work is done by",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "US20230289291A1, cache prefetch for neural processor circuit. The compiler supplies the prefetch hints.",
+      "source": "handley-vol7",
+      "entered": "handley-vol7"
+    },
     "c-mh-v8-a15-rob-smaller": {
       "text": "Dougall Johnson found the A15/M2 P core has a ROB and some other structures about 10% smaller than the A14/M1, and a slightly larger load/store scheduling queue",
       "loc": "p009",
@@ -24045,6 +24071,14 @@
       "year": 2025,
       "url": "https://github.com/name99-org/AArch64-Explore",
       "pages": 385
+    },
+    "handley-vol7": {
+      "type": "pdf",
+      "title": "AArch64-Explore vol 7: ANE",
+      "author": "Handley, Maynard",
+      "year": 2025,
+      "url": "https://github.com/name99-org/AArch64-Explore",
+      "pages": 122
     },
     "anandtech-m1": {
       "type": "article",

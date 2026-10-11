@@ -63,6 +63,13 @@ sources:
     year: 2025
     url: https://github.com/name99-org/AArch64-Explore
     pages: 385
+  handley-vol7:
+    type: pdf
+    title: "AArch64-Explore vol 7: ANE"
+    author: Handley, Maynard
+    year: 2025
+    url: https://github.com/name99-org/AArch64-Explore
+    pages: 122
   anandtech-m1:
     type: article
     title: "Apple Silicon M1: A14 Deep Dive"
