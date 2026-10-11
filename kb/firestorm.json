@@ -12467,6 +12467,81 @@
       "chip": "m1",
       "entered": "handley-vol2-latency"
     },
+    "c-mh-v2-small-subarrays": {
+      "text": "Apple builds its caches from many small SRAM sub-arrays, giving up some cache cycle time for lower power because it designs for IPC rather than peak clock",
+      "loc": "p024",
+      "quote": "we're designing based on high IPC, not maximum GHz? This allows us to have many small sub-arrays. We can see that this is a design goal here",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US9529533B1 (2016), power grid segmentation for memory arrays.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
+    "c-mh-v2-subarray-precharge": {
+      "text": "Apple appears to power down idle SRAM sub-arrays: their bit lines can float instead of staying precharged, and a sub-array is precharged on demand when accessed",
+      "loc": "p026",
+      "quote": "Even so, Apple does appear to be powering off sub-arrays for at least some purposes.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "does appear",
+      "supports": [],
+      "notes": "US20100329062A1 (2009) lets a sub-array's bit lines float; US20150227456A1 (2014) implies precharge on demand.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
+    "c-mh-v2-l2-way-filter": {
+      "text": "An Apple patent applies a variant of way filtering to an L2: an early partial-tag comparison limits which ways have their sense amplifiers fired, with no way-prediction table",
+      "loc": "p028",
+      "quote": "a variant of this idea appears in (2015) ... Cache way prediction, in the context of an L2 cache.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "way filtering, for the L2?",
+      "supports": [],
+      "notes": "US10157137B1 (2015). The 22 + 4 bit tag split in Handley's example is his illustration, not the patent's.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
+    "c-mh-v2-sram-supply": {
+      "text": "Apple runs SRAM cells on a supply voltage separate from the logic supply, with level shifters where logic meets the arrays; later patents add a memory supply that drops when possible and separate retention and write levels",
+      "loc": "p029",
+      "quote": "Even so Apple has done the work: ... which separates out the logic voltage levels from the SRAM cell voltage levels",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US7355905B2 (2005); then US20100182850A1 (2009), US8885393B2 (2012) and US8964490B2 (2013).",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
+    "c-mh-v2-coalesce-patent": {
+      "text": "Handley's model for serving several accesses per cycle comes from an Apple patent, mainly for an L2, in which four requestors are coalesced into two requests over two ports into the data array",
+      "loc": "p033",
+      "quote": "primarily for an L2 cache, but shows the essential idea ... four requestors are coalesced down to two actual requests going over two ports into the data storage",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "US8036061B2 (2009).",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
+    "c-mh-v2-masked-sum-compare": {
+      "text": "Apple appears to use, or to have used, a fast check during address generation that tells whether base plus offset stays on the base register's page without waiting for the full add",
+      "loc": "p034",
+      "quote": "It appears that Apple is (or at least was) using some version of these ideas: Look at the early patent (2011)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "(or at least was)",
+      "supports": [],
+      "notes": "US8914548B2 (2011), fast masked summing comparator.",
+      "source": "handley-vol2",
+      "chip": "m1",
+      "entered": "handley-vol2-sram"
+    },
     "c-mh-v3-barrier-colors": {
       "text": "Per a 2012 Apple patent, barriers tag memory requests with a color that changes at each barrier, and no request of a later color completes until every request of the earlier color has",
       "loc": "p008",
@@ -23647,7 +23722,8 @@
         "c-mh-v2-store-fire-forget",
         "c-mh-v2-storeload-same-bank",
         "c-mh-v2-stores-free",
-        "c-mh-v2-ld-unit-uop"
+        "c-mh-v2-ld-unit-uop",
+        "c-mh-v2-coalesce-patent"
       ],
       "name": "Banked L1D with piggybacked loads and buffered stores",
       "status": "inferred",
