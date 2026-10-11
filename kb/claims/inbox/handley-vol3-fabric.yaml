@@ -212,7 +212,102 @@ claims:
     method: patent-reading
     derivation: inferred
     supports: []
+  - id: c-mh-v3-rt-amplification
+    text: >-
+      Per a 2022 patent, realtime bandwidth budgets add an amplification factor for requests that hit in the SLC's
+      duplicate tags and turn one DRAM access into several NoC transactions, so the NoC is not oversubscribed
+    loc: p159
+    quote: "some sort of amplification factor that will vary over time depending on exactly how RT traffic is being moved around"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20230325086A1 (2022). The patent's baseline has several SLC slices and memory controllers under a closed-loop latency tolerance controller.
+  - id: c-mh-v3-bw-fabric-clock
+    text: >-
+      Per a 2012 patent, the central bandwidth management controller also raises or lowers the fabric clock, with
+      hysteresis, besides throttling requesters
+    loc: p162
+    quote: "but also dynamically shifting the speed of the fabric to faster or slower (of course to save power if possible), and using hysteresis"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20140086070A1 (2012). Adds to c-mh-v3-bw-controller.
+  - id: c-mh-v3-retry-id
+    text: >-
+      Per a 2005 patent, a fabric Retry response names the transaction blocking the request; the requester keeps that
+      ID with the pending request in a small table and resubmits once it sees the response carrying that ID
+    loc: p163
+    quote: "this TransactionID is stored, along with the pending request, in a small table on Processor B"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US7529866B2 (2005).
+  - id: c-mh-v3-cdc-predict
+    text: >-
+      Per 2005 and 2007 patents, clock-domain crossings predict the other clock's edges from recorded history instead
+      of using stateless synchronizers that cost at least two cycles, and pass only one-bit pointer-increment events
+      through small event FIFOs of about 4 or 8 entries
+    loc: p164
+    quote: "you can then predict the transitions of the other clock domain and when it is safe to transfer data from one side to the other, without the enforced delays of the traditional scheme"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US7500044B2 (2005) and US20080198671A1 (2007); a 2015 patent (US20160328182A1) lets most of the crossing logic sleep.
+  - id: c-mh-v3-arb-weights
+    text: >-
+      Per a 2020 patent, a fabric arbiter first serves, round robin, each traffic class whose minimum-progress counter
+      for the epoch is still positive, then grants by weight countdown, the example weights being 100 for realtime,
+      20 for low latency and 1 for bulk
+    loc: p165
+    quote: "Each class is given a weight (eg 100 for Real Time, 20 for Low Latency, and 1 for Bulk traffic)"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10972408B1 (2020). The OS can tune the weights. Adds detail to c-mh-v3-fabric-arbitration.
+  - id: c-mh-v3-fabric-tiers
+    text: >-
+      Handley guesses the fabric is layered: a coherent Apple Fabric for memory, SLC, CPU and GPU, bridged to a
+      non-coherent AXI-based IO fabric, which bridges in turn to PCIe and USB
+    loc: p167
+    quote: "the highest performance region of the fabric (Memory, SLC, CPU, GPU) is Apple Fabric, and is about maximum bandwidth, minimum latency, and coherency"
+    derivation: inferred
+    hedge: "I’m guessing"
+    supports: []
+  - id: c-mh-v3-voltage-detect
+    text: >-
+      Per a 2010 patent, a sensor tells the power manager when a raised voltage has settled before the frequency goes
+      up, and the frequency increase is abandoned if the voltage never reaches its target
+    loc: p201
+    quote: "a dedicated sensor circuit that informs the PMU when the voltage has reached its target"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US8892922B2 (2010).
+  - id: c-mh-v3-timebase-sync
+    text: >-
+      Per a 2015 patent, the SoC keeps several local timebases, resynchronized periodically so they never
+      drift far apart, run backwards or jump too far
+    loc: p201
+    quote: "the system provides for multiple local timebases, along with periodic resynchronizations to ensure that they do not drift too far apart"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20170168520A1 (2015).
+  - id: c-mh-v3-clpc-knobs
+    text: >-
+      Per a 2016 patent, the closed-loop performance controller's knobs are how many cores are powered, core DVFS, and
+      the frequency of the SoC fabric and DRAM
+    loc: p205
+    quote: "how many cores to power up ... modifying the frequency of the SoC fabric and the DRAM"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: a10
+    notes: US20170357302A1 (2016), which Handley places on A7 to A10 class chips, before clusters.
 
 mechanism_claims:
-  fabric_qos_credits: [c-mh-v3-snoop-qos, c-mh-v3-iso-windows, c-mh-v3-write-credit-reply, c-mh-v3-buffer-lending, c-mh-v3-edge-limits, c-mh-v3-critical-client, c-mh-v3-retry-table, c-mh-v3-dram-vc-category, c-mh-v3-latency-tolerance]
+  fabric_qos_credits: [c-mh-v3-snoop-qos, c-mh-v3-iso-windows, c-mh-v3-write-credit-reply, c-mh-v3-buffer-lending,
+    c-mh-v3-edge-limits, c-mh-v3-critical-client, c-mh-v3-retry-table, c-mh-v3-dram-vc-category,
+    c-mh-v3-latency-tolerance, c-mh-v3-rt-amplification, c-mh-v3-bw-fabric-clock, c-mh-v3-arb-weights]
   coherence_duplicate_tags: [c-mh-v3-sideways-hold]
