@@ -1953,6 +1953,19 @@
       "status": "derived",
       "confidence": "derived"
     },
+    "prefetch.dmp_region": {
+      "claims": [
+        "c-gf-4g-region"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "DMP pointer region (pointer and its line share upper bits)",
+      "unit": "GiB",
+      "mechanism": "content_directed_prefetch",
+      "value": 4,
+      "status": "measured",
+      "confidence": "single"
+    },
     "sched_ls.queues": {
       "claims": [
         "c-mh-v1-sched-ls-4x12",
@@ -5861,6 +5874,116 @@
       "unit": "\u00b5s",
       "supports": [],
       "notes": "Moving the test to another core also clears the effect.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l1-half": {
+      "text": "When an L2 line is filled from DRAM, the DMP scans only the 64-byte half that was accessed, not the other half of the 128-byte line",
+      "loc": "p005",
+      "quote": "when filling an L2 cache line from DRAM, the DMP dereferences all pointers in the specific L1 line that is accessed, and not those in the other half of the L2 line",
+      "derivation": "measured",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-other-half-l2": {
+      "text": "Accessing one half of a 128-byte L2 line fills that 64-byte half into L1 and L2, while the other half goes only into the L2",
+      "loc": "p005",
+      "quote": "the accessed L1 line will be filled into both the L1 and L2 caches, while the other half will only be filled into the L2 cache",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Checked by timing the other half at L2 hit latency. Augury reports two adjacent L1 lines filled together (c-aug-l1-pair-fill).",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l2-to-l1": {
+      "text": "A fill from the L2 into the L1, not only one from DRAM, also triggers the DMP scan",
+      "loc": "p005",
+      "quote": "This means that L2 to L1 fills can also activate the DMP.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-do-not-scan": {
+      "text": "A line evicted from the L1 alone is not rescanned on refill; only after it leaves the L2 too does the DMP dereference its pointers again, matching a do-not-scan hint the L2 sets on L1 fills",
+      "loc": "p006",
+      "quote": "when the aop is also evicted from the L2, the DMP re-dereferences it",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "The do-not-scan hint is the patent's mechanism; the authors match it to this behaviour.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-4g-region": {
+      "text": "The DMP follows a pointer only if the pointer and the line holding it lie in the same 4 GB-aligned region, so bits 55 to 32 must match",
+      "loc": "p006",
+      "quote": "the DMP only dereferences a pointer if the aop entry and target line are in the same 4 ... region (Figure 6). In other words, that the upper 32 bits of their addresses match",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "GiB",
+      "supports": [
+        "prefetch.dmp_region"
+      ],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-tbi": {
+      "text": "The DMP ignores the top 8 bits of a pointer, as with Arm top-byte-ignore; flipping bits 48 to 55 stops the dereference, flipping bits 56 to 63 does not",
+      "loc": "p007",
+      "quote": "We conclude that the DMP ignores the upper 8 bits of a pointer when dereferencing it, which matches the \u201cTop-Byte-Ignore\u201d in ARMv8.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-scan-chunks": {
+      "text": "The DMP checks each 64-bit-aligned chunk of a filled L1 line as a candidate pointer",
+      "loc": "p007",
+      "quote": "The DMP performs the scan by checking each pointer size-aligned chunk (the first 64 bits, second 64 bits, etc.) in the cache line.",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Part of the authors' model; Augury measured the 8-byte alignment rule (c-aug-align-8).",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-next-line": {
+      "text": "Besides the pointer's target line, the next line is also found in the L2, which the authors put down to a next-line prefetcher triggered with the DMP",
+      "loc": "p007",
+      "quote": "Apart from the target line, we also observe L2 hits to cache lines immediately next to the target line. We hypothesize that this is due to a next-line prefetcher being triggered alongside the DMP",
+      "derivation": "measured",
+      "hedge": "We hypothesize",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-two-lines": {
+      "text": "For each accepted pointer the DMP prefetches two L2 lines, the target and its neighbour, and records both in the history filter",
+      "loc": "p007",
+      "quote": "If bits [55:32] match and the pointer is not in the history filter, the DMP attempts to prefetch two L2 lines.",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-tlb-walk": {
+      "text": "The DMP looks up the TLB for each candidate pointer, walks the page tables on a miss and inserts the translation",
+      "loc": "p007",
+      "quote": "the DMP looks up the translation lookaside buffer (TLB) and triggers page table walks to obtain the physical address corresponding to each candidate pointer",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "notes": "Footnote credits Augury's measurement (c-aug-tlb-fill).",
       "source": "usenix24-gofetch",
       "chip": "m1",
       "entered": "gofetch"
@@ -21423,6 +21546,13 @@
         "c-gf-once",
         "c-gf-filter-128",
         "c-gf-filter-per-core",
+        "c-gf-l1-half",
+        "c-gf-l2-to-l1",
+        "c-gf-do-not-scan",
+        "c-gf-4g-region",
+        "c-gf-tbi",
+        "c-gf-next-line",
+        "c-gf-two-lines",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",
