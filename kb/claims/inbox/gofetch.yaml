@@ -1,0 +1,53 @@
+# gofetch.yaml
+# Boru Chen et al., 2024
+# The M1 DMP's activation rules, pointer test and filters, re-measured and extended past Augury.
+session: gofetch
+source: usenix24-gofetch
+
+claims:
+  - id: c-gf-firestorm-only
+    text: Only the four Firestorm cores of the M1 have the DMP
+    loc: p002
+    quote: "Most of our experiments were conducted on the Apple M1's 4 Firestorm (performance) cores, which are the only ones to have a DMP."
+    derivation: measured
+    supports: []
+    notes: M1 experiments on a Mac Mini under macOS 13.5.
+  - id: c-gf-l1d-8way
+    text: Each Firestorm core's 128 KB L1 data cache is 8-way set associative with 64-byte lines
+    loc: p002
+    quote: "Each Firestorm core has a 128 KByte, 8 way ... L1 data cache with 64 Byte cache lines"
+    derivation: inferred
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: Stated as background without a method.
+  - id: c-gf-l2-12way
+    text: The 12 MB L2 shared by the Firestorm cores is 12-way set associative with 128-byte lines
+    loc: p002
+    quote: "these 4 Firestorm cores share a 12 MByte, 12 way ... L2 data cache with 128 Byte cache lines"
+    derivation: derived
+    value: 12
+    unit: ways
+    supports: [l2.assoc]
+    notes: Consistent with the 8192 sets of 128 B the authors enumerate with eviction sets (c-gf-l2-sets). Augury believed 16 ways (c-aug-l2-16way).
+  - id: c-gf-l2-sets
+    text: The L2 has 8192 sets, indexed by 6 bits of the physical page frame and 7 bits of the page offset
+    loc: p009
+    quote: "The M1 has 8192 ... L2 cache sets, indexed with 6 (upper) bits from the physical page frame and 7 (lower) bits from the page offset"
+    derivation: derived
+    value: 8192
+    unit: sets
+    supports: []
+    notes: Appendix A builds 64 eviction sets at a fixed page offset, then all 128 offsets, for 8192 in total.
+  - id: c-gf-l2-inclusive
+    text: The shared L2 is inclusive of the L1 caches
+    loc: p002
+    quote: "The shared L2 cache is inclusive of the L1 caches, i.e. every cache line present in the L1 is also present in the L2 [93]."
+    method: secondhand
+    derivation: reported
+    value: inclusive
+    supports: [l2.inclusion]
+    notes: Cites the S2C paper (Yu et al.), from the same lab.
+
+mechanism_claims:
+  content_directed_prefetch: [c-gf-firestorm-only]

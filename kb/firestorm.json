@@ -1452,6 +1452,7 @@
     "l1d.assoc": {
       "claims": [
         "c-aug-l1-8way",
+        "c-gf-l1d-8way",
         "c-mh-v2-l1d-8way",
         "c-mh-v2-l1d-8way-tlb",
         "c-mh-v8-l1d-8way",
@@ -2316,6 +2317,7 @@
     },
     "l2.inclusion": {
       "claims": [
+        "c-gf-l2-inclusive",
         "c-mh-v3-l2-covering-tags-hint",
         "c-mh-v3-dram-fill-l1-only",
         "c-ilk-l2-inclusive",
@@ -2579,6 +2581,7 @@
     "l2.assoc": {
       "claims": [
         "c-aug-l2-16way",
+        "c-gf-l2-12way",
         "c-ilk-l2-ways",
         "c-pac-l2-ways",
         "c-prt-l2-ways",
@@ -5655,6 +5658,75 @@
       "chip": "m1max",
       "supports": [],
       "entered": "chipsandcheese-ocxtal"
+    },
+    "c-gf-firestorm-only": {
+      "text": "Only the four Firestorm cores of the M1 have the DMP",
+      "loc": "p002",
+      "quote": "Most of our experiments were conducted on the Apple M1's 4 Firestorm (performance) cores, which are the only ones to have a DMP.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "M1 experiments on a Mac Mini under macOS 13.5.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l1d-8way": {
+      "text": "Each Firestorm core's 128 KB L1 data cache is 8-way set associative with 64-byte lines",
+      "loc": "p002",
+      "quote": "Each Firestorm core has a 128 KByte, 8 way ... L1 data cache with 64 Byte cache lines",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Stated as background without a method.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l2-12way": {
+      "text": "The 12 MB L2 shared by the Firestorm cores is 12-way set associative with 128-byte lines",
+      "loc": "p002",
+      "quote": "these 4 Firestorm cores share a 12 MByte, 12 way ... L2 data cache with 128 Byte cache lines",
+      "derivation": "derived",
+      "value": 12,
+      "unit": "ways",
+      "supports": [
+        "l2.assoc"
+      ],
+      "notes": "Consistent with the 8192 sets of 128 B the authors enumerate with eviction sets (c-gf-l2-sets). Augury believed 16 ways (c-aug-l2-16way).",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l2-sets": {
+      "text": "The L2 has 8192 sets, indexed by 6 bits of the physical page frame and 7 bits of the page offset",
+      "loc": "p009",
+      "quote": "The M1 has 8192 ... L2 cache sets, indexed with 6 (upper) bits from the physical page frame and 7 (lower) bits from the page offset",
+      "derivation": "derived",
+      "value": 8192,
+      "unit": "sets",
+      "supports": [],
+      "notes": "Appendix A builds 64 eviction sets at a fixed page offset, then all 128 offsets, for 8192 in total.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-l2-inclusive": {
+      "text": "The shared L2 is inclusive of the L1 caches",
+      "loc": "p002",
+      "quote": "The shared L2 cache is inclusive of the L1 caches, i.e. every cache line present in the L1 is also present in the L2 [93].",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": "inclusive",
+      "supports": [
+        "l2.inclusion"
+      ],
+      "notes": "Cites the S2C paper (Yu et al.), from the same lab.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
     },
     "c-mh-v1-lsq-fsqrt-330": {
       "text": "With an FSQRT chain as the delay, independent loads show a jump at ~330; Handley notes the limit looks like the ROB's \"failable\" slots rather than a load-queue size",
@@ -20553,6 +20625,14 @@
       "year": 2024,
       "url": "https://arxiv.org/abs/2402.15425"
     },
+    "usenix24-gofetch": {
+      "type": "paper",
+      "title": "GoFetch: Breaking Constant-Time Cryptographic Implementations Using Data Memory-Dependent Prefetchers",
+      "author": "Chen, Boru",
+      "group": "Fletcher, Christopher",
+      "year": 2024,
+      "url": "https://gofetch.fail/"
+    },
     "us20210064376a1": {
       "type": "patent",
       "title": "Last physical register reference scheme",
@@ -21198,6 +21278,7 @@
         "c-aug-max-stride",
         "c-aug-2m-retrain",
         "c-aug-tlb-fill",
+        "c-gf-firestorm-only",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",

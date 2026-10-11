@@ -136,3 +136,10 @@ sources:
     author: Lee, Jaehyuk
     year: 2024
     url: https://arxiv.org/abs/2402.15425
+  usenix24-gofetch:
+    type: paper
+    title: "GoFetch: Breaking Constant-Time Cryptographic Implementations Using Data Memory-Dependent Prefetchers"
+    author: Chen, Boru
+    group: Fletcher, Christopher
+    year: 2024
+    url: https://gofetch.fail/
