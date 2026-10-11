@@ -694,7 +694,8 @@
     },
     "dirpred.history": {
       "claims": [
-        "c-tm-history-100"
+        "c-tm-history-100",
+        "c-cq-phr-100"
       ],
       "disputes": [],
       "block": "dirpred",
@@ -703,7 +704,7 @@
       "sim_key": "dir_history",
       "value": 100,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dirpred.capacity": {
       "claims": [],
@@ -5684,6 +5685,60 @@
       "chip": "m1max",
       "supports": [],
       "entered": "chipsandcheese-ocxtal"
+    },
+    "c-cq-phr-100": {
+      "text": "Firestorm's path history register records the most recent 100 taken branches",
+      "loc": "p005",
+      "quote": "This indicates that the PHR in both microarchitectures can only record information from the most recent 100 taken branches.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "branches",
+      "supports": [
+        "dirpred.history"
+      ],
+      "chip": "m1",
+      "notes": "Measured on the M1 (Firestorm) and the X Elite (Oryon) with identical results; the test also rules out a global history register of branch outcomes. Agrees with Tuby and Morrison's history length of 100.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-phr-split": {
+      "text": "Firestorm keeps two separate path history registers, one for taken-branch target addresses and one for branch addresses",
+      "loc": "p006",
+      "quote": "the PHR is split into two registers: one called PHRT ... whereas Firestorm has a 28-bit PHRB. The PHRT remains consistent at 100 bits",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "PHRT 100 bits, PHRB 28 bits",
+      "supports": [],
+      "chip": "m1",
+      "notes": "PHRT records taken-branch target addresses, PHRB records branch addresses; each shifts one bit per taken branch. Confirmed in hardware. Refines the single-register bit list of c-tm-history-inputs.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-footprint-bits": {
+      "text": "The Firestorm history footprint folds in only branch-address bits 5:2 and target-address bits 31:2",
+      "loc": "p006",
+      "quote": "only the bits 5:2 of the branch address (abbreviated as B below) are utilized in the computation of the footprint ... the bits 31:2 of the target address (abbreviated as T below) are utilized in the PHR footprint computation",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "branch bits 5:2 into PHRB, target bits 31:2 into PHRT",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Reparametrizes c-tm-history-inputs by assigning branch-address bits to PHRB and target-address bits to PHRT.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-pc-input": {
+      "text": "Firestorm's conditional branch predictor feeds PC bits 18:2 into the pattern history tables",
+      "loc": "p007",
+      "quote": "the Firestorm CBP uses PC[18:2] as input, while the Oryon CBP uses PC[12:2].",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "PC[18:2]",
+      "supports": [],
+      "chip": "m1",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
     },
     "c-gf-firestorm-only": {
       "text": "Only the four Firestorm cores of the M1 have the DMP",
@@ -20913,6 +20968,14 @@
       "year": 2024,
       "url": "https://github.com/ChuhengZhou/M1_BPU_Experiments"
     },
+    "arxiv-2411-13900": {
+      "type": "paper",
+      "title": "Dissecting Conditional Branch Predictors of Apple Firestorm and Qualcomm Oryon for Software Optimization and Architectural Analysis",
+      "author": "Chen, Jiajie",
+      "group": "Chen, Jiajie",
+      "year": 2024,
+      "url": "https://arxiv.org/abs/2411.13900"
+    },
     "isca22-pacman": {
       "type": "paper",
       "title": "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution",
@@ -21260,7 +21323,10 @@
         "c-tm-target-shift-xor",
         "c-tm-ind-pc-position",
         "c-tm-not-taken-updates",
-        "c-tm-lpc-pc-bit2"
+        "c-tm-lpc-pc-bit2",
+        "c-cq-phr-100",
+        "c-cq-phr-split",
+        "c-cq-footprint-bits"
       ],
       "name": "Path history register (shift-and-XOR)",
       "status": "measured",

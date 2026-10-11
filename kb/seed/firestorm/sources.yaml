@@ -104,6 +104,13 @@ sources:
     author: Zhou, Chuheng
     year: 2024
     url: https://github.com/ChuhengZhou/M1_BPU_Experiments
+  arxiv-2411-13900:
+    type: paper
+    title: Dissecting Conditional Branch Predictors of Apple Firestorm and Qualcomm Oryon for Software Optimization and Architectural Analysis
+    author: Chen, Jiajie
+    group: Chen, Jiajie
+    year: 2024
+    url: https://arxiv.org/abs/2411.13900
   isca22-pacman:
     type: paper
     title: "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution"

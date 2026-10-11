@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 140, claims 1353, sources 29, mechanisms 54
+blocks 37, links 35, params 140, claims 1357, sources 30, mechanisms 54
 
 ## By status
 
@@ -14,10 +14,10 @@ blocks 37, links 35, params 140, claims 1353, sources 29, mechanisms 54
 
 - confirmed: 16
 - conjecture: 3
-- corroborated: 26
+- corroborated: 27
 - derived: 13
 - inferred: 29
-- single: 51
+- single: 50
 - unknown: 2
 
 ## Holes (5)
