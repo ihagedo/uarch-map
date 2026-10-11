@@ -110,6 +110,13 @@ sources:
     author: Ravichandran, Joseph
     year: 2022
     url: https://pacmanattack.com/
+  sp22-augury:
+    type: paper
+    title: "Augury: Using Data Memory-Dependent Prefetchers to Leak Data at Rest"
+    author: Sanchez Vicarte, Jose Rodrigo
+    group: Fletcher, Christopher
+    year: 2022
+    url: https://www.prefetchers.info/augury.pdf
   usenix23-s2c:
     type: paper
     title: "Synchronization Storage Channels (S2C): Timer-less Cache Side-Channel Attacks on the Apple M1 via Hardware Synchronization Instructions"

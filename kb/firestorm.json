@@ -1777,6 +1777,19 @@
       "status": "measured",
       "confidence": "corroborated"
     },
+    "prefetch.dmp_levels": {
+      "claims": [
+        "c-aug-single-level"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "DMP dereference levels",
+      "unit": "levels",
+      "mechanism": "content_directed_prefetch",
+      "value": 1,
+      "status": "measured",
+      "confidence": "single"
+    },
     "dirpred.counter_bits": {
       "claims": [
         "c-tm-counter-3bit"
@@ -3729,6 +3742,73 @@
       "supports": [],
       "chip": "m1",
       "entered": "apple-patents"
+    },
+    "c-aug-dmp-exists": {
+      "text": "The Firestorm cores have a single-level pointer-chasing prefetcher that recognises streaming or strided reads over an array of pointers and prefetches what later pointers point to",
+      "loc": "p001",
+      "quote": "the Apple M1, M1 Max, M1 Pro, and A14 processors possess an Array-of-Pointers (AoP) prefetcher that recognizes streaming and striding reads and dereferences over an array of pointers",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Seen on M1, M1 Pro, M1 Max and A14.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-firestorm-only": {
+      "text": "The DMP is present only on the Firestorm cores",
+      "loc": "p007",
+      "quote": "We find the DMP to be present solely on Firestorm cores.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-icestorm-none": {
+      "text": "Icestorm cores show no DMP speedup on the same array-of-pointers test",
+      "loc": "p008",
+      "quote": "these speedups vanish when we run the same experiment on the M1's Icestorm cores",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "sp22-augury",
+      "entered": "augury"
+    },
+    "c-aug-single-level": {
+      "text": "The DMP dereferences one level only; tests for two-level pointer chasing and for index-based indirection found neither",
+      "loc": "p009",
+      "quote": "Both of the above experiments did not indicate the presence of other styles of DMP.",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "levels",
+      "supports": [
+        "prefetch.dmp_levels"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-fills-l2": {
+      "text": "Lines the DMP prefetches are found at L2 hit latency, so it prefetches into the L2 and probably sits beside it",
+      "loc": "p008",
+      "quote": "the DMP prefetches into the L2 cache and is likely built alongside the L2.",
+      "derivation": "measured",
+      "hedge": "likely",
+      "supports": [],
+      "notes": "Placement beside the L2 is the authors' inference from the fill level.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-stride-pf-l1": {
+      "text": "A separate classical stride prefetcher fills the L1 and has its own depth and confidence, apart from the DMP",
+      "loc": "p008",
+      "quote": "the M1 contains a separate classical (stride) prefetcher that prefetches data into the L1 cache",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
     },
     "c-tm-tage": {
       "text": "The M1 cores' conditional branch predictor is taken to be a TAGE variant, a hypothesis drawn from Apple patent filings that the authors say they confirm experimentally",
@@ -20044,6 +20124,14 @@
       "year": 2022,
       "url": "https://pacmanattack.com/"
     },
+    "sp22-augury": {
+      "type": "paper",
+      "title": "Augury: Using Data Memory-Dependent Prefetchers to Leak Data at Rest",
+      "author": "Sanchez Vicarte, Jose Rodrigo",
+      "group": "Fletcher, Christopher",
+      "year": 2022,
+      "url": "https://www.prefetchers.info/augury.pdf"
+    },
     "usenix23-s2c": {
       "type": "paper",
       "title": "Synchronization Storage Channels (S2C): Timer-less Cache Side-Channel Attacks on the Apple M1 via Hardware Synchronization Instructions",
@@ -20699,6 +20787,10 @@
     },
     "content_directed_prefetch": {
       "claims": [
+        "c-aug-dmp-exists",
+        "c-aug-firestorm-only",
+        "c-aug-single-level",
+        "c-aug-fills-l2",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",

@@ -1,0 +1,55 @@
+# augury.yaml
+# Jose Rodrigo Sanchez Vicarte et al., 2022
+# The M1's array-of-pointers data memory-dependent prefetcher, measured from user space.
+session: augury
+source: sp22-augury
+
+claims:
+  - id: c-aug-dmp-exists
+    text: The Firestorm cores have a single-level pointer-chasing prefetcher that recognises streaming or strided reads over an array of pointers and prefetches what later pointers point to
+    loc: p001
+    quote: "the Apple M1, M1 Max, M1 Pro, and A14 processors possess an Array-of-Pointers (AoP) prefetcher that recognizes streaming and striding reads and dereferences over an array of pointers"
+    derivation: measured
+    supports: []
+    notes: Seen on M1, M1 Pro, M1 Max and A14.
+  - id: c-aug-firestorm-only
+    text: The DMP is present only on the Firestorm cores
+    loc: p007
+    quote: "We find the DMP to be present solely on Firestorm cores."
+    derivation: measured
+    supports: []
+  - id: c-aug-icestorm-none
+    text: Icestorm cores show no DMP speedup on the same array-of-pointers test
+    loc: p008
+    quote: "these speedups vanish when we run the same experiment on the M1's Icestorm cores"
+    derivation: measured
+    supports: []
+    chip: icestorm
+  - id: c-aug-single-level
+    text: The DMP dereferences one level only; tests for two-level pointer chasing and for index-based indirection found neither
+    loc: p009
+    quote: "Both of the above experiments did not indicate the presence of other styles of DMP."
+    derivation: measured
+    value: 1
+    unit: levels
+    supports: [prefetch.dmp_levels]
+  - id: c-aug-fills-l2
+    text: Lines the DMP prefetches are found at L2 hit latency, so it prefetches into the L2 and probably sits beside it
+    loc: p008
+    quote: "the DMP prefetches into the L2 cache and is likely built alongside the L2."
+    derivation: measured
+    hedge: "likely"
+    supports: []
+    notes: Placement beside the L2 is the authors' inference from the fill level.
+  - id: c-aug-stride-pf-l1
+    text: A separate classical stride prefetcher fills the L1 and has its own depth and confidence, apart from the DMP
+    loc: p008
+    quote: "the M1 contains a separate classical (stride) prefetcher that prefetches data into the L1 cache"
+    derivation: measured
+    supports: []
+
+new_params:
+  prefetch.dmp_levels:        {block: prefetch, name: DMP dereference levels, unit: levels, mechanism: content_directed_prefetch}
+
+mechanism_claims:
+  content_directed_prefetch: [c-aug-dmp-exists, c-aug-firestorm-only, c-aug-single-level, c-aug-fills-l2]
