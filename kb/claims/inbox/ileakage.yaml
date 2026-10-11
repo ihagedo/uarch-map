@@ -1,0 +1,179 @@
+# ileakage.yaml
+# Jason Kim, Stephan van Schaik, Daniel Genkin and Yuval Yarom, 2023
+# Cache organization, L2 inclusion, speculation depth and timer facts for M1 and other Apple chips, from the iLeakage attack paper.
+session: ileakage
+source: ccs23-ileakage
+
+claims:
+  - id: c-ilk-l1i-ways
+    text: Timing loops over chains of branches at congruent addresses find a 6-way L1I on the M1 P-cores
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: measured
+    value: 6
+    unit: ways
+    supports: []
+    contradicts: [l1i.assoc]
+    notes: >-
+      M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of
+      c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).
+  - id: c-ilk-l1i-size
+    text: The M1 P-core L1I is 192 KiB in 512 sets, the size taken as the ways times the largest stride that avoids self-eviction
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: derived
+    value: 192
+    unit: KiB
+    supports: [l1i.size]
+    notes: M1 (P) row, Mac Mini; sets follow from size, line and ways.
+  - id: c-ilk-l1i-line
+    text: The M1 P-core L1I line is 64 bytes
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: measured
+    value: 64
+    unit: B
+    supports: [l1i.line]
+    notes: >-
+      M1 (P) row, Mac Mini. The line is the smallest offset that, applied to half of an over-full congruent set, brings
+      a speedup.
+  - id: c-ilk-l1d-ways
+    text: Timing loops over congruent addresses find an 8-way L1D on the M1 P-cores
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: measured
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 8 ways.
+  - id: c-ilk-l1d-size
+    text: The M1 P-core L1D is 128 KiB in 256 sets
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: derived
+    value: 128
+    unit: KiB
+    supports: [l1d.size]
+    notes: M1 (P) row, Mac Mini; size is ways times the largest stride that avoids self-eviction.
+  - id: c-ilk-l1d-line
+    text: The M1 P-core L1D line is 64 bytes
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: measured
+    value: 64
+    unit: B
+    supports: [l1d.line]
+    notes: M1 (P) row, Mac Mini.
+  - id: c-ilk-l2-ways
+    text: A minimal eviction set for the M1 P-cluster L2 holds 12 lines, giving 12 ways and 8192 sets
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: measured
+    value: 12
+    unit: ways
+    supports: [l2.assoc]
+    notes: >-
+      M1 (P) row, Mac Mini; M1 Pro and M1 Max give the same. Sets follow from the sysctl size and line. The eviction
+      sets are found by group testing with a timer or the timerless gadget.
+  - id: c-ilk-l2-size
+    text: The M1 P-cluster L2 is 12 MiB as reported by sysctl
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: documented
+    value: 12
+    unit: MiB
+    supports: [l2.size]
+    notes: M1 (P) row, Mac Mini; the L2 size and line come from the macOS and iOS sysctl interface.
+  - id: c-ilk-l2-line
+    text: The M1 P-cluster L2 line is 128 bytes as reported by sysctl, twice the 64 B L1 line
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: documented
+    value: 128
+    unit: B
+    supports: [l2.line]
+    notes: M1 (P) row, Mac Mini. Every chip in the table shows 128 B L2 lines.
+  - id: c-ilk-l2-phys-indexed
+    text: The L2 is physically indexed, so its sets cannot be found from virtual addresses and need eviction sets
+    loc: p005
+    quote: "as the L2 cache is physically indexed and we therefore cannot retrieve"
+    derivation: reported
+    supports: []
+    notes: Stated as background, without a test.
+  - id: c-ilk-ice-l1i
+    text: The M1 E-core L1I is 128 KiB, 8 ways of 256 sets with 64 B lines
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: derived
+    value: 128
+    unit: KiB
+    chip: icestorm
+    supports: []
+    notes: M1 (E) row; agrees with the register read in c-pac-ice-l1i.
+  - id: c-ilk-ice-l1d
+    text: The M1 E-core L1D is 64 KiB, 8 ways of 128 sets with 64 B lines
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: stride-sweep
+    derivation: derived
+    value: 64
+    unit: KiB
+    chip: icestorm
+    supports: []
+    notes: M1 (E) row.
+  - id: c-ilk-ice-l2
+    text: The M1 E-cluster L2 is 4 MiB, 16 ways of 2048 sets with 128 B lines
+    loc: p006
+    quote: "Mac Mini (M1, 2020) (Macmini9,1) A2348 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: documented
+    value: 4
+    unit: MiB
+    chip: icestorm
+    supports: []
+    notes: M1 (E) row; size from sysctl, ways from eviction sets. The M1 Pro and M1 Max E-cluster rows give the same, marked unconfirmed.
+  - id: c-ilk-a14-l2
+    text: The A14 P-cluster L2 is 8 MiB, 16 ways of 4096 sets with 128 B lines
+    loc: p006
+    quote: "iPhone 12 (iPhone13,2) A2172 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: documented
+    value: 8
+    unit: MiB
+    chip: a14
+    supports: []
+    notes: A14 Bionic (P) row, iPhone 12; size from sysctl, ways from eviction sets. Its P-core L1I and L1D rows match the M1 P-core.
+  - id: c-ilk-m2-l2
+    text: The M2 P-cluster L2 is 16 MiB, 16 ways of 8192 sets with 128 B lines
+    loc: p006
+    quote: "MacBook Air (M2, 2022) (Mac14,2) A2681 ... Table 1: The cache organization of various Apple CPUs. W: Ways, S: Sets, CL: Cache Line size."
+    method: other
+    derivation: documented
+    value: 16
+    unit: MiB
+    chip: m2
+    supports: []
+    notes: M2 (P) row; size from sysctl, ways from eviction sets. Its P-core L1I and L1D rows match the M1 P-core.
+  - id: c-ilk-a15-l2
+    text: The A15 P-cluster L2 is 12 MiB with 128 B lines, and most likely 12 ways of 8192 sets
+    loc: p006
+    quote: "iPhone 13 mini (iPhone14,4) A2481 ... we could not confirm the results, but these are the most likely based on other Apple CPUs with similar cache organization"
+    method: other
+    derivation: documented
+    value: 12
+    unit: MiB
+    hedge: "most likely"
+    chip: a15
+    supports: []
+    notes: A15 Bionic (P) row; the size is from sysctl, while the ways and sets are starred as unconfirmed guesses.
+

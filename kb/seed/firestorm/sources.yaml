@@ -117,6 +117,12 @@ sources:
     group: Fletcher, Christopher
     year: 2023
     url: https://www.usenix.org/conference/usenixsecurity23/presentation/yu-jiyong
+  ccs23-ileakage:
+    type: paper
+    title: "iLeakage: Browser-based Timerless Speculative Execution Attacks on Apple Devices"
+    author: Kim, Jason
+    year: 2023
+    url: https://ileakage.com/
   arxiv-2402-15425:
     type: paper
     title: "Prime+Retouch: When Cache is Locked and Leaked"
