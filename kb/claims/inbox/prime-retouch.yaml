@@ -89,6 +89,88 @@ claims:
     supports: []
     chip: icestorm
 
+  - id: c-prt-l1d-index
+    text: On Firestorm the L1D set is (virtual address mod 16384) / 64, so address bits 6-13 pick the set
+    loc: p004
+    quote: "s = (x mod 16384)/64 on Firestorm core and s = (x mod 8192)/64 on Icestorm"
+    derivation: measured
+    value: (VA mod 16384) / 64
+    supports: []
+  - id: c-prt-ice-l1d-index
+    text: On Icestorm the L1D set is (virtual address mod 8192) / 64, so address bits 6-12 pick the set
+    loc: p004
+    quote: "s = (x mod 16384)/64 on Firestorm core and s = (x mod 8192)/64 on Icestorm"
+    derivation: measured
+    value: (VA mod 8192) / 64
+    supports: []
+    chip: icestorm
+
+  - id: c-prt-l1-hit
+    text: >-
+      A single Firestorm L1D hit, timed between barriers with the PMU cycle counter, takes 4 cycles once the barrier
+      cost is taken off
+    loc: p005
+    quote: "the actual L1 hit latency is 2 cycles and 4 cycles, and L1 miss latency is around 12 cycles and 16 cycles, respectively"
+    method: counter
+    derivation: derived
+    value: 4
+    unit: cycles
+    supports: []
+    notes: Measured total minus the 56-cycle barrier cost (c-prt-barrier). Not a pointer chase, so not comparable with l1d.latency.
+  - id: c-prt-l1-miss
+    text: A Firestorm L1D miss takes about 16 cycles on the same timing
+    loc: p005
+    quote: "the actual L1 hit latency is 2 cycles and 4 cycles, and L1 miss latency is around 12 cycles and 16 cycles, respectively"
+    method: counter
+    derivation: derived
+    value: 16
+    unit: cycles
+    approx: true
+    supports: []
+    notes: The level that served the miss is not stated. Measured total minus the 56-cycle barrier cost.
+  - id: c-prt-ice-l1-hit
+    text: A single Icestorm L1D hit takes 2 cycles on the same timing
+    loc: p005
+    quote: "the actual L1 hit latency is 2 cycles and 4 cycles, and L1 miss latency is around 12 cycles and 16 cycles, respectively"
+    method: counter
+    derivation: derived
+    value: 2
+    unit: cycles
+    supports: []
+    chip: icestorm
+    notes: Measured total minus the 51-cycle barrier cost (c-prt-ice-barrier).
+  - id: c-prt-ice-l1-miss
+    text: An Icestorm L1D miss takes about 12 cycles on the same timing
+    loc: p005
+    quote: "the actual L1 hit latency is 2 cycles and 4 cycles, and L1 miss latency is around 12 cycles and 16 cycles, respectively"
+    method: counter
+    derivation: derived
+    value: 12
+    unit: cycles
+    approx: true
+    supports: []
+    chip: icestorm
+  - id: c-prt-barrier
+    text: The barrier around the timed load adds 56 cycles on Firestorm
+    loc: p005
+    quote: "The measured latency includes the memory barrier instruction’s latency: 51 cycles and 56 cycles, respectively, on Icestorm and Firestorm core."
+    method: counter
+    derivation: measured
+    value: 56
+    unit: cycles
+    supports: []
+    notes: The appendix code brackets the PMU reads and the load with ISB.
+  - id: c-prt-ice-barrier
+    text: The barrier around the timed load adds 51 cycles on Icestorm
+    loc: p005
+    quote: "The measured latency includes the memory barrier instruction’s latency: 51 cycles and 56 cycles, respectively, on Icestorm and Firestorm core."
+    method: counter
+    derivation: measured
+    value: 51
+    unit: cycles
+    supports: []
+    chip: icestorm
+
 new_params:
   l1d.replacement: {block: l1d, name: L1D replacement policy}
   l2.assoc: {block: l2, name: L2 associativity, unit: ways}
