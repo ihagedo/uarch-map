@@ -18301,6 +18301,79 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-cluster"
     },
+    "c-mh-v8-ipv-encoding": {
+      "text": "An insertion/promotion vector for an 8-way set holds, for each of the 8 places in the replacement order, the place a hit line moves to, plus the place a new line is inserted; eviction is always from the least desirable place",
+      "loc": "p138",
+      "quote": "This short array describing a replacement algorithm is referred to as an IPV (Insert/Promotion Vector)",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US12222875B1 (2023). In this encoding LRU has every entry and the insertion place at 0.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
+    "c-mh-v8-fusion-buffer": {
+      "text": "Per a 2024 patent, an AMX/SME permute-style operation and the compute operation that uses its result are dispatched together, so the permuted vector goes straight from the permute unit to the compute array and is not written back if the compute overwrites it",
+      "loc": "p160",
+      "quote": "capture a sequence of operations that begin with a permute-style operation, followed by a compute-style operation using the permuted vector",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250103338A1 (2024); a companion patent (US20250103551A1) describes the permute unit.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
+    "c-mh-v8-sme-latency-15": {
+      "text": "In Apple's implementation the SSVE and SME Z registers sit in the separate AMX coprocessor, about 15 cycles of latency from each core",
+      "loc": "p161",
+      "quote": "the Z registers are now in a separate co-processor isolated from each core by 15 cycles or so of latency",
+      "derivation": "inferred",
+      "value": 15,
+      "unit": "cycles",
+      "approx": true,
+      "supports": [],
+      "chip": "m4",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
+    "c-mh-v8-streaming-neon": {
+      "text": "Per Apple's 2025 optimization guide, Z registers exist only in streaming mode, entering streaming mode clears the NEON registers, and using NEON registers while streaming is illegal and crashes",
+      "loc": "p161",
+      "quote": "starting up streaming mode (SSVE or SME) makes the Z registers available and CLEARS the NEON registers",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "m4",
+      "notes": "From Table 4.4 of Apple's CPU optimization guide. Handley adds that the Arm spec requires the same steps.",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
+    "c-mh-v8-mem-usage-hints": {
+      "text": "Per a 2024 patent, every IP block reports its current and expected memory usage to the central power manager in a common form, so DRAM, memory controller and fabric-link power decisions need not rest on recent memory-controller history alone",
+      "loc": "p245",
+      "quote": "to indicate to the central power manager its current and future expected memory usage",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250104742A1 (2024).",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
+    "c-mh-v8-dram-vs-cpu-power": {
+      "text": "Per a 2023 patent, the power manager gathers performance, per-unit power and sensitivity statistics to decide whether extra power is better spent raising the DRAM or the CPU frequency",
+      "loc": "p245",
+      "quote": "suppose I am willing to spend one extra unit of power. Is that power best spent on running DRAM faster or running the CPU faster?",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "post-m1",
+      "notes": "US20250093932A1 (2023).",
+      "source": "handley-vol8",
+      "entered": "handley-vol8-cluster"
+    },
     "c-mh-v8-a15-rob-smaller": {
       "text": "Dougall Johnson found the A15/M2 P core has a ROB and some other structures about 10% smaller than the A14/M1, and a slightly larger load/store scheduling queue",
       "loc": "p009",
@@ -25706,6 +25779,7 @@
     },
     "ipv_replacement": {
       "claims": [
+        "c-mh-v8-ipv-encoding",
         "c-mh-v8-ipv-replacement"
       ],
       "name": "Criticality-aware replacement vectors",
