@@ -9305,6 +9305,31 @@
       "chip": "m1",
       "entered": "handley-vol1-sched"
     },
+    "c-mh-v1-map-stage": {
+      "text": "Apple's patents show a separate Map stage ahead of Rename that works out the register dependencies among the up to eight instructions handled in one cycle; Rename then allocates each instruction's resources",
+      "loc": "p011",
+      "quote": "You have to figure out the successive name dependencies between all the instructions ... Apple is very clear, in multiple patents, that they use this separate Map stage",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Handley names no patent number here. He says most other companies do not describe such a stage and suggests it may help Apple sustain its width.",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-theory"
+    },
+    "c-mh-v1-lsq-order-tags": {
+      "text": "In the virtual load/store queue the program-order tag given at rename is, depending on the patent, the retirement group number (GNUM), the reorder buffer number (RNUM) or a load-queue number (LNUM)",
+      "loc": "p134",
+      "quote": "Different patents suggest that what Apple variously calls the GNUM (retirement group number), or the RNUM (reorder buffer number), or the LNUM (load queue? number) are used as the ordering property for load/stores",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "hedge": "Different patents suggest",
+      "supports": [],
+      "notes": "Handley names no patent numbers here. The tags play the role of the age bits in his POWER4-style split LQ/SQ model.",
+      "source": "handley-vol1",
+      "chip": "m1",
+      "entered": "handley-vol1-theory"
+    },
     "c-mh-v2-l1-bw-internet": {
       "text": "Handley puts the M1's L1 load bandwidth at 150 GB/s and attributes internet reports of ~100 GB/s to reduction code that limits the loop before the cache does",
       "loc": "p090",
@@ -23167,6 +23192,7 @@
         "c-mh-v1-late-alloc-58",
         "c-mh-v1-sq-dram-108",
         "c-mh-v1-sq-late-alloc-60",
+        "c-mh-v1-lsq-order-tags",
         "c-mh-v8-virtual-alloc",
         "c-dj-lsq-alloc-issue",
         "c-dj-lsq-store-107",
