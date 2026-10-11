@@ -48,6 +48,88 @@ claims:
     value: inclusive
     supports: [l2.inclusion]
     notes: Cites the S2C paper (Yu et al.), from the same lab.
+  - id: c-gf-no-deref-needed
+    text: The DMP prefetches pointers beyond the walked range even when the program never dereferences any pointer itself
+    loc: p004
+    quote: "we deduce that architectural dereferences are not required for the DMP to activate"
+    derivation: measured
+    supports: []
+    notes: Widens Augury's rule that the array's pointers must be dereferenced.
+  - id: c-gf-iterate-enough
+    text: Merely loading the entries of an array holding valid pointers makes the DMP dereference them, including those inside the walked range
+    loc: p004
+    quote: "if the aop contains data which can be interpreted as valid pointers, merely iterating over it is sufficient to activate the DMP"
+    derivation: measured
+    supports: []
+  - id: c-gf-one-load
+    text: A single load makes the DMP dereference every pointer in the loaded cache line, and one pointer in the line is enough
+    loc: p004
+    quote: "Even though the program only loads one aop index, other pointers in the same cache line are also brought into the cache."
+    derivation: measured
+    value: 1
+    unit: loads
+    supports: []
+    notes: Tested with 1 to 8 pointers per line. Augury's three-access threshold (c-aug-min-accesses) applies to reaching past the trained range.
+  - id: c-gf-store-no
+    text: A store to the line, in place of the load, makes the DMP dereference none of its pointers
+    loc: p004
+    quote: "Replacing the load with the store instruction, we find that none of pointers in the accessed cache line are dereferenced."
+    derivation: measured
+    supports: []
+  - id: c-gf-l1-fill
+    text: The DMP looks for pointers when a line is filled into the L1, and has a history filter and a do-not-scan hint against redundant prefetches
+    loc: p004
+    quote: "the DMP dereferences pointers specifically on L1 cache fills and features two mechanisms to prevent redundant prefetches: a history filter and a do-not-scan hint"
+    derivation: measured
+    supports: []
+  - id: c-gf-l2-hit
+    text: A pointer target fetched by the DMP is then loaded in about 250 cycles, at L2 hit time, against much longer when it was not prefetched
+    loc: p004
+    quote: "When the pointers are present, a test access (dereference) to one takes ... 250 cycles"
+    derivation: measured
+    value: 250
+    unit: cycles
+    approx: true
+    supports: []
+    notes: Timed with kperf PMC cycle counts around the access; the authors use 300 cycles as the L2 hit cutoff.
+  - id: c-gf-once
+    text: The DMP reliably dereferences a pointer only once, on the first access to its entry, even after both lines are evicted
+    loc: p005
+    quote: "We observe that the DMP only reliably dereferences each pointer once, on the first access to its aop entry."
+    derivation: measured
+    supports: []
+  - id: c-gf-filter-128
+    text: The DMP re-dereferences a pointer reliably only after 128 other pointers have been seen, which the authors put down to a history filter of about that size
+    loc: p005
+    quote: "We observe that the DMP only reliably re-activates on ptr when S ≥ 128. This behavior is likely due to the limited capacity of the history filter."
+    derivation: derived
+    value: 128
+    unit: entries
+    hedge: "likely"
+    supports: [prefetch.dmp_filter_entries]
+  - id: c-gf-filter-patent
+    text: Apple's content-directed prefetch patent suggests the history filter is a direct-mapped table of 128 or 256 entries
+    loc: p005
+    quote: "The same patent suggests that this filter may be organized as a direct-mapped 128-entry or 256-entry structure."
+    method: patent-reading
+    derivation: inferred
+    value: 128
+    unit: entries
+    range: [128, 256]
+    supports: []
+    notes: US 9,886,385 (Huberty, Meier and Agarwal), the patent Handley cites in c-mh-v2-content-directed.
+  - id: c-gf-filter-per-core
+    text: The history filter is per core and is cleared when the core sits idle for 100 µs or more
+    loc: p005
+    quote: "the history filter is a per-core structure and is reset if a core remains idle ... leave the core idle for 100µs or more"
+    derivation: measured
+    value: 100
+    unit: µs
+    supports: []
+    notes: Moving the test to another core also clears the effect.
+
+new_params:
+  prefetch.dmp_filter_entries: {block: prefetch, name: DMP history filter entries, unit: entries, mechanism: content_directed_prefetch}
 
 mechanism_claims:
-  content_directed_prefetch: [c-gf-firestorm-only]
+  content_directed_prefetch: [c-gf-firestorm-only, c-gf-no-deref-needed, c-gf-one-load, c-gf-store-no, c-gf-l1-fill, c-gf-once, c-gf-filter-128, c-gf-filter-per-core]
