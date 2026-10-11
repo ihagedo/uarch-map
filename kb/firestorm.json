@@ -18871,6 +18871,39 @@
       "chip": "m1",
       "entered": "pacman"
     },
+    "c-pac-eager-squash": {
+      "text": "On the wrong path of an outer branch, the M1 squashes a mispredicted inner indirect branch as soon as its target is computed and fetches from the real target",
+      "loc": "p005",
+      "quote": "the targeted processor must use a speculation mechanism that can eagerly squash nested branches. This behavior is common to many aggressively optimized out-of-order processors, including the Apple M1 SoC.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Shown by the instruction gadget working on the M1 (c-pac-instr-gadget), where the fetch from the authenticated target leaves a TLB trace.",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-data-gadget": {
+      "text": "Under a mispredicted branch, an AUT followed by a load to its result leaves L1 dTLB misses in the probe only when the PAC is correct; a failed check leaves no trace",
+      "loc": "p011",
+      "quote": "When an incorrect PAC is used, in almost all cases (99.2%), we observe no L1 dTLB misses. When a correct PAC is used, we observe at least 5 misses for 99.6% of the time",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Kernel gadget triggered by a syscall, probed from user space with 12 addresses 256 x 16 KB apart, 20,000 trials. A failed AUT yields an invalid pointer whose speculative load is not issued.",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-instr-gadget": {
+      "text": "Under a mispredicted outer branch, an indirect branch to an authenticated pointer fetches from that target, and fills the kernel iTLB, only when the PAC is correct",
+      "loc": "p011",
+      "quote": "when an incorrect PAC is used, we observe at most 1 accesses for 99.2% of the time, and when the correct PAC is used, we observe at least 5 misses for 99.8% of the time",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "The kernel then pushes the entry from its iTLB into the shared L1 dTLB with 4 fetches 32 x 16 KB apart, where user-space Prime+Probe sees it.",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
     "c-prt-l1d-tree-plru": {
       "text": "The L1D replacement policy is tree-based pseudo-LRU: the eviction order over every pattern of hits in a full set matches Tree-PLRU",
       "loc": "p004",
