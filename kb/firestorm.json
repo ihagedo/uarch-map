@@ -499,6 +499,7 @@
     "pcluster.clock_max": {
       "claims": [
         "c-7cpu-clock",
+        "c-aug-clock",
         "c-cc-clk-m1-max-clock",
         "c-prt-clock"
       ],
@@ -571,6 +572,7 @@
     "l1i.size": {
       "claims": [
         "c-7cpu-l1i",
+        "c-aug-l1-sizes",
         "c-ox-l1i-192",
         "c-cc-oryon-m1-l1i-192",
         "c-cc-gcc-l1i-192",
@@ -1412,6 +1414,7 @@
     "l1d.size": {
       "claims": [
         "c-7cpu-l1d-size",
+        "c-aug-l1-sizes",
         "c-cc-oryon-m1-l1d-128",
         "c-cc-gcc-l1d-128",
         "c-mh-v2-l1d-size",
@@ -1430,6 +1433,7 @@
     "l1d.line": {
       "claims": [
         "c-7cpu-l1d-line",
+        "c-aug-l1-line",
         "c-mh-v2-l1d-line-dczva",
         "c-mh-v2-l1d-line",
         "c-ilk-l1d-line",
@@ -1447,6 +1451,7 @@
     },
     "l1d.assoc": {
       "claims": [
+        "c-aug-l1-8way",
         "c-mh-v2-l1d-8way",
         "c-mh-v2-l1d-8way-tlb",
         "c-mh-v8-l1d-8way",
@@ -1599,6 +1604,7 @@
       "claims": [
         "c-at-m1-l2-size",
         "c-7cpu-l2-size",
+        "c-aug-l2-size",
         "c-ilk-l2-size",
         "c-pac-l2-size"
       ],
@@ -1614,6 +1620,7 @@
     "l2.line": {
       "claims": [
         "c-7cpu-l2-line",
+        "c-aug-l2-line",
         "c-mh-v2-l2-line-128-bw",
         "c-mh-v2-l2-line-128",
         "c-mh-v3-l2-line-patent",
@@ -1630,7 +1637,7 @@
       "name": "L2 line size",
       "unit": "B",
       "value": 128,
-      "status": "documented",
+      "status": "measured",
       "confidence": "confirmed"
     },
     "l2.latency": {
@@ -2571,6 +2578,7 @@
     },
     "l2.assoc": {
       "claims": [
+        "c-aug-l2-16way",
         "c-ilk-l2-ways",
         "c-pac-l2-ways",
         "c-prt-l2-ways",
@@ -4037,6 +4045,168 @@
       "supports": [],
       "source": "sp22-augury",
       "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l2-line": {
+      "text": "L2 lines are 128 bytes",
+      "loc": "p004",
+      "quote": "we found that L2 lines are 128 bytes",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "l2.line"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l1-line": {
+      "text": "L1 data cache lines are 64 bytes",
+      "loc": "p004",
+      "quote": "and L1 lines are 64 bytes.",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l1-pair-fill": {
+      "text": "An L1D fill brings in two adjacent 64-byte lines, each of which can then be evicted on its own",
+      "loc": "p004",
+      "quote": "When filling L1d lines, two adjacent L1d lines are brought in at a time, and both are independently evictable.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "GoFetch (c-gf-other-half-l2) finds the other half of the 128 B L2 line goes only to the L2.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l1-8way": {
+      "text": "The L1D is believed to be 8-way set associative, from experience building eviction sets",
+      "loc": "p004",
+      "quote": "We also believe that the L1 is 8-way associative and the L2 is 16-way associative from our experience building eviction sets",
+      "derivation": "inferred",
+      "value": 8,
+      "unit": "ways",
+      "hedge": "We also believe",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l2-16way": {
+      "text": "The L2 is believed to be 16-way set associative, from experience building eviction sets",
+      "loc": "p004",
+      "quote": "We also believe that the L1 is 8-way associative and the L2 is 16-way associative from our experience building eviction sets",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "ways",
+      "hedge": "We also believe",
+      "supports": [
+        "l2.assoc"
+      ],
+      "notes": "GoFetch, from the same lab, gives 12 ways (c-gf-l2-12way).",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-l2-size": {
+      "text": "The four Firestorm cores share a 12 MiB L2",
+      "loc": "p004",
+      "quote": "The four Firestorm cores share a 12 MiB L2, and the Icestorm cores share 4 MiB.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-ice-l2-size": {
+      "text": "The four Icestorm cores share a 4 MiB L2",
+      "loc": "p004",
+      "quote": "The four Firestorm cores share a 12 MiB L2, and the Icestorm cores share 4 MiB.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 4,
+      "unit": "MiB",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "sp22-augury",
+      "entered": "augury"
+    },
+    "c-aug-l1-sizes": {
+      "text": "Each Firestorm core has a private 192 KiB L1 instruction cache and a 128 KiB L1 data cache",
+      "loc": "p004",
+      "quote": "Each Firestorm core has a private 192 KiB L1 instruction cache and 128 KiB L1 data cache [11].",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size",
+        "l1i.size"
+      ],
+      "notes": "Cites Apple's M1 launch event. The value field holds the L1D size.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-dram-scaling": {
+      "text": "DRAM access times vary widely and fall under heavier DRAM load, which the authors put down to DRAM frequency scaling",
+      "loc": "p004",
+      "quote": "We find that increasing the pressure on DRAM can reduce the average access time more than amortizing measurement costs would anticipate.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Attributed to DRAM controller frequency scaling reported by Hector Martin.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-no-smt": {
+      "text": "The M1 has no simultaneous multithreading",
+      "loc": "p004",
+      "quote": "does not support any form of Simultaneous Multi-Threading (SMT).",
+      "derivation": "reported",
+      "method": "secondhand",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-clock": {
+      "text": "Apple gives the Firestorm cores a maximum clock of 3.2 GHz",
+      "loc": "p007",
+      "quote": "Apple reporting a maximum clock speed of 3.2 GHz for the Firestorm cores",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3.2,
+      "unit": "GHz",
+      "supports": [
+        "pcluster.clock_max"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-a14": {
+      "text": "The same DMP is present on the A14",
+      "loc": "p003",
+      "quote": "We have confirmed that our findings apply to the A14 (iPhone 12) and the new M1 Max at a minimum.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "a14",
+      "source": "sp22-augury",
       "entered": "augury"
     },
     "c-tm-tage": {
