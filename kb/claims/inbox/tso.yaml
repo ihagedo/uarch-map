@@ -160,6 +160,84 @@ claims:
     supports: []
     notes: Cites the S2C paper on the M1.
 
+  - id: c-tso-m1-simd
+    text: >-
+      On the M1 P core, cache-hitting loads of more than 16 bytes run over 10x slower in TSO mode than in Arm mode;
+      loads of 16 bytes or less are not slowed
+    loc: p014
+    quote: "On the M1 P core TSO mode, loads of > 16 𝐵 are more than 10× slower than in Arm mode, whereas loads of ≤ 16 𝐵 are not slowed down."
+    method: throughput
+    derivation: measured
+    value: 10
+    unit: x
+    supports: []
+    notes: Loops of 100 M cache-hitting loads of each ldr, ldp and ld1-ld4 variant; 10x is a lower bound.
+  - id: c-tso-m4-simd
+    text: On the M4 P core every load variant has the same throughput in TSO and Arm modes
+    loc: p014
+    quote: "In contrast, on the M4, all loads variants have equal throughput in both modes."
+    method: throughput
+    derivation: measured
+    supports: []
+    chip: m4
+    notes: The M1 slowdown for loads over 16 bytes (c-tso-m1-simd) is gone on the M4.
+  - id: c-tso-m1-ffmpeg
+    text: >-
+      On M1 P cores ffmpeg_x264 runs 25 % slower in TSO mode on one core and about 10 % slower on four, mostly
+      from NEON loads of 32 bytes or more
+    loc: p009
+    quote: "Finally, on M1 P cores, ffmpeg_x264 slows down by 25% in single-core execution and by about 10% in multi-core execution."
+    method: throughput
+    derivation: measured
+    value: 25
+    unit: "%"
+    supports: []
+    notes: Replacing each 32 B vector load with two 16 B loads removes much of the slowdown.
+  - id: c-tso-m1-stl
+    text: >-
+      On M1 P and E cores, as on the M4 P core, a load that needs more bytes than the forwarding store holds runs
+      much slower in TSO mode than in Arm mode
+    loc: p013
+    quote: "on an M4 P core. (M1 P and E core results are qualitatively identical.)"
+    method: throughput
+    derivation: measured
+    supports: []
+    notes: The M4 P-core gap is about 5x (c-tso-stl-5x); M1 numbers are not given.
+  - id: c-tso-stl-5x
+    text: >-
+      In TSO mode store-to-load forwarding is as fast as in Arm mode when the load takes all its bytes from the
+      store, and about 5x slower when it must also read the cache
+    loc: p013
+    quote: "STL forwarding in TSO mode is as fast as Arm’s if the load obtains all its data from the store ... but is about 5× slower otherwise, when the load must also access the cache."
+    method: throughput
+    derivation: measured
+    value: 5
+    unit: x
+    approx: true
+    supports: []
+    chip: m4
+    notes: Loops of 100 M same-address store/load pairs with 4- and 8-byte widths on an M4 P core.
+  - id: c-tso-stl-dsb
+    text: With a DSB after each store/load pair, every width combination runs at about the same rate in both modes
+    loc: p013
+    quote: "However, when the STL pairs are serialized by a dsb, all patterns exhibit roughly the same throughput in both modes"
+    method: throughput
+    derivation: measured
+    supports: []
+    chip: m4
+    notes: That common rate is close to the TSO-mode rate of an 8-byte load from a 4-byte store.
+  - id: c-tso-stl-serial
+    text: >-
+      The authors hypothesize that TSO mode handles partial forwarding pairs one at a time, perhaps waiting for the
+      store to reach the L1, though TSO does not require it
+    loc: p013
+    quote: "We therefore hypothesize that TSO mode serializes partial STL pair handling, possibly because it waits for the store to write to the L1 cache in this case (i.e., disables STL forwarding)."
+    derivation: inferred
+    hedge: "We therefore hypothesize"
+    supports: []
+    chip: m4
+    notes: Root cause of a 70 % TSO slowdown in fluidanimate built at -O0.
+
 new_mechanisms:
   tso_mode:
     name: Runtime-selectable TSO memory model
@@ -172,4 +250,4 @@ new_mechanisms:
       8-byte load forwarded from a 4-byte store runs several times slower than with the bit clear
 
 mechanism_claims:
-  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench]
+  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench, c-tso-m1-simd, c-tso-m4-simd, c-tso-m1-ffmpeg, c-tso-m1-stl, c-tso-stl-5x, c-tso-stl-dsb, c-tso-stl-serial]
