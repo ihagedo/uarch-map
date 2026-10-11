@@ -84,6 +84,158 @@ claims:
     derivation: inferred
     supports: []
     notes: This differs from c-mh-v3-cpu-no-slc-alloc, which says GPU misses never allocate lines in the SLC.
+  - id: c-mh-v6-dsid-tag
+    text: >-
+      Per a 2017 patent, each GPU cache read or write is tagged with a Data Set ID (DSID) that goes with the line to
+      the L2 and the SLC, so SLC lines carry a DSID
+    loc: p275
+    quote: >-
+      each read or write of a cache line is now also tagged with a Data Set ID (now in addition to the Command Buffer ID
+      tag). This tag propagates out to L2 and SLC.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1, cache drop feature to increase memory bandwidth and save power.
+  - id: c-mh-v6-dsid-drop
+    text: >-
+      A client can ask the SLC to drop every line of one DSID, which frees the lines at once and skips writing their
+      modified data back to DRAM
+    loc: p275
+    quote: >-
+      we can send a request to SLC to drop all the lines tagged with a particular DSID ... not having to pay the energy
+      and bandwidth costs of writing modified line data to DRAM
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1. DSIDs also drive the SLC quotas and line locking.
+  - id: c-mh-v6-slc-drop-unit
+    text: >-
+      Beside the SLC sit a DSID mapping table and a drop control unit that walks the cache line by line, invalidating
+      the lines of the DSIDs being dropped
+    loc: p275
+    quote: >-
+      a DSID Mapping Table, which holds information about various DSIDs ... a Drop Control Unit, which can autonomously
+      walk through the cache one line after another
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1.
+  - id: c-mh-v6-slc-physical-dsids
+    text: >-
+      The 2017 patent allows 256 (in fact 246) virtual 8-bit DSIDs in the GPU but only 32 physical DSIDs in the SLC; the
+      mapping table converts one to the other
+    loc: p276
+    quote: >-
+      the system allows for 256 (actually 246) possible “virtual” DSIDs within the GPU (ie 8-bit DSID) but only 32
+      “physical” DSIDs within the SLC
+    method: patent-reading
+    derivation: inferred
+    value: 32
+    unit: IDs
+    hedge: "possibly increased since 2017"
+    supports: [slc.dsids]
+    notes: US20180349291A1. Handley says a later patent suggests about 2^16 virtual DSIDs.
+  - id: c-mh-v6-dsid-quota
+    text: The DSID mapping table also stores each DSID's quota, so it is the point where SLC quotas are enforced
+    loc: p276
+    quote: "this same table stores the quota provided for each DSID and so is the point at which quotas are enforced"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1.
+  - id: c-mh-v6-dsid-clients
+    text: >-
+      Clients other than the GPU, such as the camera and the media encoders and decoders, also use DSIDs for locked
+      lines, quotas and drops in the SLC
+    loc: p276
+    quote: >-
+      Non-GPU clients (eg camera or media encoder/decoder) can also use DSIDs, and exploit the same functionality like
+      locked lines, quotas, or dropping all lines associated with a particular DSID.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+  - id: c-mh-v6-cpu-dsid
+    text: >-
+      The SLC reserves ten DSIDs for its own data classes; one is the CPU DSID, which tags lines from the CPU and other
+      traditional clients that follow ordinary LRU control
+    loc: p276
+    quote: >-
+      ten virtual DSIDs are unavailable to the GPU or other client ... One DSID is what you might think of as “the CPU
+      DSID”. It tags lines that come from the CPU
+    method: patent-reading
+    derivation: inferred
+    value: 10
+    unit: IDs
+    supports: []
+    notes: >-
+      US20180349291A1. Other reserved DSIDs mark compressed metadata and MMU data; Handley thinks another probably tags
+      hardware debug traces, and that the CPU DSID may be split in the M3 or later.
+  - id: c-mh-v6-dsid-page-tables
+    text: >-
+      One reserved DSID holds MMU parameters and page tables, which may let page-table lines stay sticky in the SLC
+      where the existing page walkers read them, in effect extending the TLBs into the SLC
+    loc: p276
+    quote: >-
+      Yet another DSID is for storing memory management unit (MMU) parameters and page tables, which might be a way of
+      giving those extra “persistence” in the SLC
+    method: patent-reading
+    derivation: inferred
+    hedge: "might be a way of"
+    supports: []
+    notes: US20180349291A1. See c-mh-v3-mmu-at-slc.
+  - id: c-mh-v6-dsid-fallback
+    text: >-
+      When no physical DSID is free, the data gets the default CPU DSID and escapes quota and drop control; a line that
+      two DSIDs touch in conflicting ways is also moved to the CPU DSID
+    loc: p277
+    quote: >-
+      What do we do if we cannot find a free physical DSID? In that case the data is treated as “CPU” data and given the
+      default DSID.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1.
+  - id: c-mh-v6-drop-victim
+    text: >-
+      While a drop scan is still running, a way whose tag carries a DSID being dropped counts as invalid and is replaced
+      first
+    loc: p277
+    quote: >-
+      if any way has a tag corresponding to a “being-dropped” DSID then that way will be treated as invalid and
+      preferentially replaced
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20180349291A1.
+  - id: c-mh-v6-dsid-set
+    text: >-
+      Per a 2018 patent, firmware maps each resource group to a free DSID, and a SET command early in a command buffer
+      makes that DSID tag all later cache activity, including lines read into the GPU L1 and passed on to the L2 and SLC
+    loc: p278
+    quote: >-
+      From that point on, until a reset, that DSID is used implicitly for all cache activity. Cache lines read into L1
+      (and propagated up to L2 and SLC) are marked with that DSID
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10672099B2. A DROP command then invalidates every line marked with the DSID.
+  - id: c-mh-v6-deprioritize
+    text: >-
+      Per a 2020 patent, a DE-PRIORITIZE command marks a DSID's SLC lines as low priority instead of dropping them, so
+      they last into the next frame unless something more important needs the space
+    loc: p279
+    quote: >-
+      The previous DSID scheme is augmented with a DE-PRIORITIZE command. This marks the data in SLC not to be completely
+      dropped, but tagged as low priority.
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20210096994A1. A related hint marks written lines to be sent on to DRAM and freed soon.
 
+new_params:
+  slc.dsids: {block: slc, name: SLC data set IDs (physical), unit: IDs}
 mechanism_claims:
+  slc_sticky_quota: [c-mh-v6-dsid-tag, c-mh-v6-dsid-drop, c-mh-v6-slc-drop-unit, c-mh-v6-slc-physical-dsids,
+    c-mh-v6-dsid-quota, c-mh-v6-dsid-clients, c-mh-v6-cpu-dsid, c-mh-v6-dsid-page-tables, c-mh-v6-dsid-fallback,
+    c-mh-v6-drop-victim, c-mh-v6-dsid-set, c-mh-v6-deprioritize]
   coherence_directory: [c-mh-v6-gpu-l2-sync]
