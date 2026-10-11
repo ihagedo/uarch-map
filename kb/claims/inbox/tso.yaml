@@ -379,6 +379,79 @@ claims:
     supports: []
     chip: m4
     notes: M4 E cores. This explains the 2x TSO slowdown of lbm on M4 E cores.
+  - id: c-tso-mlp-8
+    text: >-
+      TSO-mode load throughput falls below Arm mode once a burst of loads touches more than 8 addresses with the
+      same intra-page offset, the L1D associativity
+    loc: p011
+    quote: "TSO mode throughput drops relative to Arm mode once the load burst accesses more than 8 addresses ... exactly the associativity of the L1 data cache (see Table 1)."
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: addresses
+    supports: []
+    chip: m4
+    notes: M4 P cores, E cores similar. With random intra-page offsets TSO mode matches Arm mode.
+  - id: c-tso-mlp-squash
+    text: >-
+      Out-of-order loads squashed when L1 set conflicts evict their lines limit memory-level parallelism in TSO
+      mode and cause the large slowdowns of bwaves, cactuBSSN, wrf and roms
+    loc: p011
+    quote: "Our analysis reveals that this effect is the root cause of the severe TSO slowdowns in bwaves, cactuBSSN, wrf, and roms."
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: Randomizing the intra-page offset of large allocations removes these slowdowns and speeds Arm mode up too.
+  - id: c-tso-cactu-misses
+    text: >-
+      In TSO mode cactuBSSN has 50 % more L1 load misses than in Arm mode, 71 % of them from loads later squashed
+    loc: p011
+    quote: "show that the slowdown is correlated with 50% more L1 load misses, 71% of which are due to loads that are eventually squashed"
+    method: counter
+    derivation: measured
+    value: 50
+    unit: "%"
+    supports: []
+    chip: m4
+    notes: Load-unit uops per retired load rise from 11 in Arm mode to 17.96 in TSO mode.
+  - id: c-tso-outliers
+    text: >-
+      On the M4, bwaves, cactuBSSN, wrf and roms run 19 % to 70 % slower in TSO mode on one or four cores
+    loc: p009
+    quote: "On the M4, the SPEC CPU 2017 programs bwaves, cactuBSSN, wrf, and roms have average slowdowns ranging from 19% to 70% in both single- and multi-core executions"
+    method: throughput
+    derivation: measured
+    value: 44.5
+    unit: "%"
+    range: [19, 70]
+    supports: []
+    chip: m4
+  - id: c-tso-overall
+    text: >-
+      Leaving out seven outliers, the harmonic-mean TSO-mode slowdown across 49 applications is 1.9 %, most at 3 %
+      or less
+    loc: p002
+    quote: "the harmonic mean [25] of per-application average TSO slowdowns is 1.9%, with most applications exhibiting slowdowns of at most 3%"
+    method: throughput
+    derivation: measured
+    value: 1.9
+    unit: "%"
+    supports: []
+    chip: m4
+    notes: Reported mainly for M4 P cores; the largest non-outlier slowdown is 11.5 %.
+  - id: c-tso-suite-fixed
+    text: >-
+      Across the whole suite the harmonic-mean TSO-mode slowdown is 4.2 %, falling to 1.9 % with allocator and
+      code changes
+    loc: p002
+    quote: "With these software changes, the harmonic mean of per-application TSO slowdowns across our entire benchmark suite decreases from 4.2% to 1.9%."
+    method: throughput
+    derivation: measured
+    value: 4.2
+    unit: "%"
+    supports: []
+    chip: m4
+    notes: Reported mainly for M4 P cores.
 
 new_mechanisms:
   tso_mode:
@@ -392,5 +465,10 @@ new_mechanisms:
       8-byte load forwarded from a 4-byte store runs several times slower than with the bit clear
 
 mechanism_claims:
-  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench, c-tso-m1-simd, c-tso-m4-simd, c-tso-m1-ffmpeg, c-tso-m1-stl, c-tso-stl-5x, c-tso-stl-dsb, c-tso-stl-serial, c-tso-ll-reorder, c-tso-ll-violation, c-tso-ll-precise, c-tso-ll-squash-rule, c-tso-ss-hits, c-tso-ss-miss-36, c-tso-ss-mshr-fifo, c-tso-ss-mix, c-tso-ss-reorder, c-tso-ss-remote, c-tso-ss-nonspec, c-tso-ecore-ss]
+  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench, c-tso-m1-simd,
+             c-tso-m4-simd, c-tso-m1-ffmpeg, c-tso-m1-stl, c-tso-stl-5x, c-tso-stl-dsb, c-tso-stl-serial,
+             c-tso-ll-reorder, c-tso-ll-violation, c-tso-ll-precise, c-tso-ll-squash-rule, c-tso-ss-hits,
+             c-tso-ss-miss-36, c-tso-ss-mshr-fifo, c-tso-ss-mix, c-tso-ss-reorder, c-tso-ss-remote, c-tso-ss-nonspec,
+             c-tso-ecore-ss, c-tso-mlp-8, c-tso-mlp-squash, c-tso-cactu-misses, c-tso-outliers, c-tso-overall,
+             c-tso-suite-fixed]
   load_poison_bits: [c-tso-ll-squash-rule]
