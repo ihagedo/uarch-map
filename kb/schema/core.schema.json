@@ -430,6 +430,10 @@
             "author": {
               "type": "string"
             },
+            "group": {
+              "type": "string",
+              "description": "lab or team; sources sharing one count as one author"
+            },
             "year": {
               "type": "integer"
             },

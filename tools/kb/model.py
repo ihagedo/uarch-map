@@ -31,11 +31,16 @@ class Source:
     year: int | None = None
     url: str = ""
     notes: str = ""
+    name: str = ""  # display name; set by KB when two authors share a surname
+
+    @property
+    def surname(self):
+        return (self.author or self.title).split(",")[0].strip()
 
     @property
     def cite(self):
         """Short citation, e.g. 'Johnson 2023'."""
-        name = (self.author or self.title).split(",")[0].strip()
+        name = self.name or self.surname
         return f"{name} {self.year}" if self.year else name
 
 
@@ -181,6 +186,12 @@ class KB:
             )
             for k, v in data["sources"].items()
         }
+        authors = {}
+        for s in self.sources.values():
+            authors.setdefault(s.surname, set()).add(s.author)
+        for s in self.sources.values():
+            if len(authors[s.surname]) > 1 and "," in s.author:
+                s.name = f"{s.author.split(',')[1].strip()[:1]}. {s.surname}"
         self.claims = {
             k: Claim(
                 id=k,

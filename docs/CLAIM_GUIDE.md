@@ -114,6 +114,7 @@ Derivation:
   - inferred: only inferences or repeats;
   - conjecture: a hole that related claims bound (`kb/seed/firestorm/conjectures.yaml`);
   - unknown: a hole with nothing to go on.
+- Sources from one lab carry the same `group` in `sources.yaml` and count as one author.
 - Agreement: values within 5 %, or one inside the other claim's `range`.
 - Dispute: two supporting claims of equal rank disagree by more than 5 %, or a claim lists the param
   in `contradicts`. An open dispute caps confidence at corroborated.

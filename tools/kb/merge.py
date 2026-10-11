@@ -51,7 +51,7 @@ def load_yaml_dir(pattern):
 
 
 def author_of(src):
-    return (src.get("author") or src.get("title") or "").split(",")[0].strip().lower()
+    return (src.get("group") or src.get("author") or src.get("title") or "").strip().lower()
 
 
 def close(a, b):
