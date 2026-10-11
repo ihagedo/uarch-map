@@ -5988,6 +5988,71 @@
       "chip": "m1",
       "entered": "gofetch"
     },
+    "c-gf-dit-m1": {
+      "text": "Setting the Arm DIT bit does not turn off the DMP on the M1 or M2",
+      "loc": "p015",
+      "quote": "setting the data independent timing (DIT) [1] bit disables the DMP behavior on M3, which is not the case with M1 and M2.",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "The same result holds on the M2.",
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-dit-m3": {
+      "text": "Setting the DIT bit turns off the DMP on the M3",
+      "loc": "p015",
+      "quote": "setting the data independent timing (DIT) [1] bit disables the DMP behavior on M3, which is not the case with M1 and M2.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m3",
+      "source": "usenix24-gofetch",
+      "entered": "gofetch"
+    },
+    "c-gf-no-disable": {
+      "text": "Turning the DMP off entirely is probably not possible on the M1 and M2",
+      "loc": "p015",
+      "quote": "completely disable the DMP. However, as doing so will incur heavy performance penalties and is likely not possible on M1 and M2 CPUs",
+      "derivation": "inferred",
+      "hedge": "likely not possible",
+      "supports": [],
+      "source": "usenix24-gofetch",
+      "chip": "m1",
+      "entered": "gofetch"
+    },
+    "c-gf-m2": {
+      "text": "The M2's DMP activates on all four access patterns that trigger it on the M1",
+      "loc": "p007",
+      "quote": "the M2/M3 activates on all the patterns discussed previously",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m2",
+      "notes": "Mac Mini M2 under macOS 14.2.1.",
+      "source": "usenix24-gofetch",
+      "entered": "gofetch"
+    },
+    "c-gf-m3": {
+      "text": "The M3's DMP behaves like the M2's, activating on the same access patterns as on the M1",
+      "loc": "p007",
+      "quote": "As the Apple M3 behaves similarly to the M2, we omit its figure.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m3",
+      "notes": "MacBook Pro M3 under macOS 14.2.",
+      "source": "usenix24-gofetch",
+      "entered": "gofetch"
+    },
+    "c-gf-icestorm-none": {
+      "text": "The DMP does not activate for code running on the Icestorm cores",
+      "loc": "p015",
+      "quote": "As pointed out by Augury [83], the DMP does not activate on code running on Icestorm cores.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "usenix24-gofetch",
+      "entered": "gofetch"
+    },
     "c-mh-v1-lsq-fsqrt-330": {
       "text": "With an FSQRT chain as the delay, independent loads show a jump at ~330; Handley notes the limit looks like the ROB's \"failable\" slots rather than a load-queue size",
       "loc": "p124",
@@ -21553,6 +21618,7 @@
         "c-gf-tbi",
         "c-gf-next-line",
         "c-gf-two-lines",
+        "c-gf-dit-m1",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",

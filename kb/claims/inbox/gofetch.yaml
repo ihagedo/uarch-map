@@ -195,10 +195,57 @@ claims:
     derivation: reported
     supports: []
     notes: Footnote credits Augury's measurement (c-aug-tlb-fill).
+  - id: c-gf-dit-m1
+    text: Setting the Arm DIT bit does not turn off the DMP on the M1 or M2
+    loc: p015
+    quote: "setting the data independent timing (DIT) [1] bit disables the DMP behavior on M3, which is not the case with M1 and M2."
+    derivation: measured
+    supports: []
+    notes: The same result holds on the M2.
+  - id: c-gf-dit-m3
+    text: Setting the DIT bit turns off the DMP on the M3
+    loc: p015
+    quote: "setting the data independent timing (DIT) [1] bit disables the DMP behavior on M3, which is not the case with M1 and M2."
+    derivation: measured
+    supports: []
+    chip: m3
+  - id: c-gf-no-disable
+    text: Turning the DMP off entirely is probably not possible on the M1 and M2
+    loc: p015
+    quote: "completely disable the DMP. However, as doing so will incur heavy performance penalties and is likely not possible on M1 and M2 CPUs"
+    derivation: inferred
+    hedge: "likely not possible"
+    supports: []
+  - id: c-gf-m2
+    text: The M2's DMP activates on all four access patterns that trigger it on the M1
+    loc: p007
+    quote: "the M2/M3 activates on all the patterns discussed previously"
+    derivation: measured
+    supports: []
+    chip: m2
+    notes: Mac Mini M2 under macOS 14.2.1.
+  - id: c-gf-m3
+    text: The M3's DMP behaves like the M2's, activating on the same access patterns as on the M1
+    loc: p007
+    quote: "As the Apple M3 behaves similarly to the M2, we omit its figure."
+    derivation: measured
+    supports: []
+    chip: m3
+    notes: MacBook Pro M3 under macOS 14.2.
+  - id: c-gf-icestorm-none
+    text: The DMP does not activate for code running on the Icestorm cores
+    loc: p015
+    quote: "As pointed out by Augury [83], the DMP does not activate on code running on Icestorm cores."
+    method: secondhand
+    derivation: reported
+    supports: []
+    chip: icestorm
 
 new_params:
   prefetch.dmp_filter_entries: {block: prefetch, name: DMP history filter entries, unit: entries, mechanism: content_directed_prefetch}
   prefetch.dmp_region:         {block: prefetch, name: DMP pointer region (pointer and its line share upper bits), unit: GiB, mechanism: content_directed_prefetch}
 
 mechanism_claims:
-  content_directed_prefetch: [c-gf-firestorm-only, c-gf-no-deref-needed, c-gf-one-load, c-gf-store-no, c-gf-l1-fill, c-gf-once, c-gf-filter-128, c-gf-filter-per-core, c-gf-l1-half, c-gf-l2-to-l1, c-gf-do-not-scan, c-gf-4g-region, c-gf-tbi, c-gf-next-line, c-gf-two-lines]
+  content_directed_prefetch: [c-gf-firestorm-only, c-gf-no-deref-needed, c-gf-one-load, c-gf-store-no, c-gf-l1-fill, c-gf-once,
+    c-gf-filter-128, c-gf-filter-per-core, c-gf-l1-half, c-gf-l2-to-l1, c-gf-do-not-scan, c-gf-4g-region, c-gf-tbi,
+    c-gf-next-line, c-gf-two-lines, c-gf-dit-m1]
