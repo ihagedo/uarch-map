@@ -682,6 +682,7 @@
     "dirpred.kind": {
       "claims": [
         "c-tm-tage",
+        "c-cq-tage",
         "c-mh-v4-tage",
         "c-mh-v4-m1-tage"
       ],
@@ -689,8 +690,8 @@
       "block": "dirpred",
       "name": "Direction predictor type",
       "value": "tage-like",
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "measured",
+      "confidence": "single"
     },
     "dirpred.history": {
       "claims": [
@@ -707,14 +708,17 @@
       "confidence": "corroborated"
     },
     "dirpred.capacity": {
-      "claims": [],
+      "claims": [
+        "c-cq-capacity"
+      ],
       "disputes": [],
       "block": "dirpred",
       "name": "Direction predictor capacity",
       "unit": "entries",
-      "status": "open",
-      "value": null,
-      "confidence": "unknown"
+      "value": 44000,
+      "approx": true,
+      "status": "derived",
+      "confidence": "derived"
     },
     "dirpred.mispredict_penalty": {
       "claims": [
@@ -1940,6 +1944,18 @@
       "approx": true,
       "status": "measured",
       "confidence": "corroborated"
+    },
+    "dirpred.tables": {
+      "claims": [
+        "c-cq-tables"
+      ],
+      "disputes": [],
+      "block": "dirpred",
+      "name": "Tagged tables (PHTs)",
+      "unit": "tables",
+      "value": 6,
+      "status": "measured",
+      "confidence": "single"
     },
     "prefetch.dmp_filter_entries": {
       "claims": [
@@ -5737,6 +5753,89 @@
       "value": "PC[18:2]",
       "supports": [],
       "chip": "m1",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-tage": {
+      "text": "Firestorm's conditional predictor is a TAGE design with six tagged pattern history tables recovered experimentally",
+      "loc": "p001",
+      "quote": "the six pattern history tables in their TAGE branch predictor.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "tage-like",
+      "supports": [
+        "dirpred.kind"
+      ],
+      "chip": "m1",
+      "notes": "Six tagged tables with geometric history lengths were recovered, confirming the TAGE-style structure assumed from Apple patents.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-tables": {
+      "text": "Firestorm's TAGE conditional predictor has six pattern history tables",
+      "loc": "p003",
+      "quote": "special design of the PHR and the six pattern history tables.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "tables",
+      "supports": [
+        "dirpred.tables"
+      ],
+      "chip": "m1",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-pht1": {
+      "text": "Firestorm's longest-history pattern history table is four-way set associative with 4096 entries, indexed with PC bits 6 and 9",
+      "loc": "p008",
+      "quote": "the 1st PHT of the Firestorm CBP is\n4-way set associative and uses PC[6] and PC[9] in its index\nfunction ... which is 4-way 4096entry in capacity",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "4-way, 4096 entries",
+      "supports": [],
+      "chip": "m1",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-geometry": {
+      "text": "Firestorm's six pattern history tables use PHRT history lengths 100, 57, 32, 18, 11 and 6 with associativities 4,4,4,4,6,6 and 10 or 11 index bits",
+      "loc": "p009",
+      "quote": "Firestorm\n\n100\n57\n32\n18\n11\n6\n\n28\n28\n28\n18\n11\n6\n\n4\n4\n4\n4\n6\n6\n\n10\n10\n10\n11\n11\n11*",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "PHRT lengths 100/57/32/18/11/6; assoc 4/4/4/4/6/6; index bits 10/10/10/11/11/11",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Table 3. PHRB lengths 28/28/28/18/11/6. The last table's index-bit count is marked low confidence.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-capacity": {
+      "text": "Firestorm's conditional branch predictor holds about 44K entries across its six tables",
+      "loc": "p011",
+      "quote": "Apple Firestorm\nQualcomm Oryon\nIntel Skylake\n\n100 + 28\n100 + 32\n186\n\n6\n6\n3\n\n44K\n40K\n6K",
+      "derivation": "derived",
+      "value": 44000,
+      "unit": "entries",
+      "approx": true,
+      "supports": [
+        "dirpred.capacity"
+      ],
+      "chip": "m1",
+      "notes": "Table 6. PHR width is 100 (PHRT) plus 28 (PHRB); the total is computed from the recovered per-table sizes.",
+      "source": "arxiv-2411-13900",
+      "entered": "dissecting-cbp"
+    },
+    "c-cq-partition-pc6": {
+      "text": "Firestorm partitions the pattern history tables by one PC bit, PC bit 6, so two adjacent conditional branches can be predicted in one cycle",
+      "loc": "p011",
+      "quote": "Apple and\nQualcomm CBPs are also partitioned by one PC bit: PC[6],\naccording to our CBP models.",
+      "derivation": "derived",
+      "value": "PC[6]",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Two adjacent conditional branches in one prediction block share the same PC[6] and thus the same index, so both ways of one set are read and matched against two tags without a second SRAM read port.",
       "source": "arxiv-2411-13900",
       "entered": "dissecting-cbp"
     },

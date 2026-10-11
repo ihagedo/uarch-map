@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 140, claims 1357, sources 30, mechanisms 54
+blocks 37, links 35, params 141, claims 1363, sources 30, mechanisms 54
 
 ## By status
 
-- derived: 13
-- inferred: 25
-- measured: 93
-- open: 5
+- derived: 14
+- inferred: 24
+- measured: 95
+- open: 4
 - reported: 4
 
 ## By confidence
@@ -15,14 +15,13 @@ blocks 37, links 35, params 140, claims 1357, sources 30, mechanisms 54
 - confirmed: 16
 - conjecture: 3
 - corroborated: 27
-- derived: 13
-- inferred: 29
-- single: 50
-- unknown: 2
+- derived: 14
+- inferred: 28
+- single: 52
+- unknown: 1
 
-## Holes (5)
+## Holes (4)
 
-- dirpred.capacity (dirpred): Direction predictor capacity
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
 - int_prf.headroom (int_prf): Integer rename headroom
