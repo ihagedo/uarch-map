@@ -1,14 +1,14 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 133, claims 1250, sources 26, mechanisms 53
+blocks 37, links 35, params 134, claims 1259, sources 26, mechanisms 54
 
 ## By status
 
-- derived: 10
+- derived: 12
 - documented: 3
 - inferred: 25
 - measured: 85
-- open: 6
+- open: 5
 - reported: 4
 
 ## By confidence
@@ -16,14 +16,13 @@ blocks 37, links 35, params 133, claims 1250, sources 26, mechanisms 53
 - confirmed: 15
 - conjecture: 3
 - corroborated: 26
-- derived: 10
+- derived: 12
 - inferred: 29
 - single: 47
-- unknown: 3
+- unknown: 2
 
-## Holes (6)
+## Holes (5)
 
-- itlb.entries (itlb): iTLB entries
 - dirpred.capacity (dirpred): Direction predictor capacity
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth

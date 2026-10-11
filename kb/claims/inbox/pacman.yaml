@@ -256,3 +256,104 @@ claims:
       From the step at 4 loads 256 x 128 B apart (c-pac-l1d-evict-4); the paper does not study the caches further.
       Disagrees with the 8 ways of c-mh-v2-l1d-8way, c-pac-l1d-ways and c-ilk-l1d-ways.
 
+  - id: c-pac-itlb-evict-4
+    text: >-
+      After a page is reached only by instruction fetch, a data load to it takes over 110 cycles; executing 4 or more
+      branches spaced 32 x 16 KB apart drops that load to about 80 cycles
+    loc: p009
+    quote: "small (N < 4), we observe a high access latency above 110 cycles. The access latency then drops from above 110 cycles to around 80 cycles when stride ≥ 32×16KB and N ≥ 4"
+    method: stride-sweep
+    derivation: measured
+    value: 4
+    unit: branches
+    supports: []
+    notes: >-
+      The L1 dTLB and L2 TLB are first reset with 23 loads 2048 x 16 KB apart; the target is branched to as code, then
+      loaded as data from a JIT region.
+  - id: c-pac-itlb-separate
+    text: The L1 iTLB is a separate structure from the L1 dTLB, and loads and stores cannot see its entries
+    loc: p010
+    quote: "the L1 iTLB and L1 dTLB are separate structures and the L1 iTLB content is not visible from the load and store ports"
+    derivation: inferred
+    hedge: "we hypothesize"
+    supports: []
+    notes: Proposed to explain why a load misses the L1 dTLB while its page's translation sits only in the iTLB (c-pac-itlb-evict-4).
+  - id: c-pac-dtlb-backs-itlb
+    text: >-
+      The L1 dTLB is a non-inclusive backing store for both the user and the kernel L1 iTLB, so a translation evicted
+      from either iTLB is inserted into the L1 dTLB
+    loc: p010
+    quote: "Both the userspace L1 iTLB and the kernelspace L1 iTLB use the L1 dTLB as a non-inclusive backing-store. When a page table entry is evicted from one of the L1 iTLBs, it will be inserted into the L1 dTLB."
+    derivation: inferred
+    supports: []
+  - id: c-pac-itlb-4x32
+    text: The L1 iTLB has 4 ways and 32 sets, worked out from the eviction step at a 32 x 16 KB branch stride
+    loc: p010
+    quote: "Third, the L1 iTLB has 4 ways with 32 sets, as indicated by the line labeled with stride = 32×16KB in Figure 5(c)."
+    derivation: derived
+    value: "4-way, 32 sets"
+    supports: [itlb.org]
+    notes: Figure 6 gives this shape to each of the user and kernel iTLBs. The paper states no entry count.
+  - id: c-pac-itlb-128
+    text: Each L1 iTLB holds 128 entries, as 4 ways of 32 sets
+    loc: p010
+    quote: "Third, the L1 iTLB has 4 ways with 32 sets"
+    derivation: derived
+    value: 128
+    unit: entries
+    supports: [itlb.entries]
+    notes: The paper states the shape, not the count; 128 is 4 ways times 32 sets. One such iTLB each for user and kernel code.
+  - id: c-pac-itlb-victim-steps
+    text: >-
+      In the same instruction-fetch sweep, 12 or more branches 256 x 16 KB apart raise the data load to about 110 cycles
+      and 23 or more 2048 x 16 KB apart to about 130, the steps data eviction sets cause
+    loc: p010
+    quote: "we observe the access latency increases from 80 cycles to around 110 cycles when stride ≥ 256×16KB and N ≥ 12, and further increases to around 130 cycles"
+    method: stride-sweep
+    derivation: measured
+    supports: []
+    notes: The authors take this to mean a translation pushed from the iTLB into the L1 dTLB behaves like any other entry there.
+  - id: c-pac-itlb-per-el
+    text: User space and the kernel each have their own L1 iTLB
+    loc: p010
+    quote: "not shared between the kernelspace and userspace"
+    derivation: measured
+    supports: []
+    notes: >-
+      From repeating the eviction experiments across privilege levels. The kernel attack therefore evicts its own iTLB
+      entry with 4 syscall-driven fetches 32 x 16 KB apart.
+  - id: c-pac-tlb-shared-el
+    text: The L1 dTLB and the L2 TLB are shared between user space and the kernel
+    loc: p010
+    quote: "while the L1 dTLB and the L2 TLB are shared across privilege levels"
+    derivation: measured
+    supports: []
+    notes: User-space Prime+Probe on the L1 dTLB sees the kernel's speculative loads in the attacks.
+  - id: c-pac-four-tlbs
+    text: >-
+      Each Firestorm core has four TLB structures in a hierarchy, a user and a kernel L1 iTLB of 32 sets and 4 ways each
+      above one L1 dTLB, above one L2 TLB
+    loc: p010
+    quote: "each p-core on M1 has four separate TLB structures organized hierarchically as shown in Figure 6"
+    derivation: inferred
+    hedge: "we do not draw conclusions about the M1 design"
+    supports: []
+    notes: Figure 6 labels the L1 dTLB 256 sets, 12 ways and the L2 TLB 2048 sets, 23 ways.
+
+new_params:
+  itlb.org: {block: itlb, name: iTLB organisation}
+
+new_mechanisms:
+  itlb_victims_to_dtlb:
+    name: L1 dTLB as backing store for the iTLBs
+    status: inferred
+    description: Translations evicted from the user or kernel L1 iTLB move into the shared L1 dTLB; loads cannot see the iTLB itself.
+    params: [itlb.org, dtlb.l1_org]
+    sim_switch: null
+    detection_rule: >-
+      after code on a page is fetched, a load to that page misses the L1 dTLB until 4 or more branches 32 x 16 KB apart
+      push the translation out of the iTLB, after which the load hits
+
+mechanism_claims:
+  itlb_victims_to_dtlb: [c-pac-itlb-evict-4, c-pac-itlb-separate, c-pac-dtlb-backs-itlb, c-pac-itlb-victim-steps,
+                         c-pac-itlb-per-el]
