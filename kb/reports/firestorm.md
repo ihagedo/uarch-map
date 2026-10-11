@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 134, claims 1278, sources 27, mechanisms 54
+blocks 37, links 35, params 134, claims 1287, sources 27, mechanisms 54
 
 ## By status
 
@@ -29,7 +29,7 @@ blocks 37, links 35, params 134, claims 1278, sources 27, mechanisms 54
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (19)
+## Open disputes (20)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
@@ -47,6 +47,7 @@ blocks 37, links 35, params 134, claims 1278, sources 27, mechanisms 54
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - l2.replacement: Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).  [c-mh-v2-l2-random-repl, c-s2c-l2-repl]
 - dtlb.l2_org: Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).  [c-mh-v2-tlb2-org, c-pac-l2tlb-23x2048]
+- l2.inclusion: Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive, non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.  [c-mh-v3-l2-covering-tags-hint, c-ilk-l2-inclusive]
 - l2.inclusion: Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.  [c-mh-v3-l2-covering-tags-hint, c-s2c-l2-inclusive]
 - l1i.assoc: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).  [c-mh-v8-l1i-12way, c-ilk-l1i-ways]
 - l1i.assoc: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).  [c-mh-v8-l1i-12way, c-pac-l1i-ways]

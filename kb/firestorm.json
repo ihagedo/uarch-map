@@ -2259,9 +2259,19 @@
       "claims": [
         "c-mh-v3-l2-covering-tags-hint",
         "c-mh-v3-dram-fill-l1-only",
+        "c-ilk-l2-inclusive",
         "c-s2c-l2-inclusive"
       ],
       "disputes": [
+        {
+          "claims": [
+            "c-mh-v3-l2-covering-tags-hint",
+            "c-ilk-l2-inclusive"
+          ],
+          "note": "Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive, non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.",
+          "resolution": null,
+          "resolved_by": null
+        },
         {
           "claims": [
             "c-mh-v3-l2-covering-tags-hint",
@@ -2497,6 +2507,7 @@
     },
     "l1d.replacement": {
       "claims": [
+        "c-ilk-l1d-plru",
         "c-prt-l1d-tree-plru"
       ],
       "disputes": [],
@@ -17620,6 +17631,131 @@
       "supports": [],
       "notes": "A15 Bionic (P) row; the size is from sysctl, while the ways and sets are starred as unconfirmed guesses.",
       "source": "ccs23-ileakage",
+      "entered": "ileakage"
+    },
+    "c-ilk-spec-mul-100": {
+      "text": "With a branch condition evicted from the caches, M-series P-cores execute about 100 dependent multiplies under speculation before a following probe load is no longer reached",
+      "loc": "p005",
+      "quote": "we see that Apple\u2019s M series CPUs can execute about 100 mul instructions under speculation",
+      "method": "other",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "instructions",
+      "approx": true,
+      "supports": [],
+      "notes": "Stated for the M series as a whole (M1 and M2 alike); Figure 2 plots each chip with the condition evicted from L1 or from L2. 1000 trials per mul count, timed with the privileged cycle counter.",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-spec-300": {
+      "text": "Taking 3 cycles per multiply, the authors put the speculation window on recent Apple cores at up to about 300 cycles",
+      "loc": "p002",
+      "quote": "modern Apple hardware has deep pipelines, with speculation windows running as long as 300 cycles",
+      "derivation": "derived",
+      "value": 300,
+      "unit": "cycles",
+      "approx": true,
+      "supports": [],
+      "notes": "100 multiplies (c-ilk-spec-mul-100) at Johnson's 3-cycle mul latency; the method section words the same product as about 300 instructions.",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-l2-inclusive": {
+      "text": "Traversing an L2 eviction set on one core evicts the victim's line from another core's L1, so the M1 P-cluster L2 is inclusive of the L1s",
+      "loc": "p008",
+      "quote": "Indeed, we find that the L2 cache of the Apple M1 is inclusive of the L1 caches.",
+      "method": "other",
+      "derivation": "measured",
+      "value": "inclusive",
+      "hedge": "strongly indicate",
+      "supports": [],
+      "contradicts": [
+        "l2.inclusion"
+      ],
+      "notes": "Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive, non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-l2-half-line": {
+      "text": "Touching only one 64 B half of each 128 B L2 line in the eviction set evicts the victim's L1 copy only now and then; touching both halves roughly triples the eviction rate",
+      "loc": "p008",
+      "quote": "while accessing half of an L2 cache line occasionally results in evictions, accessing both halves approximately triples the success rate",
+      "method": "other",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "x",
+      "approx": true,
+      "supports": [],
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-l2-three-passes": {
+      "text": "One or two traversals of an L2 eviction set do not always evict the victim, while three always do",
+      "loc": "p008",
+      "quote": "accessing the eviction set more often results in higher eviction rates, with 3 access iterations guaranteeing eviction",
+      "method": "other",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "traversals",
+      "supports": [],
+      "notes": "The set is shuffled before each traversal, and a spinlock hands control between attacker and victim threads.",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-timer-42ns": {
+      "text": "Unprivileged code on Apple systems gets only mach_absolute_time(), a 24 MHz (42 ns) timer",
+      "loc": "p003",
+      "quote": "unprivileged code can only access the timer provided by mach_absolute_time(), which PACMAN reported to have a resolution of 24 MHz [64], or 42 ns",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 42,
+      "unit": "ns",
+      "supports": [],
+      "notes": "Repeats PACMAN's system counter frequency (c-pac-cntpct-24mhz).",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-kperf-cycles": {
+      "text": "Privileged native code on macOS and iOS can read a cycle-accurate counter through the kperf API",
+      "loc": "p003",
+      "quote": "Both macOS and iOS allow privileged native code to read a cycle-accurate timer which is accessible via the kperf API",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-l1d-plru": {
+      "text": "Apple L1D caches use a pseudo-LRU replacement policy, which earlier work turned into a stable covert channel",
+      "loc": "p004",
+      "quote": "abuses the pseudo least recently used (pLRU) eviction strategy of L1-D caches to construct a particularly stable covert channel on Intel and Apple CPUs",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": "pLRU",
+      "supports": [
+        "l1d.replacement"
+      ],
+      "notes": "From Google's Leaky.page work; iLeakage's own M1 results rest on this channel.",
+      "source": "ccs23-ileakage",
+      "chip": "m1",
+      "entered": "ileakage"
+    },
+    "c-ilk-no-meltdown": {
+      "text": "Unlike early Apple cores, recent ones show no sign of Meltdown-style reads across address spaces",
+      "loc": "p013",
+      "quote": "While early versions of Apple hardware were susceptible to Meltdown [4], there is no indication of such vulnerabilities in newer Apple CPUs.",
+      "derivation": "inferred",
+      "hedge": "there is no indication",
+      "supports": [],
+      "source": "ccs23-ileakage",
+      "chip": "m1",
       "entered": "ileakage"
     },
     "c-dj-width": {
