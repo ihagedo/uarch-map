@@ -104,6 +104,13 @@ sources:
     author: Zhou, Chuheng
     year: 2024
     url: https://github.com/ChuhengZhou/M1_BPU_Experiments
+  usenix23-s2c:
+    type: paper
+    title: "Synchronization Storage Channels (S2C): Timer-less Cache Side-Channel Attacks on the Apple M1 via Hardware Synchronization Instructions"
+    author: Yu, Jiyong
+    group: Fletcher, Christopher
+    year: 2023
+    url: https://www.usenix.org/conference/usenixsecurity23/presentation/yu-jiyong
   arxiv-2402-15425:
     type: paper
     title: "Prime+Retouch: When Cache is Locked and Leaked"

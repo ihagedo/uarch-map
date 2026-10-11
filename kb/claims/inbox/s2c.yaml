@@ -1,0 +1,95 @@
+# s2c.yaml
+# Jiyong Yu et al., 2023
+# The M1 exclusive monitor and P-cluster L2 (inclusion, AutoLock, replacement, set index) reverse engineered for S2C.
+session: s2c
+source: usenix23-s2c
+
+claims:
+  - id: c-s2c-stxr-l1-evict
+    text: >-
+      A store-exclusive to a private line fails exactly when the line was evicted from the L1D after its
+      load-exclusive, and never while the line stays in the L1D
+    loc: p005
+    quote: "strex to a local exclusive address never fails when the address still remains in the L1, and always fails when the address resides only in lower levels of the cache"
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: >-
+      Algorithm 1: 1000 LDXR/STXR pairs with random loads between, the line's L1 residency timed with the cycle
+      counter, repeated over 10 times. One run: 518 failed and evicted, 482 neither, none mixed.
+  - id: c-s2c-ice-stxr-l1-evict
+    text: On Icestorm too, a store-exclusive fails exactly when its line has left the L1D since the load-exclusive
+    loc: p005
+    quote: "We test the above code on both P-cores and E-cores ... consistently observed that fail correlates perfectly with evict_from_L1"
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    chip: icestorm
+  - id: c-s2c-erg-64
+    text: >-
+      The exclusive reservation granule is 64 B, the L1D line size: a store-exclusive to a different address than
+      its load-exclusive succeeds only inside the same 64 B block
+    loc: p005
+    quote: "We observed that strex can succeed even if ldrex and strex addresses differ. Also, strex only succeeds when the two addresses are on the same 64-byte-aligned block."
+    method: other
+    derivation: measured
+    value: 64
+    unit: B
+    supports: [lsu.exclusive_granule]
+    notes: The authors read a 64 B rather than 128 B (L2 line) granule as a sign that the monitor tracks L1D lines only.
+  - id: c-s2c-one-reservation
+    text: Each core holds only one exclusive reservation at a time; a younger load-exclusive replaces the older one
+    loc: p005
+    quote: "we find that each core can indeed only monitor one exclusive address at a time"
+    method: other
+    derivation: measured
+    value: 1
+    unit: addresses
+    supports: []
+  - id: c-s2c-monitor-coherence
+    text: >-
+      The authors speculate that the exclusive monitor rides on the L1 coherence protocol, perhaps as a dedicated
+      coherence state for lines reserved by a load-exclusive
+    loc: p014
+    quote: "we speculate that the exclusive monitor is implemented by piggybacking on the cache coherence protocol. The implementation may use a dedicated coherence state for exclusive addresses accessed by LL instructions."
+    derivation: inferred
+    hedge: "we speculate"
+    supports: []
+    notes: A store-exclusive, like a plain store, would then invalidate the line in other cores' L1Ds and so clear their reservations.
+  - id: c-s2c-stxr-rob-head
+    text: >-
+      A store-exclusive is not performed until it reaches the head of the reorder buffer, so it waits for older
+      loads to complete
+    loc: p011
+    quote: "strex is not performed until it reaches the head of the reorder buffer, and thus would not execute until load[x] is completed if the load was placed before it"
+    derivation: inferred
+    supports: []
+    notes: Given as the reason the racing load had to follow the STXR in program order in the multi-set monitor.
+  - id: c-s2c-m2-stxr
+    text: On the M2 a store-exclusive likewise fails when its line is evicted from the L1D
+    loc: p013
+    quote: "We are able to reproduce the same attack primitive that we explained in §3 on M2 CPUs."
+    derivation: measured
+    supports: []
+    chip: m2
+    notes: The M2 cache hierarchy itself was not reverse engineered.
+
+new_params:
+  lsu.exclusive_granule: {block: lsu, name: Exclusive reservation granule, unit: B}
+
+new_mechanisms:
+  exclusive_monitor_l1:
+    name: Exclusive monitor bound to L1D residency
+    status: measured
+    description: >-
+      A load-exclusive reservation lasts only while its line stays in the L1D, so evicting the line makes the
+      store-exclusive fail; each core holds one reservation with a 64 B granule.
+    params: [lsu.exclusive_granule]
+    sim_switch: null
+    detection_rule: LDXR a line, walk an 8-address L1D eviction set for it, then STXR; the store fails exactly when the line left the L1D
+
+mechanism_claims:
+  exclusive_monitor_l1: [c-s2c-stxr-l1-evict, c-s2c-erg-64, c-s2c-one-reservation, c-s2c-monitor-coherence,
+                         c-s2c-stxr-rob-head]
