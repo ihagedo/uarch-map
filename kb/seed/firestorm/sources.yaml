@@ -95,7 +95,7 @@ sources:
   arxiv-2502-10719:
     type: paper
     title: Reverse Engineering the Apple M1 Conditional Branch Predictor for Out-of-Place Spectre Mistraining
-    author: arXiv 2502.10719
+    author: Tuby, Adam
     year: 2025
     url: https://arxiv.org/abs/2502.10719
   zhou-m1-bpu:
@@ -104,3 +104,9 @@ sources:
     author: Zhou, Chuheng
     year: 2024
     url: https://github.com/ChuhengZhou/M1_BPU_Experiments
+  arxiv-2402-15425:
+    type: paper
+    title: "Prime+Retouch: When Cache is Locked and Leaked"
+    author: Lee, Jaehyuk
+    year: 2024
+    url: https://arxiv.org/abs/2402.15425

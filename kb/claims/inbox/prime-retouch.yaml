@@ -1,0 +1,94 @@
+# prime-retouch.yaml
+# Jaehyuk Lee, Fan Sang and Taesoo Kim, 2024
+# The M1 L1D tree-PLRU replacement, cache geometry from CCSIDR_EL1 and the Apple PMU, from the Prime+Retouch attack.
+session: prime-retouch
+source: arxiv-2402-15425
+
+claims:
+  - id: c-prt-l1d-tree-plru
+    text: >-
+      The L1D replacement policy is tree-based pseudo-LRU: the eviction order over every pattern of hits in a full
+      set matches Tree-PLRU
+    loc: p004
+    quote: "we successfully reveal that the M1 processor adopts the Tree-PLRU eviction policy for the L1 data cache"
+    method: counter
+    derivation: measured
+    value: tree-PLRU
+    supports: [l1d.replacement]
+    notes: >-
+      Kernel driver timing loads with the Apple PMU cycle counter and L1D-miss event 0xa3. The core used is not named;
+      the attack built on the policy worked on both core types (c-prt-ice-l1d-tree-plru).
+  - id: c-prt-ice-l1d-tree-plru
+    text: >-
+      An access sequence built on tree-PLRU state produced the predicted extra L1D misses on Icestorm as well as
+      Firestorm
+    loc: p013
+    quote: "We empirically found that 14 additional misses are enough to clearly distinguish genuine victim accesses in both types of core."
+    derivation: measured
+    value: tree-PLRU
+    supports: []
+    chip: icestorm
+    notes: >-
+      The 57-load sequence adds 14 misses only when the tree state shows the victim's access. The paper states
+      tree-PLRU for the M1 L1D without separating the cores.
+
+  - id: c-prt-l1d-ways
+    text: CCSIDR_EL1 reports the Firestorm L1D as 8-way set associative
+    loc: p004
+    quote: "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128"
+    method: vendor-doc
+    derivation: documented
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: Table I gives the Firestorm L1D as 256 sets, 8 ways, 64 B lines.
+  - id: c-prt-l1d-line
+    text: CCSIDR_EL1 reports a 64 B line for the Firestorm L1D
+    loc: p004
+    quote: "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128"
+    method: vendor-doc
+    derivation: documented
+    value: 64
+    unit: B
+    supports: [l1d.line]
+  - id: c-prt-l2-ways
+    text: CCSIDR_EL1 reports the P-cluster L2 as 12-way set associative
+    loc: p004
+    quote: "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128"
+    method: vendor-doc
+    derivation: documented
+    value: 12
+    unit: ways
+    supports: [l2.assoc]
+    notes: Table I gives the Firestorm L2 as 8192 sets, 12 ways, 128 B lines.
+  - id: c-prt-l2-line
+    text: CCSIDR_EL1 reports a 128 B line for the P-cluster L2
+    loc: p004
+    quote: "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128"
+    method: vendor-doc
+    derivation: documented
+    value: 128
+    unit: B
+    supports: [l2.line]
+  - id: c-prt-ice-l1d-geometry
+    text: CCSIDR_EL1 reports the Icestorm L1D as 128 sets of 8 ways with 64 B lines
+    loc: p004
+    quote: "256 8 64 8192 12 128 128 8 64 2048 16 128 TABLE I: Information of data cache hierarchies in M1 processors"
+    method: vendor-doc
+    derivation: documented
+    value: 128 sets, 8 ways, 64 B lines
+    supports: []
+    chip: icestorm
+  - id: c-prt-ice-l2-geometry
+    text: CCSIDR_EL1 reports the E-cluster L2 as 2048 sets of 16 ways with 128 B lines
+    loc: p004
+    quote: "256 8 64 8192 12 128 128 8 64 2048 16 128 TABLE I: Information of data cache hierarchies in M1 processors"
+    method: vendor-doc
+    derivation: documented
+    value: 2048 sets, 16 ways, 128 B lines
+    supports: []
+    chip: icestorm
+
+new_params:
+  l1d.replacement: {block: l1d, name: L1D replacement policy}
+  l2.assoc: {block: l2, name: L2 associativity, unit: ways}

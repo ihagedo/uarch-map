@@ -1442,7 +1442,8 @@
       "claims": [
         "c-7cpu-l1d-line",
         "c-mh-v2-l1d-line-dczva",
-        "c-mh-v2-l1d-line"
+        "c-mh-v2-l1d-line",
+        "c-prt-l1d-line"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1451,21 +1452,22 @@
       "sim_key": "l1d_line",
       "value": 64,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "l1d.assoc": {
       "claims": [
         "c-mh-v2-l1d-8way",
         "c-mh-v2-l1d-8way-tlb",
-        "c-mh-v8-l1d-8way"
+        "c-mh-v8-l1d-8way",
+        "c-prt-l1d-ways"
       ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D associativity",
       "unit": "ways",
       "value": 8,
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "documented",
+      "confidence": "single"
     },
     "l1d.latency": {
       "claims": [
@@ -1610,15 +1612,16 @@
         "c-mh-v3-l2-line-patent",
         "c-mh-v3-l2-line-128",
         "c-mh-v3-line-change",
-        "c-mh-v8-line-128"
+        "c-mh-v8-line-128",
+        "c-prt-l2-line"
       ],
       "disputes": [],
       "block": "l2",
       "name": "L2 line size",
       "unit": "B",
       "value": 128,
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "documented",
+      "confidence": "single"
     },
     "l2.latency": {
       "claims": [
@@ -2415,6 +2418,29 @@
       "value": 4,
       "status": "measured",
       "confidence": "corroborated"
+    },
+    "l1d.replacement": {
+      "claims": [
+        "c-prt-l1d-tree-plru"
+      ],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D replacement policy",
+      "value": "tree-PLRU",
+      "status": "measured",
+      "confidence": "single"
+    },
+    "l2.assoc": {
+      "claims": [
+        "c-prt-l2-ways"
+      ],
+      "disputes": [],
+      "block": "l2",
+      "name": "L2 associativity",
+      "unit": "ways",
+      "value": 12,
+      "status": "documented",
+      "confidence": "single"
     }
   },
   "claims": {
@@ -18311,6 +18337,119 @@
       "chip": "m1",
       "entered": "johnson"
     },
+    "c-prt-l1d-tree-plru": {
+      "text": "The L1D replacement policy is tree-based pseudo-LRU: the eviction order over every pattern of hits in a full set matches Tree-PLRU",
+      "loc": "p004",
+      "quote": "we successfully reveal that the M1 processor adopts the Tree-PLRU eviction policy for the L1 data cache",
+      "method": "counter",
+      "derivation": "measured",
+      "value": "tree-PLRU",
+      "supports": [
+        "l1d.replacement"
+      ],
+      "notes": "Kernel driver timing loads with the Apple PMU cycle counter and L1D-miss event 0xa3. The core used is not named; the attack built on the policy worked on both core types (c-prt-ice-l1d-tree-plru).",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-ice-l1d-tree-plru": {
+      "text": "An access sequence built on tree-PLRU state produced the predicted extra L1D misses on Icestorm as well as Firestorm",
+      "loc": "p013",
+      "quote": "We empirically found that 14 additional misses are enough to clearly distinguish genuine victim accesses in both types of core.",
+      "derivation": "measured",
+      "value": "tree-PLRU",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "The 57-load sequence adds 14 misses only when the tree state shows the victim's access. The paper states tree-PLRU for the M1 L1D without separating the cores.",
+      "source": "arxiv-2402-15425",
+      "entered": "prime-retouch"
+    },
+    "c-prt-l1d-ways": {
+      "text": "CCSIDR_EL1 reports the Firestorm L1D as 8-way set associative",
+      "loc": "p004",
+      "quote": "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Table I gives the Firestorm L1D as 256 sets, 8 ways, 64 B lines.",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-l1d-line": {
+      "text": "CCSIDR_EL1 reports a 64 B line for the Firestorm L1D",
+      "loc": "p004",
+      "quote": "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-l2-ways": {
+      "text": "CCSIDR_EL1 reports the P-cluster L2 as 12-way set associative",
+      "loc": "p004",
+      "quote": "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": 12,
+      "unit": "ways",
+      "supports": [
+        "l2.assoc"
+      ],
+      "notes": "Table I gives the Firestorm L2 as 8192 sets, 12 ways, 128 B lines.",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-l2-line": {
+      "text": "CCSIDR_EL1 reports a 128 B line for the P-cluster L2",
+      "loc": "p004",
+      "quote": "retrieve such information by utilizing the system registers CCSIDR_EL1 and CSSELR_EL1 ... L1 DCache L2 DCache L1 DCache L2 DCache 256 8 64 8192 12 128",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "l2.line"
+      ],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-ice-l1d-geometry": {
+      "text": "CCSIDR_EL1 reports the Icestorm L1D as 128 sets of 8 ways with 64 B lines",
+      "loc": "p004",
+      "quote": "256 8 64 8192 12 128 128 8 64 2048 16 128 TABLE I: Information of data cache hierarchies in M1 processors",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": "128 sets, 8 ways, 64 B lines",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "arxiv-2402-15425",
+      "entered": "prime-retouch"
+    },
+    "c-prt-ice-l2-geometry": {
+      "text": "CCSIDR_EL1 reports the E-cluster L2 as 2048 sets of 16 ways with 128 B lines",
+      "loc": "p004",
+      "quote": "256 8 64 8192 12 128 128 8 64 2048 16 128 TABLE I: Information of data cache hierarchies in M1 processors",
+      "method": "vendor-doc",
+      "derivation": "documented",
+      "value": "2048 sets, 16 ways, 128 B lines",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "arxiv-2402-15425",
+      "entered": "prime-retouch"
+    },
     "c-zhou-ibtb": {
       "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
       "loc": "#ibtb-size",
@@ -18435,7 +18574,7 @@
     "arxiv-2502-10719": {
       "type": "paper",
       "title": "Reverse Engineering the Apple M1 Conditional Branch Predictor for Out-of-Place Spectre Mistraining",
-      "author": "arXiv 2502.10719",
+      "author": "Tuby, Adam",
       "year": 2025,
       "url": "https://arxiv.org/abs/2502.10719"
     },
@@ -18445,6 +18584,13 @@
       "author": "Zhou, Chuheng",
       "year": 2024,
       "url": "https://github.com/ChuhengZhou/M1_BPU_Experiments"
+    },
+    "arxiv-2402-15425": {
+      "type": "paper",
+      "title": "Prime+Retouch: When Cache is Locked and Leaked",
+      "author": "Lee, Jaehyuk",
+      "year": 2024,
+      "url": "https://arxiv.org/abs/2402.15425"
     },
     "us20210064376a1": {
       "type": "patent",
