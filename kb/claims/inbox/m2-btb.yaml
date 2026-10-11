@@ -1,0 +1,117 @@
+# m2-btb.yaml
+# Taehee Kim and Hyunwoo Choi, 2025
+# Capacity, set index bits and associativity of the M2 P-core BTB, measured with indirect-branch chains.
+session: m2-btb
+source: electronics25-m2-btb
+
+claims:
+  - id: c-kc-m2-btb-2k
+    text: The M2 P-core BTB holds about 2K entries; mispredictions stay near zero up to about 2K indirect branches and rise sharply beyond
+    loc: p009
+    quote: "Given this observation, we estimate that the Apple M2’s BTB contains approximately 2K entries."
+    method: branch-sweep
+    derivation: measured
+    value: 2048
+    unit: entries
+    approx: true
+    supports: []
+    chip: m2
+    notes: >-
+      Avalanche core of a 2023 Mac mini under m1n1, ADR+BR chains at D = 3, indirect-misprediction counter. Near 80 %
+      mispredicted at 8K branches. Same count as the M2 fetch predictor in c-mh-v4-m2-l2-fp.
+  - id: c-kc-m2-btb-index-bits
+    text: The M2 BTB set index uses about 9 branch-address bits, bits 4 to 12
+    loc: p009
+    quote: "This sharp rise suggests that the index bits used by selecting the BTB set fall within the lower 4 to 12 bits of the branch address."
+    method: branch-sweep
+    derivation: derived
+    value: 9
+    unit: bits
+    approx: true
+    hedge: "suggests"
+    supports: []
+    chip: m2
+    notes: From a stride sweep with 2K branches, D from 3 to 19; mispredictions stay low for D up to 12, rise at D = 13 and near 100 % at D = 14.
+  - id: c-kc-m2-btb-sets-512
+    text: The M2 BTB has 512 sets, following from its 9 index bits
+    loc: p009
+    quote: "These results imply that the BTB uses approximately 9 bits for set indexing, corresponding to 29 = 512 sets."
+    method: branch-sweep
+    derivation: derived
+    value: 512
+    unit: sets
+    approx: true
+    supports: []
+    chip: m2
+  - id: c-kc-m2-btb-4way
+    text: The M2 BTB is about 4-way set associative; with branches forced into one set, mispredictions grow as the branch count minus four
+    loc: p011
+    quote: "This linear trend beyond the threshold implies that the BTB can reliably hold four targets per set ... indicating an effective associativity of approximately 4 ways under our test conditions."
+    method: branch-sweep
+    derivation: measured
+    value: 4
+    unit: ways
+    approx: true
+    supports: []
+    chip: m2
+    notes: >-
+      D = 8, 2 to 16 branches, mispredictions counted on the second of two runs: about 2 at 6 branches up to 10 at 14.
+      Handley's patent reading gave 512 sets of 2 ways, perhaps 4 later (c-mh-v4-nfp-assoc).
+  - id: c-kc-m2-btb-16-shortfall
+    text: With 16 branches in one set the M2 BTB mispredicts about 10 of them, not the 12 a plain 4-way set would give
+    loc: p011
+    quote: "we would expect about 12 mispredictions at B = 16; instead, the outcomes cluster around ∼10."
+    method: branch-sweep
+    derivation: measured
+    value: 10
+    unit: mispredictions
+    approx: true
+    supports: []
+    chip: m2
+  - id: c-kc-m2-btb-third-run
+    text: >-
+      Running the same branch set repeatedly, mispredictions often persist in the second run but are gone by the third,
+      even with more than four branches per set
+    loc: p011
+    quote: "when we execute the same set of branches repeatedly, mispredictions often persist in the second run but disappear by the third run even when B > W = 4."
+    method: branch-sweep
+    derivation: measured
+    value: 3
+    unit: runs
+    supports: []
+    chip: m2
+    notes: Seen across several (B, D) configurations.
+  - id: c-kc-m2-btb-two-level
+    text: >-
+      The authors read the third-run convergence as a fast L1 BTB backed by a larger L2 BTB that takes more than one
+      pass to fill
+    loc: p011
+    quote: "One plausible interpretation is that the first run allocates targets into a fast L1 BTB while also triggering fills into a backing BTB (e.g., L2 BTB)."
+    derivation: inferred
+    hedge: "One plausible interpretation"
+    supports: []
+    chip: m2
+    notes: Handley reports a second-level M2 fetch predictor between the zero-bubble tier and the I-cache (c-mh-v4-m2-l2-fp).
+  - id: c-kc-m2-btb-prefetch
+    text: >-
+      The authors take the shortfall at 16 branches as a sign that a backing BTB level, a BTB prefetcher, or both keep
+      targets a single 4-way set could not
+    loc: p011
+    quote: "This shortfall implies that some targets are being preserved or inserted beyond what a single 4-way set would allow, consistent with assistance from a backing BTB level, a prefetcher, or both."
+    derivation: inferred
+    hedge: "consistent with"
+    supports: []
+    chip: m2
+  - id: c-kc-m1-btb-1k
+    text: The authors list the M1 BTB at 1K entries, relayed from earlier M1 work that gives only its size
+    loc: p012
+    quote: "Comparison of reported or inferred BTB parameters across Cortex-A76, Apple M1, and Apple M2 (this work). ... Apple M1 [13,21] ... 1K"
+    method: secondhand
+    derivation: reported
+    value: 1024
+    unit: entries
+    supports: []
+    notes: >-
+      Cites Zhou's M1_BPU_Experiments and Jia's microarchitecture comparison page. Equals both btb.l0_entries and
+      indpred.capacity (c-zhou-ibtb); the paper does not say which structure.
+

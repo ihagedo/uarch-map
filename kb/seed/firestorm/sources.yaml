@@ -124,6 +124,12 @@ sources:
     author: Ravichandran, Joseph
     year: 2026
     url: https://people.csail.mit.edu/mengjia/data/2026.SP.fractal.pdf
+  electronics25-m2-btb:
+    type: paper
+    title: Reverse Engineering the Branch Target Buffer Organizations on Apple M2
+    author: Kim, Taehee
+    year: 2025
+    url: https://doi.org/10.3390/electronics14234686
   isca22-pacman:
     type: paper
     title: "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution"
