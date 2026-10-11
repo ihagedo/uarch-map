@@ -1460,15 +1460,16 @@
         "c-mh-v2-l1d-8way",
         "c-mh-v2-l1d-8way-tlb",
         "c-mh-v8-l1d-8way",
-        "c-prt-l1d-ways"
+        "c-prt-l1d-ways",
+        "c-s2c-l1d-8way"
       ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D associativity",
       "unit": "ways",
       "value": 8,
-      "status": "documented",
-      "confidence": "single"
+      "status": "measured",
+      "confidence": "confirmed"
     },
     "l1d.latency": {
       "claims": [
@@ -1614,7 +1615,8 @@
         "c-mh-v3-l2-line-128",
         "c-mh-v3-line-change",
         "c-mh-v8-line-128",
-        "c-prt-l2-line"
+        "c-prt-l2-line",
+        "c-s2c-l2-line-split"
       ],
       "disputes": [],
       "block": "l2",
@@ -2226,9 +2228,20 @@
     "l2.inclusion": {
       "claims": [
         "c-mh-v3-l2-covering-tags-hint",
-        "c-mh-v3-dram-fill-l1-only"
+        "c-mh-v3-dram-fill-l1-only",
+        "c-s2c-l2-inclusive"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v3-l2-covering-tags-hint",
+            "c-s2c-l2-inclusive"
+          ],
+          "note": "Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l2",
       "name": "L2 inclusion of L1 contents",
       "value": "non-inclusive, non-exclusive",
@@ -18752,6 +18765,119 @@
       "source": "usenix23-s2c",
       "entered": "s2c"
     },
+    "c-s2c-l1-index": {
+      "text": "The L1D set index is taken from the page-offset address bits above the line offset",
+      "loc": "p006",
+      "quote": "L1 sets are indexed by the page offset bits subtracting the L1 line offset bits.",
+      "method": "other",
+      "derivation": "measured",
+      "value": "page-offset bits above the line offset",
+      "supports": [],
+      "notes": "Pages are 16 KB on the M1. Matches the (VA mod 16384)/64 mapping in c-prt-l1d-index.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l1d-8way": {
+      "text": "Eight addresses sharing the target's L1D set index always evict it from the L1D and seven never do, so the L1D is 8-way set associative",
+      "loc": "p006",
+      "quote": "The results show that the candidate L1 eviction set always evicts the target address out of the L1 cache. Also if we drop one address from the eight-element eviction set, the target address will never be evicted.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Eviction checked by timing the target load with the cycle counter.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l1-lru": {
+      "text": "The L1D uses an LRU-based replacement policy",
+      "loc": "p006",
+      "quote": "The L1 cache adopts an LRUbased replacement policy for choosing evicted lines.",
+      "method": "other",
+      "derivation": "measured",
+      "value": "LRU-based",
+      "supports": [],
+      "notes": "Rests on the 8-in, 7-out eviction test, which does not separate true LRU from tree-PLRU; Prime+Retouch finds tree-PLRU (c-prt-l1d-tree-plru).",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-cross-core-l1-hit": {
+      "text": "Walking a plain L2 eviction set on another core never evicted the target line from the first core's L1D",
+      "loc": "p006",
+      "quote": "After running this experiment with different addresses, we always observe an L1 hit.",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Hetterich and Schwarz saw the same. The authors trace it to AutoLock (c-s2c-l2-autolock) rather than to a non-inclusive L2.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-inclusive": {
+      "text": "The P-cluster L2 is inclusive of the L1Ds: contention with lines from another core in an L2 set evicts this core's lines from its L1D",
+      "loc": "p007",
+      "quote": "the contention with T in the L2 causes S to be evicted from the L1, which is only possible in an inclusive L2",
+      "method": "other",
+      "derivation": "measured",
+      "value": "inclusive",
+      "supports": [],
+      "contradicts": [
+        "l2.inclusion"
+      ],
+      "notes": "Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-autolock": {
+      "text": "The L2 evicts lines that have no L1D copy before lines an L1D still holds (AutoLock)",
+      "loc": "p008",
+      "quote": "M1 also employs the AutoLock optimization [64] to prioritize data without L1 copies for eviction from the L2.",
+      "method": "other",
+      "derivation": "measured",
+      "value": true,
+      "supports": [],
+      "notes": "AutoLock, which the authors say ARM CPUs use with inclusive caches, is described in US 8,271,733. Shown by varying how the eviction set is split over two L1D sets (c-s2c-autolock-threshold).",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-autolock-threshold": {
+      "text": "With a minimal L2 eviction set split over the two L1D sets of one L2 line on another core, the target is evicted only when the smaller half holds at least 3 lines",
+      "loc": "p007",
+      "quote": "We observe that addr can be evicted when the smaller half of S has at least 3 addresses (meaning 3 or 9 addresses are flipped).",
+      "method": "other",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "addresses",
+      "supports": [],
+      "notes": "The authors' reading: with fewer, the other L1D set holds at most 8, so at most 11 of the 12 lines in the L2 set have L1D copies and the target, held in L1D, is never chosen.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-line-split": {
+      "text": "The L2 line is 128 B, twice the L1D line, so the lines of one L2 set spread over two adjacent L1D sets",
+      "loc": "p007",
+      "quote": "we notice that the L2 line size in the M1 is 128 Bytes, twice the size of L1 lines. This means that data in one L2 set can reside in two adjacent L1 sets.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "l2.line"
+      ],
+      "notes": "Taken from Table 1 (PACMAN). Flipping address bit 6 moves a line to the other L1D set but keeps its L2 set; the inclusion and AutoLock tests rely on this split.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
     "c-zhou-ibtb": {
       "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
       "loc": "#ibtb-size",
@@ -20062,6 +20188,23 @@
       ],
       "sim_switch": null,
       "detection_rule": "LDXR a line, walk an 8-address L1D eviction set for it, then STXR; the store fails exactly when the line left the L1D"
+    },
+    "l2_autolock": {
+      "claims": [
+        "c-s2c-l2-inclusive",
+        "c-s2c-l2-autolock",
+        "c-s2c-autolock-threshold",
+        "c-s2c-l2-cross-core-l1-hit"
+      ],
+      "name": "Inclusive L2 that spares L1-resident lines (AutoLock)",
+      "status": "measured",
+      "description": "The L2 is inclusive of the L1Ds, and its replacement takes lines with no L1D copy before lines an L1D still holds.",
+      "params": [
+        "l2.inclusion",
+        "l2.replacement"
+      ],
+      "sim_switch": null,
+      "detection_rule": "an L2 eviction set walked on another core evicts a line from this core's L1D only when the set's own lines all stay in L1D, split over the two L1D sets of one 128 B L2 line"
     }
   }
 }
