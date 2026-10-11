@@ -1960,6 +1960,15 @@
       "status": "measured",
       "confidence": "single"
     },
+    "lsu.value_prediction": {
+      "claims": [],
+      "disputes": [],
+      "block": "lsu",
+      "name": "Load value prediction",
+      "status": "open",
+      "value": null,
+      "confidence": "unknown"
+    },
     "prefetch.dmp_filter_entries": {
       "claims": [
         "c-gf-filter-128"
@@ -5841,6 +5850,119 @@
       "notes": "Two adjacent conditional branches in one prediction block share the same PC[6] and thus the same index, so both ways of one set are read and matched against two tags without a second SRAM read port.",
       "source": "arxiv-2411-13900",
       "entered": "dissecting-cbp"
+    },
+    "c-flop-m2-no-lvp": {
+      "text": "On the M2 P cores a chain of dependent loads runs no faster when every load returns the same constant, so the M2 has no load value prediction",
+      "loc": "p004",
+      "quote": "and does not depend on the values loaded from memory being randomized or constant. Thus, we conclude that an LVP is not present.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "supports": [],
+      "chip": "m2",
+      "notes": "Byte loads to shuffled, flushed 128 B-aligned offsets, 10 to 500 loads, median of 100, macOS 14.5 development kernel. The M1 was not tested.",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-m3-lvp": {
+      "text": "On the M3 P cores the dependent chain speeds up from about 40 loads when every load returns the same constant, taking about half the cycles at 500 loads",
+      "loc": "p004",
+      "quote": "show a significant speedup from 40 iterations and above on our experiment when the load values are constant",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 40,
+      "unit": "loads",
+      "supports": [],
+      "chip": "m3",
+      "notes": "Relayed by Handley in c-mh-v8-m3-lvp.",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-ecores-no-lvp": {
+      "text": "The E cores of the M2 and M3 have no load value prediction",
+      "loc": "p004",
+      "quote": "Moving on to the E-cores of both CPUs (Figure 3 bottom), these generate plots that do not differ significantly by load value, indicating the lack of LVPs.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "supports": [],
+      "chip": "m3",
+      "notes": "M2 and M3 E cores.",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-chips": {
+      "text": "Load value prediction is present on the M3, M4 and A17 Pro and absent on the M2, A15 and A16",
+      "loc": "p004",
+      "quote": "That is, the LVP is present on the M3, M4, and A17 and absent on the M2, A15, and A16.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": true,
+      "supports": [],
+      "chip": "m3",
+      "notes": "WebAssembly version of the test in Safari, ten million loads, 1 ms timer.",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-width": {
+      "text": "The M3 predictor predicts any constant for 1-, 2- and 4-byte loads, but for 8-byte loads only the value zero",
+      "loc": "p005",
+      "quote": "Remarkably, while all other load widths activate the LVP on any constant value fitting that width, we observe that activation on 8-byte wide loads occurs only when the load value is zero.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m3",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-no-pointers": {
+      "text": "The authors conjecture the 8-byte restriction keeps the predictor from learning pointer values",
+      "loc": "p005",
+      "quote": "We conjecture that this may be a countermeasure for memory safety such that the LVP will not learn values of pointers.",
+      "derivation": "inferred",
+      "hedge": "We conjecture that this may be",
+      "supports": [],
+      "chip": "m3",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-constants-only": {
+      "text": "The M3 predictor learns only constant load values, not values that change by a fixed stride",
+      "loc": "p005",
+      "quote": "As such, we conclude that Apple\u2019s implementation of the LVP trains only on constants.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m3",
+      "notes": "Striding load values gave the same runtime trend as random values.",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-local": {
+      "text": "Fully unrolling the load loop stops the M3 predictor from firing, so it trains per load instruction, not on a global window of recent values",
+      "loc": "p005",
+      "quote": "Hence, we conclude that LVP trains with local scope (presumably with entries tagged with the instruction address) instead of training on a global window of recent load values.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "hedge": "presumably",
+      "supports": [],
+      "chip": "m3",
+      "source": "usenix25-flop",
+      "entered": "flop"
+    },
+    "c-flop-lvp-72": {
+      "text": "The M3 predictor tracks at most 72 distinct load instructions at once, fewer for some load spacings",
+      "loc": "p005",
+      "quote": "Interestingly, we observe that the maximum number of copies the LVP can accommodate is 72, but this also depends on how far the load instructions are spaced apart.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 72,
+      "unit": "loads",
+      "supports": [],
+      "chip": "m3",
+      "notes": "Copies of the load spaced 0 to 32 instructions apart; same result with ASLR off. Relayed by Handley in c-mh-v8-m3-lvp-entries.",
+      "source": "usenix25-flop",
+      "entered": "flop"
     },
     "c-fr-phr-100": {
       "text": "The M1 path history register covers the most recent 100 branches, as the authors relay from earlier work",
@@ -21609,6 +21731,13 @@
       "year": 2024,
       "url": "https://gofetch.fail/"
     },
+    "usenix25-flop": {
+      "type": "paper",
+      "title": "FLOP: Breaking the Apple M3 CPU via False Load Output Predictions",
+      "author": "Kim, Jason",
+      "year": 2025,
+      "url": "https://predictors.fail/"
+    },
     "us20210064376a1": {
       "type": "patent",
       "title": "Last physical register reference scheme",
@@ -21978,6 +22107,27 @@
       ],
       "sim_switch": null,
       "detection_rule": "taken-branch latency steps with code footprint (branch spacing) more than with branch count"
+    },
+    "load_value_prediction": {
+      "claims": [
+        "c-flop-m2-no-lvp",
+        "c-flop-m3-lvp",
+        "c-flop-ecores-no-lvp",
+        "c-flop-lvp-chips",
+        "c-flop-lvp-width",
+        "c-flop-lvp-no-pointers",
+        "c-flop-lvp-constants-only",
+        "c-flop-lvp-local",
+        "c-flop-lvp-72"
+      ],
+      "name": "Load value prediction",
+      "status": "absent",
+      "description": "A PC-tagged predictor hands a load's last constant value to dependent instructions early; not found on M1 or M2, present from M3/A17 Pro.",
+      "params": [
+        "lsu.value_prediction"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a chain of dependent byte loads from shuffled, cache-missing lines runs at the same speed whether every line holds one constant or random values; with the predictor the constant run speeds up after about 40 loads"
     },
     "ibp_context_check": {
       "claims": [

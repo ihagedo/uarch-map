@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 141, claims 1399, sources 33, mechanisms 56
+blocks 37, links 35, params 142, claims 1408, sources 34, mechanisms 57
 
 ## By status
 
 - derived: 13
 - inferred: 24
 - measured: 96
-- open: 4
+- open: 5
 - reported: 4
 
 ## By confidence
@@ -18,14 +18,15 @@ blocks 37, links 35, params 141, claims 1399, sources 33, mechanisms 56
 - derived: 13
 - inferred: 28
 - single: 52
-- unknown: 1
+- unknown: 2
 
-## Holes (4)
+## Holes (5)
 
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
+- lsu.value_prediction (lsu): Load value prediction
 
 ## Open disputes (20)
 
