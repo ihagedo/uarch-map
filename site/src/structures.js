@@ -346,7 +346,8 @@
     const ly = py + 172;
     box(px + 16, ly, pw - 32, 112, "cache-box", confOf(P.l2_size, P.l2_lat));
     txt(g, px + 32, ly + 26, "Shared L2", "st-t strong");
-    line(g, px + 32, ly + 54, [{ pid: P.l2_size }, "MiB,", { pid: P.l2_line }, "B lines,", { pid: P.l2_lat }, "cycles"]);
+    line(g, px + 32, ly + 54, [{ pid: P.l2_size }, "MiB,", { pid: P.l2_assoc }, "ways,", { pid: P.l2_line }, "B lines,",
+      { pid: P.l2_lat }, "cycles"]);
     line(g, px + 32, ly + 82, ["one core sees an inner", { pid: P.l2_inner }, "MiB and can use", { pid: P.l2_core },
       "MiB; loads at", { pid: P.l2_bw }, "GB/s"]);
     const ex = px + pw + 30, ew = W - 32 - ex - 8;
@@ -440,7 +441,8 @@
     const P = S.params, W = 1180;
     const num = (pid) => D.params[pid].num;
     txt(g, 16, 76, "L1 data cache", "st-h");
-    line(g, 16, 102, [{ pid: P.size }, "KiB,", { pid: P.line }, "B lines,", { pid: P.assoc }, "ways"]);
+    line(g, 16, 102, [{ pid: P.size }, "KiB,", { pid: P.line }, "B lines,", { pid: P.assoc }, "ways,",
+      { pid: P.repl, raw: true }]);
     line(g, 16, 126, [{ pid: P.banks }, "banks of", { pid: P.bank_w }, "B"]);
     const nb = num(P.banks) || 0;
     if (nb) {

@@ -17,7 +17,7 @@
   "l1i.size": {
     "value": 192,
     "sim_key": "l1i_kib",
-    "confidence": "single"
+    "confidence": "confirmed"
   },
   "btb.l0_entries": {
     "value": 1024,
@@ -37,7 +37,7 @@
   "dirpred.history": {
     "value": 100,
     "sim_key": "dir_history",
-    "confidence": "single"
+    "confidence": "corroborated"
   },
   "dirpred.mispredict_penalty": {
     "value": 13,
@@ -152,12 +152,12 @@
   "l1d.size": {
     "value": 128,
     "sim_key": "l1d_kib",
-    "confidence": "single"
+    "confidence": "confirmed"
   },
   "l1d.line": {
     "value": 64,
     "sim_key": "l1d_line",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "l1d.latency": {
     "value": 3,
@@ -177,7 +177,7 @@
   "l2.size": {
     "value": 12,
     "sim_key": "l2_mib",
-    "confidence": "single"
+    "confidence": "confirmed"
   },
   "l2.latency": {
     "value": 17,

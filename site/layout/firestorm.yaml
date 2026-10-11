@@ -104,7 +104,7 @@ structures:
     label: Chip
     kind: chip
     blocks: [l2, slc, memctrl]
-    params: {cores: pcluster.cores, clock: pcluster.clock_max, l2_size: l2.size, l2_line: l2.line,
+    params: {cores: pcluster.cores, clock: pcluster.clock_max, l2_size: l2.size, l2_line: l2.line, l2_assoc: l2.assoc,
              l2_lat: l2.latency, l2_inner: l2.inner_slice, l2_core: l2.core_capacity, l2_bw: l2.load_bw,
              slc_size: slc.size, slc_lat: slc.latency, slc_bw: slc.load_bw,
              dram: memctrl.dram_latency, dram_bw: memctrl.dram_load_bw}
@@ -123,7 +123,7 @@ structures:
     label: Data caches and translation
     kind: dmem
     blocks: [l1d, dtlb, prefetch, mshr]
-    params: {size: l1d.size, line: l1d.line, assoc: l1d.assoc, banks: l1d.banks, bank_w: l1d.bank_width,
+    params: {size: l1d.size, line: l1d.line, assoc: l1d.assoc, repl: l1d.replacement, banks: l1d.banks, bank_w: l1d.bank_width,
              ld_bw: l1d.load_bw, st_bw: l1d.store_bw, ld_n: lsu.loads_per_cycle, st_n: lsu.stores_per_cycle,
              lat: l1d.latency, lat_alu: l1d.latency_alu, lat_cx: l1d.latency_complex, lat_simd: l1d.latency_simd,
              l2_lat: l2.latency, slc_lat: slc.latency, dram: memctrl.dram_latency,

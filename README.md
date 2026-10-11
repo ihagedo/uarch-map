@@ -1,7 +1,8 @@
 # uarch-map
 
 An architecture map of the Apple M1 Firestorm core, assembled from published reverse engineering
-(Dougall Johnson, Maynard Handley), Apple patents, and a few articles and papers.
+(Dougall Johnson, Maynard Handley), security research that measured Apple cores, Apple patents, and a
+few articles.
 
 Every value on the map comes from a claim, and every claim cites a place in its source: a page, a
 section, a patent. Confidence runs from confirmed (three or more independent measurements agree)
