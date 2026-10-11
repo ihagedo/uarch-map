@@ -111,6 +111,13 @@ sources:
     group: Chen, Jiajie
     year: 2024
     url: https://arxiv.org/abs/2411.13900
+  ccs26-ienflow:
+    type: paper
+    title: "iEnFlow: Endogenous Control-Flow Attacks via Conditional Branch Prediction on Apple Silicon"
+    author: Rong, Kaiyuan
+    group: Chen, Jiajie
+    year: 2026
+    url: https://craft.cs.tsinghua.edu.cn/papers/iEnFlow_full.pdf
   isca22-pacman:
     type: paper
     title: "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution"

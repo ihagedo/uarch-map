@@ -696,7 +696,8 @@
     "dirpred.history": {
       "claims": [
         "c-tm-history-100",
-        "c-cq-phr-100"
+        "c-cq-phr-100",
+        "c-ien-phrt-pcore"
       ],
       "disputes": [],
       "block": "dirpred",
@@ -1844,15 +1845,16 @@
     },
     "dirpred.counter_bits": {
       "claims": [
-        "c-tm-counter-3bit"
+        "c-tm-counter-3bit",
+        "c-ien-counter-3bit"
       ],
       "disputes": [],
       "block": "dirpred",
       "name": "Prediction counter width",
       "unit": "bits",
       "value": 3,
-      "status": "derived",
-      "confidence": "derived"
+      "status": "measured",
+      "confidence": "corroborated"
     },
     "dirpred.history_update": {
       "claims": [
@@ -18422,6 +18424,77 @@
       "source": "handley-vol8",
       "entered": "handley-vol8-memory"
     },
+    "c-ien-phrt-pcore": {
+      "text": "On the Firestorm core the target-address path history register folds in target bits 31:2 and records up to 100 taken branches",
+      "loc": "p005",
+      "quote": "the PHR incorporates bits [31:2] of the target address (denoted as T[31:2] in the following sections) into its hash function and can record up to 100 target addresses on the P-cores of M1 processors.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 100,
+      "unit": "branches",
+      "supports": [
+        "dirpred.history"
+      ],
+      "chip": "m1",
+      "notes": "iEnFlow's own reverse engineering confirms the 2024 Firestorm result. The M2 P-core is identical.",
+      "source": "ccs26-ienflow",
+      "entered": "ienflow"
+    },
+    "c-ien-phrb-pcore": {
+      "text": "On the Firestorm core the branch-address path history register folds in branch bits 5:2 and holds 28 entries",
+      "loc": "p004",
+      "quote": "bits [5:2] of the branch address (denoted as B[5:2] in the following sections) form the input ... the BHB can record up to 28 branch addresses.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 28,
+      "unit": "branches",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Confirms the 2024 split path-history-register result. The M2 P-core is identical.",
+      "source": "ccs26-ienflow",
+      "entered": "ienflow"
+    },
+    "c-ien-pcore-pht": {
+      "text": "Firestorm's longest-history pattern history table is four-way with a 10-bit index using PC bits 6 and 9 and a 16-bit tag",
+      "loc": "p007",
+      "quote": "we can conclude that\nthe associativity of the PHT is four, and PC[6] and PC[9]\nare involved in the index hash function ... On the P-cores\nof M1, the PHT has a 10-bit index ... the PHT employs a 16-bit\ntag.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": "4-way, 10-bit index, 16-bit tag",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Firestorm; the PC input to the table is PC[18:2]. Confirms the 2024 Firestorm result. The M2 P-core is identical.",
+      "source": "ccs26-ienflow",
+      "entered": "ienflow"
+    },
+    "c-ien-counter-3bit": {
+      "text": "Every pattern history table entry uses a 3-bit saturating counter",
+      "loc": "p008",
+      "quote": "we observe that PHT entries on\nall tested cores contain a 3-bit saturating counter.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "bits",
+      "supports": [
+        "dirpred.counter_bits"
+      ],
+      "chip": "m1",
+      "notes": "Measured on all tested cores (M1 through M4, P and E), so it holds for Firestorm. Agrees with Tuby and Morrison.",
+      "source": "ccs26-ienflow",
+      "entered": "ienflow"
+    },
+    "c-ien-all-taken": {
+      "text": "On Firestorm every taken branch type updates the path history register, while not-taken conditional branches do not",
+      "loc": "p005",
+      "quote": "Our results show that all types of taken branches are recorded\non M1-M3 processors and on the E-cores of the M4 processor.",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m1",
+      "notes": "Tested direct and indirect jumps, taken and non-taken conditional branches, direct and indirect calls, and returns. Supports the shift-and-XOR update policy where not-taken conditional branches do not shift.",
+      "source": "ccs26-ienflow",
+      "entered": "ienflow"
+    },
     "c-ilk-l1i-ways": {
       "text": "Timing loops over chains of branches at congruent addresses find a 6-way L1I on the M1 P-cores",
       "loc": "p006",
@@ -21075,6 +21148,14 @@
       "year": 2024,
       "url": "https://arxiv.org/abs/2411.13900"
     },
+    "ccs26-ienflow": {
+      "type": "paper",
+      "title": "iEnFlow: Endogenous Control-Flow Attacks via Conditional Branch Prediction on Apple Silicon",
+      "author": "Rong, Kaiyuan",
+      "group": "Chen, Jiajie",
+      "year": 2026,
+      "url": "https://craft.cs.tsinghua.edu.cn/papers/iEnFlow_full.pdf"
+    },
     "isca22-pacman": {
       "type": "paper",
       "title": "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution",
@@ -21425,7 +21506,8 @@
         "c-tm-lpc-pc-bit2",
         "c-cq-phr-100",
         "c-cq-phr-split",
-        "c-cq-footprint-bits"
+        "c-cq-footprint-bits",
+        "c-ien-all-taken"
       ],
       "name": "Path history register (shift-and-XOR)",
       "status": "measured",
