@@ -2113,9 +2113,20 @@
     },
     "l2.replacement": {
       "claims": [
-        "c-mh-v2-l2-random-repl"
+        "c-mh-v2-l2-random-repl",
+        "c-s2c-l2-repl"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v2-l2-random-repl",
+            "c-s2c-l2-repl"
+          ],
+          "note": "Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l2",
       "name": "L2 replacement policy",
       "value": "random",
@@ -2446,7 +2457,8 @@
     },
     "l2.assoc": {
       "claims": [
-        "c-prt-l2-ways"
+        "c-prt-l2-ways",
+        "c-s2c-l2-12way-table"
       ],
       "disputes": [],
       "block": "l2",
@@ -18874,6 +18886,94 @@
         "l2.line"
       ],
       "notes": "Taken from Table 1 (PACMAN). Flipping address bit 6 moves a line to the other L1D set but keeps its L2 set; the inclusion and AutoLock tests rely on this split.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-repl": {
+      "text": "L2 replacement acts as LRU among lines from one core and as non-LRU, possibly pseudo-random, when lines from different cores compete",
+      "loc": "p008",
+      "quote": "The L2 replacement policy behaves as LRU when eviction candidates are lines belonging to the same core, and non-LRU (possibly pseudo-random) when lines belonging to different cores can be evicted.",
+      "method": "other",
+      "derivation": "measured",
+      "value": "LRU among one core's lines; non-LRU, possibly pseudo-random, across cores",
+      "hedge": "possibly pseudo-random",
+      "supports": [],
+      "contradicts": [
+        "l2.replacement"
+      ],
+      "notes": "Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-repl-cross-8x": {
+      "text": "With the target on one core and its minimal L2 eviction set on another, one pass over the set does not always evict the target, while 8 passes do",
+      "loc": "p008",
+      "quote": "iterating over the minimal eviction set at least 8 times guarantees the eviction of addr in practice. These observations imply that a non-LRU replacement policy is being used.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "passes",
+      "supports": [],
+      "notes": "Figure 4a; eviction set split over two L1D sets so every line is evictable under AutoLock.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-repl-same-core": {
+      "text": "When one core loads the target and then its minimal L2 eviction set, a single pass always evicts the target",
+      "loc": "p008",
+      "quote": "even one iteration over the minimal L2 eviction set S is guaranteed to evict addr. This is possible only when an LRUbased policy is used.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "passes",
+      "supports": [],
+      "notes": "Figure 4b.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-index": {
+      "text": "The 13-bit L2 set index takes 11 bits directly from physical address bits inside the 32 MB huge-page offset and forms the other 2 as XORs of several higher page-number bits",
+      "loc": "p008",
+      "quote": "Notice that 11 out of 13 set index bits are directly mapped from huge page offset bits. The other 2 bits are computed over a complex xor operation involving the huge page number bits.",
+      "method": "other",
+      "derivation": "measured",
+      "value": "13 bits: 11 direct, 2 XOR-hashed",
+      "supports": [],
+      "notes": "From physical addresses of L2-congruent lines (Linux pagemap). Eviction sets match the 16 KB page offset and address bits 19:16, leaving four groups for the 2 hashed bits. Huge pages are 32 MB.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-slices": {
+      "text": "The authors suggest the 2 hashed index bits may pick one of four L2 slices, one per core, each of 2048 sets",
+      "loc": "p008",
+      "quote": "It is possible that the M1 also divides the L2 cache into as many slices as cores, resulting in a 2-bit L2 slice index, and each slice owns 8192/4",
+      "derivation": "inferred",
+      "value": 4,
+      "unit": "slices",
+      "hedge": "It is possible that",
+      "supports": [],
+      "notes": "Drawn by analogy with Intel LLC slice hashing.",
+      "source": "usenix23-s2c",
+      "chip": "m1",
+      "entered": "s2c"
+    },
+    "c-s2c-l2-12way-table": {
+      "text": "The P-cluster L2 is 12-way set associative with 8192 sets of 128 B lines",
+      "loc": "p003",
+      "quote": "Ways 8 12 8 16 Sets 256 8192 128 2048 ... Table 1: Apple M1 cache parameters (from Table 2 of [49])",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 12,
+      "unit": "ways",
+      "supports": [
+        "l2.assoc"
+      ],
+      "notes": "Relayed from PACMAN. Also lists the L1D as 8 ways, 256 sets, and the Icestorm L1D (8 ways, 128 sets) and L2 (16 ways, 2048 sets, 4 MB).",
       "source": "usenix23-s2c",
       "chip": "m1",
       "entered": "s2c"
