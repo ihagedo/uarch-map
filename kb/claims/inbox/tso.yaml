@@ -1,0 +1,175 @@
+# tso.yaml
+# Yossi Khayet and Adam Morrison, 2026
+# Apple's runtime TSO memory-model mode measured against Arm mode on the M1 and M4.
+session: tso
+source: asplos26-tso
+
+claims:
+  - id: c-tso-entso-bit
+    text: >-
+      An M-series core switches to x86 TSO ordering when bit 1 (EnTSO) of ACTLR_EL1 is set, which only privileged
+      code such as the kernel can do
+    loc: p003
+    quote: "The memory model can be configured only by code running in a privileged execution level, such as the kernel. ... model is determined by bit #1 (EnTSO) of its auxiliary control register (ACTLR_EL1)"
+    method: secondhand
+    derivation: reported
+    value: "ACTLR_EL1 bit 1 (EnTSO)"
+    supports: []
+    notes: Background statement without a source. The authors toggle the mode this way on the M1 under Linux and on the M4 under macOS.
+  - id: c-tso-rosetta
+    text: The TSO mode exists so that code from Apple's Rosetta x86-to-Arm translator runs efficiently
+    loc: p003
+    quote: "To support efficient execution of binaries created by Apple’s Rosetta x86-to-Arm binary translator [35], an M Series CPU core can be configured to use x86’s TSO memory model"
+    method: secondhand
+    derivation: reported
+    value: true
+    supports: []
+    notes: Cites Apple's Rosetta documentation, which also supports setting the mode from inside a virtual machine.
+  - id: c-tso-m1-prior-specfp
+    text: Earlier work found that TSO mode slows multi-threaded SPEC CPU 2017 FP on the M1 by 8.94 % on average
+    loc: p002
+    quote: "prior work [8, 76] has reported that TSO on the M1 CPU can slow down the SPEC CPU 2017 FP and Geekbench suites by an average of 8.94% and 22%, respectively"
+    method: secondhand
+    derivation: reported
+    value: 8.94
+    unit: "%"
+    supports: []
+    notes: Wrenger et al., 2024.
+  - id: c-tso-m1-prior-geekbench
+    text: Earlier work found that the M1 scores 22 % lower in Geekbench in TSO mode
+    loc: p002
+    quote: "prior work [8, 76] has reported that TSO on the M1 CPU can slow down the SPEC CPU 2017 FP and Geekbench suites by an average of 8.94% and 22%, respectively"
+    method: secondhand
+    derivation: reported
+    value: 22
+    unit: "%"
+    supports: []
+    notes: Beck et al. (AtoMig), 2023.
+  - id: c-tso-lq-130
+    text: An M1 P core keeps about 130 loads in flight
+    loc: p003
+    quote: "An M1 P core can maintain about 130 loads and 60 stores in flight [39]"
+    method: secondhand
+    derivation: reported
+    value: 130
+    unit: entries
+    approx: true
+    supports: [lq.entries]
+    notes: Cites Johnson's Firestorm pages.
+  - id: c-tso-sq-60
+    text: An M1 P core keeps about 60 stores in flight
+    loc: p003
+    quote: "An M1 P core can maintain about 130 loads and 60 stores in flight [39]"
+    method: secondhand
+    derivation: reported
+    value: 60
+    unit: entries
+    approx: true
+    supports: [sq.entries]
+    notes: Cites Johnson's Firestorm pages.
+  - id: c-tso-issue-8
+    text: An M1 P core sustains 8 instructions per cycle, against 10 on the M4
+    loc: p003
+    quote: "M1 and M4 P cores can sustain issuing 8 and 10 instructions per cycle, respectively [36]"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: instr/cycle
+    supports: []
+    notes: Cites Apple's CPU optimization guide; the pipeline stage is not named.
+  - id: c-tso-cores
+    text: The M1 has eight cores, four P and four E
+    loc: p007
+    quote: "8 (4 P + 4 E) L1D$: 128 KiB, 8-way"
+    method: secondhand
+    derivation: reported
+    value: 4
+    unit: cores
+    supports: [pcluster.cores]
+    notes: Table 1 of the evaluated CPUs, M1 column; no source given.
+  - id: c-tso-l1d-128
+    text: The M1 P-core L1 data cache is 128 KiB
+    loc: p007
+    quote: "8 (4 P + 4 E) L1D$: 128 KiB, 8-way"
+    method: secondhand
+    derivation: reported
+    value: 128
+    unit: KiB
+    supports: [l1d.size]
+    notes: Table 1, M1 column; no source given.
+  - id: c-tso-l1d-8way
+    text: The M1 P-core L1 data cache is 8-way set associative
+    loc: p007
+    quote: "8 (4 P + 4 E) L1D$: 128 KiB, 8-way"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: Table 1, M1 column; no source given. The M4 load-burst test drops past 8 addresses (c-tso-mlp-8).
+  - id: c-tso-l2-12mib
+    text: The M1 P-cluster L2 is 12 MiB
+    loc: p007
+    quote: "L1D$: 128 KiB, 8-way L2$ (shared): 12 MiB, 12-way"
+    method: secondhand
+    derivation: reported
+    value: 12
+    unit: MiB
+    supports: [l2.size]
+    notes: Table 1, M1 column; no source given.
+  - id: c-tso-l2-12way
+    text: The M1 P-cluster L2 is listed as 12-way set associative
+    loc: p007
+    quote: "L1D$: 128 KiB, 8-way L2$ (shared): 12 MiB, 12-way"
+    method: secondhand
+    derivation: reported
+    value: 12
+    unit: ways
+    supports: [l2.assoc]
+    notes: >-
+      Table 1, M1 column; no source given. Handley finds the L2 behaves as three-way with a hashed index
+      (c-mh-v2-l2-assoc-hash) and doubts 24-way (c-mh-v2-l2-not-24way).
+  - id: c-tso-ice-l1d-8way
+    text: The M1 E-core L1 data cache is 64 KiB and 8-way set associative
+    loc: p007
+    quote: "12-way L1D$: 64 KiB, 8-way L2$ (shared): 4 MiB, 16-way"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: ways
+    supports: []
+    chip: icestorm
+    notes: Table 1, M1 column; no source given.
+  - id: c-tso-ice-l2
+    text: The M1 E-cluster L2 is 4 MiB and 16-way set associative
+    loc: p007
+    quote: "12-way L1D$: 64 KiB, 8-way L2$ (shared): 4 MiB, 16-way"
+    method: secondhand
+    derivation: reported
+    value: 16
+    unit: ways
+    supports: []
+    chip: icestorm
+    notes: Table 1, M1 column; no source given.
+  - id: c-tso-l1-virt-indexed
+    text: The L1 cache of M-series CPUs is virtually indexed
+    loc: p011
+    quote: "Because the L1 cache in M Series CPUs is virtuallyindexed [78, § 4.1], such accesses suffer from L1 cache set conflicts"
+    method: secondhand
+    derivation: reported
+    supports: []
+    notes: Cites the S2C paper on the M1.
+
+new_mechanisms:
+  tso_mode:
+    name: Runtime-selectable TSO memory model
+    status: measured
+    description: A privileged control bit switches a core to x86-TSO ordering for Rosetta while keeping out-of-order loads.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      with ACTLR_EL1.EnTSO set, cache-hitting loads wider than 16 B run over 10x slower on an M1 P core and an
+      8-byte load forwarded from a 4-byte store runs several times slower than with the bit clear
+
+mechanism_claims:
+  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench]

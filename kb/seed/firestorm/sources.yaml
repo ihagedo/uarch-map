@@ -181,3 +181,9 @@ sources:
     author: Kim, Jason
     year: 2025
     url: https://predictors.fail/
+  asplos26-tso:
+    type: paper
+    title: "Arm Weak Memory Consistency on Apple Silicon: What Is It Good For?"
+    author: Khayet, Yossi
+    year: 2026
+    url: https://www.cs.tau.ac.il/~mad/publications/asplos2026-TSO.pdf
