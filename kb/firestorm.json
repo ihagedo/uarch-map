@@ -1426,7 +1426,8 @@
         "c-cc-gcc-l1d-128",
         "c-mh-v2-l1d-size",
         "c-ilk-l1d-size",
-        "c-pac-l1d-size"
+        "c-pac-l1d-size",
+        "c-slap-l1d-128"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1445,7 +1446,8 @@
         "c-mh-v2-l1d-line",
         "c-ilk-l1d-line",
         "c-pac-l1d-line",
-        "c-prt-l1d-line"
+        "c-prt-l1d-line",
+        "c-slap-l1-line-64"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1961,13 +1963,15 @@
       "confidence": "single"
     },
     "lsu.value_prediction": {
-      "claims": [],
+      "claims": [
+        "c-slap-m1-no-data-spec"
+      ],
       "disputes": [],
       "block": "lsu",
       "name": "Load value prediction",
-      "status": "open",
-      "value": null,
-      "confidence": "unknown"
+      "value": false,
+      "status": "inferred",
+      "confidence": "inferred"
     },
     "prefetch.dmp_filter_entries": {
       "claims": [
@@ -2052,14 +2056,15 @@
       "claims": [
         "c-mh-v1-no-addr-prediction",
         "c-mh-v2-no-address-prediction",
-        "c-mh-v8-m1-no-lap"
+        "c-mh-v8-m1-no-lap",
+        "c-slap-m1-no-lap"
       ],
       "disputes": [],
       "block": "lsu",
       "name": "Load address prediction",
       "value": false,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "int_prf.banks": {
       "claims": [
@@ -2325,7 +2330,8 @@
     "dtlb.page_size": {
       "claims": [
         "c-mh-v2-page-16k",
-        "c-pac-macos-config"
+        "c-pac-macos-config",
+        "c-slap-page-16k"
       ],
       "disputes": [],
       "block": "dtlb",
@@ -21733,6 +21739,161 @@
       "chip": "m1",
       "entered": "s2c"
     },
+    "c-slap-m1-no-lap": {
+      "text": "On the M1, a chain of dependent loads runs no faster when its addresses stride than when they are random, so the M1 has no load address prediction",
+      "loc": "p002",
+      "quote": "On the M1 CPU, we observe no difference in runtime whether the load addresses increment in strides or not.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "supports": [
+        "lsu.address_prediction"
+      ],
+      "notes": "10 to 1,000 dependent loads at a 32 B stride, cycle counts on macOS, median of 100 runs. A WebAssembly rerun on an M1 MacBook Pro also found none. Confirms c-mh-v1-no-addr-prediction and c-mh-v2-no-address-prediction.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-a14-no-lap": {
+      "text": "The A14, which uses the Firestorm core, shows no load address prediction, and neither does the A13",
+      "loc": "p005",
+      "quote": "A13 Bionic A14 Bionic A15 Bionic A15 Bionic A16 Bionic A17 Pro M4 \u2717 \u2717 \u2713 \u2717 \u2713 \u2713 \u2713",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "supports": [],
+      "chip": "a14",
+      "notes": "A14 in an iPhone 12 (A2172), A13 in an iPhone 11. WebAssembly in Safari with a 1 ms timer, one million dependent loads at a 32 B stride.",
+      "source": "sp25-slap",
+      "entered": "slap"
+    },
+    "c-slap-m1-no-data-spec": {
+      "text": "On both M1 core types dependent-load latency grows linearly whatever the load addresses or values, and the authors conclude the cores have no load data speculation, value prediction included",
+      "loc": "p004",
+      "quote": "a consistent linear increase in latency, which does not differ based on the load addresses or values. ... Thus, we conclude these cores lack load data speculation mechanisms.",
+      "method": "pointer-chase",
+      "derivation": "inferred",
+      "value": false,
+      "supports": [
+        "lsu.value_prediction"
+      ],
+      "notes": "The test used striding addresses and striding values only. FLOP found that the M3's value predictor trains only on constant values.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-ice-no-lap": {
+      "text": "Icestorm, like Firestorm, shows no speedup for striding dependent loads, so it has no load address prediction",
+      "loc": "p004",
+      "quote": "On both core types of the M1 (top left and bottom left), we observe",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": false,
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "The sentence continues with a linear latency increase that does not depend on load addresses or values.",
+      "source": "sp25-slap",
+      "entered": "slap"
+    },
+    "c-slap-l1d-128": {
+      "text": "The P-core L1 data cache of the M-series is 128 KiB",
+      "loc": "p004",
+      "quote": "The L1 data cache size of the M-series CPUs is 128 KiB for the P-cores and 64 KiB for the E-cores",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "Cites Apple's CPU optimization guide.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-ice-l1d-64": {
+      "text": "The E-core L1 data cache of the M-series is 64 KiB",
+      "loc": "p004",
+      "quote": "The L1 data cache size of the M-series CPUs is 128 KiB for the P-cores and 64 KiB for the E-cores",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 64,
+      "unit": "KiB",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Cites Apple's CPU optimization guide.",
+      "source": "sp25-slap",
+      "entered": "slap"
+    },
+    "c-slap-l1-line-64": {
+      "text": "The L1 cache line on Apple CPUs is 64 bytes",
+      "loc": "p007",
+      "quote": "has a magnitude below 64 bytes. Coincidentally, this is the size of an L1 cache line on Apple CPUs",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "notes": "Stated without a source, as true of Apple CPUs in general.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-page-16k": {
+      "text": "The page size on Apple CPUs is 16 KiB",
+      "loc": "p016",
+      "quote": "The page size on Apple CPUs is 16 KiB.",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 16,
+      "unit": "KiB",
+      "supports": [
+        "dtlb.page_size"
+      ],
+      "notes": "Stated without a source.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-mul-3": {
+      "text": "Citing Apple's optimization guide, the authors take each MUL to cost 3 cycles",
+      "loc": "p008",
+      "quote": "With Apple documentation stating that each mul requires 3 cycles [5, Appendix A]",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "Used to turn MUL counts into training and speculation windows in cycles.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-m1-hid11-dmp": {
+      "text": "Bit 30 of HID11_EL1 disables the data memory-dependent prefetcher on the M1 and M2",
+      "loc": "p013",
+      "quote": "bit 30 of the HID11_EL1 system register, which has been shown to disable the DMP on the M1 and M2 CPUs [18, 41]",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "notes": "Cites GoFetch and a post by Hector Martin. The paper adds that the bit can be set only under Linux.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
+    "c-slap-dmp-vs-lap": {
+      "text": "The data memory-dependent prefetcher found on Apple CPUs dereferences pointer-like loaded data only as a prefetch and does not let younger instructions run past a dependent load",
+      "loc": "p009",
+      "quote": "Unlike the LAP, the DMP does not speculate past RAW dependencies, since it is a hardware prefetcher.",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "The prefetcher itself is from Augury (M1) and GoFetch.",
+      "source": "sp25-slap",
+      "chip": "m1",
+      "entered": "slap"
+    },
     "c-zhou-ibtb": {
       "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
       "loc": "#ibtb-size",
@@ -21942,6 +22103,13 @@
       "group": "Fletcher, Christopher",
       "year": 2024,
       "url": "https://gofetch.fail/"
+    },
+    "sp25-slap": {
+      "type": "paper",
+      "title": "SLAP: Data Speculation Attacks via Load Address Prediction on Apple Silicon",
+      "author": "Kim, Jason",
+      "year": 2025,
+      "url": "https://predictors.fail/"
     },
     "usenix25-flop": {
       "type": "paper",
@@ -22344,7 +22512,8 @@
         "c-flop-full-pc-tag",
         "c-flop-pid-tag",
         "c-flop-kernel-addr",
-        "c-flop-dit"
+        "c-flop-dit",
+        "c-slap-m1-no-data-spec"
       ],
       "name": "Load value prediction",
       "status": "absent",
@@ -22690,7 +22859,9 @@
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",
         "c-mh-v8-prefetch-kinds",
-        "c-mh-v8-cdp-lsu"
+        "c-mh-v8-cdp-lsu",
+        "c-slap-m1-hid11-dmp",
+        "c-slap-dmp-vs-lap"
       ],
       "name": "Content-directed (data memory-dependent) prefetch",
       "status": "inferred",
@@ -23248,6 +23419,21 @@
       ],
       "sim_switch": null,
       "detection_rule": "an L2 eviction set walked on another core evicts a line from this core's L1D only when the set's own lines all stay in L1D, split over the two L1D sets of one 128 B L2 line"
+    },
+    "load_address_prediction": {
+      "claims": [
+        "c-slap-m1-no-lap",
+        "c-slap-a14-no-lap",
+        "c-slap-ice-no-lap"
+      ],
+      "name": "Load address prediction",
+      "status": "absent",
+      "description": "A PC-tagged predictor loads from a strided address before the real address is known; absent on M1, present from M2/A15.",
+      "params": [
+        "lsu.address_prediction"
+      ],
+      "sim_switch": null,
+      "detection_rule": "a chain of dependent loads whose addresses stride by 32 B keeps the per-load latency of a random-order chain; with the predictor it speeds up after about 120 to 500 loads"
     }
   }
 }

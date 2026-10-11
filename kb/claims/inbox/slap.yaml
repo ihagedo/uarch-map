@@ -1,0 +1,139 @@
+# slap.yaml
+# Jason Kim, Daniel Genkin and Yuval Yarom, 2025
+# Load address prediction tested on the M1 (absent) and reverse engineered on the M2 and M3.
+session: slap
+source: sp25-slap
+
+claims:
+  - id: c-slap-m1-no-lap
+    text: >-
+      On the M1, a chain of dependent loads runs no faster when its addresses stride than when they are
+      random, so the M1 has no load address prediction
+    loc: p002
+    quote: "On the M1 CPU, we observe no difference in runtime whether the load addresses increment in strides or not."
+    method: pointer-chase
+    derivation: measured
+    value: false
+    supports: [lsu.address_prediction]
+    notes: >-
+      10 to 1,000 dependent loads at a 32 B stride, cycle counts on macOS, median of 100 runs. A WebAssembly rerun on
+      an M1 MacBook Pro also found none. Confirms c-mh-v1-no-addr-prediction and c-mh-v2-no-address-prediction.
+  - id: c-slap-a14-no-lap
+    text: The A14, which uses the Firestorm core, shows no load address prediction, and neither does the A13
+    loc: p005
+    quote: "A13 Bionic A14 Bionic A15 Bionic A15 Bionic A16 Bionic A17 Pro M4 ✗ ✗ ✓ ✗ ✓ ✓ ✓"
+    method: pointer-chase
+    derivation: measured
+    value: false
+    supports: []
+    chip: a14
+    notes: >-
+      A14 in an iPhone 12 (A2172), A13 in an iPhone 11. WebAssembly in Safari with a 1 ms timer, one million
+      dependent loads at a 32 B stride.
+  - id: c-slap-m1-no-data-spec
+    text: >-
+      On both M1 core types dependent-load latency grows linearly whatever the load addresses or values, and the
+      authors conclude the cores have no load data speculation, value prediction included
+    loc: p004
+    quote: "a consistent linear increase in latency, which does not differ based on the load addresses or values. ... Thus, we conclude these cores lack load data speculation mechanisms."
+    method: pointer-chase
+    derivation: inferred
+    value: false
+    supports: [lsu.value_prediction]
+    notes: >-
+      The test used striding addresses and striding values only. FLOP found that the M3's value predictor trains
+      only on constant values.
+  - id: c-slap-ice-no-lap
+    text: Icestorm, like Firestorm, shows no speedup for striding dependent loads, so it has no load address prediction
+    loc: p004
+    quote: "On both core types of the M1 (top left and bottom left), we observe"
+    method: pointer-chase
+    derivation: measured
+    value: false
+    supports: []
+    chip: icestorm
+    notes: The sentence continues with a linear latency increase that does not depend on load addresses or values.
+  - id: c-slap-l1d-128
+    text: The P-core L1 data cache of the M-series is 128 KiB
+    loc: p004
+    quote: "The L1 data cache size of the M-series CPUs is 128 KiB for the P-cores and 64 KiB for the E-cores"
+    method: secondhand
+    derivation: reported
+    value: 128
+    unit: KiB
+    supports: [l1d.size]
+    notes: Cites Apple's CPU optimization guide.
+  - id: c-slap-ice-l1d-64
+    text: The E-core L1 data cache of the M-series is 64 KiB
+    loc: p004
+    quote: "The L1 data cache size of the M-series CPUs is 128 KiB for the P-cores and 64 KiB for the E-cores"
+    method: secondhand
+    derivation: reported
+    value: 64
+    unit: KiB
+    supports: []
+    chip: icestorm
+    notes: Cites Apple's CPU optimization guide.
+  - id: c-slap-l1-line-64
+    text: The L1 cache line on Apple CPUs is 64 bytes
+    loc: p007
+    quote: "has a magnitude below 64 bytes. Coincidentally, this is the size of an L1 cache line on Apple CPUs"
+    method: secondhand
+    derivation: reported
+    value: 64
+    unit: B
+    supports: [l1d.line]
+    notes: Stated without a source, as true of Apple CPUs in general.
+  - id: c-slap-page-16k
+    text: The page size on Apple CPUs is 16 KiB
+    loc: p016
+    quote: "The page size on Apple CPUs is 16 KiB."
+    method: secondhand
+    derivation: reported
+    value: 16
+    unit: KiB
+    supports: [dtlb.page_size]
+    notes: Stated without a source.
+  - id: c-slap-mul-3
+    text: Citing Apple's optimization guide, the authors take each MUL to cost 3 cycles
+    loc: p008
+    quote: "With Apple documentation stating that each mul requires 3 cycles [5, Appendix A]"
+    method: secondhand
+    derivation: reported
+    value: 3
+    unit: cycles
+    supports: []
+    notes: Used to turn MUL counts into training and speculation windows in cycles.
+  - id: c-slap-m1-hid11-dmp
+    text: Bit 30 of HID11_EL1 disables the data memory-dependent prefetcher on the M1 and M2
+    loc: p013
+    quote: "bit 30 of the HID11_EL1 system register, which has been shown to disable the DMP on the M1 and M2 CPUs [18, 41]"
+    method: secondhand
+    derivation: reported
+    supports: []
+    notes: Cites GoFetch and a post by Hector Martin. The paper adds that the bit can be set only under Linux.
+  - id: c-slap-dmp-vs-lap
+    text: >-
+      The data memory-dependent prefetcher found on Apple CPUs dereferences pointer-like loaded data only as a
+      prefetch and does not let younger instructions run past a dependent load
+    loc: p009
+    quote: "Unlike the LAP, the DMP does not speculate past RAW dependencies, since it is a hardware prefetcher."
+    derivation: inferred
+    supports: []
+    notes: The prefetcher itself is from Augury (M1) and GoFetch.
+
+new_mechanisms:
+  load_address_prediction:
+    name: Load address prediction
+    status: absent
+    description: A PC-tagged predictor loads from a strided address before the real address is known; absent on M1, present from M2/A15.
+    params: [lsu.address_prediction]
+    sim_switch: null
+    detection_rule: >-
+      a chain of dependent loads whose addresses stride by 32 B keeps the per-load latency of a random-order chain;
+      with the predictor it speeds up after about 120 to 500 loads
+
+mechanism_claims:
+  load_address_prediction: [c-slap-m1-no-lap, c-slap-a14-no-lap, c-slap-ice-no-lap]
+  load_value_prediction: [c-slap-m1-no-data-spec]
+  content_directed_prefetch: [c-slap-m1-hid11-dmp, c-slap-dmp-vs-lap]
