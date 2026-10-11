@@ -130,4 +130,52 @@ claims:
     notes: >-
       No method or source given, and not part of the register-read table. Disagrees with the 8 MB of c-7cpu-slc-size
       and c-mh-v2-slc-size; 16 MB is AnandTech's A14 figure (c-at-a14-slc).
+  - id: c-pac-macos-config
+    text: Under macOS 12.2.1 the kernel uses 48-bit virtual addresses, 16-bit PACs and 16 KB pages
+    loc: p008
+    quote: "The macOS 12.2.1 kernel uses 48-bit virtual addresses and 16-bit PACs with 16KB pages."
+    derivation: reported
+    value: 16
+    unit: KiB
+    supports: [dtlb.page_size]
+    notes: Stated without a method. The attack's brute force over PAC values 0x0 to 0xFFFF finds the correct kernel PAC, in line with 16-bit PACs.
+  - id: c-pac-cntpct-24mhz
+    text: The system counter CNTPCT_EL0 is shared by all cores, readable at EL0 by default, and runs at 24 MHz according to CNTFRQ_EL0
+    loc: p007
+    quote: "a system counter, CNTPCT_EL0, which is shared by all cores and is accessible from EL0 by default ... 24 MHz according to the Counter-timer Frequency register (CNTFRQ_EL0)"
+    method: other
+    derivation: documented
+    value: 24
+    unit: MHz
+    supports: []
+    notes: Checked on macOS Big Sur 11.5. Too coarse for cache or TLB timing, so the paper builds a counting-thread timer for the attack.
+  - id: c-pac-no-pmccntr
+    text: The M1 does not implement the standard ARM PMU, so the PMCCNTR_EL0 cycle counter is unavailable at every privilege level
+    loc: p007
+    quote: "the M1 SoC does not use the standard ARM PMU, so this counter is unavailable on M1 at any privilege level"
+    derivation: measured
+    supports: []
+  - id: c-pac-pmc0-pmc1
+    text: >-
+      Apple's own counter registers include PMC0 (S3_2_c15_c0_0), counting cycles, and PMC1 (S3_2_c15_c1_0), counting
+      instructions, readable only in the kernel by default
+    loc: p007
+    quote: "PMC0 (S3_2_c15_c0_0) counts cycles and PMC1 (S3_2_c15_c1_0) counts instructions ... these counters are only accessible in the kernel"
+    method: vendor-doc
+    derivation: documented
+    supports: []
+    notes: Taken from Apple's XNU kernel source (monotonic_arm64.c).
+  - id: c-pac-pmcr0-el0
+    text: Setting the counter control register PMCR0 (S3_1_c15_c0_0) from a kernel extension makes PMC0 readable from user space
+    loc: p007
+    quote: "configure the performance counter control register PMCR0 (S3_1_c15_c0_0) and make PMC0 readable from userspace"
+    derivation: measured
+    supports: []
+    notes: The paper's latency figures in its reverse engineering come from PMC0 read this way.
+  - id: c-pac-pcore-speculation
+    text: The performance cores gave a more reliable attack surface than the efficiency cores, which the authors put down to more speculation
+    loc: p007
+    quote: "We target our attack on the performance cores, which have provided a more reliable attack surface due to a higher degree of speculation."
+    derivation: inferred
+    supports: []
 
