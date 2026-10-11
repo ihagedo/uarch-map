@@ -1,0 +1,111 @@
+# handley-vol8-cluster.yaml
+# Maynard Handley, 2025
+# AMX and SME after the M1, cluster scheduling, memory power and later front-end patents (AArch64-Explore vol 8).
+session: handley-vol8-cluster
+source: handley-vol8
+
+claims:
+  - id: c-mh-v8-fetch-16
+    text: >-
+      Apple's current front end aims to fetch about 10 instructions per cycle on average and can sometimes fetch as
+      many as 16 contiguous instructions spanning two I-cache lines
+    loc: p003
+    quote: "sometimes we can load perhaps as many as 16 contiguous instructions, spanning two I-cache lines, to compensate for occasional bubble cycles"
+    derivation: inferred
+    value: 16
+    unit: instructions
+    hedge: "perhaps"
+    supports: []
+    chip: post-m1
+    notes: From his summary of the front end after the M1's successors; no chip named.
+  - id: c-mh-v8-wrong-path-reuse
+    text: >-
+      Per a 2023 patent, after a mispredicted short forward branch, loads past the reconvergence point whose address
+      chain does not depend on the wrongly executed code keep their loaded values instead of executing again
+    loc: p072
+    quote: "Suppose also the chain of instructions that led to the load does not depend on ... altered in short code. Then the already loaded value in the register should be legitimate!"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20240354109A1 (2023). Handley does not know whether the M4 has it.
+  - id: c-mh-v8-wrong-path-branches
+    text: >-
+      The same patent records the outcomes of branches executed in the reconverged region and hands them to fetch
+      with the redirect, so they are known rather than predicted
+    loc: p072
+    quote: "we track the outcomes of whatever branch comparisons were performed in the converged region, and pass those back to the I-fetch unit"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20240354109A1 (2023). Handley expects indirect-branch targets to be recorded next, which the patent does not mention.
+  - id: c-mh-v8-dram-temp
+    text: >-
+      Per a 2022 patent, Apple adds temperature sensors accurate to 0.1 or 0.01 K on the DRAM, against the roughly 5 K
+      steps the DRAM reports itself, so memory requests can be throttled just below the danger temperature
+    loc: p078
+    quote: "To fix this Apple places addition (much more sensitive, to .1 or .01K) thermocouples on the DRAM"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US12055988B1 (2022).
+  - id: c-mh-v8-m4-sme-decode
+    text: >-
+      The M4 supports SME mostly through instruction decoding, with little change to the AMX hardware
+    loc: p088
+    quote: "the M4 supports SME. This doesn’t change the hardware much, just the instruction decoder details"
+    derivation: inferred
+    supports: []
+    chip: m4
+  - id: c-mh-v8-m4-sme-regs
+    text: >-
+      In SME terms the M4's AMX has 32 Z registers of 512 bits, 16 predicate registers and a 64-row ZA array that
+      forms eight 8x8 fp64 tiles
+    loc: p088
+    quote: "AMX (SME2/M4 version) gives us 32 Z-registers ... that are 512b long (ie can hold 8 FP64 values), along with 16 predicate registers"
+    method: secondhand
+    derivation: reported
+    value: 512
+    unit: bits
+    supports: []
+    chip: m4
+  - id: c-mh-v8-matmul-loop
+    text: >-
+      Per a 2022 patent, one instruction could perform the outer-product accumulates for every pair of vectors in two
+      loaded vector groups, optionally set up by a separate configuration register, to cut instruction traffic from
+      the core to AMX
+    loc: p090
+    quote: "performs the relevant vector-by-vector outer product and accumulate for all the different pairs of vectors in the two vector groups"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20240103858A1 (2022). Handley thinks about 16, maybe 64, successive accumulates per instruction is the practical limit.
+  - id: c-mh-v8-amx-six-sets
+    text: >-
+      AMX keeps a full register set for every core of its cluster, six on chips whose P-clusters have six cores,
+      though almost none are in use at once
+    loc: p091
+    quote: "AMX has the unfortunate situation that it has to provide 4 (now 6 as clusters have grown larger) replicates of a large footprint of registers"
+    derivation: inferred
+    value: 6
+    unit: register sets
+    supports: []
+    chip: m3pro
+    notes: Six-core P-clusters appear on the M3 Pro and Max (c-mh-v8-m3pro-6core). Compare c-mh-v8-amx-reg-sets, four on the M1.
+  - id: c-mh-v8-amx-m3-throughput
+    text: >-
+      On the M3 and M4, AMX can apparently run two loads or stores (128 B of data to or from the L2) alongside either
+      one outer product or two vector operations
+    loc: p091
+    quote: "the capacity of AMX seems to be something like the ability to execute ... two load/store type instructions (so 128B of data movement to L2) along with either an outer product or two vector-vector operations"
+    derivation: inferred
+    value: 2
+    unit: loads/stores per cycle
+    hedge: "seems to be something like"
+    supports: []
+    chip: m3
+    notes: Also stated for the M4.
+
