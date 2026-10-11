@@ -499,7 +499,8 @@
     "pcluster.clock_max": {
       "claims": [
         "c-7cpu-clock",
-        "c-cc-clk-m1-max-clock"
+        "c-cc-clk-m1-max-clock",
+        "c-prt-clock"
       ],
       "disputes": [],
       "block": "pcluster",
@@ -18554,6 +18555,101 @@
       "supports": [],
       "chip": "icestorm",
       "source": "arxiv-2402-15425",
+      "entered": "prime-retouch"
+    },
+    "c-prt-no-armv8-pmu": {
+      "text": "The M1 cores do not implement the standard ARMv8 PMU; accessing its system registers halts the system",
+      "loc": "p004",
+      "quote": "we found that the M1 does not deploy the standard ARMv8 PMU",
+      "derivation": "measured",
+      "value": false,
+      "supports": [],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-pmu-10": {
+      "text": "Apple's PMU counts at most 10 events at once per core, each counter selecting one of 255 events (0 to 254)",
+      "loc": "p004",
+      "quote": "the M1 processor can concurrently monitor at most 10 PMU events per core, and each PMU can track one of the 255 undocumented events (0 to 254)",
+      "method": "other",
+      "derivation": "measured",
+      "value": 10,
+      "unit": "events",
+      "supports": [],
+      "notes": "Interface worked out from XNU's partial use of the PMU and experiment.",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-pmu-cycles": {
+      "text": "Apple PMU event 0x2 counts core clock cycles",
+      "loc": "p004",
+      "quote": "0x2 that tracks the core clock cycles (e.g., rdtsc as in x86)",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-pmu-l1d-miss": {
+      "text": "Apple PMU event 0xa3 counts L1D misses",
+      "loc": "p004",
+      "quote": "0xa3 that monitors the L1 data cache miss event",
+      "method": "counter",
+      "derivation": "measured",
+      "supports": [],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-pmesr0": {
+      "text": "PMESR0 (S3_1_C15_C5_0) selects the events for PMC2 to PMC5, 8 bits per counter",
+      "loc": "p016",
+      "quote": "the PMESR0 register mapped to S3_1_C15_C5_0 provides a way to select PMU events for PMC2 to PMC5. Each PMC can track PMU events 0 to 254, and 8 bits are assigned per PMC.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-pmcr0": {
+      "text": "PMCR0 (s3_1_c15_c0_0) enables counters with bits 0-7, sets the interrupt mode with bits 8-10 and grants EL0 access with bit 30",
+      "loc": "p016",
+      "quote": "The PMCR0 register mapped to s3_1_c15_c0_0 controls basic capabilities of PMU such as which Performance Monitoring Counter (PMC) needs to be enabled (bit 0-7)",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "EL0 access is off by default on macOS. PMCR1 (bits 16-23 for EL1) picks the exception levels that count.",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-cntvct-alias": {
+      "text": "The Apple system register s3_4_c15_c10_6 reads the ARM system counter at EL0 as an alias of CNTVCT_EL0",
+      "loc": "p011",
+      "quote": "we could discover that an undocumented system register s3_4_c15_c10_6 is used as an alias of CNTVCT_EL0",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Found by disassembling Rosetta 2's translation of rdtsc. Reading CNTVCT_EL0 itself faulted in the authors' Linux setup.",
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
+      "entered": "prime-retouch"
+    },
+    "c-prt-clock": {
+      "text": "Firestorm runs at 3.2 GHz",
+      "loc": "p011",
+      "quote": "it is known that Firestorm core runs at 3.2GHz",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3.2,
+      "unit": "GHz",
+      "supports": [
+        "pcluster.clock_max"
+      ],
+      "source": "arxiv-2402-15425",
+      "chip": "m1",
       "entered": "prime-retouch"
     },
     "c-zhou-ibtb": {
