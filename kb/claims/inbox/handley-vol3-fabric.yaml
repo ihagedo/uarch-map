@@ -455,6 +455,61 @@ claims:
     derivation: inferred
     supports: []
     notes: US20180074824A1 (2018).
+  - id: c-mh-v3-m2-amx-pairs
+    text: >-
+      Exploring the instruction encodings shows that some M2 AMX vector operations update two vectors at once
+    loc: p225
+    quote: "the M2 allows for some vector operation update two vectors"
+    method: secondhand
+    derivation: reported
+    value: 2
+    unit: vectors
+    supports: []
+    chip: m2
+    notes: Not in any patent; Handley does not say who explored the encodings.
+  - id: c-mh-v3-m3-amx-quads
+    text: >-
+      On the M3 such AMX vector operations can update four vectors at once
+    loc: p225
+    quote: "the M3 extends this to four vectors"
+    method: secondhand
+    derivation: reported
+    value: 4
+    unit: vectors
+    supports: []
+    chip: m3
+  - id: c-mh-v3-m4-sme
+    text: >-
+      The M4 exposes AMX as Arm SME, with its vector subset as streaming SVE, but does not offer SVE as an extension
+      of NEON
+    loc: p226
+    quote: "M4 exposes essentially the same functionality as the SME subset of ARMv9, with the vector subset of AMX exposed as SSVE"
+    method: secondhand
+    derivation: reported
+    supports: []
+    chip: m4
+  - id: c-mh-v3-amx-two-issue
+    text: >-
+      Handley reads the 2019 bundling patent as saying the first AMX ran perhaps one instruction per cycle and the
+      second probably two, a load or store alongside an arithmetic operation
+    loc: p229
+    quote: "the first AMX implementation was perhaps one instruction (on the AMX side) per cycle, the second ... probably attempts two instruction per cycle"
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: instructions/cycle
+    hedge: "probably"
+    supports: []
+    notes: US20200218540A1 (2019). He does not say which chip carries the second implementation.
+  - id: c-mh-v3-amx-encoding
+    text: >-
+      AMX instructions appear to use only the all-zero first- and second-level encoding space, so the upper 8 bits of
+      every AMX instruction are zero
+    loc: p295
+    quote: "Looks like AMX is limiting itself to the 0000 hex of first level, and the 0000 hex of second level"
+    derivation: inferred
+    hedge: "Looks like"
+    supports: []
 
 mechanism_claims:
   fabric_qos_credits: [c-mh-v3-snoop-qos, c-mh-v3-iso-windows, c-mh-v3-write-credit-reply, c-mh-v3-buffer-lending,
