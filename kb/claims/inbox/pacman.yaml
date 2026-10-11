@@ -179,3 +179,80 @@ claims:
     derivation: inferred
     supports: []
 
+  - id: c-pac-dtlb-evict-12
+    text: >-
+      Twelve or more loads spaced 256 x 16 KB apart (each offset by a further 128 B to avoid cache conflicts) evict the
+      target's translation from what the paper calls the L1 dTLB, raising its reload latency from about 60 to about 95 cycles
+    loc: p009
+    quote: "The access latency starts around 60 cycles, increases to around 95 cycles when stride ≥ 256×16KB and N ≥ 12"
+    method: stride-sweep
+    derivation: measured
+    value: 12
+    unit: addresses
+    supports: []
+    notes: >-
+      Median of 1000 PMC0 samples on a p-core, including timing overhead; stride stepped in 16 KB multiples and N from
+      1 to 30.
+  - id: c-pac-l2tlb-evict-23
+    text: >-
+      Twenty-three or more loads spaced 2048 x 16 KB apart also evict the translation from what the paper calls the L2
+      TLB, raising reload latency to about 115 cycles
+    loc: p009
+    quote: "further increases to 115 cycles when stride ≥ 2048×16KB and N ≥ 23"
+    method: stride-sweep
+    derivation: measured
+    value: 23
+    unit: addresses
+    supports: []
+  - id: c-pac-dtlb-12x256
+    text: The authors fit the first latency step to an L1 dTLB of 12 ways and 256 sets, assuming the TLBs are inclusive
+    loc: p009
+    quote: "It is very likely that the L1 dTLB is 12 ways with 256 sets ... if the TLBs are inclusive"
+    derivation: derived
+    value: "12-way, 256 sets"
+    hedge: "It is very likely ... if the TLBs are inclusive"
+    supports: []
+    contradicts: [dtlb.l1_org]
+    notes: >-
+      Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12
+      shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).
+  - id: c-pac-l2tlb-23x2048
+    text: >-
+      The authors fit the second latency step to an L2 TLB of 23 ways and 2048 sets, again assuming inclusive TLBs, and
+      warn that hidden structures may explain the steps instead
+    loc: p009
+    quote: "L2 TLB is 23 ways with 2048 sets if the TLBs are inclusive ... there may exist hidden structures in the micro-architecture that our analysis has missed"
+    derivation: derived
+    value: "23-way, 2048 sets"
+    hedge: "we do not intend to conclude that the M1 chip follows our hypothesized design"
+    supports: []
+    contradicts: [dtlb.l2_org]
+    notes: >-
+      Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape
+      (c-mh-v2-tlb2-org).
+  - id: c-pac-l1d-evict-4
+    text: >-
+      Without the 128 B offsets, four or more loads spaced 256 x 128 B apart raise the reload latency from about 60 to
+      about 80 cycles, which the authors read as L1D conflicts leaving an L2 hit with an L1 dTLB hit
+    loc: p009
+    quote: "increases to around 80 cycles when stride ≥ 256×128B and N ≥ 4 ... the 80-cycle latency corresponds to L2 cache hits and L1 dTLB hits"
+    method: stride-sweep
+    derivation: measured
+    value: 4
+    unit: addresses
+    hedge: "We hypothesize"
+    supports: []
+    notes: The same sweep then steps to about 110 cycles at 12 addresses 256 x 16 KB apart and about 130 at 23 addresses 2048 x 16 KB apart.
+  - id: c-pac-l1d-assoc-half
+    text: The L1D associativity seen in the eviction test is half the 8 ways the system registers report
+    loc: p009
+    quote: "Note that the observed L1 data cache associativity is half of the number reported by the system registers (Table 2)."
+    method: stride-sweep
+    derivation: measured
+    value: 4
+    unit: ways
+    supports: []
+    notes: >-
+      From the step at 4 loads 256 x 128 B apart (c-pac-l1d-evict-4); the paper does not study the caches further.
+      Disagrees with the 8 ways of c-mh-v2-l1d-8way, c-pac-l1d-ways and c-ilk-l1d-ways.
+
