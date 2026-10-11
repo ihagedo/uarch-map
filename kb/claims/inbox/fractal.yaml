@@ -1,0 +1,106 @@
+# fractal.yaml
+# Joseph Ravichandran and Mengjia Yan, 2026
+# Context isolation of the M1 indirect and conditional branch predictors, and Phantom fetches, measured bare metal.
+session: fractal
+source: sp26-fractal
+
+claims:
+  - id: c-fr-phr-100
+    text: The M1 path history register covers the most recent 100 branches, as the authors relay from earlier work
+    loc: p003
+    quote: "According to prior work [14], [15], the Apple M1 PHR holds information about the most recent 100 branches."
+    method: secondhand
+    derivation: reported
+    value: 100
+    unit: branches
+    supports: [dirpred.history]
+    notes: Cites Tuby and Morrison (c-tm-history-100) and Chen, Qu and Zhang (arXiv 2411.13900).
+  - id: c-fr-csv2
+    text: The M1 reports support for Arm's CSV2, the feature meant to keep branch targets trained in one hardware context from steering speculation in another
+    loc: p009
+    quote: "The M1 supports ARM CSV2 as reported by sysctl"
+    method: vendor-doc
+    derivation: documented
+    supports: []
+    notes: Read with sysctl on macOS. The paper quotes Arm's CSV2 context as security state, exception level, VMID and ASID.
+  - id: c-fr-bp-virtual
+    text: The M1 branch predictor works on virtual addresses
+    loc: p009
+    quote: "We utilize multiple tasks rather than threads because the branch predictor utilizes virtual addresses, so full 64-bit mirroring is desirable"
+    derivation: inferred
+    supports: []
+    notes: >-
+      Stated as the reason for the test design, not tested on its own. Their same-context tasks share the virtual
+      layout but not the physical pages, and training still transfers (c-fr-ibp-same-context).
+  - id: c-fr-ibp-same-context
+    text: >-
+      An indirect branch trained in one user task steers speculative fetch and execution of an identically placed
+      indirect branch in another user task with the same ASID
+    loc: p010
+    quote: "We ran the receiver and verified we were able to observe this sequence via speculative fetches and executes when both the sender and receiver were run in user mode."
+    method: other
+    derivation: measured
+    supports: []
+    notes: >-
+      Firestorm, bare-metal M1 Mac mini (J274AP). Sender trains 128 times per sample, 5000 random samples, one
+      measurement each. Out-of-place across address spaces, unlike the in-place c-dimva-spectre-btb.
+  - id: c-fr-ibp-priv-no-exec
+    text: Indirect-branch targets trained by user code are not speculatively executed by the same branch running in kernel mode
+    loc: p010
+    quote: "Targets inserted by user code will not be speculatively executed by the IBP in kernel mode."
+    method: other
+    derivation: measured
+    supports: []
+    notes: >-
+      Firestorm. A load at the trained target stays at SLC latency for a kernel-mode receiver, against L1D latency for
+      a user-mode one. Fits the privilege tag read from Apple's patent (c-tm-patent-security-tag).
+  - id: c-fr-ibp-priv-fetch
+    text: Indirect-branch targets trained by user code are still speculatively fetched when the same branch runs in kernel mode
+    loc: p010
+    quote: "Targets inserted by user code can be speculatively fetched by the IBP in kernel mode."
+    method: other
+    derivation: measured
+    supports: []
+    notes: Firestorm. Fetch is detected by Flush+Reload on the target's instruction cache line.
+  - id: c-fr-ibp-shared-entries
+    text: >-
+      User and kernel code share the same indirect-predictor entries: the index does not depend on privilege level,
+      and the privilege check acts only on execution
+    loc: p010
+    quote: "This also demonstrates that the IBP hash function is independent of the privilege level; user and kernel code must share the same IBP entries"
+    derivation: inferred
+    supports: []
+    notes: >-
+      Drawn from cross-privilege fetches succeeding (c-fr-ibp-priv-fetch). The authors had asked whether isolation came
+      from a privilege-dependent hash or a privilege tag on each target.
+  - id: c-fr-ibp-fetch-race
+    text: >-
+      The indirect predictor seems to start fetching a target before it checks the context that trained it, and blocks
+      only execution once the mismatch is found
+    loc: p010
+    quote: "We hypothesize there is a race condition in the pipeline; the IBP begins fetching the target before checking whether the target should be executed."
+    derivation: inferred
+    hedge: "We hypothesize"
+    supports: []
+  - id: c-fr-ibp-asid
+    text: Indirect-branch targets trained under one ASID are speculatively fetched, but not executed, under a different ASID
+    loc: p011
+    quote: "Targets inserted with one ASID will be fetched, but not executed, by a different ASID."
+    method: other
+    derivation: measured
+    supports: []
+    notes: Firestorm. Both sides in user mode, each given its own ASID in TTBR0_EL1.
+
+new_mechanisms:
+  ibp_context_check:
+    name: Indirect target context check
+    status: measured
+    description: Indirect-predictor entries are shared across privilege levels and ASIDs; a target trained in another context is fetched but not executed.
+    params: []
+    sim_switch: null
+    detection_rule: >-
+      train an indirect branch in one context and run an identically placed copy at another EL or ASID; the trained
+      target's I-cache line comes back fetched (Flush+Reload hit) while a load at the target stays at SLC latency
+
+mechanism_claims:
+  ibp_context_check: [c-fr-csv2, c-fr-ibp-same-context, c-fr-ibp-priv-no-exec, c-fr-ibp-priv-fetch, c-fr-ibp-shared-entries, c-fr-ibp-fetch-race, c-fr-ibp-asid]

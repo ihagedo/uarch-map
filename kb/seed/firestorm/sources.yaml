@@ -118,6 +118,12 @@ sources:
     group: Chen, Jiajie
     year: 2026
     url: https://craft.cs.tsinghua.edu.cn/papers/iEnFlow_full.pdf
+  sp26-fractal:
+    type: paper
+    title: "Fractal: An Operating System Designed for Microarchitecture Reverse Engineering"
+    author: Ravichandran, Joseph
+    year: 2026
+    url: https://people.csail.mit.edu/mengjia/data/2026.SP.fractal.pdf
   isca22-pacman:
     type: paper
     title: "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution"
