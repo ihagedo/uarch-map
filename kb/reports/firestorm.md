@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 142, claims 1449, sources 35, mechanisms 58
+blocks 37, links 35, params 142, claims 1459, sources 35, mechanisms 58
 
 ## By status
 
