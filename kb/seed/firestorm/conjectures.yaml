@@ -2,14 +2,6 @@
 # Isaac Hagedorn, 2026-10-09
 # Bounds for params nothing published measures, from related claims; never values.
 conjectures:
-  l1i.line:
-    range: [64, 128]
-    text: Likely the 64 B line of the L1D or the 128 B line of the L2; no test of the L1I line is published.
-    basis: [c-mh-v2-l1d-line-dczva, c-mh-v2-l2-line-128-bw, c-7cpu-l1i]
-  itlb.entries:
-    value: "≤160"
-    text: Likely no larger than the 160-entry L1 dTLB, since the fetch predictor holds physical addresses and most fetches skip the iTLB.
-    basis: [c-mh-v4-pa-in-fp, c-mh-v4-seq-line-power, c-mh-v2-dtlb]
   ftq.depth:
     value: 0
     text: Probably none, if fetch is not decoupled from prediction as Handley argues.

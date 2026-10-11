@@ -574,7 +574,8 @@
         "c-ox-l1i-192",
         "c-cc-oryon-m1-l1i-192",
         "c-cc-gcc-l1i-192",
-        "c-mh-v4-l1i-192"
+        "c-mh-v4-l1i-192",
+        "c-pac-l1i-size"
       ],
       "disputes": [],
       "block": "l1i",
@@ -583,29 +584,19 @@
       "sim_key": "l1i_kib",
       "value": 192,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "confirmed"
     },
     "l1i.line": {
-      "claims": [],
+      "claims": [
+        "c-pac-l1i-line"
+      ],
       "disputes": [],
       "block": "l1i",
       "name": "L1I line size",
       "unit": "B",
-      "status": "open",
-      "value": null,
-      "confidence": "conjecture",
-      "conjecture": {
-        "basis": [
-          "c-mh-v2-l1d-line-dczva",
-          "c-mh-v2-l2-line-128-bw",
-          "c-7cpu-l1i"
-        ],
-        "range": [
-          64,
-          128
-        ],
-        "text": "Likely the 64 B line of the L1D or the 128 B line of the L2; no test of the L1I line is published."
-      }
+      "value": 64,
+      "status": "documented",
+      "confidence": "single"
     },
     "itlb.entries": {
       "claims": [],
@@ -615,16 +606,7 @@
       "unit": "entries",
       "status": "open",
       "value": null,
-      "confidence": "conjecture",
-      "conjecture": {
-        "basis": [
-          "c-mh-v4-pa-in-fp",
-          "c-mh-v4-seq-line-power",
-          "c-mh-v2-dtlb"
-        ],
-        "value": "\u2264160",
-        "text": "Likely no larger than the 160-entry L1 dTLB, since the fetch predictor holds physical addresses and most fetches skip the iTLB."
-      }
+      "confidence": "unknown"
     },
     "btb.l0_entries": {
       "claims": [
@@ -1428,7 +1410,8 @@
         "c-7cpu-l1d-size",
         "c-cc-oryon-m1-l1d-128",
         "c-cc-gcc-l1d-128",
-        "c-mh-v2-l1d-size"
+        "c-mh-v2-l1d-size",
+        "c-pac-l1d-size"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1437,13 +1420,14 @@
       "sim_key": "l1d_kib",
       "value": 128,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "confirmed"
     },
     "l1d.line": {
       "claims": [
         "c-7cpu-l1d-line",
         "c-mh-v2-l1d-line-dczva",
         "c-mh-v2-l1d-line",
+        "c-pac-l1d-line",
         "c-prt-l1d-line"
       ],
       "disputes": [],
@@ -1460,6 +1444,7 @@
         "c-mh-v2-l1d-8way",
         "c-mh-v2-l1d-8way-tlb",
         "c-mh-v8-l1d-8way",
+        "c-pac-l1d-ways",
         "c-prt-l1d-ways",
         "c-s2c-l1d-8way"
       ],
@@ -1595,7 +1580,8 @@
     "l2.size": {
       "claims": [
         "c-at-m1-l2-size",
-        "c-7cpu-l2-size"
+        "c-7cpu-l2-size",
+        "c-pac-l2-size"
       ],
       "disputes": [],
       "block": "l2",
@@ -1604,7 +1590,7 @@
       "sim_key": "l2_mib",
       "value": 12,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "confirmed"
     },
     "l2.line": {
       "claims": [
@@ -1615,6 +1601,7 @@
         "c-mh-v3-l2-line-128",
         "c-mh-v3-line-change",
         "c-mh-v8-line-128",
+        "c-pac-l2-line",
         "c-prt-l2-line",
         "c-s2c-l2-line-split"
       ],
@@ -1624,7 +1611,7 @@
       "unit": "B",
       "value": 128,
       "status": "documented",
-      "confidence": "single"
+      "confidence": "confirmed"
     },
     "l2.latency": {
       "claims": [
@@ -2384,9 +2371,20 @@
     },
     "l1i.assoc": {
       "claims": [
-        "c-mh-v8-l1i-12way"
+        "c-mh-v8-l1i-12way",
+        "c-pac-l1i-ways"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v8-l1i-12way",
+            "c-pac-l1i-ways"
+          ],
+          "note": "Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l1i",
       "name": "L1I associativity",
       "unit": "ways",
@@ -2457,6 +2455,7 @@
     },
     "l2.assoc": {
       "claims": [
+        "c-pac-l2-ways",
         "c-prt-l2-ways",
         "c-s2c-l2-12way-table"
       ],
@@ -2466,7 +2465,7 @@
       "unit": "ways",
       "value": 12,
       "status": "documented",
-      "confidence": "single"
+      "confidence": "confirmed"
     },
     "lsu.exclusive_granule": {
       "claims": [
@@ -18375,6 +18374,196 @@
       "chip": "m1",
       "entered": "johnson"
     },
+    "c-pac-l1i-ways": {
+      "text": "The cache configuration registers report a 6-way L1I for the Firestorm cores, with 512 sets of 64 B lines",
+      "loc": "p008",
+      "quote": "Level Ways Sets Line Size Total Size L1I 6 512 64 B 192 KB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 6,
+      "unit": "ways",
+      "supports": [],
+      "contradicts": [
+        "l1i.assoc"
+      ],
+      "notes": "Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l1i-size": {
+      "text": "The Firestorm L1I is 192 KB according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "The private L1 instruction cache , L1 data cache, and shared L2 cache sizes on the p-core side are 192KB, 128KB, and 12MB respectively.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l1i-line": {
+      "text": "The Firestorm L1I line is 64 bytes according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "The cache line size of the L1 data and instruction caches is 64 bytes",
+      "method": "other",
+      "derivation": "documented",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1i.line"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l1d-ways": {
+      "text": "The cache configuration registers report an 8-way L1D for the Firestorm cores, with 256 sets of 64 B lines",
+      "loc": "p008",
+      "quote": "L1D 8 256 64 B 128 KB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "The paper's own eviction test sees half as many ways (c-pac-l1d-assoc-half).",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l1d-size": {
+      "text": "The Firestorm L1D is 128 KB according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "The private L1 instruction cache , L1 data cache, and shared L2 cache sizes on the p-core side are 192KB, 128KB, and 12MB respectively.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l1d-line": {
+      "text": "The Firestorm L1D line is 64 bytes according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "The cache line size of the L1 data and instruction caches is 64 bytes",
+      "method": "other",
+      "derivation": "documented",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1d.line"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l2-ways": {
+      "text": "The cache configuration registers report a 12-way P-cluster L2 with 8192 sets of 128 B lines",
+      "loc": "p008",
+      "quote": "L2 12 8192 128 B 12 MB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 12,
+      "unit": "ways",
+      "supports": [
+        "l2.assoc"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l2-size": {
+      "text": "The L2 shared by the Firestorm cores is 12 MB according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "The private L1 instruction cache , L1 data cache, and shared L2 cache sizes on the p-core side are 192KB, 128KB, and 12MB respectively.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-l2-line": {
+      "text": "The L2 line is 128 bytes according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "the line size of the L2 caches is 128 bytes",
+      "method": "other",
+      "derivation": "documented",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "l2.line"
+      ],
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
+    "c-pac-ice-l1i": {
+      "text": "The Icestorm L1I is 128 KB, 8 ways of 256 sets with 64 B lines, according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "L1I 8 256 64 B 128 KB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 128,
+      "unit": "KiB",
+      "chip": "icestorm",
+      "supports": [],
+      "source": "isca22-pacman",
+      "entered": "pacman"
+    },
+    "c-pac-ice-l1d": {
+      "text": "The Icestorm L1D is 64 KB, 8 ways of 128 sets with 64 B lines, according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "L1D 8 128 64 B 64 KB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 64,
+      "unit": "KiB",
+      "chip": "icestorm",
+      "supports": [],
+      "source": "isca22-pacman",
+      "entered": "pacman"
+    },
+    "c-pac-ice-l2": {
+      "text": "The Icestorm cluster's L2 is 4 MB, 16 ways of 2048 sets with 128 B lines, according to the cache configuration registers",
+      "loc": "p008",
+      "quote": "L2 16 2048 128 B 4 MB ... Table 2: Cache configurations on M1 obtained via reading system registers.",
+      "method": "other",
+      "derivation": "documented",
+      "value": 4,
+      "unit": "MiB",
+      "chip": "icestorm",
+      "supports": [],
+      "source": "isca22-pacman",
+      "entered": "pacman"
+    },
+    "c-pac-slc-16": {
+      "text": "The paper gives the M1's system level cache, a memory-side cache shared by every block on the SoC, as 16 MB",
+      "loc": "p008",
+      "quote": "There also exists a 16 MB system level memory-side cache shared across all components on the SoC.",
+      "derivation": "reported",
+      "value": 16,
+      "unit": "MiB",
+      "supports": [],
+      "notes": "No method or source given, and not part of the register-read table. Disagrees with the 8 MB of c-7cpu-slc-size and c-mh-v2-slc-size; 16 MB is AnandTech's A14 figure (c-at-a14-slc).",
+      "source": "isca22-pacman",
+      "chip": "m1",
+      "entered": "pacman"
+    },
     "c-prt-l1d-tree-plru": {
       "text": "The L1D replacement policy is tree-based pseudo-LRU: the eviction order over every pattern of hits in a full set matches Tree-PLRU",
       "loc": "p004",
@@ -19112,6 +19301,13 @@
       "author": "Zhou, Chuheng",
       "year": 2024,
       "url": "https://github.com/ChuhengZhou/M1_BPU_Experiments"
+    },
+    "isca22-pacman": {
+      "type": "paper",
+      "title": "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution",
+      "author": "Ravichandran, Joseph",
+      "year": 2022,
+      "url": "https://pacmanattack.com/"
     },
     "usenix23-s2c": {
       "type": "paper",

@@ -104,6 +104,12 @@ sources:
     author: Zhou, Chuheng
     year: 2024
     url: https://github.com/ChuhengZhou/M1_BPU_Experiments
+  isca22-pacman:
+    type: paper
+    title: "PACMAN: Attacking ARM Pointer Authentication with Speculative Execution"
+    author: Ravichandran, Joseph
+    year: 2022
+    url: https://pacmanattack.com/
   usenix23-s2c:
     type: paper
     title: "Synchronization Storage Channels (S2C): Timer-less Cache Side-Channel Attacks on the Apple M1 via Hardware Synchronization Instructions"

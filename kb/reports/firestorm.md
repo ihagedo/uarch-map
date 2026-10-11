@@ -1,29 +1,28 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 133, claims 1225, sources 25, mechanisms 53
+blocks 37, links 35, params 133, claims 1238, sources 26, mechanisms 53
 
 ## By status
 
 - derived: 10
-- documented: 2
+- documented: 3
 - inferred: 25
 - measured: 85
-- open: 7
+- open: 6
 - reported: 4
 
 ## By confidence
 
-- confirmed: 10
-- conjecture: 5
+- confirmed: 15
+- conjecture: 3
 - corroborated: 26
 - derived: 10
 - inferred: 29
-- single: 51
-- unknown: 2
+- single: 47
+- unknown: 3
 
-## Holes (7)
+## Holes (6)
 
-- l1i.line (l1i): L1I line size
 - itlb.entries (itlb): iTLB entries
 - dirpred.capacity (dirpred): Direction predictor capacity
 - ftq.depth (ftq): Fetch target queue depth
@@ -31,7 +30,7 @@ blocks 37, links 35, params 133, claims 1225, sources 25, mechanisms 53
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (15)
+## Open disputes (16)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
@@ -48,6 +47,7 @@ blocks 37, links 35, params 133, claims 1225, sources 25, mechanisms 53
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - l2.replacement: Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).  [c-mh-v2-l2-random-repl, c-s2c-l2-repl]
 - l2.inclusion: Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.  [c-mh-v3-l2-covering-tags-hint, c-s2c-l2-inclusive]
+- l1i.assoc: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).  [c-mh-v8-l1i-12way, c-pac-l1i-ways]
 
 ## Problems (0)
 
