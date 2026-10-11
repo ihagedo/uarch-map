@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 37, links 35, params 135, claims 1293, sources 28, mechanisms 54
+blocks 37, links 35, params 136, claims 1300, sources 28, mechanisms 54
 
 ## By status
 
 - derived: 12
 - documented: 1
 - inferred: 25
-- measured: 88
+- measured: 89
 - open: 5
 - reported: 4
 
@@ -18,7 +18,7 @@ blocks 37, links 35, params 135, claims 1293, sources 28, mechanisms 54
 - corroborated: 26
 - derived: 12
 - inferred: 29
-- single: 47
+- single: 48
 - unknown: 2
 
 ## Holes (5)

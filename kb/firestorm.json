@@ -1790,6 +1790,19 @@
       "status": "measured",
       "confidence": "single"
     },
+    "prefetch.dmp_min_accesses": {
+      "claims": [
+        "c-aug-min-accesses"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "DMP activation threshold",
+      "unit": "accesses",
+      "mechanism": "content_directed_prefetch",
+      "value": 3,
+      "status": "measured",
+      "confidence": "single"
+    },
     "dirpred.counter_bits": {
       "claims": [
         "c-tm-counter-3bit"
@@ -3804,6 +3817,82 @@
       "text": "A separate classical stride prefetcher fills the L1 and has its own depth and confidence, apart from the DMP",
       "loc": "p008",
       "quote": "the M1 contains a separate classical (stride) prefetcher that prefetches data into the L1 cache",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-min-accesses": {
+      "text": "The DMP activates only after at least three pointers in the array have been dereferenced",
+      "loc": "p009",
+      "quote": "the DMP has a minimum confidence threshold of 3 accesses to activate at all",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "accesses",
+      "supports": [
+        "prefetch.dmp_min_accesses"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-depth-confidence": {
+      "text": "How many pointers ahead the DMP prefetches grows with the number of matching accesses seen",
+      "loc": "p010",
+      "quote": "the number of entries the DMP is willing to prefetch and dereference (depth) is clearly proportional to the number of accesses",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-align-8": {
+      "text": "The DMP builds no confidence unless the pointers in the array sit on 8-byte boundaries",
+      "loc": "p009",
+      "quote": "The M1 DMP will not build confidence if the addresses of the pointers in the AoP are not aligned to eight-byte boundaries.",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "B",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-not-ip-indexed": {
+      "text": "The DMP is not indexed by instruction address; an unrolled straight-line sequence of loads still trains it",
+      "loc": "p009",
+      "quote": "We observed that the M1 DMP is not IP indexed.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-speculative-train": {
+      "text": "Loads that are executed speculatively and later squashed are enough to activate the DMP",
+      "loc": "p009",
+      "quote": "the DMP can be activated using only speculative memory accesses that are eventually squashed",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-barriers-block": {
+      "text": "System calls or instruction and data barriers between the array accesses stop the DMP activating; delays, unrelated arithmetic and other loads do not",
+      "loc": "p009",
+      "quote": "system calls and serialization such as instruction and data synchronization barriers4 placed between accesses to pointers in the AoP prevents the DMP from activating",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-backward": {
+      "text": "The DMP also activates when the array of pointers is walked backwards",
+      "loc": "p010",
+      "quote": "we found that the DMP will also activate when traversing an AoP backwards",
       "derivation": "measured",
       "supports": [],
       "source": "sp22-augury",
@@ -20791,6 +20880,10 @@
         "c-aug-firestorm-only",
         "c-aug-single-level",
         "c-aug-fills-l2",
+        "c-aug-min-accesses",
+        "c-aug-depth-confidence",
+        "c-aug-align-8",
+        "c-aug-not-ip-indexed",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",
