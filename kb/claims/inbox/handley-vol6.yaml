@@ -231,6 +231,81 @@ claims:
     derivation: inferred
     supports: []
     notes: US20210096994A1. A related hint marks written lines to be sent on to DRAM and freed soon.
+  - id: c-mh-v6-gpu-dram-bw
+    text: On the M1 the GPU gets about 50-60 GB/s from DRAM, the same as the CPU, so both are limited by the DRAM itself
+    loc: p295
+    quote: >-
+      The DRAM bandwidth is about 50..60 GB/s, same as the CPU bandwidth (on an M1, not a Pro or Max), so maxed out by
+      the DRAM’s intrinsic performance.
+    method: secondhand
+    derivation: reported
+    value: 55
+    range: [50, 60]
+    unit: GB/s
+    approx: true
+    supports: []
+    notes: Read off a Chips and Cheese M1 GPU bandwidth graph.
+  - id: c-mh-v6-gpu-slc-link
+    text: >-
+      In the SLC range of footprints, about 1 to 9 MB, the M1 GPU gets at least twice the DRAM bandwidth, which suggests
+      an effective 64 B wide data path from the SLC to the GPU
+    loc: p295
+    quote: >-
+      Within the SLC range (so from about 1 to 9 MB) even at worst case we’re twice the DRAM bandwidth. This suggests a
+      64B wide “effective” data connection from SLC to GPU
+    derivation: derived
+    value: 64
+    unit: B
+    supports: []
+    notes: >-
+      Perhaps 128 B at half the CPU clock. Handley gives the CPU cluster's link to the SLC as effectively 32 B wide
+      (c-mh-v2-slc-link-64b).
+  - id: c-mh-v6-boost-noc-dram
+    text: >-
+      Per a 2017 patent, to speed a GPU context switch the system can raise the GPU clock and, if needed, the speed of
+      the NoC and DRAM, so the blocking work reaches a sync point sooner
+    loc: p179
+    quote: >-
+      by boosting the frequency of the GPU, and also, if appropriate, the speed of the NoC and DRAM, to reduce the time
+      till the lower-priority GPU code hits a sync point or exits
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20190057484A1, Fast GPU Context Switch.
+  - id: c-mh-v6-m1pro-two-l2
+    text: The M1 Pro has two P-clusters whose two L2 caches are kept coherent with each other
+    loc: p077
+    quote: "You can compare this to the coherence of two L2 cluster caches for the two P clusters on an M1 Pro."
+    derivation: inferred
+    chip: m1pro
+    supports: []
+  - id: c-mh-v6-ultrafusion
+    text: >-
+      The UltraFusion link between the two dies of an M1 Ultra carries 2.5 TB/s, against about 400 GB/s of DRAM
+      bandwidth per Max die, so most of it must serve GPU-to-GPU traffic
+    loc: p059
+    quote: >-
+      the M1/M2 UltraFusion link provides 2.5TB/s (which is astonishing when you remember that the DRAM bandwidth to one
+      of the Max chips is “only” 400GB/s
+    method: secondhand
+    derivation: reported
+    value: 2500
+    unit: GB/s
+    chip: m1ultra
+    supports: []
+    notes: Apple's published figure, the same for the M2 Ultra.
+  - id: c-mh-v6-fp64-amx
+    text: >-
+      Apple probably expects FP64 code to run on the CPU side, on AMX and NEON; FP64 on even a Max GPU appears not to beat
+      AMX
+    loc: p312
+    quote: >-
+      Apple’s expectation is probably that if you have FP64 code, you’re best off running it on AMX ... splitting it into
+      parts that run on AMX and parts that run on NEON
+    derivation: inferred
+    hedge: "probably"
+    supports: []
+    notes: Apple GPUs emulate FP64 at about 20 (e8m48) to 100 (e11m48) times the cost of FP32.
 
 new_params:
   slc.dsids: {block: slc, name: SLC data set IDs (physical), unit: IDs}
