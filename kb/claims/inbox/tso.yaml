@@ -238,6 +238,148 @@ claims:
     chip: m4
     notes: Root cause of a 70 % TSO slowdown in fluidanimate built at -O0.
 
+  - id: c-tso-ll-reorder
+    text: In TSO mode the M4 still executes independent loads out of order, with the same timing as Arm mode
+    loc: p005
+    quote: "The pattern’s execution time is identical in Arm and TSO modes, implying that TSO mode executes the loads out of order as in Arm mode."
+    method: other
+    derivation: measured
+    supports: []
+    chip: m4
+    notes: Each pattern run 1 M times between serializing barriers on M4 P cores; E-core results qualitatively the same.
+  - id: c-tso-ll-violation
+    text: >-
+      With conflicting writes from another core, Arm mode shows TSO-violating results in 99.93 % of runs, while
+      TSO mode runs slower, consistent with squash and re-execution
+    loc: p005
+    quote: "In Arm mode, this results in observable TSO violations (determined by inspecting the values read by the loads) in 99.93% of the executions."
+    method: other
+    derivation: measured
+    value: 99.93
+    unit: "%"
+    supports: []
+    chip: m4
+  - id: c-tso-ll-precise
+    text: >-
+      A lone load whose line is invalidated before it commits, or loads forced into order, run as fast in TSO
+      mode as in Arm mode on the M4, where Intel cores squash
+    loc: p005
+    quote: "The pattern executes with identical timing in the M4 TSO and Arm modes, but incurs TSO violation squashes on the Intel CPU."
+    method: other
+    derivation: measured
+    supports: []
+    chip: m4
+    notes: Compared with Sapphire Rapids memory-ordering machine clears.
+  - id: c-tso-ll-squash-rule
+    text: >-
+      TSO mode speculatively reorders loads and squashes a load that ran out of order only if its line is
+      invalidated from the L1 before it commits
+    loc: p005
+    quote: "Load–load findings: Apple silicon TSO mode speculatively reorders loads, squashing a load that had executed out of order if its data gets invalidated from the L1 cache."
+    derivation: inferred
+    supports: []
+    chip: m4
+    notes: Drawn from M4 timing patterns. Matches the load poison-bit patent Handley describes (c-mh-v3-load-poison).
+  - id: c-tso-ss-hits
+    text: >-
+      Bursts of stores to one L1-resident address run at about two stores per cycle in both modes up to 72
+      stores, then one per cycle
+    loc: p006
+    quote: "Both modes commit about two stores per cycle up to 𝑆 = 72"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: stores/cycle
+    approx: true
+    supports: []
+    chip: m4
+    notes: M4 P core. The drop past 72 matches the M4's reported 72-entry store queue.
+  - id: c-tso-ss-miss-36
+    text: >-
+      Bursts of L2-missing stores keep the same rate in both modes up to 36 stores; beyond that TSO mode falls to
+      0.007 stores per cycle and Arm mode to 0.05, about 7x apart
+    loc: p006
+    quote: "Both modes maintain equal throughput up to 𝑆 = 36. Beyond this point, their throughput diverges: TSO mode throughput converges to 0.007 stores per cycle and Arm mode to 0.05 stores per cycle"
+    method: throughput
+    derivation: measured
+    value: 36
+    unit: stores
+    supports: []
+    chip: m4
+    notes: M4 P core, stores to random lines of a 64 MB buffer.
+  - id: c-tso-ss-mshr-fifo
+    text: >-
+      The authors read the 36-store knee as 36 store-miss MSHRs, each freed when its store is performed, so TSO
+      mode frees them in order and blocks behind the oldest miss
+    loc: p006
+    quote: "This behavior is consistent with the P core being able to sustain 36 concurrent store misses, with a miss handling register (MSHR) released once the initiating store is performed"
+    derivation: inferred
+    value: 36
+    unit: misses
+    hedge: "consistent with"
+    supports: []
+    chip: m4
+    notes: M4 P core; mshr.outstanding is still a hole for the M1.
+  - id: c-tso-ss-mix
+    text: >-
+      Placing each L2-missing store between two L1-hitting stores speeds TSO mode up 12x against 2.93x for Arm
+      mode, so TSO mode matches Arm mode up to 80-store bursts
+    loc: p007
+    quote: "while Arm mode throughput indeed improves by up to 2.93×, TSO mode achieves a 12× improvement. It thus matches Arm mode’s throughput up to 𝑆 = 80"
+    method: throughput
+    derivation: measured
+    value: 12
+    unit: x
+    supports: []
+    chip: m4
+    notes: M4 P core; beyond 80 stores TSO mode falls short by at most 33 %.
+  - id: c-tso-ss-reorder
+    text: >-
+      The authors hypothesize the M4 P core performs L1-hitting stores ahead of older L2-missing stores even in
+      TSO mode, packing more misses into the store buffer
+    loc: p007
+    quote: "We hypothesize that the CPU performs L1-hitting stores out of order, ahead of older L2-missing stores, which increases the density of L2-missing stores in the store buffer"
+    derivation: inferred
+    hedge: "We hypothesize"
+    supports: []
+    chip: m4
+  - id: c-tso-ss-remote
+    text: >-
+      When another core reads both store targets, TSO-mode store throughput drops 3x on average and up to 5x,
+      against 16 % in Arm mode, as if the reordering is switched off
+    loc: p007
+    quote: "In contrast, TSO mode’s throughput degrades by a more severe harmonic mean of 3× and, for large values of 𝑆, by as much as 5×."
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: x
+    supports: []
+    chip: m4
+    notes: A remote reader of only one target has no effect, and less frequent remote reads shrink the loss.
+  - id: c-tso-ss-nonspec
+    text: >-
+      The authors suspect the store reordering is non-speculative, and it appears to reorder only L1-hitting
+      stores
+    loc: p007
+    quote: "Because there is no public information on Apple silicon utilizing post-commit speculation, we suspect that it uses a non-speculative mechanism for store reordering."
+    derivation: inferred
+    hedge: "we suspect"
+    supports: []
+    chip: m4
+  - id: c-tso-ecore-ss
+    text: >-
+      M4 E cores show no store reordering in TSO mode: L1-hitting bursts match Arm mode, but every other store
+      pattern runs at half the Arm-mode rate
+    loc: p007
+    quote: "On the E cores, our experiments do not find evidence for store–store reordering. ... for all patterns, Arm mode throughput is consistently 2× better than TSO mode’s."
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: x
+    supports: []
+    chip: m4
+    notes: M4 E cores. This explains the 2x TSO slowdown of lbm on M4 E cores.
+
 new_mechanisms:
   tso_mode:
     name: Runtime-selectable TSO memory model
@@ -250,4 +392,5 @@ new_mechanisms:
       8-byte load forwarded from a 4-byte store runs several times slower than with the bit clear
 
 mechanism_claims:
-  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench, c-tso-m1-simd, c-tso-m4-simd, c-tso-m1-ffmpeg, c-tso-m1-stl, c-tso-stl-5x, c-tso-stl-dsb, c-tso-stl-serial]
+  tso_mode: [c-tso-entso-bit, c-tso-rosetta, c-tso-m1-prior-specfp, c-tso-m1-prior-geekbench, c-tso-m1-simd, c-tso-m4-simd, c-tso-m1-ffmpeg, c-tso-m1-stl, c-tso-stl-5x, c-tso-stl-dsb, c-tso-stl-serial, c-tso-ll-reorder, c-tso-ll-violation, c-tso-ll-precise, c-tso-ll-squash-rule, c-tso-ss-hits, c-tso-ss-miss-36, c-tso-ss-mshr-fifo, c-tso-ss-mix, c-tso-ss-reorder, c-tso-ss-remote, c-tso-ss-nonspec, c-tso-ecore-ss]
+  load_poison_bits: [c-tso-ll-squash-rule]
