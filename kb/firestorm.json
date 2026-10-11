@@ -1803,6 +1803,32 @@
       "status": "measured",
       "confidence": "single"
     },
+    "prefetch.dmp_max_stride": {
+      "claims": [
+        "c-aug-max-stride"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "DMP maximum stride",
+      "unit": "B",
+      "mechanism": "content_directed_prefetch",
+      "value": 8192,
+      "status": "measured",
+      "confidence": "single"
+    },
+    "prefetch.dmp_max_distance": {
+      "claims": [
+        "c-aug-max-distance"
+      ],
+      "disputes": [],
+      "block": "prefetch",
+      "name": "DMP maximum reach past the trained array",
+      "unit": "KiB",
+      "mechanism": "content_directed_prefetch",
+      "value": 64,
+      "status": "measured",
+      "confidence": "single"
+    },
     "dirpred.counter_bits": {
       "claims": [
         "c-tm-counter-3bit"
@@ -3894,6 +3920,120 @@
       "loc": "p010",
       "quote": "we found that the DMP will also activate when traversing an AoP backwards",
       "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-max-distance": {
+      "text": "With an 8 KiB stride the DMP reaches pointers up to 64 KiB, eight pointers, past the end of the trained array",
+      "loc": "p010",
+      "quote": "a stride of 64 cache lines (8 KiB) enables the DMP to reach (access and dereference) a pointer 64 KiB (i.e., 8 pointers deep) away",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "KiB",
+      "supports": [
+        "prefetch.dmp_max_distance"
+      ],
+      "notes": "Table I gives the reach for each stride from 8 B to 8 KiB; it is not monotonic in stride.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-max-stride": {
+      "text": "The DMP does not activate for strides larger than 8 KiB",
+      "loc": "p010",
+      "quote": "We did not see the DMP activate for strides larger than 8 KiB (1024 pointers).",
+      "derivation": "measured",
+      "value": 8192,
+      "unit": "B",
+      "supports": [
+        "prefetch.dmp_max_stride"
+      ],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-pow2-stride": {
+      "text": "The DMP activates only when the stride, counted in cache lines, is a power of two",
+      "loc": "p010",
+      "quote": "the DMP does not activate when the stride, at cache line granularity, is not a power of two",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-16k-deadzone": {
+      "text": "The DMP skips pointers held in the 128 bytes just after a 16 KiB boundary of the array, though it dereferences pointers on both sides of that gap",
+      "loc": "p011",
+      "quote": "the DMP does not dereference pointers located in the 128 bytes immediately after the 16 KiB page boundary",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "B",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-2m-retrain": {
+      "text": "The DMP never dereferences pointers past a 2 MiB boundary of the array; its confidence resets there and must be rebuilt",
+      "loc": "p011",
+      "quote": "The DMP will not dereference any pointers past a 2 MiB boundary of the AoP. When a training loop crosses this boundary, the DMP's confidence resets",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-stride-crosses-16k": {
+      "text": "The L1 stride prefetcher prefetches array lines across a 16 KiB page boundary",
+      "loc": "p011",
+      "quote": "the L1 stride prefetcher (Section V-F1) prefetches AoP lines across the 16 KiB boundary",
+      "derivation": "measured",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-va-range": {
+      "text": "Under macOS the DMP ignores pointer values between 0x280000000 and 0x7fe840004000; under Asahi Linux it follows pointers above 0xffff3f2b0000 but not below 0x280000000",
+      "loc": "p011",
+      "quote": "on MacOS, the DMP will not dereference pointers contained in the AoP which have a virtual address between 0x280000000 and 0x7fe840004000",
+      "derivation": "measured",
+      "hedge": "we do not have an explanation",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-line-granularity": {
+      "text": "The DMP uses a pointer value only down to L2 line granularity, the top 57 bits, and only if it is a valid virtual address",
+      "loc": "p011",
+      "quote": "Only the top 57 bits of the address/value (i.e., L2 cacheline granularity) is transmitted, and only if they are a valid virtual address.",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-tlb-fill": {
+      "text": "DMP prefetches walk the page tables and fill the TLB for the target pointers; a later access to such a target took about 28 cycles against about 111 when its TLB entry had been dropped",
+      "loc": "p012",
+      "quote": "we conclude that the DMP does fill TLB entries",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Means of 27.95 and 110.83 PMC cycles over 250 runs each.",
+      "source": "sp22-augury",
+      "chip": "m1",
+      "entered": "augury"
+    },
+    "c-aug-not-disableable": {
+      "text": "As far as the authors know, the DMP cannot be turned off by a software update",
+      "loc": "p013",
+      "quote": "This DMP, to our knowledge, cannot be disabled via software updates.",
+      "derivation": "inferred",
+      "hedge": "to our knowledge",
       "supports": [],
       "source": "sp22-augury",
       "chip": "m1",
@@ -20884,6 +21024,10 @@
         "c-aug-depth-confidence",
         "c-aug-align-8",
         "c-aug-not-ip-indexed",
+        "c-aug-max-distance",
+        "c-aug-max-stride",
+        "c-aug-2m-retrain",
+        "c-aug-tlb-fill",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",
