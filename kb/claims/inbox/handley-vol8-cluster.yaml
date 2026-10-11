@@ -108,4 +108,80 @@ claims:
     supports: []
     chip: m3
     notes: Also stated for the M4.
+  - id: c-mh-v8-stall-boost
+    text: >-
+      Per a 2020 patent, the OS tracks how much each core stalls on the SLC or DRAM and raises the NoC and DRAM
+      frequency in response, updating a 2016 patent that doubled DRAM speed for a frequently stalled core
+    loc: p092
+    quote: "tracks the extent to which each core is stalling because it is waiting of either SLC or DRAM, and in response to this boosts the frequency of the NoC and/or DRAM"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20210157700A1 (2020); Handley also links it to a 2019 cache telemetry patent.
+  - id: c-mh-v8-cluster-fill-ratio
+    text: >-
+      The same patent raises the performance of another cluster, such as the E-cluster, when a large enough share of
+      a core's cache fills (the coherent cluster fill ratio) comes from it, as when an E-core producer feeds a P-core
+      consumer
+    loc: p093
+    quote: "a large enough ... then the E-cluster gets a performance boost"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US20210157700A1 (2020).
+  - id: c-mh-v8-energy-heuristic
+    text: >-
+      To choose between speeding up the NoC and DRAM for throughput code and slowing a stalled core running
+      latency-bound code such as pointer chasing, the OS looks at the core's energy use; heavy SIMD work marks
+      throughput code
+    loc: p094
+    quote: "The heuristic the OS uses is to essentially look at how much energy the core is burning"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Same 2020 patent (US20210157700A1).
+  - id: c-mh-v8-amx-queue-monitor
+    text: >-
+      Per a 2021 patent, a monitor in the AMX unit, and a similar one in the bus interface unit, tells the OS when its
+      queue is overloaded by more than one core of the cluster, so the OS can move a thread to another cluster
+    loc: p094
+    quote: "there is a monitor within the AMX unit that is detecting, on average, how full is the queue of pending instructions, and whether the instructions are split across more than one source core"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20230040310A1 (2021). The patent names L2 oversubscription as a third case without saying how to detect it.
+  - id: c-mh-v8-amx-fma-4
+    text: >-
+      Dependent AMX multiply-adds into the same accumulator issue four cycles apart, so a lone small matrix multiply
+      leaves AMX execution slots idle
+    loc: p095
+    quote: "there will be a four cycle latency between the each multiply-add and the next time we can submit such an add"
+    derivation: inferred
+    value: 4
+    unit: cycles
+    supports: []
+    notes: No method given; stated for AMX in general, with a 16x16 fp32 example.
+  - id: c-mh-v8-m4-amx-cosched
+    text: >-
+      The M4, unlike earlier chips, readily runs two AMX threads on one AMX unit when one thread leaves execution
+      slots idle, instead of waking a second unit
+    loc: p095
+    quote: "This appears to have been done on the M4 (but not earlier), which is much more aggressive about co-scheduling AMX threads on the same AMX unit"
+    derivation: inferred
+    hedge: "This appears to have been done"
+    supports: []
+    chip: m4
+  - id: c-mh-v8-perf-islands
+    text: >-
+      Per a 2022 patent, chips with several P-clusters can run a demanding thread on one P-cluster and a less
+      demanding one on a slower clocked P-cluster, rotating clusters now and then to cool the hot one; the M1 must run
+      both in its one P-cluster at the high clock
+    loc: p095
+    quote: "for the Pro/Max/Ultra you can put the demanding thread on one P cluster, and the less demanding thread on a lower clocked different"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    chip: post-m1
+    notes: US20230067109A1 (2022).
 
