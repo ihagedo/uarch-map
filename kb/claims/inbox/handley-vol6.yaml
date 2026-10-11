@@ -1,0 +1,89 @@
+# handley-vol6.yaml
+# Maynard Handley, 2025
+# What the GPU volume says about unified memory, CPU-GPU coherence through the SLC, SLC data set IDs and the fabric (AArch64-Explore vol 6).
+session: handley-vol6
+source: handley-vol6
+
+claims:
+  - id: c-mh-v6-unified-pool
+    text: The CPU and the GPU share one pool of physical memory and the SLC; there is no separate VRAM
+    loc: p113
+    quote: >-
+      Part one is that there is a single shared pool of physical memory, not one physical VRAM and a second physical
+      DRAM. This, plus the shared SLC
+    method: secondhand
+    derivation: reported
+    supports: []
+    notes: Apple's Unified Memory Model as Handley explains it.
+  - id: c-mh-v6-shared-page-tables
+    text: The CPU and the GPU share a virtual address space, so both use TLBs over common page tables
+    loc: p113
+    quote: >-
+      Part two is a shared virtual address space ... both CPU and GPU need to use TLBs and common page tables
+    derivation: inferred
+    supports: []
+  - id: c-mh-v6-gpu-not-coherent
+    text: >-
+      To save power and area the GPU is not always coherent with the CPU, nor fully coherent within itself, so shared
+      data needs explicit synchronization
+    loc: p113
+    quote: >-
+      the GPU is not 100% all the time, no questions asked, no limitations, internally coherent, or coherent with the
+      CPU. This is to reduce power and area.
+    derivation: inferred
+    supports: []
+  - id: c-mh-v6-line-sharing
+    text: >-
+      Lines used by both CPU and GPU move between their caches a line at a time, as between the caches of two
+      P-clusters, rather than a page at a time as with discrete GPUs
+    loc: p020
+    quote: >-
+      lines that are touched by both the CPU and GPU will ... move between CPU and GPU caches like they would between
+      the caches if the cores of two different P clusters successively touched the line
+    derivation: inferred
+    hedge: "(conceptually, there are some important details...)"
+    supports: []
+  - id: c-mh-v6-slc-coherent-gpu
+    text: >-
+      A GPU load that misses the GPU L1 and L2 goes to the SLC, which is coherent with the CPUs, so it gets the latest
+      data even when that sits in a CPU cache
+    loc: p118
+    quote: >-
+      will go out to the SLC. The SLC is coherent with the CPUs, so the most recent version of the data, even if it is
+      in some CPU cache, will route to the GPU
+    derivation: inferred
+    supports: []
+  - id: c-mh-v6-gpu-l2-sync
+    text: >-
+      At a synchronization point the GPU L2 need not be flushed whole: it writes back its modified lines, and the SLC,
+      which knows the GPU L2's line addresses, tells it which lines another client such as the CPU changed so it can
+      invalidate them
+    loc: p117
+    quote: >-
+      the GPU L2 lines have state, which tracks which lines have been modified, and the SLC cache has knowledge of line
+      addresses in the L2
+    derivation: inferred
+    hedge: "I think the situation with Apple Silicon is"
+    supports: []
+  - id: c-mh-v6-cmdbuf-flush
+    text: >-
+      Per Apple's patents, dependent GPU kicks are separated by flushing the GPU L1s to the GPU L2, and Command Buffers
+      by flushing the GPU L2 out to the SLC so the CPU can see the results
+    loc: p116
+    quote: >-
+      The defining characteristic of the Command Buffer is that between two Command Buffers the L2 is brought into
+      coherence with the rest of the system.
+    method: patent-reading
+    derivation: inferred
+    hedge: "the extent to which it’s what actually happens on Apple Silicon is unclear"
+    supports: []
+  - id: c-mh-v6-gpu-slc-working-set
+    text: Apple works to keep much of the GPU's graphics working set in the SLC, which has much lower latency than DRAM
+    loc: p207
+    quote: "Apple work very hard to capture much of their graphics working set in the SLC which is much lower latency than DRAM"
+    derivation: inferred
+    supports: []
+    notes: This differs from c-mh-v3-cpu-no-slc-alloc, which says GPU misses never allocate lines in the SLC.
+
+mechanism_claims:
+  coherence_directory: [c-mh-v6-gpu-l2-sync]
