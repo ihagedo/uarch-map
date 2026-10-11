@@ -1,0 +1,99 @@
+# handley-vol5.yaml
+# Maynard Handley, 2025
+# How the M1 family is packaged: DRAM placement and stacks, die-to-die bridge and power delivery (AArch64-Explore vol 5).
+session: handley-vol5
+source: handley-vol5
+
+claims:
+  - id: c-mh-v5-m1-dram-beside
+    text: >-
+      On the M1 package the SoC and the DRAM share one common substrate, side by side as on the A12X, with a metal case
+      around the SoC
+    loc: p025
+    quote: >-
+      the metal case (probably both heat transport and some EM shielding) around the actual M1 SoC, the common substrate
+      for both the SoC and the memory
+    method: other
+    derivation: inferred
+    supports: []
+    notes: >-
+      Read from teardown images. Handley says the M1 looks much like the A12X, whose layout puts DRAM close to the SoC,
+      keeps CPU heat from rising through the DRAM, and takes about twice the area of a stacked package.
+  - id: c-mh-v5-m1-dram-4die
+    text: The DRAM packages in the M1 teardown images Handley has seen hold 4-die stacks, where phones use 2-die stacks
+    loc: p009
+    quote: "Phones still seem to use 2-die stacks, and the M1 shots I have seen use 4-die stacks."
+    method: other
+    derivation: inferred
+    value: 4
+    unit: dies
+    hedge: "But this may reflect people destroying the cheapest devices for teardowns!"
+    supports: []
+    notes: Handley wonders whether larger memory configurations use 8-die stacks.
+  - id: c-mh-v5-m1-small-cores
+    text: An M1 system appears to hold at least 30 small Arm cores, mostly Chinook, including one on each NAND chip
+    loc: p026
+    quote: "Short answer is M1 appears to have at least 30 such cores, including in non-obvious places like on each NAND-chip"
+    method: secondhand
+    derivation: reported
+    value: 30
+    unit: cores
+    hedge: "appears to have at least"
+    supports: []
+    notes: Relayed from a Twitter discussion of M1 Pro/Max packaging. See c-mh-v8-companion-cores.
+  - id: c-mh-v5-m1max-civr
+    text: >-
+      Below the RDL the M1 Max package carries five coupled-inductor voltage regulators (CIVRs) and the M1 Pro three,
+      close to the CPU and under hardware control, which allows very rapid DVFS changes
+    loc: p026
+    quote: >-
+      CIVRs (Coupled Inductor Voltage Regulators), five for the M1 Max, three for the Pro ... having them so close to the
+      CPU (and controlled by HW) allows for very rapid DVFS changes
+    method: other
+    derivation: inferred
+    value: 5
+    unit: regulators
+    chip: m1max
+    supports: []
+    notes: >-
+      Read from a cross-section of the M1 Pro package; Handley says the Max is similar. He likens the CIVRs to Intel's
+      FIVR and says the M1 Pro/Max heat spreader is about twice as thick as the M1's.
+  - id: c-mh-v5-m1ultra-bridge
+    text: >-
+      The two dies of the M1 Ultra communicate through a silicon bridge like Intel's EMIB with denser wiring (TSMC
+      InFO-L), not through the die stitching of Apple's earlier patents
+    loc: p028
+    quote: >-
+      the communication from one of the two SoCs to the other occurs via a silicon bridge (like EMIB, though apparently
+      with substantially more dense wiring)
+    method: secondhand
+    derivation: reported
+    chip: m1ultra
+    supports: []
+    notes: From TechInsights teardown photos and a Semiconductor Digest article.
+  - id: c-mh-v5-rdl-power-islands
+    text: >-
+      Per a 2018 patent, the package RDL holds many small capacitors that logic on the SoC switches in and out of the
+      power network, giving separate supplies to islands such as CPU clusters or the GPU and the best reactance at each
+      DVFS point
+    loc: p039
+    quote: >-
+      a large number of small capacitors throughout the RDL, connected to logic on the SoC ... to provide different,
+      optimal, reactance at different DVFS points
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10756622B2. Handley suggests the islands could be as fine as single cores, or the L1 caches apart from the core.
+  - id: c-mh-v5-dvfs-per-chip
+    text: >-
+      The same patent tests each chip to find the voltage ranges where its capacitor settings beat a conventional
+      regulator, and uses the result to set the DVFS points of each part of that chip
+    loc: p040
+    quote: >-
+      each chip is tested to figure out exactly what the bounds are for each grey box ... recorded then used to
+      determine the optimal DVFS settings for each subpart of that particular chip
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: US10756622B2.
+

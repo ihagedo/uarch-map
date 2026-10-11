@@ -49,6 +49,13 @@ sources:
     year: 2025
     url: https://github.com/name99-org/AArch64-Explore
     pages: 254
+  handley-vol5:
+    type: pdf
+    title: "AArch64-Explore vol 5: Packaging"
+    author: Handley, Maynard
+    year: 2025
+    url: https://github.com/name99-org/AArch64-Explore
+    pages: 46
   anandtech-m1:
     type: article
     title: "Apple Silicon M1: A14 Deep Dive"
