@@ -118,6 +118,9 @@ class Mechanism:
     claims: list = field(default_factory=list)
     sim_switch: str | None = None
     detection_rule: str = ""
+    ours: bool = False
+    basis: list = field(default_factory=list)
+    alternative: str = ""
 
 
 @dataclass(eq=False)
@@ -240,6 +243,9 @@ class KB:
                 claims=[self.claims[c] for c in v.get("claims", []) if c in self.claims],
                 sim_switch=v.get("sim_switch"),
                 detection_rule=v.get("detection_rule", ""),
+                ours=v.get("ours", False),
+                basis=[self.claims[c] for c in v.get("basis", []) if c in self.claims],
+                alternative=v.get("alternative", ""),
             )
             for k, v in data["mechanisms"].items()
         }

@@ -385,6 +385,13 @@ mechanisms:
     description: >-
       Each branch carries its predictor indices and state from decode to retire in branch information tables;
       predictors train at retire, only on mispredictions or weak predictions.
+  loop_predictor:
+    name: Companion loop predictor
+    block: dirpred
+    status: speculative
+    description: >-
+      A small loop predictor beside TAGE takes over in loops so the TAGE tables can be shut down soon after loop
+      mode starts.
   tage_tables:
     name: TAGE table layout
     block: dirpred

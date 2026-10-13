@@ -493,8 +493,23 @@
                 "measured",
                 "inferred",
                 "speculative",
-                "absent"
+                "absent",
+                "conjecture"
               ]
+            },
+            "ours": {
+              "type": "boolean",
+              "description": "our own mechanism for a question nothing published answers, not a source's"
+            },
+            "basis": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "claims an own mechanism rests on"
+            },
+            "alternative": {
+              "type": "string"
             },
             "description": {
               "type": "string"

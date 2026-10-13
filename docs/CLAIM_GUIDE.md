@@ -100,6 +100,10 @@ Derivation:
 - A mechanism names its `block` and, when only a later chip or a post-M1 patent shows it, its `chip`.
   Mechanisms drawn from several sources live in `kb/seed/firestorm/mechanisms.yaml`; each claim file
   attaches its own claims under `mechanism_claims`.
+- Our own imagination lives in `kb/seed/firestorm/conjectures.yaml`: bounds for params and mechanisms
+  marked `ours: true`, each with the claims it rests on (`basis`), an `alternative` and what would tell
+  them apart. Status says how far it goes: `inferred` when reasoned from specific claims, `conjecture`
+  when only plausible. The map draws everything ours in one color, apart from sources' inferences.
 
 ## How the merge decides
 

@@ -24703,6 +24703,102 @@
     }
   },
   "mechanisms": {
+    "l1i_tree_plru": {
+      "claims": [],
+      "name": "Tree-PLRU L1I replacement",
+      "block": "l1i",
+      "status": "inferred",
+      "ours": true,
+      "description": "The L1I picks its victim by tree pseudo-LRU over its six ways, as three pairs, like the L1D.",
+      "basis": [
+        "c-ilk-l1i-ways",
+        "c-pac-l1i-ways",
+        "c-prt-ice-l1d-tree-plru",
+        "c-s2c-l1-lru"
+      ],
+      "alternative": "Random or round-robin replacement.",
+      "detection_rule": "An eviction sequence built on tree-PLRU state evicts the predicted code line, as Prime+Retouch showed for the L1D."
+    },
+    "l1i_maintenance_only": {
+      "claims": [],
+      "name": "Code changes by cache maintenance only",
+      "block": "l1i",
+      "status": "conjecture",
+      "ours": true,
+      "description": "The L1I does not snoop stores; code written at run time is cleaned to the L2 and invalidated by line, and the L2 forwards the invalidate through its copies of the L1 tags.",
+      "basis": [
+        "c-mh-v3-l2-dup-tags",
+        "c-mh-v3-l2-snoop-filter"
+      ],
+      "alternative": "The L1I snoops stores to lines it holds and drops them itself.",
+      "detection_rule": "Code rewritten without an I-cache invalidate keeps running its old instructions."
+    },
+    "path_history_rewind": {
+      "claims": [],
+      "name": "Path history rewind",
+      "block": "dirpred",
+      "status": "conjecture",
+      "ours": true,
+      "description": "Each branch in flight records the head of a circular buffer of taken-branch footprints; a mispredict rewinds the head to that mark and pushes the corrected outcome.",
+      "basis": [
+        "c-cq-phr-split",
+        "c-ien-phrb-pcore",
+        "c-ien-all-taken",
+        "c-mh-v4-checkpoints",
+        "c-mh-v4-bit-tables"
+      ],
+      "alternative": "Each branch saves full copies of both history registers, restored on a mispredict.",
+      "detection_rule": "No timing probe tells them apart; the simulator can carry either."
+    },
+    "l1d_write_allocate": {
+      "claims": [],
+      "name": "Write-allocate L1D with store-miss entries",
+      "block": "l1d",
+      "status": "inferred",
+      "ours": true,
+      "description": "A store miss takes a store-miss entry that fetches the line for ownership while younger store hits write ahead of it; full-line streaming stores skip the fetch and go out non-temporal.",
+      "basis": [
+        "c-tso-ss-mshr-fifo",
+        "c-tso-ss-reorder",
+        "c-mh-v2-store-stream-detect",
+        "c-mh-v2-nt-store-bypass",
+        "c-mh-v2-sq-slot-32b"
+      ],
+      "alternative": "Stores that miss write around the L1D into the L2.",
+      "detection_rule": "A load right after a store that missed hits the L1D if the store allocated the line, and goes to the L2 if it wrote around."
+    },
+    "fill_buffer_pool": {
+      "claims": [],
+      "name": "Shared fill buffers with line merging",
+      "block": "mshr",
+      "status": "conjecture",
+      "ours": true,
+      "description": "One fill buffer per 64 B line in flight, shared by demand loads and L1 prefetches; a second miss to the line joins its entry, and a load that finds the buffers full replays.",
+      "basis": [
+        "c-ox-store-load",
+        "c-mh-v8-fill-forward",
+        "c-mh-v2-ampm-throttle",
+        "c-tso-ss-mshr-fifo",
+        "c-dj-loads"
+      ],
+      "alternative": "Each miss holds its own entry, and a second miss to a line waits until the first fills.",
+      "detection_rule": "Independent loads to distinct lines level off at the buffer count, while loads to one line keep scaling past it."
+    },
+    "l2_core_round_robin": {
+      "claims": [],
+      "name": "Round-robin among cores at the L2",
+      "block": "l2",
+      "status": "conjecture",
+      "ours": true,
+      "description": "Per-core request queues feed each L2 bank round-robin, demand ahead of prefetch, cores in latency mode first.",
+      "basis": [
+        "c-mh-v3-l2-cpu-qos",
+        "c-mh-v3-retry-queue",
+        "c-mh-v2-l2-cachelets"
+      ],
+      "alternative": "Requests from all cores enter one queue in arrival order.",
+      "detection_rule": "With three cores streaming through the L2, a fourth core's pointer chase keeps its unloaded latency under round-robin and slows with the load under one shared queue."
+    },
     "address_interleave_hash": {
       "claims": [
         "c-mh-v3-dram-hash",
@@ -25361,6 +25457,15 @@
       "block": "dirpred",
       "status": "speculative",
       "description": "Each branch carries its predictor indices and state from decode to retire in branch information tables; predictors train at retire, only on mispredictions or weak predictions."
+    },
+    "loop_predictor": {
+      "claims": [
+        "c-mh-v4-m1-tage"
+      ],
+      "name": "Companion loop predictor",
+      "block": "dirpred",
+      "status": "speculative",
+      "description": "A small loop predictor beside TAGE takes over in loops so the TAGE tables can be shut down soon after loop mode starts."
     },
     "tage_tables": {
       "claims": [

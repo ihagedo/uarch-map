@@ -501,12 +501,20 @@
 
   function mechHTML([mid, m]) {
     const on = state.mech === mid;
-    return `<div class="mech-wrap"><button type="button" class="mech" data-mech="${mid}" aria-pressed="${on}">` +
-      `<span class="mech-h">${esc(m.name)}<span class="status-tag">${esc(m.status)}</span>` +
+    let more = "";
+    if (on && m.ours) {
+      if (m.alternative) more += `<p class="ours-line"><b>Alternative.</b> ${esc(m.alternative)}</p>`;
+      if (m.test) more += `<p class="ours-line"><b>What would tell them apart.</b> ${esc(m.test)}</p>`;
+      more += `<h4 class="ev-h">Rests on (${m.basis.length})</h4>` + m.basis.map(claimHTML).join("");
+    } else if (on && m.claims.length) {
+      more += `<h4 class="ev-h">Claims (${m.claims.length})</h4>` + m.claims.map(claimHTML).join("");
+    }
+    return `<div class="mech-wrap"><button type="button" class="mech${m.ours ? " ours" : ""}" data-mech="${mid}" aria-pressed="${on}">` +
+      `<span class="mech-h">${esc(m.name)}` + (m.ours ? `<span class="ours-tag">Ours</span>` : "") +
+      `<span class="status-tag">${esc(m.status)}</span>` +
       (m.chip && m.chip !== "m1" ? `<span class="status-tag">${esc(m.chip.toUpperCase())}</span>` : "") + `</span>` +
       `<span class="mech-desc">${esc(m.description)}</span></button>` +
-      (on && m.claims.length ? `<div class="mech-claims"><h4 class="ev-h">Claims (${m.claims.length})</h4>` +
-        m.claims.map(claimHTML).join("") + `</div>` : "") + `</div>`;
+      (more ? `<div class="mech-claims">${more}</div>` : "") + `</div>`;
   }
 
   function linkHTML(other, dir, l) {

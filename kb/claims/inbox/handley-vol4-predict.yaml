@@ -891,3 +891,4 @@ mechanism_claims:
   cold_start_mode: [c-mh-v4-cold-start-fetch, c-mh-v4-cold-start-tage]
   prefetch_throttle: [c-mh-v4-prefetch-boost]
   simd_power_down: [c-mh-v4-decode-vector-gating]
+  loop_predictor: [c-mh-v4-m1-tage]

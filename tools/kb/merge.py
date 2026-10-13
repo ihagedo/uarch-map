@@ -288,6 +288,13 @@ def merge(core):
     for mid, m in kb["mechanisms"].items():
         if m.get("block") not in block_ids:
             problems.append(f"mechanism {mid} has no known block ({m.get('block')})")
+        if m.get("ours") and not m.get("basis"):
+            problems.append(f"mechanism {mid} is ours but rests on no claim")
+        if m.get("status") == "conjecture" and not m.get("ours"):
+            problems.append(f"mechanism {mid} is a conjecture but not marked ours")
+        for cid in m.get("basis") or []:
+            if cid not in kb["claims"]:
+                problems.append(f"mechanism {mid} rests on unknown claim {cid}")
         for cid in m["claims"]:
             if cid not in kb["claims"]:
                 problems.append(f"mechanism {mid} cites unknown claim {cid}")

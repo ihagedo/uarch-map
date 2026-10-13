@@ -16,6 +16,7 @@
   --c-lsu: #7c3aed;
   --c-beyond: #d97706;
   --dispute: #dc2626;
+  --ours: #c026d3;
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-num: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: light;
@@ -27,6 +28,7 @@
     --line: #263041; --edge: #9aa3b2; --link: #60a5fa;
     --c-frontend: #60a5fa; --c-backend: #34d399; --c-lsu: #a78bfa; --c-beyond: #fbbf24;
     --dispute: #f87171;
+    --ours: #e879f9;
     color-scheme: dark;
   }
 }
@@ -36,6 +38,7 @@
   --line: #263041; --edge: #9aa3b2; --link: #60a5fa;
   --c-frontend: #60a5fa; --c-backend: #34d399; --c-lsu: #a78bfa; --c-beyond: #fbbf24;
   --dispute: #f87171;
+  --ours: #e879f9;
   color-scheme: dark;
 }
 
@@ -132,6 +135,8 @@ h1 {
 .conf-single .body { fill: color-mix(in srgb, var(--hue) 14%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); }
 .conf-derived .body { fill: color-mix(in srgb, var(--hue) 8%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 9 3; }
 .conf-inferred .body { fill: color-mix(in srgb, var(--hue) 4%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 4 3; }
+/* ours: conjectures and our own mechanisms take one color, whatever the region */
+.conf-conjecture { --hue: var(--ours) !important; }
 .conf-conjecture .body { fill: none; stroke: color-mix(in srgb, var(--hue) 60%, var(--ink-3)); stroke-width: 1.3; stroke-dasharray: 1 2.5; }
 .conf-unknown .body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
 .box .name { font-size: 12px; font-weight: 600; fill: var(--ink); }
@@ -145,6 +150,7 @@ h1 {
 .row .value { font: 500 10.5px var(--font-num); fill: var(--ink); }
 .row.conf-unknown .label, .row.conf-unknown .value, .row.conf-conjecture .label, .row.conf-conjecture .value { fill: var(--ink-3); }
 .row.conf-conjecture .value { font-style: italic; }
+.row.conf-conjecture .label, .row.conf-conjecture .value { fill: var(--ours); }
 .row .row-bg { fill: transparent; }
 .row:hover .row-bg { fill: var(--hue); fill-opacity: 0.1; }
 .row.selected .row-bg, .row.mech-hit .row-bg { fill: var(--hue); fill-opacity: 0.25; }
@@ -204,7 +210,7 @@ h1 {
 .conf-tag.conf-derived, .card.conf-derived { background: color-mix(in srgb, var(--hue) 8%, var(--surface)); border: 1.5px dashed color-mix(in srgb, var(--hue) 70%, var(--surface)); }
 .conf-tag.conf-inferred, .card.conf-inferred { background: color-mix(in srgb, var(--hue) 4%, var(--surface)); border-style: dashed; }
 .conf-tag.conf-conjecture, .card.conf-conjecture {
-  background: transparent; border: 1.3px dotted color-mix(in srgb, var(--hue) 60%, var(--ink-3)); color: var(--ink-2); font-weight: 500; font-style: italic;
+  background: transparent; border: 1.3px dotted color-mix(in srgb, var(--hue) 60%, var(--ink-3)); color: var(--ours); font-weight: 500; font-style: italic;
 }
 .conf-tag.conf-unknown, .card.conf-unknown { background: transparent; border: 1px dotted var(--ink-3); color: var(--ink-2); font-weight: 500; }
 .blackbox-note {
@@ -231,6 +237,7 @@ h1 {
 .p-row .p-meta { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--ink-2); }
 .p-row.conf-unknown .p-name, .p-row.conf-unknown .p-value, .p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value { color: var(--ink-3); }
 .p-row.conf-conjecture .p-value { font-style: italic; }
+.p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value { color: var(--ours); }
 .evidence { display: grid; gap: 10px; padding: 6px 0 10px 22px; }
 .ev-h { margin: 4px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .ev-flag, .flag { display: inline-flex; align-items: center; gap: 6px; }
@@ -257,6 +264,14 @@ h1 {
 .mech-h { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; font-size: 15px; font-weight: 600; }
 .status-tag { font-size: 11.5px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
 .mech .mech-desc { font-size: 14.5px; line-height: 1.5; color: var(--ink-2); }
+.mech.ours { border: 1px dashed var(--ours); border-left: 3px solid var(--ours); }
+.mech.ours[aria-pressed="true"] { background: color-mix(in srgb, var(--ours) 7%, var(--surface)); }
+.ours-tag {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--surface); background: var(--ours); border-radius: 4px; padding: 0 6px;
+}
+.ours-line { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
+.ours-line b { color: var(--ours); font-weight: 600; }
 .link-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .link-list button {
   padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--raise);

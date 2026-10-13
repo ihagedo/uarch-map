@@ -276,6 +276,9 @@ def view_data(kb, geo):
                 "claims": [c.id for c in m.claims],
                 "simSwitch": m.sim_switch,
                 "test": m.detection_rule,
+                "ours": m.ours,
+                "basis": [c.id for c in m.basis],
+                "alternative": m.alternative,
             }
             for m in kb.mechanisms.values()
         },
