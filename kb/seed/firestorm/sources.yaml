@@ -220,3 +220,10 @@ sources:
     author: Cawley, Peter
     year: 2022
     url: https://github.com/corsix/amx
+  corsix-amx-issues:
+    type: web
+    title: "corsix/amx: AMX throughput by thread count"
+    author: Cawley, Peter
+    year: 2023
+    url: https://github.com/corsix/amx/issues/6
+    notes: Claims come from Cawley's own posts; the threads also hold posts by other users

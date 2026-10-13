@@ -96,7 +96,123 @@ claims:
     value: true
     supports: []
     notes: Reverse engineered on an M1 Max; only the 8-bit by 16-bit variant is marked M3 only. Contradicts c-mh-v3-amx-no-int8 and the "no int8" in amx_op_set.
+  - id: c-cx-m3-i8i16
+    text: The M3 adds an 8-bit X by 16-bit Y integer outer product into 32-bit Z
+    loc: p004
+    quote: "When 47=8, M3 also supports 8-bit X, 16-bit Y, 32-bit Z"
+    derivation: measured
+    supports: []
+    chip: m3
+  - id: c-cx-one-to-one
+    source: corsix-amx-issues
+    text: Each CPU cluster, P or E, has its own AMX unit, placed beside the cluster's L2 on die shots
+    loc: p002
+    quote: "an AMX coprocessor associated with an E CPU cluster ... There's a 1:1 correspondence between CPU clusters and AMX clusters, and on die shots you'll see them colocated, along with a bunch of L2."
+    derivation: inferred
+    value: 1
+    unit: units
+    supports: [amx.units]
+    notes: Adds an E-cluster unit that c-mh-v8-amx-per-cluster and amx_shared_contexts leave out.
+  - id: c-cx-per-core-rf
+    source: corsix-amx-issues
+    text: Each AMX unit must hold at least 512 bytes of X, 512 bytes of Y and 4096 bytes of Z for every core of its cluster
+    loc: p002
+    quote: "X register file, which is at least 512 bytes per CPU core in the associated CPU cluster ... Z register file, which is at least 4096 bytes per CPU core"
+    derivation: inferred
+    supports: []
+  - id: c-cx-z-in-cells
+    source: corsix-amx-issues
+    text: The X and Y register files sit apart from the compute cells, while Z is likely split up and held inside the cells
+    loc: p002
+    quote: "The X and Y register files (or a combined X and Y register file) will be separate from the AMX cells, but the Z register file is likely split up and colocated in the AMX cells."
+    derivation: inferred
+    hedge: "likely"
+    supports: []
+    notes: Agrees with c-mh-v3-amx-z-in-pe.
+  - id: c-cx-cell-grid
+    source: corsix-amx-issues
+    text: Each compute cell handles an aligned 8-byte by 8-byte piece of the 64x64-byte grid, and the P-cluster AMX may well have an 8x8 grid of cells on both M1 and M2
+    loc: p002
+    quote: "a cell is an aligned 8-byte by 8-byte sub-grid, in which FMA/MAC operations are performed ... P AMX may well be 8x8 cells in both M1 and M2"
+    derivation: inferred
+    value: 8x8
+    hedge: "may well be"
+    supports: [amx.pe_grid]
+  - id: c-cx-cell-f64
+    source: corsix-amx-issues
+    text: Each cell holds one fp64 FMA circuit that can split into four fp32 FMAs or other ways for fp16, bf16 and integer multiply-accumulate
+    loc: p002
+    quote: "Each cell contains an F64 FMA circuit. Said circuit can be split up and used as four separate F32 FMA circuits, or split up in other ways for F16/BF16/integer-multiply-accumulate."
+    derivation: inferred
+    value: 4
+    unit: fp32 FMAs
+    supports: []
+    notes: c-mh-v3-amx-pe-grid reads two fp32 multiply-adders per element from a patent; c-cx-fp32-4x measures fp32 at four times fp64.
+  - id: c-cx-fma-latency
+    source: corsix-amx-issues
+    text: The FMA path from addend input to output takes four cycles
+    loc: p002
+    quote: "That circuit might be split into four pipeline stages (e.g. 4 cycle compute latency), or at least the path from addend input to FMA output is four cycles."
+    derivation: inferred
+    value: 4
+    unit: cycles
+    hedge: "might be split into four pipeline stages"
+    supports: [amx.fma_latency]
+  - id: c-cx-four-ranges
+    source: corsix-amx-issues
+    text: With a four-cycle FMA, each cell needs four distinct Z ranges in flight to stay busy, so a matrix operation that uses all 4096 bytes of Z needs several cores
+    loc: p002
+    quote: "Given that the latency is 4 cycles, four distinct ranges of Z are required. If a matrix instruction refers to all 4096 bytes of Z, then multiple CPU cores need to be in play."
+    derivation: inferred
+    value: 4
+    unit: Z ranges
+    supports: []
+  - id: c-cx-instr-only
+    source: corsix-amx-issues
+    text: The CPU cluster sends AMX only instructions, never data, and data moves between them through memory, in particular the L2
+    loc: p002
+    quote: "The CPU cluster only sends instructions to the AMX cluster, not data. ... Data has to move via memory, and in particular via L2."
+    derivation: inferred
+    supports: []
+  - id: c-cx-store-ports
+    source: corsix-amx-issues
+    text: How fast a core can queue AMX instructions is set by its store ports, two per P-core on the M1, and fusion might let each port carry two AMX instructions a cycle
+    loc: p002
+    quote: "for M1 that means store ports, of which there are 2 per P core, and 1 per E core. Instruction fusion might let you enqueue two AMX instructions per port per cycle"
+    derivation: inferred
+    value: 2
+    unit: instr/cycle
+    hedge: "might"
+    supports: [amx.issue_width]
+    notes: He gives one store port per E-core.
+  - id: c-cx-matfp64-sat
+    source: corsix-amx-issues
+    text: One thread's fp64 outer-product throughput grows with independent Z accumulators up to four, reaching 370.8 GFLOPS, and stays flat beyond
+    loc: p002
+    quote: "For `matfp` FP64xFP64=FP64, I'm seeing the following on M1 Max: ... |4 (2048 bytes) per thread|370.8 GFLOPS ... |5 (2560 bytes) per thread|370.9 GFLOPS"
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: accumulators
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-two-clusters
+    source: corsix-amx-issues
+    text: Going from one thread to two roughly doubles AMX throughput on an M1 Max, since it has two P-clusters each with its own AMX
+    loc: p002
+    quote: "M1 Max gets ~100% improvement going from 1 thread to 2, which is consistent with M1 Max having two P clusters."
+    method: throughput
+    derivation: measured
+    value: 100
+    unit: "%"
+    approx: true
+    supports: []
+    notes: M1 Max.
 
 mechanism_claims:
-  amx_op_set: [c-cx-fp-types, c-cx-m2-bf16, c-cx-m3-modes, c-cx-m4-offsets, c-cx-vec-mat, c-cx-indexed, c-cx-mixed-full-z, c-cx-setclr, c-cx-matint-opts, c-cx-matint-int8]
-  amx_datapath: [c-cx-regs, c-cx-circular, c-cx-no-moves]
+  amx_op_set: [c-cx-fp-types, c-cx-m2-bf16, c-cx-m3-modes, c-cx-m4-offsets, c-cx-vec-mat, c-cx-indexed,
+               c-cx-mixed-full-z, c-cx-setclr, c-cx-matint-opts, c-cx-matint-int8, c-cx-m3-i8i16]
+  amx_datapath: [c-cx-regs, c-cx-circular, c-cx-no-moves, c-cx-z-in-cells, c-cx-cell-grid, c-cx-cell-f64]
+  amx_shared_contexts: [c-cx-one-to-one, c-cx-per-core-rf, c-cx-two-clusters]
+  amx_lsu_issue: [c-cx-instr-only, c-cx-store-ports]
+  amx_z_dependency_window: [c-cx-fma-latency, c-cx-four-ranges, c-cx-matfp64-sat]
