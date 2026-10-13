@@ -208,11 +208,142 @@ claims:
     approx: true
     supports: []
     notes: M1 Max.
+  - id: c-cx-three-dip
+    source: corsix-amx-issues
+    text: Throughput dips at three threads, likely because three threads cannot be spread well over two AMX units
+    loc: p002
+    quote: "The dip when going to 3 threads is likely a consequence of the same thing, with there being no good scheduling of 3 threads onto two AMX clusters."
+    derivation: inferred
+    hedge: "likely"
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-m2-saturate
+    source: corsix-amx-issues
+    text: On the M2 a single thread almost saturates the one AMX unit, so more threads add little
+    loc: p002
+    quote: "M2 sees only small gains from increasing thread count, as a single thread is able to almost saturate the entire AMX cluster."
+    method: throughput
+    derivation: measured
+    supports: []
+    chip: m2
+  - id: c-cx-m2-same
+    source: corsix-amx-issues
+    text: An M2 AMX unit performs about like an M1 one, its single-thread results about 10% higher in line with its clock
+    loc: p002
+    quote: 'The "1 Thread" column sees a ~10% uplift in performance, consistent with M2 clocks being 10% higher than M1.'
+    method: throughput
+    derivation: measured
+    value: 10
+    unit: "%"
+    approx: true
+    supports: []
+    chip: m2
+  - id: c-cx-fp32-4x
+    source: corsix-amx-issues
+    text: fp32 outer products run at four times the FLOPS of fp64 ones
+    loc: p002
+    quote: "FP32 is getting 4x the performance of FP64."
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: x
+    supports: []
+    notes: M1 Max and M2.
+  - id: c-cx-f16f32
+    source: corsix-amx-issues
+    text: An fp16 by fp16 outer product into fp32 Z, which fills all of Z, runs at about the fp32 rate
+    loc: p002
+    quote: "Going down to FP16xFP16=FP32, M1 Max: ... Similar performance to FP32xFP32=FP32."
+    method: throughput
+    derivation: measured
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-fp16-2x
+    source: corsix-amx-issues
+    text: fp16 outer products into fp16 Z run at twice the fp32 rate
+    loc: p002
+    quote: "Going down to FP16xFP16=FP16, M1 Max: ... Twice the performance of FP32."
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: x
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-vecfp-sat
+    source: corsix-amx-issues
+    text: One thread's fp64 vector multiply-add throughput grows with independent Z accumulators up to eight, reaching 92.8 GFLOPS, and stays flat beyond
+    loc: p002
+    quote: "For vecfp FP64xFP64=FP64, I'm seeing the following on M1 Max: ... |8 (512 bytes) per thread|92.8 GFLOPS ... |9 (576 bytes) per thread|89.0 GFLOPS"
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: accumulators
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-m2-multi
+    source: corsix-amx-issues
+    text: The M2's modes that run a vector operation on two or four registers at once raise peak throughput little
+    loc: p002
+    quote: "No major performance improvement from using the two-at-a-time or four-at-a-time vector instruction modes"
+    method: throughput
+    derivation: measured
+    supports: []
+    chip: m2
+  - id: c-cx-xy-rf-bw
+    source: corsix-amx-issues
+    text: The four-at-a-time vector mode doubles throughput only with broadcast modes that read fewer operands, which points to limited read bandwidth from a seemingly shared X/Y register file
+    loc: p002
+    quote: "It looks like four-at-a-time gets (up to) double the throughput when any broadcast mode other than mode 0 is used ... This suggests another bottleneck in the equations: bandwidth out of the (seemingly combined) X/Y register file."
+    derivation: inferred
+    hedge: "seemingly combined"
+    supports: []
+    chip: m2
+  - id: c-cx-vec-1t
+    source: corsix-amx-issues
+    text: One thread can reach 185.5 GFLOPS of fp32 vector multiply-adds on AMX, but only by spreading them over 512 bytes of Z
+    loc: p004
+    quote: "A single thread _can_ exceed 102.4 GFLOPS, potentially hitting 185.5 GFLOPS, but you need to be using 512 bytes of Z registers to get there."
+    method: throughput
+    derivation: measured
+    value: 185.5
+    unit: GFLOPS
+    supports: []
+    notes: M1 Max.
+  - id: c-cx-vec-4t
+    source: corsix-amx-issues
+    text: Four threads reach only 406.0 GFLOPS of fp32 vector multiply-adds on AMX, and more threads add nothing
+    loc: p004
+    quote: "Four threads only get to 406.0 GFLOPS, which is less than the theoretical 409.6 achievable with NEON. More than four threads don't help AMX, but will help NEON."
+    method: throughput
+    derivation: measured
+    value: 406.0
+    unit: GFLOPS
+    supports: []
+    notes: M1 Max, two P-clusters.
+  - id: c-cx-z-spread
+    source: corsix-amx-issues
+    text: Vector operations reach full throughput only when their Z accumulators are spread as far apart as allowed rather than packed together
+    loc: p004
+    quote: "For vector operations, the Z accumulators you choose want to be maximally spread out over the permissible range, rather than contiguous"
+    method: throughput
+    derivation: measured
+    supports: []
+  - id: c-cx-no-rename
+    source: corsix-amx-issues
+    text: AMX does little or no register renaming
+    loc: p004
+    quote: "There's limited-to-no register renaming going on."
+    derivation: inferred
+    hedge: "limited-to-no"
+    supports: []
 
 mechanism_claims:
   amx_op_set: [c-cx-fp-types, c-cx-m2-bf16, c-cx-m3-modes, c-cx-m4-offsets, c-cx-vec-mat, c-cx-indexed,
                c-cx-mixed-full-z, c-cx-setclr, c-cx-matint-opts, c-cx-matint-int8, c-cx-m3-i8i16]
-  amx_datapath: [c-cx-regs, c-cx-circular, c-cx-no-moves, c-cx-z-in-cells, c-cx-cell-grid, c-cx-cell-f64]
-  amx_shared_contexts: [c-cx-one-to-one, c-cx-per-core-rf, c-cx-two-clusters]
+  amx_datapath: [c-cx-regs, c-cx-circular, c-cx-no-moves, c-cx-z-in-cells, c-cx-cell-grid, c-cx-cell-f64,
+                 c-cx-fp32-4x, c-cx-f16f32, c-cx-fp16-2x, c-cx-m2-same, c-cx-m2-multi, c-cx-xy-rf-bw]
+  amx_shared_contexts: [c-cx-one-to-one, c-cx-per-core-rf, c-cx-two-clusters, c-cx-three-dip, c-cx-m2-saturate,
+                        c-cx-vec-4t]
   amx_lsu_issue: [c-cx-instr-only, c-cx-store-ports]
-  amx_z_dependency_window: [c-cx-fma-latency, c-cx-four-ranges, c-cx-matfp64-sat]
+  amx_z_dependency_window: [c-cx-fma-latency, c-cx-four-ranges, c-cx-matfp64-sat, c-cx-vecfp-sat, c-cx-vec-1t,
+                            c-cx-z-spread, c-cx-no-rename]
