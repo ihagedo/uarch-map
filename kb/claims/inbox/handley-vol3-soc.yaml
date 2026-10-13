@@ -362,7 +362,7 @@ claims:
     value: 2
     unit: instr/cycle
     hedge: "let's assume"
-    supports: []
+    supports: [amx.issue_width]
     notes: Two stores per cycle agrees with the measured store rate
   - id: c-mh-v3-l1-l2-bus-32b
     text: The L1-to-L2 data bus is at least about 32 B wide
@@ -483,8 +483,8 @@ claims:
     notes: Taken from a third-party write-up of Apple's custom instructions
 
 new_params:
-  pcluster.clock_domain: {block: pcluster, name: Clock domain}
-  pcluster.core_powerup: {block: pcluster, name: Core power-up time, unit: µs}
+  pcluster.clock_domain: {block: power, name: Clock domain}
+  pcluster.core_powerup: {block: power, name: Core power-up time, unit: µs}
 
 new_mechanisms:
   coprocessor_ordering_table:
@@ -499,7 +499,7 @@ new_mechanisms:
       but not when it goes to another page
   power_estimator_throttle:
     name: Digital power estimator throttling
-    block: pcluster
+    block: power
     status: speculative
     description: Per-core event counts feed a power estimate and energy credits that block vector or AMX issue for a cycle or two and steer DVFS.
     params: []
@@ -509,7 +509,7 @@ new_mechanisms:
       core runs the same loop alone
   idle_clock_division:
     name: Divided clock while the core waits
-    block: pcluster
+    block: power
     status: speculative
     description: A core stalled on DRAM or waiting for an event receives one clock pulse in four instead of a frequency change.
     params: []

@@ -1047,7 +1047,7 @@ new_params:
   l2.inclusion:            {block: l2, name: L2 inclusion of L1 contents}
   l2.power_groups:         {block: l2, name: Separately powered L2 way groups, unit: groups}
   slc.inclusion:           {block: slc, name: SLC inclusion of L2 contents}
-  chip.coherence_protocol: {block: chip, name: Coherence protocol}
+  chip.coherence_protocol: {block: fabric, name: Coherence protocol}
 
 new_mechanisms:
   barrier_colors:

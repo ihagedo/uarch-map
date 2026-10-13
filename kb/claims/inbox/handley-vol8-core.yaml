@@ -652,7 +652,7 @@ claims:
     value: 2
     unit: instr/cycle
     hedge: "apparently..."
-    supports: []
+    supports: [amx.issue_width]
     notes: Matches Johnson's AMX roles for load/store units 7 and 8 (c-dj-ls-units)
   - id: c-mh-v8-amx-reg-sets
     text: The AMX unit holds four logical register sets, one for each of the four cores it serves
@@ -661,7 +661,7 @@ claims:
     derivation: reported
     value: 4
     unit: sets
-    supports: []
+    supports: [amx.register_sets]
     notes: Aside with no method; a 2021 patent (US20230095072A1) renames registers of idle clients into a shared pool
   - id: c-mh-v8-abandonable-requests
     text: >-
@@ -707,7 +707,7 @@ claims:
     derivation: inferred
     value: 1
     unit: units
-    supports: []
+    supports: [amx.units]
   - id: c-mh-v8-amx-m1-dgemm
     text: >-
       Peak large-matrix FP64 DGEMM on one M1 AMX unit is about 300 GFLOPS, twice that on an M1 Pro or Max with two

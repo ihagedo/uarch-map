@@ -325,7 +325,7 @@ claims:
     derivation: inferred
     value: 8x8
     unit: processing elements
-    supports: []
+    supports: [amx.pe_grid]
     notes: From a later patent; Handley names the 2019 bypass and variable-grid patent (US20200272597A1) as the one that makes the grid clear.
   - id: c-mh-v3-amx-z-in-pe
     text: >-

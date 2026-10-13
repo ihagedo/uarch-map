@@ -43,12 +43,36 @@
       "description": "DRAM reads and writes."
     },
     {
+      "id": "fabric",
+      "name": "Fabric and coherence",
+      "parent": "chip",
+      "stage": "uncore",
+      "level": 0,
+      "description": "Coherence and the network joining clusters, caches and memory."
+    },
+    {
+      "id": "power",
+      "name": "Clocks and power",
+      "parent": "chip",
+      "stage": "uncore",
+      "level": 0,
+      "description": "Clocks, voltages and power states."
+    },
+    {
       "id": "l2",
       "name": "Shared L2",
       "parent": "pcluster",
       "stage": "cache",
       "level": 1,
       "description": "Shared by the cores of a cluster."
+    },
+    {
+      "id": "amx",
+      "name": "AMX coprocessor",
+      "parent": "pcluster",
+      "stage": "execute",
+      "level": 1,
+      "description": "Matrix coprocessor shared by a cluster's cores."
     },
     {
       "id": "core",
@@ -439,7 +463,17 @@
     },
     {
       "from": "l2",
+      "to": "fabric",
+      "kind": "data"
+    },
+    {
+      "from": "fabric",
       "to": "slc",
+      "kind": "data"
+    },
+    {
+      "from": "amx",
+      "to": "l2",
       "kind": "data"
     },
     {
@@ -1707,6 +1741,55 @@
       "status": "measured",
       "confidence": "single"
     },
+    "amx.units": {
+      "claims": [
+        "c-mh-v8-amx-per-cluster"
+      ],
+      "disputes": [],
+      "block": "amx",
+      "name": "AMX units per P-cluster",
+      "unit": "units",
+      "value": 1,
+      "status": "inferred",
+      "confidence": "inferred"
+    },
+    "amx.register_sets": {
+      "claims": [
+        "c-mh-v8-amx-reg-sets"
+      ],
+      "disputes": [],
+      "block": "amx",
+      "name": "AMX register sets",
+      "unit": "sets",
+      "value": 4,
+      "status": "reported",
+      "confidence": "inferred"
+    },
+    "amx.issue_width": {
+      "claims": [
+        "c-mh-v3-amx-two-per-cycle",
+        "c-mh-v8-amx-store-pipe"
+      ],
+      "disputes": [],
+      "block": "amx",
+      "name": "AMX instructions sent per cycle",
+      "unit": "instr/cycle",
+      "value": 2,
+      "status": "inferred",
+      "confidence": "inferred"
+    },
+    "amx.pe_grid": {
+      "claims": [
+        "c-mh-v3-amx-pe-grid"
+      ],
+      "disputes": [],
+      "block": "amx",
+      "name": "Processing-element grid",
+      "value": "8x8",
+      "unit": "processing elements",
+      "status": "inferred",
+      "confidence": "inferred"
+    },
     "slc.size": {
       "claims": [
         "c-7cpu-slc-size",
@@ -2444,7 +2527,7 @@
         "c-mh-v3-moesi"
       ],
       "disputes": [],
-      "block": "chip",
+      "block": "fabric",
       "name": "Coherence protocol",
       "value": "MOESI",
       "status": "inferred",
@@ -2496,7 +2579,7 @@
         "c-mh-v8-cluster-one-clock"
       ],
       "disputes": [],
-      "block": "pcluster",
+      "block": "power",
       "name": "Clock domain",
       "value": "per cluster",
       "status": "inferred",
@@ -2507,7 +2590,7 @@
         "c-mh-v3-core-powerup-10us"
       ],
       "disputes": [],
-      "block": "pcluster",
+      "block": "power",
       "name": "Core power-up time",
       "unit": "\u00b5s",
       "value": 10,
@@ -2589,7 +2672,7 @@
         "c-mh-v8-m1-one-noc-port"
       ],
       "disputes": [],
-      "block": "pcluster",
+      "block": "fabric",
       "name": "NoC ports per cluster",
       "unit": "ports",
       "value": 1,
@@ -14130,7 +14213,9 @@
       "derivation": "inferred",
       "value": "8x8",
       "unit": "processing elements",
-      "supports": [],
+      "supports": [
+        "amx.pe_grid"
+      ],
       "notes": "From a later patent; Handley names the 2019 bypass and variable-grid patent (US20200272597A1) as the one that makes the grid clear.",
       "source": "handley-vol3",
       "chip": "m1",
@@ -15982,7 +16067,9 @@
       "value": 2,
       "unit": "instr/cycle",
       "hedge": "let's assume",
-      "supports": [],
+      "supports": [
+        "amx.issue_width"
+      ],
       "notes": "Two stores per cycle agrees with the measured store rate",
       "source": "handley-vol3",
       "chip": "m1",
@@ -19037,7 +19124,9 @@
       "value": 2,
       "unit": "instr/cycle",
       "hedge": "apparently...",
-      "supports": [],
+      "supports": [
+        "amx.issue_width"
+      ],
       "notes": "Matches Johnson's AMX roles for load/store units 7 and 8 (c-dj-ls-units)",
       "source": "handley-vol8",
       "chip": "m1",
@@ -19050,7 +19139,9 @@
       "derivation": "reported",
       "value": 4,
       "unit": "sets",
-      "supports": [],
+      "supports": [
+        "amx.register_sets"
+      ],
       "notes": "Aside with no method; a 2021 patent (US20230095072A1) renames registers of idle clients into a shared pool",
       "source": "handley-vol8",
       "chip": "m1",
@@ -19099,7 +19190,9 @@
       "derivation": "inferred",
       "value": 1,
       "unit": "units",
-      "supports": [],
+      "supports": [
+        "amx.units"
+      ],
       "source": "handley-vol8",
       "chip": "m1",
       "entered": "handley-vol8-core"
@@ -24619,7 +24712,7 @@
         "c-mh-v8-mc-shutdown"
       ],
       "name": "Hashed address interleave",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "Addresses are hashed across the coherence, SLC and memory-controller pipelines and over DRAM channels, ranks and banks; later patents let the OS shut an idle controller after moving its pages."
     },
@@ -24630,7 +24723,7 @@
         "c-mh-v3-cluster-one-requester"
       ],
       "name": "Layered fabric, one port per cluster",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "Each CPU cluster is one requester on a coherent fabric joining memory, SLC, CPU and GPU through switch levels, bridged to a non-coherent IO fabric for PCIe and USB."
     },
@@ -24644,7 +24737,7 @@
         "c-mh-v8-noc-rings"
       ],
       "name": "Later NoCs: rings, lanes, split networks",
-      "block": "chip",
+      "block": "fabric",
       "chip": "post-m1",
       "status": "speculative",
       "description": "Later NoCs use two counter-rotating rings, add a parallel lane for bandwidth, split CPU, IO and GPU networks, and give each P-cluster two ports chosen by address hash."
@@ -24657,7 +24750,7 @@
         "c-mh-v3-l2-link-combined"
       ],
       "name": "Separate command and data paths",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "Commands and data travel apart: write data is buffered once at fabric entry and moved once, only a small control packet is routed, and most read returns skip Coherence."
     },
@@ -24667,7 +24760,7 @@
         "c-mh-v3-deferred-invalidate-poison"
       ],
       "name": "Paced remote maintenance",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "Cache and TLB maintenance requests wait in a per-cluster unit, and a core that has taken many refuses more until it progresses; a later design poisons invalidated lines and syncs them later."
     },
@@ -24680,7 +24773,7 @@
         "c-mh-v8-retry-queue"
       ],
       "name": "Linked same-address waiting",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "A request blocked by same-address work waits linked behind it in a retry queue, a pending SLC line or a hashed write table, or retries once the blocking transaction's response passes."
     },
@@ -24689,7 +24782,7 @@
         "c-mh-v3-slc-io-proxy"
       ],
       "name": "SLC as controller for IO caches",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "The SLC acts as cache controller for small caches in IO blocks outside the coherence domain, turning one request into the simpler commands such a cache needs."
     },
@@ -24699,7 +24792,7 @@
         "c-mh-v3-sharing-tracking"
       ],
       "name": "Snoop skipping for unshared lines",
-      "block": "chip",
+      "block": "fabric",
       "status": "speculative",
       "description": "Lines in pages marked never-shared, or lines a device has learned no other requester can hold, skip snoop broadcasts."
     },
@@ -24713,7 +24806,7 @@
         "c-mh-v8-amx-m3-throughput"
       ],
       "name": "AMX outer-product grid",
-      "block": "pcluster",
+      "block": "amx",
       "status": "speculative",
       "description": "AMX accumulates X-by-Y outer products into Z, held across an 8x8 grid of processing elements, and runs a load or store to the L2 alongside each arithmetic operation."
     },
@@ -24726,7 +24819,7 @@
         "c-mh-v8-amx-store-pipe"
       ],
       "name": "AMX issue through the store queue",
-      "block": "pcluster",
+      "block": "amx",
       "status": "inferred",
       "description": "AMX instructions pass through the core's load/store pipeline, wait in the store queue until non- speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four."
     },
@@ -24748,7 +24841,7 @@
         "c-mh-v8-fusion-buffer"
       ],
       "name": "AMX operation set",
-      "block": "pcluster",
+      "block": "amx",
       "status": "inferred",
       "description": "AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add 2x2 packing, lookup tables, strided dots, mixed precision and row moves."
     },
@@ -24762,7 +24855,7 @@
         "c-mh-v8-amx-per-cluster"
       ],
       "name": "One AMX unit per cluster",
-      "block": "pcluster",
+      "block": "amx",
       "status": "inferred",
       "description": "One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor tells the OS when several cores overload it."
     },
@@ -24773,7 +24866,7 @@
         "c-cc-clk-m1max-hw-boost"
       ],
       "name": "Clock ramp from idle",
-      "block": "pcluster",
+      "block": "power",
       "status": "measured",
       "description": "From idle the P-cluster clock starts rising within about 10 to 20 ms and reaches its maximum after roughly 40 to 100 ms, in steps that may be set by hardware."
     },
@@ -24783,7 +24876,7 @@
         "c-mh-v3-wake-state-restore"
       ],
       "name": "Core power-down and restart",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "A powered-down core restarts from an address the always-on power manager supplies and reloads its saved state from the L2, the SLC or DRAM, depending on what else slept."
     },
@@ -24795,7 +24888,7 @@
         "c-mh-v3-pll-divider-ramp"
       ],
       "name": "DVFS transition sequence",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "A cluster's cores, L2 and bus interface change performance state together: voltage rises and is sensed settled first, then the PLL retargets behind a divider stepping from 4 to 1.",
       "params": [
@@ -24812,7 +24905,7 @@
         "c-mh-v3-irq-rob-nack"
       ],
       "name": "Power-aware interrupt routing",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "Device interrupts follow the device's writes, are held while all cores sleep, and are offered cluster by cluster in soft, hard and force rounds that a busy core may refuse."
     },
@@ -24828,7 +24921,7 @@
         "c-mh-v8-dram-vs-cpu-power"
       ],
       "name": "Closed-loop performance controller",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "A closed-loop controller maps each thread group's control effort to a cluster type and DVFS level, and raises NoC, DRAM or feeding-cluster clocks when cores stall on memory."
     },
@@ -24837,7 +24930,7 @@
         "c-mh-v3-cdc-predict"
       ],
       "name": "Predictive clock-domain crossing",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "Clock-domain crossings predict the other clock's edges from history instead of using two-cycle synchronizers, passing one-bit pointer increments through small event FIFOs."
     },
@@ -26762,7 +26855,7 @@
         "c-mh-v8-slc-dup-tags"
       ],
       "name": "Coherence point with duplicate tags",
-      "block": "chip",
+      "block": "fabric",
       "status": "inferred",
       "description": "Before the SLC, a coherence point holds copies of every cache's L2 tags and states, a tag-only pseudo-L3 that orders same-address requests.",
       "params": [],
@@ -26882,7 +26975,7 @@
         "c-mh-v8-eviction-accounting"
       ],
       "name": "Credit-gated fabric with QoS bands",
-      "block": "chip",
+      "block": "fabric",
       "status": "inferred",
       "description": "Requests carry one of five QoS classes in three bands on six virtual channels; credits gate entry to the fabric and memory controller.",
       "params": [],
@@ -26901,7 +26994,7 @@
         "c-mh-v8-nsm-gateway"
       ],
       "name": "Separate PIO network",
-      "block": "chip",
+      "block": "fabric",
       "status": "inferred",
       "description": "Device-memory accesses and short control messages such as interprocessor interrupts use a flat network that skips coherence, the SLC and DRAM.",
       "params": [],
@@ -26935,7 +27028,7 @@
         "c-mh-v8-hw-dvfs"
       ],
       "name": "Digital power estimator throttling",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "Per-core event counts feed a power estimate and energy credits that block vector or AMX issue for a cycle or two and steer DVFS.",
       "params": [],
@@ -26949,7 +27042,7 @@
         "c-mh-v3-clock-dither"
       ],
       "name": "Divided clock while the core waits",
-      "block": "pcluster",
+      "block": "power",
       "status": "speculative",
       "description": "A core stalled on DRAM or waiting for an event receives one clock pulse in four instead of a frequency change.",
       "params": [],
@@ -27130,7 +27223,7 @@
         "c-mh-v8-directory-way-bits"
       ],
       "name": "Coherence directory at the SLC",
-      "block": "slc",
+      "block": "fabric",
       "status": "speculative",
       "description": "A hashed, set-associative directory at the SLC records which L2-level caches hold each line, replacing duplicate tags; a set overflow invalidates a line in its L2.",
       "params": [],

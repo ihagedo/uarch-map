@@ -1009,7 +1009,7 @@ new_mechanisms:
     detection_rule: the cached region seen by one core extends to about the L2 share plus the SLC, not to the larger of the two
   coherence_duplicate_tags:
     name: Coherence point with duplicate tags
-    block: chip
+    block: fabric
     status: inferred
     description: Before the SLC, a coherence point holds copies of every cache's L2 tags and states, a tag-only pseudo-L3 that orders same-address requests.
     params: []
@@ -1041,7 +1041,7 @@ new_mechanisms:
     detection_rule: SLC-range latency or capacity right after an idle period differs from that after a warm-up sweep of the same footprint
   fabric_qos_credits:
     name: Credit-gated fabric with QoS bands
-    block: chip
+    block: fabric
     status: inferred
     description: Requests carry one of five QoS classes in three bands on six virtual channels; credits gate entry to the fabric and memory controller.
     params: []
@@ -1049,7 +1049,7 @@ new_mechanisms:
     detection_rule: not visible to a single-core probe; under bulk GPU traffic a latency-bound CPU miss slows less than CPU streaming bandwidth falls
   pio_network:
     name: Separate PIO network
-    block: chip
+    block: fabric
     status: inferred
     description: Device-memory accesses and short control messages such as interprocessor interrupts use a flat network that skips coherence, the SLC and DRAM.
     params: []

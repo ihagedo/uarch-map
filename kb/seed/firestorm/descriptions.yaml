@@ -9,6 +9,9 @@ descriptions:
   slc:       Last-level cache shared by the whole chip.
   memctrl:   DRAM reads and writes.
   l2:        Shared by the cores of a cluster.
+  amx:       Matrix coprocessor shared by a cluster's cores.
+  fabric:    Coherence and the network joining clusters, caches and memory.
+  power:     Clocks, voltages and power states.
   core:      One performance core.
 
   frontend:  Predict, fetch and decode.

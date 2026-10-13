@@ -5,21 +5,21 @@
 mechanisms:
   address_interleave_hash:
     name: Hashed address interleave
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       Addresses are hashed across the coherence, SLC and memory-controller pipelines and over DRAM channels,
       ranks and banks; later patents let the OS shut an idle controller after moving its pages.
   noc_layout:
     name: Layered fabric, one port per cluster
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       Each CPU cluster is one requester on a coherent fabric joining memory, SLC, CPU and GPU through switch
       levels, bridged to a non-coherent IO fabric for PCIe and USB.
   noc_rings_lanes:
     name: 'Later NoCs: rings, lanes, split networks'
-    block: chip
+    block: fabric
     chip: post-m1
     status: speculative
     description: >-
@@ -27,84 +27,84 @@ mechanisms:
       networks, and give each P-cluster two ports chosen by address hash.
   noc_split_paths:
     name: Separate command and data paths
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       Commands and data travel apart: write data is buffered once at fabric entry and moved once, only a small
       control packet is routed, and most read returns skip Coherence.
   remote_maintenance_pacing:
     name: Paced remote maintenance
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       Cache and TLB maintenance requests wait in a per-cluster unit, and a core that has taken many refuses
       more until it progresses; a later design poisons invalidated lines and syncs them later.
   same_address_ordering:
     name: Linked same-address waiting
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       A request blocked by same-address work waits linked behind it in a retry queue, a pending SLC line or a
       hashed write table, or retries once the blocking transaction's response passes.
   slc_io_cache_proxy:
     name: SLC as controller for IO caches
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       The SLC acts as cache controller for small caches in IO blocks outside the coherence domain, turning one
       request into the simpler commands such a cache needs.
   unshared_snoop_skip:
     name: Snoop skipping for unshared lines
-    block: chip
+    block: fabric
     status: speculative
     description: >-
       Lines in pages marked never-shared, or lines a device has learned no other requester can hold, skip
       snoop broadcasts.
   amx_datapath:
     name: AMX outer-product grid
-    block: pcluster
+    block: amx
     status: speculative
     description: >-
       AMX accumulates X-by-Y outer products into Z, held across an 8x8 grid of processing elements, and runs a
       load or store to the L2 alongside each arithmetic operation.
   amx_lsu_issue:
     name: AMX issue through the store queue
-    block: pcluster
+    block: amx
     status: inferred
     description: >-
       AMX instructions pass through the core's load/store pipeline, wait in the store queue until non-
       speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four.
   amx_op_set:
     name: AMX operation set
-    block: pcluster
+    block: amx
     status: inferred
     description: >-
       AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add
       2x2 packing, lookup tables, strided dots, mixed precision and row moves.
   amx_shared_contexts:
     name: One AMX unit per cluster
-    block: pcluster
+    block: amx
     status: inferred
     description: >-
       One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor
       tells the OS when several cores overload it.
   clock_ramp:
     name: Clock ramp from idle
-    block: pcluster
+    block: power
     status: measured
     description: >-
       From idle the P-cluster clock starts rising within about 10 to 20 ms and reaches its maximum after
       roughly 40 to 100 ms, in steps that may be set by hardware.
   core_power_cycle:
     name: Core power-down and restart
-    block: pcluster
+    block: power
     status: speculative
     description: >-
       A powered-down core restarts from an address the always-on power manager supplies and reloads its saved
       state from the L2, the SLC or DRAM, depending on what else slept.
   dvfs_transition:
     name: DVFS transition sequence
-    block: pcluster
+    block: power
     status: speculative
     description: >-
       A cluster's cores, L2 and bus interface change performance state together: voltage rises and is sensed
@@ -112,21 +112,21 @@ mechanisms:
     params: [pcluster.clock_domain]
   interrupt_routing:
     name: Power-aware interrupt routing
-    block: pcluster
+    block: power
     status: speculative
     description: >-
       Device interrupts follow the device's writes, are held while all cores sleep, and are offered cluster by
       cluster in soft, hard and force rounds that a busy core may refuse.
   perf_controller:
     name: Closed-loop performance controller
-    block: pcluster
+    block: power
     status: speculative
     description: >-
       A closed-loop controller maps each thread group's control effort to a cluster type and DVFS level, and
       raises NoC, DRAM or feeding-cluster clocks when cores stall on memory.
   predictive_clock_crossing:
     name: Predictive clock-domain crossing
-    block: pcluster
+    block: power
     status: speculative
     description: >-
       Clock-domain crossings predict the other clock's edges from history instead of using two-cycle

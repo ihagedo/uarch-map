@@ -80,6 +80,10 @@ params:
   l2.line:                      {block: l2,       name: L2 line size,                    unit: B}
   l2.latency:                   {block: l2,       name: L2 hit latency,                  unit: cycles,      sim_key: l2_latency}
   l2.inner_slice:               {block: l2,       name: Per-core inner L2 slice,         unit: MiB}
+  amx.units:                    {block: amx,      name: AMX units per P-cluster,         unit: units}
+  amx.register_sets:            {block: amx,      name: AMX register sets,               unit: sets}
+  amx.issue_width:              {block: amx,      name: AMX instructions sent per cycle, unit: instr/cycle}
+  amx.pe_grid:                  {block: amx,      name: Processing-element grid}
   slc.size:                     {block: slc,      name: SLC capacity,                    unit: MiB}
   slc.latency:                  {block: slc,      name: SLC hit latency,                 unit: cycles}
   memctrl.dram_latency:         {block: memctrl,  name: DRAM latency,                    unit: ns,          sim_key: dram_latency_ns}
