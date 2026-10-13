@@ -107,6 +107,104 @@ claims:
     unit: cycles
     supports: []
     chip: icestorm
+  - id: c-dj-amx-e-tput
+    text: The E-cluster AMX completes one fp32 or fp64 FMA instruction every four cycles and one fp16 FMA every eight
+    loc: p001
+    quote: "only perform one FMA32 or FMA64 instruction every four cycles, or one ... FMA16 instruction every eight cycles."
+    derivation: measured
+    value: 4
+    unit: cycles/instr
+    supports: []
+    chip: icestorm
+  - id: c-dj-amx-indep-z
+    text: One core reaches one FMA per cycle only when successive FMAs write independent parts of Z, chosen with a Z offset
+    loc: p001
+    quote: "To achieve 1-cycle throughput from a single core, the destinations must be ... independent (using a Z offset)."
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-more-cores
+    text: Operations that use too much of Z run slower from one core, and spreading them over several cores, each with its own Z, raises throughput
+    loc: p001
+    quote: "Operations which use too much of the Z ... register will have lower throughput. Throughput can also be improved using ... different cores (and therefore entirely different Z registers)."
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-mac16-32
+    text: An expanding 16-bit to 32-bit FMA fills all of Z with 1024 results, so one core issues one every four cycles and two P-cores together one every two
+    loc: p001
+    quote: "an expanding 16-bit -> 32-bit FMA uses the full Z register ... so has a throughput of one every four cycles, ... but this can be doubled to one every two cycles by running on two"
+    derivation: measured
+    value: 4
+    unit: cycles/instr
+    supports: []
+  - id: c-dj-amx-ooo
+    text: AMX has some out-of-order execution, from a buffer of roughly 28 to 32 operations
+    loc: p001
+    quote: "There is some out-of-order execution capability on the co-processor (currently ... estimated at a 28 to 32 operation buffer, with very low confidence)."
+    derivation: measured
+    value: 30
+    unit: ops
+    approx: true
+    range: [28, 32]
+    hedge: "with very low confidence"
+    supports: [amx.ooo_buffer]
+  - id: c-dj-amx-fma-overlap
+    text: Thanks to this out-of-order capability, four FMAs fit inside the 9-cycle window of an X and Y load at almost no extra cost
+    loc: p001
+    quote: "Because of the out-of-order capabilities, performing four fmas fits within ... this 9-cycle window at essentially no extra cost"
+    method: throughput
+    derivation: measured
+    value: 9
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-ldst-bound
+    text: AMX loads and stores, not arithmetic, seem to limit AMX throughput
+    loc: p001
+    quote: "Loads and stores seem to be the bottleneck."
+    derivation: measured
+    hedge: "seem to be"
+    supports: []
+  - id: c-dj-amx-l1-penalty
+    text: AMX loads and stores appear to go through the L2, paying a slight penalty when the data sits in a core's L1
+    loc: p001
+    quote: "but appear to go via L2, with slight penalties ... for data in L1."
+    derivation: measured
+    hedge: "appear to"
+    supports: []
+    notes: Agrees with c-mh-v3-amx-from-l2.
+  - id: c-dj-amx-ldxy-9
+    text: At best a loop loads 128 bytes into X and 128 bytes into Y every 9 cycles
+    loc: p001
+    quote: "At best I've seen loads of 0x80 bytes to x and 0x80 bytes to y in 9 cycles"
+    method: throughput
+    derivation: measured
+    value: 9
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-stx-28
+    text: A loop of AMX stores from X takes 28 cycles per iteration with only a nop or add before each store, against 9 for the matching load loop
+    loc: p001
+    quote: "nop/add before AMXSTX: 28 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 28
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-mix-slow
+    text: Mixing core loads and stores with AMX loads and stores slows things down badly, presumably from the synchronization that keeps memory consistent between them
+    loc: p001
+    quote: "Mixing loads and stores on the main processor with co-processor loads and stores ... causes big slowdowns, presumably due to the synchronization needed to ensure a ... consistent view of memory."
+    derivation: measured
+    hedge: "presumably"
+    supports: []
+  - id: c-dj-amx-str-ldx
+    text: A non-aliasing core store before each AMX X load slows the loop from 9 to 47 cycles per iteration
+    loc: p001
+    quote: "nop/add before AMXLDX: 9 cycles/iter ... str before AMXLDX (no-aliasing): 47 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 47
+    unit: cycles/iter
+    supports: []
 
 new_params:
   amx.fma_latency: {block: amx, name: AMX FMA latency, unit: cycles}
@@ -123,7 +221,8 @@ new_mechanisms:
       out the 4-cycle FMA latency of the last one there, and a core needs four independent Z ranges to issue an
       outer product every cycle.
     params: [amx.fma_latency, amx.fma_throughput, amx.ooo_buffer]
-    claims: [c-dj-amx-latency, c-dj-amx-fma-tput, c-dj-amx-fma16]
+    claims: [c-dj-amx-latency, c-dj-amx-fma-tput, c-dj-amx-fma16, c-dj-amx-indep-z, c-dj-amx-more-cores,
+      c-dj-amx-mac16-32, c-dj-amx-ooo, c-dj-amx-fma-overlap]
     sim_switch: null
     detection_rule: >-
       One core's outer-product throughput rises in step with the number of independent Z accumulators up to four
@@ -132,4 +231,5 @@ new_mechanisms:
 mechanism_claims:
   amx_lsu_issue: [c-dj-amx-nonspec, c-dj-amx-fuse-port, c-dj-amx-prefetch, c-dj-amx-gpr-operand]
   amx_shared_contexts: [c-dj-amx-p-unit, c-dj-amx-e-unit, c-dj-amx-four-copies]
-  amx_datapath: [c-dj-amx-l2, c-dj-amx-e-latency]
+  amx_datapath: [c-dj-amx-l2, c-dj-amx-l1-penalty, c-dj-amx-ldst-bound, c-dj-amx-ldxy-9, c-dj-amx-stx-28, c-dj-amx-e-latency, c-dj-amx-e-tput]
+  coprocessor_ordering_table: [c-dj-amx-mix-slow, c-dj-amx-str-ldx]

@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 150, claims 1633, sources 40, mechanisms 165
+blocks 40, links 37, params 150, claims 1645, sources 40, mechanisms 165
 
 ## By status
 
 - derived: 13
 - inferred: 26
-- measured: 102
-- open: 5
+- measured: 103
+- open: 4
 - reported: 4
 
 ## By confidence
@@ -17,16 +17,14 @@ blocks 40, links 37, params 150, claims 1633, sources 40, mechanisms 165
 - corroborated: 30
 - derived: 13
 - inferred: 30
-- single: 56
-- unknown: 1
+- single: 57
 
-## Holes (5)
+## Holes (4)
 
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
-- amx.ooo_buffer (amx): AMX out-of-order buffer
 
 ## Open disputes (17)
 
