@@ -208,3 +208,9 @@ sources:
     author: Khayet, Yossi
     year: 2026
     url: https://www.cs.tau.ac.il/~mad/publications/asplos2026-TSO.pdf
+  dougall-amx:
+    type: web
+    title: AMX instruction notes (IDA plugin)
+    author: Johnson, Dougall
+    year: 2020
+    url: https://gist.github.com/dougallj/7a75a3be1ec69ca550e7c36dc75e0d6f

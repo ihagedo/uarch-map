@@ -1,0 +1,135 @@
+# dougall-amx.yaml
+# Dougall Johnson, 2020
+# How the M1 cores send work to AMX, its register state, FMA timing and the cost of mixing core and AMX memory accesses.
+session: dougall-amx
+source: dougall-amx
+
+claims:
+  - id: c-dj-amx-nonspec
+    text: AMX is a non-speculative coprocessor, and the cores post its operations to it through their store units
+    loc: p001
+    quote: "AMX functions as a non-speculative coprocessor, with operations posted to it ... via the store units of the CPU cores."
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-fuse-port
+    text: Two AMX instructions that are not loads or stores can fuse so that together they take a single store port
+    loc: p001
+    quote: "Non-load/store AMX instructions can be ... fused with other non-load/store AMX instructions, to only use one store ... port."
+    derivation: measured
+    supports: []
+    notes: Agrees with c-dj-fusion-amx and adds that the fused pair uses one store port.
+  - id: c-dj-amx-prefetch
+    text: AMX operations do not go through the core's out-of-order execution, so a core prefetch placed just before an AMX load or store can help, since prefetches do execute out of order
+    loc: p001
+    quote: "Because it doesn't go through the main processors out-of-order execution, it ... can be beneficial to add prefetch instructions (which do) immediately before ... AMX stores (and loads)."
+    derivation: inferred
+    hedge: "can be beneficial"
+    supports: []
+  - id: c-dj-amx-gpr-operand
+    text: Every AMX operation except enable and disable takes one 64-bit general register whose bits hold the operation's parameters, such as the address of a load or store
+    loc: p001
+    quote: "All other operations (op=0-16 and op=18-22) seem to take a 64-bit register ... number (X0-X30 or 31=XZR) as the operand. ... This register is typically a bitfield containing further parameters to the ... operation."
+    derivation: measured
+    hedge: "seem to"
+    supports: []
+  - id: c-dj-amx-p-unit
+    text: The four Firestorm cores of the M1 share one AMX coprocessor
+    loc: p001
+    quote: "The M1 has two AMX coprocessors, one used by the four Firestorm cores, and"
+    derivation: measured
+    value: 1
+    unit: units
+    supports: [amx.units]
+    notes: Agrees with c-mh-v8-amx-per-cluster.
+  - id: c-dj-amx-e-unit
+    text: The four Icestorm cores of the M1 share a second, separate AMX coprocessor
+    loc: p001
+    quote: "The M1 has two AMX coprocessors ... another used by the four Icestorm cores."
+    derivation: measured
+    value: 1
+    unit: units
+    supports: []
+    chip: icestorm
+    notes: c-mh-v8-amx-per-cluster and amx_shared_contexts count only P-cluster units; this adds a unit for the E-cluster.
+  - id: c-dj-amx-four-copies
+    text: Each AMX coprocessor keeps four copies of the architectural register state, one for each core of its cluster
+    loc: p001
+    quote: "Each coprocessor stores four copies ... of the architectural register state, one for each core."
+    derivation: measured
+    value: 4
+    unit: sets
+    supports: [amx.register_sets]
+    notes: Agrees with c-mh-v8-amx-reg-sets.
+  - id: c-dj-amx-l2
+    text: The AMX coprocessors reach memory through the same L2 cache as the cores
+    loc: p001
+    quote: "These access memory ... via the same L2 cache as the cores"
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-clock
+    text: The AMX coprocessors seem to run at about the same clock as the cores
+    loc: p001
+    quote: "seem to run at around the same clock ... speed as the cores."
+    derivation: measured
+    hedge: "seem to"
+    supports: []
+  - id: c-dj-amx-latency
+    text: The P-cluster AMX is an array of pipelined FMAs with a latency of four cycles
+    loc: p001
+    quote: "The performance-variant consists of an array of 4-cycle latency, pipelined ... FMAs"
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: [amx.fma_latency]
+    notes: Agrees with c-mh-v8-amx-fma-4.
+  - id: c-dj-amx-fma-tput
+    text: The P-cluster AMX completes one fp32 or fp64 FMA instruction per cycle
+    loc: p001
+    quote: "giving a throughput of one FMA32 or FMA64 instruction per cycle"
+    derivation: measured
+    value: 1
+    unit: instr/cycle
+    supports: [amx.fma_throughput]
+  - id: c-dj-amx-fma16
+    text: The P-cluster AMX completes only one fp16 FMA instruction every two cycles
+    loc: p001
+    quote: "only one FMA16 instruction every two cycles."
+    derivation: measured
+    value: 2
+    unit: cycles/instr
+    supports: []
+  - id: c-dj-amx-e-latency
+    text: The E-cluster AMX also has a four-cycle fp32 and fp64 FMA latency
+    loc: p001
+    quote: "The efficiency-variant still has 4-cycle FMA32/FMA64 latency"
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: []
+    chip: icestorm
+
+new_params:
+  amx.fma_latency: {block: amx, name: AMX FMA latency, unit: cycles}
+  amx.fma_throughput: {block: amx, name: AMX fp32/fp64 FMA instructions per cycle, unit: instr/cycle}
+  amx.ooo_buffer: {block: amx, name: AMX out-of-order buffer, unit: ops}
+
+new_mechanisms:
+  amx_z_dependency_window:
+    name: AMX out-of-order window without Z renaming
+    block: amx
+    status: measured
+    description: >-
+      AMX reorders operations within a small buffer but does not rename Z, so an operation into a Z range waits
+      out the 4-cycle FMA latency of the last one there, and a core needs four independent Z ranges to issue an
+      outer product every cycle.
+    params: [amx.fma_latency, amx.fma_throughput, amx.ooo_buffer]
+    claims: [c-dj-amx-latency, c-dj-amx-fma-tput, c-dj-amx-fma16]
+    sim_switch: null
+    detection_rule: >-
+      One core's outer-product throughput rises in step with the number of independent Z accumulators up to four
+      and then stays flat, while a second core's own Z adds more.
+
+mechanism_claims:
+  amx_lsu_issue: [c-dj-amx-nonspec, c-dj-amx-fuse-port, c-dj-amx-prefetch, c-dj-amx-gpr-operand]
+  amx_shared_contexts: [c-dj-amx-p-unit, c-dj-amx-e-unit, c-dj-amx-four-copies]
+  amx_datapath: [c-dj-amx-l2, c-dj-amx-e-latency]
