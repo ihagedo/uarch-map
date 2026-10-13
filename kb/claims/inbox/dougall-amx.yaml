@@ -205,6 +205,110 @@ claims:
     value: 47
     unit: cycles/iter
     supports: []
+  - id: c-dj-amx-str-ldx-alias
+    text: An aliasing core store before each AMX X load slows the loop to 93 or 103 cycles per iteration
+    loc: p001
+    quote: "str before AMXLDX (aliasing): 93 or 103 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 98
+    unit: cycles/iter
+    range: [93, 103]
+    supports: []
+  - id: c-dj-amx-ldr-ldx
+    text: A non-aliasing core load before each AMX X load costs little, 11 cycles per iteration against 9
+    loc: p001
+    quote: 'ldr before AMXLDX (no-"aliasing"): 11 cycles/iter'
+    method: throughput
+    derivation: measured
+    value: 11
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-ldr-ldx-alias
+    text: An aliasing core load before each AMX X load slows the loop to 66 cycles per iteration
+    loc: p001
+    quote: 'ldr before AMXLDX ("aliasing"): 66 cycles/iter'
+    method: throughput
+    derivation: measured
+    value: 66
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-str-stx
+    text: A non-aliasing core store before each AMX X store slows the loop from 28 to 48 cycles per iteration
+    loc: p001
+    quote: "str before AMXSTX (no-aliasing): 48 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 48
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-str-stx-alias
+    text: An aliasing core store before each AMX X store slows the loop to 115 cycles per iteration
+    loc: p001
+    quote: "str before AMXSTX (aliasing): 115 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 115
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-ldr-stx
+    text: A non-aliasing core load before each AMX X store slows the loop from 28 to 31 cycles per iteration
+    loc: p001
+    quote: "ldr before AMXSTX (no-aliasing): 31 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 31
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-ldr-stx-alias
+    text: An aliasing core load before each AMX X store slows the loop to 112 cycles per iteration
+    loc: p001
+    quote: "ldr before AMXSTX (aliasing): 112 cycles/iter"
+    method: throughput
+    derivation: measured
+    value: 112
+    unit: cycles/iter
+    supports: []
+  - id: c-dj-amx-state
+    text: The AMX state is two 512-byte registers, X and Y, and one 4096-byte register, Z
+    loc: p001
+    quote: 'The coprocessor state consists of two 0x200 byte "registers", amx0 ("x") ... and amx1 ("y"), and one 0x1000 byte register amx2 ("z").'
+    derivation: measured
+    value: 4096
+    unit: B
+    supports: []
+  - id: c-dj-amx-apple-z
+    text: Apple's headers describe Z as 64 registers in an M-by-N matrix, each 64-byte row of X, Y and Z being one register
+    loc: p001
+    quote: 'describe only "z" as being "64 registers in an M-by-N ... matrix"'
+    derivation: documented
+    value: 64
+    unit: registers
+    supports: []
+  - id: c-dj-amx-enable
+    text: AMX must be enabled with its own instruction first, and any other AMX instruction run while it is disabled is an illegal instruction
+    loc: p001
+    quote: 'If instructions other than "enable" are executed when AMX is not enabled, ... they are treated as illegal instructions.'
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-ldst-size
+    text: An AMX load or store moves 64 bytes, or an aligned 128 bytes when a flag bit is set
+    loc: p001
+    quote: "a 1-bit flag in bit 62 (acting as an 0x40 byte load/store ... when zero, or an 0x80 byte (but aligned) load/store when one)."
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-fma-shapes
+    text: An fp64 multiply-add forms an 8x8 outer product of 64 results, and an fp32 one a 16x16 product of 256 results, added into spaced rows of Z
+    loc: p001
+    quote: "8x8 double multiplies for 64 results, added ... 16x16 float multiplies for 256 results, added"
+    derivation: measured
+    supports: []
+  - id: c-dj-amx-extr
+    text: Two move operations copy a 64-byte row from Z or Y into X, or a 64-byte column of Z (or a row of X) into Y, without going through memory
+    loc: p001
+    quote: "move a 64-byte row from z or y to x ... move a 64-byte column from z to x or y, or move a 64-byte row from x to y"
+    derivation: measured
+    supports: []
 
 new_params:
   amx.fma_latency: {block: amx, name: AMX FMA latency, unit: cycles}
@@ -222,7 +326,7 @@ new_mechanisms:
       outer product every cycle.
     params: [amx.fma_latency, amx.fma_throughput, amx.ooo_buffer]
     claims: [c-dj-amx-latency, c-dj-amx-fma-tput, c-dj-amx-fma16, c-dj-amx-indep-z, c-dj-amx-more-cores,
-      c-dj-amx-mac16-32, c-dj-amx-ooo, c-dj-amx-fma-overlap]
+             c-dj-amx-mac16-32, c-dj-amx-ooo, c-dj-amx-fma-overlap]
     sim_switch: null
     detection_rule: >-
       One core's outer-product throughput rises in step with the number of independent Z accumulators up to four
@@ -231,5 +335,9 @@ new_mechanisms:
 mechanism_claims:
   amx_lsu_issue: [c-dj-amx-nonspec, c-dj-amx-fuse-port, c-dj-amx-prefetch, c-dj-amx-gpr-operand]
   amx_shared_contexts: [c-dj-amx-p-unit, c-dj-amx-e-unit, c-dj-amx-four-copies]
-  amx_datapath: [c-dj-amx-l2, c-dj-amx-l1-penalty, c-dj-amx-ldst-bound, c-dj-amx-ldxy-9, c-dj-amx-stx-28, c-dj-amx-e-latency, c-dj-amx-e-tput]
-  coprocessor_ordering_table: [c-dj-amx-mix-slow, c-dj-amx-str-ldx]
+  amx_datapath: [c-dj-amx-l2, c-dj-amx-l1-penalty, c-dj-amx-ldst-bound, c-dj-amx-ldxy-9, c-dj-amx-stx-28,
+                 c-dj-amx-state, c-dj-amx-apple-z, c-dj-amx-e-latency, c-dj-amx-e-tput]
+  coprocessor_ordering_table: [c-dj-amx-mix-slow, c-dj-amx-str-ldx, c-dj-amx-str-ldx-alias, c-dj-amx-ldr-ldx,
+                               c-dj-amx-ldr-ldx-alias, c-dj-amx-str-stx, c-dj-amx-str-stx-alias,
+                               c-dj-amx-ldr-stx, c-dj-amx-ldr-stx-alias]
+  amx_op_set: [c-dj-amx-enable, c-dj-amx-ldst-size, c-dj-amx-fma-shapes, c-dj-amx-extr]
