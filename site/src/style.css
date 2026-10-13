@@ -270,6 +270,9 @@ h1 {
   font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
   color: var(--surface); background: var(--ours); border-radius: 4px; padding: 0 6px;
 }
+.judgment { display: block; font-size: 14px; line-height: 1.5; color: var(--ink-2); border-left: 2px solid var(--ours); padding-left: 8px; }
+.judgment .ours-tag { margin-right: 6px; }
+.judgment b { color: var(--ours); font-weight: 600; margin-right: 4px; }
 .ours-line { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
 .ours-line b { color: var(--ours); font-weight: 600; }
 .link-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
@@ -423,3 +426,43 @@ h1 {
 .st-big { font-size: 17px; font-weight: 700; fill: var(--ink); }
 .lat-bar { fill: color-mix(in srgb, var(--hue) 35%, var(--surface)); stroke: var(--hue); stroke-width: 1; }
 .toolbar > * { min-width: 0; max-width: 100%; }
+
+/* questions: hue marks the region, fill and outline how a question is answered; ours in its own color */
+.questions { display: grid; gap: 12px; }
+.q-bars { display: grid; gap: 6px; max-width: 60rem; }
+.q-bar-row { display: grid; grid-template-columns: minmax(8rem, 12rem) minmax(0, 1fr) 2.5rem; gap: 12px; align-items: center; font-size: 13.5px; color: var(--ink-2); }
+.q-track { min-width: 0; }
+.q-bar { display: flex; gap: 2px; height: 12px; border-radius: 3px; overflow: hidden; }
+.q-seg { min-width: 3px; }
+.q-seg.q-measured { background: var(--hue); }
+.q-seg.q-inferred { background: color-mix(in srgb, var(--hue) 50%, var(--surface)); }
+.q-seg.q-patent { background: color-mix(in srgb, var(--hue) 22%, var(--surface)); }
+.q-seg.q-ours { background: var(--ours); }
+.q-seg.q-open { background: repeating-linear-gradient(90deg, var(--ink-3) 0 1px, var(--raise) 1px 4px); }
+.q-n { font: 500 13px var(--font-num); text-align: right; font-variant-numeric: tabular-nums; }
+.q-legend { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink-2); }
+.q-legend li { display: inline-flex; gap: 6px; align-items: center; }
+.q-chip { display: inline-block; border-radius: 4px; font-size: 12.5px; line-height: 1.35; padding: 1px 7px; border: 1px solid transparent; white-space: nowrap; }
+.q-chip.q-measured { background: color-mix(in srgb, var(--hue) 30%, var(--surface)); border: 1.5px solid var(--hue); color: var(--ink); }
+.q-chip.q-inferred { background: color-mix(in srgb, var(--hue) 12%, var(--surface)); border: 1px dashed color-mix(in srgb, var(--hue) 75%, var(--surface)); color: var(--ink); }
+.q-chip.q-patent { background: color-mix(in srgb, var(--hue) 4%, var(--surface)); border: 1px dashed color-mix(in srgb, var(--hue) 45%, var(--surface)); color: var(--ink-2); }
+.q-chip.q-ours { background: color-mix(in srgb, var(--ours) 12%, var(--surface)); border: 1.5px dashed var(--ours); color: var(--ours); font-weight: 600; }
+.q-chip.q-open { border: 1px dotted var(--ink-3); color: var(--ink-3); }
+.q-blocks { display: grid; gap: 14px; }
+.q-region { display: grid; gap: 4px; }
+.q-region h3 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hue); }
+.q-row {
+  display: grid; grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr); gap: 10px; align-items: start; text-align: left;
+  padding: 7px 10px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--hue); border-radius: 4px; cursor: pointer;
+}
+.q-row:hover { border-color: color-mix(in srgb, var(--hue) 50%, var(--line)); border-left-color: var(--hue); }
+.q-name { font-weight: 600; font-size: 14px; }
+.q-chips { display: flex; flex-wrap: wrap; gap: 5px; min-width: 0; }
+@media (max-width: 640px) { .q-row, .q-bar-row { grid-template-columns: minmax(0, 1fr); } }
+.q-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.q-list > li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 10px; align-items: baseline; font-size: 14px; }
+.q-list .q-text { color: var(--ink-2); }
+.q-list .q-text b { color: var(--ink); font-weight: 600; }
+.q-answers { grid-column: 2; list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 13.5px; color: var(--ink-2); }
+.q-answers b { font-weight: 500; color: var(--ink); }
+.q-answers li.ours b, .q-answers li.ours .status-tag { color: var(--ours); }

@@ -85,3 +85,86 @@ mechanisms:
     alternative: Requests from all cores enter one queue in arrival order.
     detection_rule: With three cores streaming through the L2, a fourth core's pointer chase keeps its unloaded latency
       under round-robin and slows with the load under one shared queue.
+
+judgments:
+  trace_cache:
+    verdict: unlikely
+    text: Not on the M1. ocxtal measured at most one taken branch per cycle, and Handley places the trace cache on the M4.
+    basis: [c-ox-two-branches, c-mh-v8-trace-cache]
+  matrix_scheduler:
+    verdict: likely
+    text: Nothing measured goes against it, and it fits operands read at issue from queues that do not shift.
+    basis: [c-mh-v1-read-at-issue, c-mh-v1-age-matrix]
+  lsq_at_issue:
+    verdict: likely
+    text: Allocation at issue explains why the apparent queue sizes change with the delay used (about 330, 125 and 100,
+      188 and 118).
+    basis: [c-mh-v1-virtual-lsq, c-mh-v1-lq-dram-125, c-mh-v1-lq-storeaddr-188]
+  hierarchical_store_queue:
+    verdict: unlikely
+    text: Not in this form on the M1. The two-queue design comes from a post-M1 patent; the M1's 60 stores fit one queue,
+      banked as Handley guesses from the mixed-stream stall.
+    basis: [c-mh-v8-hsq-two-queues, c-mh-v2-sq-banks-guess, c-dj-stores]
+  loop_modes:
+    verdict: likely
+    text: Handley says the M1 has loop buffers to save energy; a loop's backward branch already costs nothing, so they
+      should not change timing.
+    basis: [c-mh-v4-loop-buffers-m1]
+  iq_bypass_fixup:
+    verdict: likely
+    text: Likely for bypassing an empty queue. Deleting the instructions a short forward branch skips comes from a post-M1
+      patent and stays open.
+    basis: [c-mh-v4-iq-bypass, c-mh-v8-sfb-patent]
+  two_level_ras:
+    verdict: likely
+    text: Both patents predate the M1, and nothing measured goes against a main stack at decode with a small fetch-side
+      stack.
+    basis: [c-mh-v4-ras-at-decode, c-mh-v4-ras-mini]
+  l2_cachelets:
+    verdict: likely
+    text: Likely in effect. One core's bandwidth changes at 3 MiB and 7.5 MiB, and S2C's two hashed index bits fit four
+      slices; whether the cachelets are physical is open.
+    basis: [c-mh-v2-l2-transitions, c-mh-v2-l2-inner-bw, c-s2c-l2-slices]
+  l2.inclusion:
+    verdict: settled
+    text: Inclusive of the L1Ds. Two labs measured it across cores; the non-inclusive readings come from patents.
+    basis: [c-ilk-l2-inclusive, c-s2c-l2-inclusive, c-mh-v3-dram-fill-l1-only]
+  l2_victim_fill:
+    verdict: unlikely
+    text: Not as stated on the M1. With an inclusive L2, measured by two labs, DRAM fills enter the L2 as well as the L1.
+    basis: [c-ilk-l2-inclusive, c-s2c-l2-inclusive]
+  l2.replacement:
+    verdict: settled
+    text: LRU among one core's lines, as S2C measured. Handley's partial hits between 8 and 16 MiB fit low-priority
+      insertion of streaming lines better than random replacement.
+    basis: [c-s2c-l2-repl, c-mh-v2-l2-random-repl, c-mh-v3-l2-stream-lru0]
+  content_directed_prefetch:
+    verdict: settled
+    text: Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2; no control outside the kernel does, which
+      is what Augury and GoFetch found.
+    basis: [c-slap-m1-hid11-dmp, c-aug-not-disableable, c-gf-no-disable]
+  early_barrier_completion:
+    verdict: unlikely
+    text: Not on the M1 for DSB. A DSB alone does not stop speculation past a mispredicted branch on the M1; the design
+      comes from post-M1 patents.
+    basis: [c-dimva-dmb-dsb, c-mh-v8-dsb-early]
+  uop_split_merge:
+    verdict: settled
+    text: NOPs never issue and use no unit, but they are not dropped at decode; each takes a retire slot, which is why
+      over 2200 fit in the window.
+    basis: [c-ox-nop-decoder, c-mh-v1-nop-rob-slot, c-dj-nop-b-no-issue, c-mh-v1-nop-window]
+  slc.inclusion:
+    verdict: settled
+    text: Neither inclusive nor strictly exclusive. For CPU lines the SLC is a victim cache of the L2, so CPU reads do not
+      allocate in it, close to the exclusive SLC 7-cpu suggests.
+    basis: [c-7cpu-slc-exclusive, c-mh-v3-slc-neither-incl-excl, c-mh-v8-slc-victim]
+  slc_victim_fill:
+    verdict: likely
+    text: Handley's later readings agree that CPU misses do not allocate in the SLC; his result of about 50 cycles in
+      random boxes fits region prefetch into the L2 better than an SLC prefetcher.
+    basis: [c-mh-v3-cpu-no-slc-alloc, c-mh-v8-slc-victim, c-mh-v2-slc-spatial, c-mh-v2-region-prefetch]
+  zero_cycle_loads:
+    verdict: likely
+    text: Present but narrow. Handley's probes speed up only a load that uses the store's address register with an
+      immediate offset, a case ocxtal's tests need not have hit.
+    basis: [c-mh-v1-zcl-5-vs-7, c-mh-v1-zcl-addressing, c-ox-no-aliasing]

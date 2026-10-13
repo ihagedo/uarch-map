@@ -215,8 +215,7 @@ claims:
     derivation: measured
     value: inclusive
     hedge: "strongly indicate"
-    supports: []
-    contradicts: [l2.inclusion]
+    supports: [l2.inclusion]
     notes: >-
       Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive,
       non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.

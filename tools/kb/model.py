@@ -91,6 +91,7 @@ class Param:
     contradicting: list = field(default_factory=list)
     disputes: list = field(default_factory=list)
     conjecture: dict | None = None
+    judgment: dict | None = None
 
     @property
     def label(self):
@@ -121,6 +122,7 @@ class Mechanism:
     ours: bool = False
     basis: list = field(default_factory=list)
     alternative: str = ""
+    judgment: dict | None = None
 
 
 @dataclass(eq=False)
@@ -232,6 +234,7 @@ class KB:
                 blk = self.blocks[b["id"]]
                 blk.parent = self.blocks[b["parent"]]
                 blk.parent.children.append(blk)
+        self.questions = data.get("questions", {})
         self.mechanisms = {
             k: Mechanism(
                 id=k,
@@ -246,6 +249,7 @@ class KB:
                 ours=v.get("ours", False),
                 basis=[self.claims[c] for c in v.get("basis", []) if c in self.claims],
                 alternative=v.get("alternative", ""),
+                judgment=v.get("judgment"),
             )
             for k, v in data["mechanisms"].items()
         }
@@ -261,6 +265,7 @@ class KB:
                 status=v.get("status", "open"),
                 confidence=v.get("confidence", "unknown"),
                 conjecture=v.get("conjecture"),
+                judgment=v.get("judgment"),
                 sim_key=v.get("sim_key"),
                 mechanism=self.mechanisms.get(v.get("mechanism")),
             )

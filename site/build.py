@@ -226,6 +226,7 @@ def view_data(kb, geo):
                 "status": p.status,
                 "conf": p.confidence,
                 "conj": p.conjecture,
+                "judgment": p.judgment,
                 "simKey": p.sim_key,
                 "mechanism": p.mechanism.id if p.mechanism else None,
                 "for": [c.id for c in p.supporting],
@@ -254,6 +255,7 @@ def view_data(kb, geo):
             }
             for c in kb.claims.values()
         },
+        "questions": kb.questions,
         "sources": {
             s.id: {
                 "cite": s.cite,
@@ -279,6 +281,7 @@ def view_data(kb, geo):
                 "ours": m.ours,
                 "basis": [c.id for c in m.basis],
                 "alternative": m.alternative,
+                "judgment": m.judgment,
             }
             for m in kb.mechanisms.values()
         },

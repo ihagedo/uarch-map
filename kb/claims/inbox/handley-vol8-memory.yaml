@@ -1224,6 +1224,7 @@ new_mechanisms:
   trace_cache:
     name: Trace cache built on stable taken branches
     block: fetch
+    chip: m4
     status: speculative
     description: >-
       Straight-line runs joined by stable taken branches are copied from the instruction queue into a trace cache, so
@@ -1246,6 +1247,7 @@ new_mechanisms:
   hierarchical_store_queue:
     name: Hierarchical store queue
     block: sq
+    chip: post-m1
     status: speculative
     description: >-
       A primary store queue holds the oldest stores, serves three load searches at once and writes to the L1; younger
@@ -1258,6 +1260,7 @@ new_mechanisms:
   early_barrier_completion:
     name: Early barrier completion
     block: lsu
+    chip: post-m1
     status: speculative
     description: >-
       ISB and DSB flush younger work at decode and complete once the relevant older instructions finish, poisoning

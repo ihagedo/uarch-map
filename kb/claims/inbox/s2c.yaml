@@ -129,8 +129,7 @@ claims:
     method: other
     derivation: measured
     value: inclusive
-    supports: []
-    contradicts: [l2.inclusion]
+    supports: [l2.inclusion]
     notes: >-
       Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive,
       non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.
@@ -183,8 +182,7 @@ claims:
     derivation: measured
     value: LRU among one core's lines; non-LRU, possibly pseudo-random, across cores
     hedge: "possibly pseudo-random"
-    supports: []
-    contradicts: [l2.replacement]
+    supports: [l2.replacement]
     notes: >-
       Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as
       strict LRU (c-mh-v8-l2-lru-patent).

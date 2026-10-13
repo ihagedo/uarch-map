@@ -66,6 +66,62 @@
   const DISPUTE_HTML = '<svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true">' +
     '<path class="pin-dispute" d="M6 1.4 L10.6 10 L1.4 10 Z"/></svg>';
 
+  const Q_ORDER = ["measured", "inferred", "patent", "ours", "open"];
+  const Q_WORD = { measured: "measured", inferred: "inferred", patent: "patent only", ours: "ours", open: "open" };
+  const REGION_ORDER = ["frontend", "backend", "lsu", "beyond"];
+  const REGION_NAME = { frontend: "Frontend", backend: "Backend", lsu: "Load-store unit", beyond: "Beyond the core" };
+  function questionsOf(bid) {
+    return Object.entries(D.questions).filter(([, q]) => q.block === bid);
+  }
+  function regionOf(bid) {
+    const box = D.views.L2.boxes[bid];
+    return box ? box.frame : "beyond";
+  }
+  function qChip([qid, q]) {
+    return `<span class="q-chip q-${q.state}" title="${esc(q.q)}">${esc(q.label)}</span>`;
+  }
+  function renderQuestions() {
+    const bids = Object.keys(D.blocks).filter((bid) => questionsOf(bid).length);
+    const count = {}, max = { n: 1 };
+    for (const r of REGION_ORDER) count[r] = Object.fromEntries(Q_ORDER.map((s) => [s, 0]));
+    for (const q of Object.values(D.questions)) count[regionOf(q.block)][q.state]++;
+    for (const r of REGION_ORDER) max.n = Math.max(max.n, Q_ORDER.reduce((a, s) => a + count[r][s], 0));
+    $("q-bars").innerHTML = REGION_ORDER.map((r) => {
+      const n = Q_ORDER.reduce((a, s) => a + count[r][s], 0);
+      const segs = Q_ORDER.filter((s) => count[r][s]).map((s) =>
+        `<span class="q-seg q-${s}" style="flex:${count[r][s]}" title="${Q_WORD[s]}: ${count[r][s]}"></span>`).join("");
+      return `<div class="q-bar-row" style="${hue(r)}"><span>${REGION_NAME[r]}</span>` +
+        `<span class="q-track"><span class="q-bar" style="width:${(100 * n / max.n).toFixed(1)}%">${segs}</span></span>` +
+        `<span class="q-n">${n}</span></div>`;
+    }).join("");
+    $("q-blocks").innerHTML = REGION_ORDER.map((r) => {
+      const rows = bids.filter((bid) => regionOf(bid) === r).map((bid) =>
+        `<button type="button" class="q-row" data-block="${bid}" style="${hue(r)}">` +
+        `<span class="q-name">${esc(D.blocks[bid].name)}</span><span class="q-chips">${questionsOf(bid).map(qChip).join("")}</span></button>`);
+      return rows.length ? `<div class="q-region" style="${hue(r)}"><h3>${REGION_NAME[r]}</h3>${rows.join("")}</div>` : "";
+    }).join("");
+    $("q-blocks").addEventListener("click", (e) => {
+      const row = e.target.closest(".q-row");
+      if (!row) return;
+      select(row.dataset.block, null);
+      $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+  function answerHTML(aid) {
+    const m = D.mechanisms[aid], p = D.params[aid];
+    if (m) return `<li${m.ours ? ' class="ours"' : ""}><b>${esc(m.name)}</b> <span class="status-tag">${m.ours ? "ours, " : ""}${esc(m.status)}</span></li>`;
+    if (p) return `<li${p.conf === "conjecture" ? ' class="ours"' : ""}><b>${esc(p.name)}</b> <span class="status-tag">${p.known ? esc(p.value) : p.conj ? "ours, conjecture" : "nothing published"}</span></li>`;
+    return "";
+  }
+  function questionsHTML(bid) {
+    const qs = questionsOf(bid);
+    if (!qs.length) return "";
+    return `<section class="d-section"><h3>Questions</h3><ul class="q-list">` + qs.map(([qid, q]) =>
+      `<li><span class="q-chip q-${q.state}">${esc(Q_WORD[q.state])}</span><span class="q-text"><b>${esc(q.label)}.</b> ${esc(q.q)}</span>` +
+      (q.answers.length ? `<ul class="q-answers">${q.answers.map(answerHTML).join("")}</ul>` : "") + `</li>`).join("") +
+      `</ul></section>`;
+  }
+
   function renderMasthead() {
     const c = D.counts;
     const stats = [[c.blocks, "blocks"], [c.params, "parameters"], [c.holes, "holes"], [c.claims, "claims"],
@@ -438,6 +494,7 @@
     const mechs = Object.entries(D.mechanisms)
       .filter(([, m]) => m.block === bid || m.params.some((pid) => D.params[pid].block === bid));
     if (mechs.length) h += `<section class="d-section"><h3>Mechanisms</h3>${mechs.map(mechHTML).join("")}</section>`;
+    h += questionsHTML(bid);
     const outs = D.links.filter((l) => l.from === bid), ins = D.links.filter((l) => l.to === bid);
     if (outs.length || ins.length) {
       h += `<section class="d-section"><h3>Connections</h3><ul class="link-list">` +
@@ -463,12 +520,19 @@
       `${esc(p.known ? p.value : p.conj ? p.short : p.value)}${unit}</span>` +
       `<span class="p-meta"><span class="conf-tag conf-${p.conf}">${CONF_WORD[p.conf]}</span>` +
       `<span>${p.known ? DERIV_WORD[p.status] : "Nothing published"}</span><span>${plural(n, "claim")}</span>` +
-      (openDispute(p) ? `<span class="flag">${DISPUTE_HTML}Disputed</span>` : "") + `</span></button>` +
+      (openDispute(p) ? `<span class="flag">${DISPUTE_HTML}Disputed</span>` : "") +
+      (p.judgment ? `<span class="ours-tag">Ours: ${esc(p.judgment.verdict)}</span>` : "") + `</span></button>` +
       (open ? evidenceHTML(pid, p) : "") + `</li>`;
+  }
+
+  const VERDICT = { likely: "Likely on the M1", unlikely: "Unlikely on the M1", open: "Open", settled: "Settled" };
+  function judgmentHTML(j) {
+    return j ? `<span class="judgment"><span class="ours-tag">Ours</span><b>${VERDICT[j.verdict]}.</b> ${esc(j.text)}</span>` : "";
   }
 
   function evidenceHTML(pid, p) {
     let h = `<div class="evidence" id="ev-${pid}">`;
+    if (p.judgment) h += `<p class="ev-flag">${judgmentHTML(p.judgment)}</p>`;
     for (const d of p.disputes) {
       const sides = d.claims.map((cid) => `${D.sources[D.claims[cid].source].cite} ${D.claims[cid].value}`).join(", ");
       h += `<p class="ev-flag">${DISPUTE_HTML}${d.resolution ? "Resolved" : "Disputed"}: ${esc(sides)}` +
@@ -513,7 +577,7 @@
       `<span class="mech-h">${esc(m.name)}` + (m.ours ? `<span class="ours-tag">Ours</span>` : "") +
       `<span class="status-tag">${esc(m.status)}</span>` +
       (m.chip && m.chip !== "m1" ? `<span class="status-tag">${esc(m.chip.toUpperCase())}</span>` : "") + `</span>` +
-      `<span class="mech-desc">${esc(m.description)}</span></button>` +
+      `<span class="mech-desc">${esc(m.description)}</span>${judgmentHTML(m.judgment)}</button>` +
       (more ? `<div class="mech-claims">${more}</div>` : "") + `</div>`;
   }
 
@@ -656,6 +720,7 @@
   window.addEventListener("resize", queueStrings);
 
   renderMasthead();
+  renderQuestions();
   renderSourceFilter();
   renderList();
   renderMap();

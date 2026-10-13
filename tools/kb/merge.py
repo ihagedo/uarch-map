@@ -98,10 +98,11 @@ def merge(core):
         "claims": {},
         "sources": {},
         "mechanisms": {},
+        "questions": {},
     }
     problems = []
 
-    descriptions, conjectures = {}, {}
+    descriptions, conjectures, judgments, questions = {}, {}, {}, {}
     for seed in load_yaml_dir(os.path.join(ROOT, "kb", "seed", core, "*.yaml")):
         kb["isa"] = seed.get("isa", kb["isa"]) or kb["isa"]
         kb["blocks"] += seed.get("blocks", [])
@@ -113,6 +114,10 @@ def merge(core):
             kb["mechanisms"][k] = {"claims": [], **v}
         descriptions.update(seed.get("descriptions") or {})
         conjectures.update(seed.get("conjectures") or {})
+        judgments.update(seed.get("judgments") or {})
+        for bid, qs in (seed.get("questions") or {}).items():
+            for qid, q in qs.items():
+                questions[qid] = {"block": bid, **q}
     by_id = {b["id"]: b for b in kb["blocks"]}
     for bid, text in descriptions.items():
         if bid in by_id:
@@ -284,7 +289,6 @@ def merge(core):
             problems.append(f"claim {cid} cites unknown source {c['source']}")
         if not c.get("loc"):
             problems.append(f"claim {cid} has no loc")
-    block_ids = {b["id"] for b in kb["blocks"]}
     for mid, m in kb["mechanisms"].items():
         if m.get("block") not in block_ids:
             problems.append(f"mechanism {mid} has no known block ({m.get('block')})")
@@ -298,6 +302,42 @@ def merge(core):
         for cid in m["claims"]:
             if cid not in kb["claims"]:
                 problems.append(f"mechanism {mid} cites unknown claim {cid}")
+    # a question's state: its best published answer, else ours, else open
+    LATER = {"post-m1", "m2", "m3", "m4"}
+    mech_rank = {"measured": 0, "absent": 0, "inferred": 1, "speculative": 2, "conjecture": 2}
+    for qid, q in questions.items():
+        if q["block"] not in block_ids:
+            problems.append(f"question {qid} has unknown block {q['block']}")
+        published, ours = [], False
+        for aid in q.get("answers") or []:
+            if aid in kb["mechanisms"]:
+                m = kb["mechanisms"][aid]
+                if m.get("ours"):
+                    ours = True
+                    continue
+                r = mech_rank[m["status"]]
+                published.append(max(r, 2) if m.get("chip", "m1") in LATER else r)
+            elif aid in kb["params"]:
+                p = kb["params"][aid]
+                if p.get("value") is not None:
+                    published.append(0 if p["status"] in ("measured", "documented", "derived") else 1)
+                elif p.get("confidence") == "conjecture":
+                    ours = True
+            else:
+                problems.append(f"question {qid} names unknown answer {aid}")
+        state = (
+            ["measured", "inferred", "patent"][min(published)] if published else "ours" if ours else "open"
+        )
+        kb["questions"][qid] = {**q, "answers": q.get("answers") or [], "state": state}
+    for tid, j in judgments.items():
+        target = kb["params"].get(tid) or kb["mechanisms"].get(tid)
+        if target is None:
+            problems.append(f"judgment for unknown param or mechanism {tid}")
+            continue
+        target["judgment"] = {"basis": [], **j}
+        for cid in j.get("basis") or []:
+            if cid not in kb["claims"]:
+                problems.append(f"judgment on {tid} cites unknown claim {cid}")
     for pid, cj in conjectures.items():
         if pid not in kb["params"]:
             problems.append(f"conjecture for unknown param {pid}")

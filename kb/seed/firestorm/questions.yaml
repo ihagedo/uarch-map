@@ -1,0 +1,301 @@
+# questions.yaml
+# Isaac Hagedorn, 2026-10-13
+# What a model of each block must decide, and the mechanisms and params that answer it.
+
+questions:
+  slc:
+    slc.alloc: {label: "allocation", q: "What allocates in the SLC",
+      answers: [slc_victim_fill, slc.allocation, slc_address_ranges, slc_memory_side]}
+    slc.partition: {label: "partitioning", q: "Partitioning and quotas",
+      answers: [slc_sticky_quota, slc_address_ranges]}
+    slc.repl: {label: "replacement", q: "Replacement", answers: [slc.replacement]}
+    slc.spec_read: {label: "speculative reads", q: "Speculative DRAM reads around the SLC",
+      answers: [slc_speculative_read]}
+    slc.power: {label: "power", q: "Power gating", answers: [slc_power_gating]}
+    slc.line: {label: "line states", q: "SLC line format: size, sectors and coherence states",
+      answers: [slc_line_states]}
+    slc.latency: {label: "latency", q: "Whether SLC hit latency varies with where a line sits", answers: []}
+    slc.org: {label: "organization", q: "Slicing and how an address picks a slice",
+      answers: [slc_slices, slc_memory_side]}
+    slc.place: {label: "placement", q: "Where the SLC sits relative to coherence and the memory controller, and what a write that reaches it means",
+      answers: [slc_memory_side]}
+    slc.dirty: {label: "dirty tracking", q: "How partial-line writes and dirtiness below a full line are tracked",
+      answers: [slc_line_states]}
+  memctrl:
+    mc.sched: {label: "scheduling", q: "How DRAM requests are scheduled",
+      answers: [shared_rw_memory_path, dram_qos_scheduler, dram_rw_turns]}
+    mc.page: {label: "page policy", q: "DRAM page policy and refresh",
+      answers: [dram_refresh_scheduling, dram_qos_scheduler]}
+    mc.compress: {label: "compression", q: "Memory compression",
+      answers: [pattern_index_transfer, cluster_compression_engines]}
+    mc.interleave: {label: "interleave", q: "How physical addresses map to memory controllers, and whether controllers power down",
+      answers: [address_interleave_hash]}
+    mc.dvfs: {label: "DRAM clocks", q: "Whether DRAM and controller clocks change with load",
+      answers: [dram_clock_scaling]}
+    mc.write: {label: "write policy", q: "How writes are queued and merged, and how reads that overlap queued writes are served",
+      answers: [mc_write_merge]}
+    mc.power: {label: "power states", q: "DRAM and memory-controller clocks, performance states, self-refresh and calibration",
+      answers: [dram_power_states]}
+  fabric:
+    fabric.coherence: {label: "coherence", q: "Coherence point, directory and protocol",
+      answers: [coherence_duplicate_tags, coherence_directory, chip.coherence_protocol,
+      unshared_snoop_skip, slc_io_cache_proxy]}
+    fabric.qos: {label: "QoS", q: "QoS classes, virtual channels and credits", answers: [fabric_qos_credits]}
+    fabric.pio: {label: "device traffic", q: "Device and control traffic",
+      answers: [pio_network, uncached_line_handling]}
+    fabric.networks: {label: "networks", q: "How many separate networks carry traffic and which clients use each",
+      answers: [noc_rings_lanes]}
+    fabric.maintenance: {label: "maintenance", q: "How cache and TLB maintenance requests from other cores are delivered and paced",
+      answers: [remote_maintenance_pacing]}
+    fabric.topology: {label: "topology", q: "How the networks are laid out (tiers, rings, lanes, ports) and how commands and data travel",
+      answers: [noc_layout, noc_split_paths, noc_rings_lanes]}
+    fabric.interleave: {label: "interleave", q: "How addresses are spread over coherence, SLC and memory-controller units and over DRAM channels, ranks and banks",
+      answers: [address_interleave_hash]}
+    fabric.ordering: {label: "ordering", q: "How same-address requests are ordered, and what a request does when it meets a busy line or a full resource",
+      answers: [same_address_ordering]}
+  power:
+    power.dvfs: {label: "DVFS", q: "Clock domains and frequency control",
+      answers: [pcluster.clock_domain, dvfs_transition, perf_controller, predictive_clock_crossing,
+      clock_ramp, power_estimator_throttle]}
+    power.throttle: {label: "throttling", q: "Power estimation and throttling",
+      answers: [power_estimator_throttle]}
+    power.idle: {label: "idle", q: "Idle and stall clocking, core power-up",
+      answers: [idle_clock_division, core_power_cycle, l2_snoop_filter]}
+    power.irq: {label: "interrupts", q: "How interrupts reach a core (routing over clusters, holding while cores sleep, refusal, ordering behind device writes)",
+      answers: [interrupt_routing]}
+  l2:
+    l2.org: {label: "organization", q: "Slicing and banking", answers: [l2_cachelets, noc_split_paths]}
+    l2.inclusion: {label: "inclusion", q: "Inclusion and fill path",
+      answers: [l2.inclusion, l2_autolock, l2_victim_fill, l2_half_lines, uncached_line_handling]}
+    l2.repl: {label: "replacement", q: "Replacement and insertion",
+      answers: [l2.replacement, l2_insertion_priority, ipv_replacement, l2_core_lru, l2_half_lines]}
+    l2.snoop: {label: "snoop", q: "Snoop filtering for the cores", answers: [l2_snoop_filter]}
+    l2.arb: {label: "arbitration", q: "Arbitration among cores and request priority",
+      answers: [l2_core_round_robin]}
+    l2.queues: {label: "queues", q: "L2 miss handling and queues", answers: [l2_line_ordering]}
+    l2.power: {label: "power", q: "Power gating of ways", answers: [l2_way_power, l2_zero_line_tags]}
+    l2.clients: {label: "clients", q: "Which cores and clusters may use an L2", answers: [ecores_share_pl2]}
+    l2.lookup: {label: "lookup", q: "How an L2 access finds its set and way (index hashing",
+      answers: [l2_hashed_way_filter]}
+    l2.zero_lines: {label: "zero lines", q: "Whether all-zero lines get a special form (a tag bit",
+      answers: [l2_zero_line_tags]}
+    l2.index: {label: "indexing", q: "Which physical address bits pick the set, and how they are hashed",
+      answers: [l2_physical_index]}
+  amx:
+    amx.issue: {label: "issue", q: "How the core sends AMX work and orders against it",
+      answers: [coprocessor_ordering_table, amx_lsu_issue]}
+    amx.internals: {label: "internals", q: "AMX register state, datapath and memory access",
+      answers: [amx_datapath, amx_shared_contexts]}
+    amx.ops: {label: "operations", q: "Which operations, data types and operand layouts AMX supports",
+      answers: [amx_op_set]}
+    amx.sharing: {label: "sharing", q: "How one AMX unit serves the cores of its cluster",
+      answers: [amx_shared_contexts]}
+  lsu:
+    lsu.alloc: {label: "allocation", q: "When LSQ entries are taken", answers: [lsq_at_issue]}
+    lsu.disamb: {label: "disambiguation", q: "How memory dependences are predicted and what the predictor blocks",
+      answers: [lsu.disambiguation, store_load_dep_predictor]}
+    lsu.forward: {label: "forwarding", q: "Store-to-load forwarding cases, sizes and failures",
+      answers: [lsu.forwarding, zero_cycle_loads, sq_partial_forwarding]}
+    lsu.ordering: {label: "ordering", q: "How Arm ordering, barriers and snoops are enforced on loads and stores",
+      answers: [load_poison_bits, barrier_colors, early_barrier_completion, tso_mode]}
+    lsu.exclusive: {label: "exclusives", q: "Exclusives and atomics",
+      answers: [exclusive_monitor_l1, stxr_barrier_fusion]}
+    lsu.data_spec: {label: "data speculation", q: "Load value and address prediction",
+      answers: [load_value_prediction, load_address_prediction]}
+    lsu.split: {label: "line and page splits", q: "Accesses that cross a line or a page",
+      answers: [split_access_handling]}
+    lsu.coproc: {label: "coprocessor order", q: "Ordering against AMX and other coprocessor traffic",
+      answers: [coprocessor_ordering_table]}
+    lsu.agen: {label: "address generation", q: "How a load's address is formed and checked inside the LSU (load-to-load bypass",
+      answers: [lsu_load_to_load_bypass, agu_same_page_check]}
+    lsu.elim: {label: "repeat removal", q: "Whether repeated or overwritten loads and stores are removed",
+      answers: [redundant_mem_op_elim]}
+    lsu.spec_fault: {label: "faulting loads", q: "What a speculative load or fetch does with an address that would fault",
+      answers: [spec_fault_no_access]}
+  l1i:
+    l1i.repl: {label: "replacement", q: "Which line a fill replaces", answers: [l1i_tree_plru]}
+    l1i.fill: {label: "fill", q: "How lines come in (demand only, next-line, prediction-directed prefetch)",
+      answers: [ftq.fdip, scan_on_fill_nfp, cold_start_mode, decoupled_fetch]}
+    l1i.way: {label: "way lookup", q: "How the way is found (way prediction or parallel lookup)",
+      answers: [l1i_way_prediction]}
+    l1i.predecode: {label: "predecode", q: "What is stored beside each line (predecode, branch marks)",
+      answers: [biased_branch_filter, scan_on_fill_nfp, l1i_predecode]}
+    l1i.coherence: {label: "coherence", q: "How stores to code and cache maintenance reach the L1I",
+      answers: [l1i_maintenance_only]}
+  itlb:
+    itlb.org: {label: "organization", q: "User and kernel iTLBs and their shape", answers: [itlb.org]}
+    itlb.miss: {label: "miss path", q: "Where an iTLB miss goes (L1 dTLB, L2 TLB, walker)",
+      answers: [itlb_victims_to_dtlb]}
+  btb:
+    btb.levels: {label: "levels", q: "The BTB tiers and what a hit in each costs", answers: [l1i_coupled_btb]}
+    btb.alloc: {label: "allocation", q: "Which branches get entries and when (decode, retire, line fill)",
+      answers: [scan_on_fill_nfp, nfp_training]}
+    btb.index: {label: "index and tags", q: "Indexing, tags, aliasing and context",
+      answers: [phantom_fetch, next_fetch_groups]}
+    btb.special: {label: "one-way branches", q: "Special handling of branches that always go one way",
+      answers: [biased_branch_filter]}
+  dirpred:
+    dirpred.struct: {label: "structure", q: "Tables, tags and how the provider is chosen",
+      answers: [dirpred.kind, tage_tables]}
+    dirpred.history: {label: "history", q: "What the history holds and how it updates",
+      answers: [path_history_shift_xor]}
+    dirpred.update: {label: "training", q: "When entries train and allocate (execute or retire; on mispredict)",
+      answers: [retire_time_training, cold_start_mode]}
+    dirpred.recovery: {label: "recovery", q: "How speculative history is repaired after a mispredict",
+      answers: [path_history_rewind]}
+    dirpred.side: {label: "side predictors", q: "Side predictors (loop predictor, statistical corrector)",
+      answers: [loop_predictor]}
+    dirpred.isolation: {label: "isolation", q: "Context or privilege isolation", answers: [bpu_isolation]}
+    dirpred.power: {label: "power", q: "How the branch predictors save energy (clock gating from fetch-predictor hints, staged table lookup, tables powered off)",
+      answers: [predictor_power_gating]}
+  ras:
+    ras.overflow: {label: "overflow", q: "What happens when calls nest deeper than the stack",
+      answers: [ras_overflow_clear, two_level_ras]}
+    ras.repair: {label: "repair", q: "How the stack is repaired after wrong-path calls and returns",
+      answers: [two_level_ras]}
+    ras.target: {label: "return target", q: "How fetch after a return gets its target and fetch-group length",
+      answers: [return_fetch_table]}
+    ras.pac: {label: "pointer auth", q: "How pointer authentication of return addresses interacts with the return stack",
+      answers: [ras_pac_check]}
+  indpred:
+    indpred.struct: {label: "structure", q: "Structure and history used for indirect targets",
+      answers: [indpred.kind, ittage_indirect, objc_msgsend_predictor]}
+    indpred.context: {label: "context", q: "Context tagging and checks", answers: [ibp_context_check]}
+  fetch:
+    fetch.coupling: {label: "coupling", q: "How prediction steers fetch (coupled or decoupled)",
+      answers: [decoupled_fetch]}
+    fetch.block: {label: "fetch block", q: "What one fetch delivers (alignment, line crossing, stop at taken branch)",
+      answers: [next_fetch_groups]}
+    fetch.multi_taken: {label: "several taken", q: "Whether more than one taken branch can be fetched per cycle",
+      answers: [trace_cache, next_fetch_groups]}
+    fetch.redirect: {label: "redirects", q: "How redirects (mispredict, BTB miss, decode-time correction) flow back to fetch",
+      answers: [staged_fetch_redirect, wrong_path_redirect, control_independence]}
+  ftq:
+    ftq.queue: {label: "queue", q: "Whether predicted addresses queue ahead of fetch",
+      answers: [decoupled_fetch]}
+    ftq.prefetch: {label: "prefetch", q: "Whether queued addresses drive I-cache prefetch",
+      answers: [ftq.fdip, decoupled_fetch]}
+  decode:
+    decode.crack: {label: "cracking", q: "Which instructions become several uops, and where they split",
+      answers: [uop_split_merge, ldpq_lsu_split]}
+    decode.fusion: {label: "fusion", q: "Which pairs fuse and at which stage",
+      answers: [rename.fusion, load_op_fusion, macro_op_fusion]}
+    decode.loop: {label: "loops", q: "Loop buffer or replay of loops from a queue", answers: [loop_modes]}
+    decode.barrier: {label: "barriers", q: "How barriers and system instructions are handled early",
+      answers: [early_barrier_completion, speculation_barriers]}
+  iq:
+    iq.role: {label: "role", q: "What the queue between fetch and decode does (skid, loop source, bypass when empty)",
+      answers: [loop_modes, iq_bypass_fixup]}
+  rename:
+    rename.map: {label: "in-group dependences", q: "How dependencies inside one 8-wide group are resolved",
+      answers: [group_map]}
+    rename.elim: {label: "eliminations", q: "Move elimination, zero idioms and immediates (how they share registers)",
+      answers: [rename.mov_elimination, rename.zero_idiom, immediate_regs, move_elimination,
+      rename_retire_queue]}
+    rename.recovery: {label: "recovery", q: "How the map is restored after a mispredict or exception",
+      answers: [rename_retire_queue]}
+    rename.security: {label: "security tag", q: "Security tags on register mappings",
+      answers: [register_security_tag]}
+    rename.sysreg: {label: "system registers", q: "How writes to flags and special registers are renamed instead of serialized",
+      answers: [speculative_special_regs]}
+    rename.reconverge: {label: "reconvergence", q: "Whether work past the reconvergence point of a mispredicted branch is kept rather than redone",
+      answers: [control_independence]}
+  int_prf:
+    regfile.free: {label: "freeing", q: "When a physical register is freed", answers: [rename_retire_queue]}
+    regfile.banks: {label: "banks", q: "Banking, read ports and power",
+      answers: [banked_prf_power, writeback_overflow_pool]}
+  flags_prf:
+    regfile.flags: {label: "flags", q: "How condition flags are renamed and stored",
+      answers: [split_flag_files]}
+  dispatch:
+    dispatch.buffers: {label: "buffers", q: "Buffers between rename and the schedulers",
+      answers: [dispatch_buffers]}
+    dispatch.steer: {label: "steering", q: "How a uop picks its scheduler queue", answers: [dispatch_buffers]}
+    dispatch.stall: {label: "stalls", q: "What stalls rename when a buffer or queue is full",
+      answers: [dispatch_buffers]}
+  sched_int:
+    sched.select: {label: "select", q: "Which ready uop issues first", answers: [matrix_scheduler]}
+    sched.pairing: {label: "pairing", q: "Paired or shared queues", answers: [paired_sched_queues]}
+    sched.wakeup: {label: "wakeup", q: "How dependents wake (tag broadcast, speculative wakeup behind loads)",
+      answers: [matrix_scheduler]}
+    sched.replay: {label: "replay", q: "What happens to dependents of a load that misses or conflicts",
+      answers: [fill_forwarding, load_replay_shadow]}
+    sched.flush: {label: "mispredict flush", q: "How scheduler entries younger than a mispredict or exception are found and flushed",
+      answers: [issue_age_flush]}
+  sched_ls:
+    sched.ls_split: {label: "load/store split", q: "How load and store uops split across the memory queues",
+      answers: [paired_sched_queues, sched_ls.queues]}
+  eu_int:
+    exec.unpipelined: {label: "unpipelined units", q: "Dividers and other unpipelined units, and how they block issue",
+      answers: [divider_pipe]}
+    exec.roles: {label: "roles", q: "Which units take which operations", answers: [eu_int.roles, eu_fp.roles]}
+  eu_fp:
+    exec.bypass: {label: "bypass", q: "Forwarding network and cross-domain (int to FP) delays",
+      answers: [fp_back_to_back_fusion, exec_forwarding]}
+    exec.power: {label: "power", q: "Power and throttling of the execution units",
+      answers: [simd_power_down, power_estimator_throttle]}
+  retire:
+    retire.groups: {label: "groups", q: "How uops retire (groups, rows, rate)", answers: [retire_groups]}
+    retire.renames: {label: "renames", q: "What limits renames in flight", answers: [rename_retire_queue]}
+    retire.branches: {label: "branches", q: "How in-flight branches are tracked and limited",
+      answers: [retire_time_training]}
+    retire.exceptions: {label: "exceptions", q: "How exceptions and interrupts are taken",
+      answers: [abandonable_requests, interrupt_routing]}
+    retire.release: {label: "early release", q: "Which resources are released before retire",
+      answers: [lsq_early_release]}
+  lq:
+    lq.release: {label: "early release", q: "When load entries free", answers: [lsq_early_release]}
+    lq.check: {label: "ordering check", q: "How loads are checked against later stores and snoops",
+      answers: [load_poison_bits, late_ordering_check]}
+  sq:
+    sq.structure: {label: "structure", q: "Store queue organization and search",
+      answers: [hierarchical_store_queue]}
+    sq.commit: {label: "commit", q: "How stores leave the queue (order, merging, write combining)",
+      answers: [sq_32b_slots, uncached_line_handling]}
+    sq.stream: {label: "streaming", q: "Streaming and zeroing stores",
+      answers: [streaming_store_nt, dczva_l2_zero]}
+  l1d:
+    l1d.banking: {label: "banking", q: "Banks, ports and access merging", answers: [l1d_banked_piggyback]}
+    l1d.way: {label: "way lookup", q: "Way lookup and placement", answers: [l1d_way_lookup, l1d_hashed_way]}
+    l1d.repl: {label: "replacement", q: "Replacement", answers: [l1d.replacement, l1d_tree_plru]}
+    l1d.write: {label: "write policy", q: "Write policy and what a store miss does",
+      answers: [l1d_write_allocate]}
+    l1d.fill: {label: "fill", q: "How fills return and wake loads",
+      answers: [fill_forwarding, fill_bank_conflicts]}
+    l1d.coherence: {label: "coherence", q: "Coherence states held and how snoops reach the L1D",
+      answers: [l2_snoop_filter, l1_l2_coherence_limit]}
+    l1d.power: {label: "power", q: "How idle L1D SRAM is powered down and what waking it costs",
+      answers: [cache_subarray_power]}
+    l1d.index: {label: "indexing", q: "Which address bits pick the set, and whether they are virtual or physical",
+      answers: [l1d_page_offset_index]}
+  dtlb:
+    dtlb.levels: {label: "levels", q: "TLB levels and what each holds",
+      answers: [dtlb.l1_org, dtlb.l2_org, itlb_victims_to_dtlb, tlb_mixed_page_sizes, cluster_l2_tlb]}
+    dtlb.port: {label: "ports", q: "Lookups per cycle and sharing", answers: [dtlb_piggyback]}
+    dtlb.walk: {label: "page walks", q: "Page table walks (walkers in flight, walk caches, where entries are cached)",
+      answers: [mmu_walk_cache, cluster_l2_tlb, content_directed_prefetch]}
+    dtlb.context: {label: "context", q: "ASID and VMID tags, invalidation",
+      answers: [tlb_invalidation_shortcuts, itlb_victims_to_dtlb]}
+    dtlb.perm: {label: "permissions", q: "How page permissions are encoded and changed",
+      answers: [indexed_page_permissions]}
+    dtlb.repl: {label: "replacement", q: "Which entry a TLB fill replaces",
+      answers: [dtlb_random_replacement]}
+    dtlb.power: {label: "power", q: "Whether TLB banks sleep or power down and what waking costs",
+      answers: [l2_way_power]}
+  prefetch:
+    prefetch.train: {label: "training", q: "What the prefetchers train on",
+      answers: [lsu_virtual_prefetch, ampm_prefetcher, content_directed_prefetch]}
+    prefetch.kinds: {label: "kinds", q: "Which prefetchers exist and what patterns each covers",
+      answers: [prefetch.kinds, content_directed_prefetch, ampm_prefetcher, temporal_prefetch]}
+    prefetch.throttle: {label: "throttling", q: "Throttling, accuracy feedback and deny lists",
+      answers: [prefetch_deny_list, prefetch_throttle, content_directed_prefetch]}
+    prefetch.target: {label: "fill level", q: "Which level each prefetcher fills",
+      answers: [content_directed_prefetch, lsu_virtual_prefetch]}
+    prefetch.nt: {label: "non-temporal", q: "Non-temporal handling", answers: [nt_load_handling]}
+    prefetch.control: {label: "controls", q: "Which control bits or modes (HID bits, DIT) turn a prefetcher off",
+      answers: [content_directed_prefetch]}
+  mshr:
+    mshr.merge: {label: "merging", q: "Whether misses to one line merge", answers: [fill_buffer_pool]}
+    mshr.store: {label: "store misses", q: "How store misses are handled", answers: [l1d_write_allocate]}
+    mshr.share: {label: "sharing", q: "Sharing between loads, stores and prefetches, and what happens when full",
+      answers: [fill_buffer_pool]}

@@ -2332,22 +2332,21 @@
         "c-mh-v2-l2-random-repl",
         "c-s2c-l2-repl"
       ],
-      "disputes": [
-        {
-          "claims": [
-            "c-mh-v2-l2-random-repl",
-            "c-s2c-l2-repl"
-          ],
-          "note": "Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).",
-          "resolution": null,
-          "resolved_by": null
-        }
-      ],
+      "disputes": [],
       "block": "l2",
       "name": "L2 replacement policy",
-      "value": "random",
-      "status": "inferred",
-      "confidence": "inferred"
+      "value": "LRU among one core's lines; non-LRU, possibly pseudo-random, across cores",
+      "status": "measured",
+      "confidence": "single",
+      "judgment": {
+        "basis": [
+          "c-s2c-l2-repl",
+          "c-mh-v2-l2-random-repl",
+          "c-mh-v3-l2-stream-lru0"
+        ],
+        "verdict": "settled",
+        "text": "LRU among one core's lines, as S2C measured. Handley's partial hits between 8 and 16 MiB fit low-priority insertion of streaming lines better than random replacement."
+      }
     },
     "slc.load_bw": {
       "claims": [
@@ -2473,31 +2472,21 @@
         "c-ilk-l2-inclusive",
         "c-s2c-l2-inclusive"
       ],
-      "disputes": [
-        {
-          "claims": [
-            "c-mh-v3-l2-covering-tags-hint",
-            "c-ilk-l2-inclusive"
-          ],
-          "note": "Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive, non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v3-l2-covering-tags-hint",
-            "c-s2c-l2-inclusive"
-          ],
-          "note": "Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.",
-          "resolution": null,
-          "resolved_by": null
-        }
-      ],
+      "disputes": [],
       "block": "l2",
       "name": "L2 inclusion of L1 contents",
-      "value": "non-inclusive, non-exclusive",
-      "status": "inferred",
-      "confidence": "inferred"
+      "value": "inclusive",
+      "status": "measured",
+      "confidence": "corroborated",
+      "judgment": {
+        "basis": [
+          "c-ilk-l2-inclusive",
+          "c-s2c-l2-inclusive",
+          "c-mh-v3-dram-fill-l1-only"
+        ],
+        "verdict": "settled",
+        "text": "Inclusive of the L1Ds. Two labs measured it across cores; the non-inclusive readings come from patents."
+      }
     },
     "l2.power_groups": {
       "claims": [
@@ -2520,7 +2509,16 @@
       "name": "SLC inclusion of L2 contents",
       "value": "non-inclusive, non-exclusive",
       "status": "inferred",
-      "confidence": "inferred"
+      "confidence": "inferred",
+      "judgment": {
+        "basis": [
+          "c-7cpu-slc-exclusive",
+          "c-mh-v3-slc-neither-incl-excl",
+          "c-mh-v8-slc-victim"
+        ],
+        "verdict": "settled",
+        "text": "Neither inclusive nor strictly exclusive. For CPU lines the SLC is a victim cache of the L2, so CPU reads do not allocate in it, close to the exclusive SLC 7-cpu suggests."
+      }
     },
     "chip.coherence_protocol": {
       "claims": [
@@ -20982,8 +20980,7 @@
       "derivation": "measured",
       "value": "inclusive",
       "hedge": "strongly indicate",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l2.inclusion"
       ],
       "notes": "Cross-core test with a control set that leaves the victim alone. Disagrees with the non-inclusive, non-exclusive readings of c-mh-v3-l2-covering-tags-hint and c-mh-v3-dram-fill-l1-only.",
@@ -23199,8 +23196,7 @@
       "method": "other",
       "derivation": "measured",
       "value": "inclusive",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l2.inclusion"
       ],
       "notes": "Two cores, eviction set split over two L1D sets so AutoLock cannot interfere. Disagrees with the non-inclusive, non-exclusive reading (c-mh-v3-l2-covering-tags-hint, c-mh-v3-dram-fill-l1-only). E-core results said similar.",
@@ -23259,8 +23255,7 @@
       "derivation": "measured",
       "value": "LRU among one core's lines; non-LRU, possibly pseudo-random, across cores",
       "hedge": "possibly pseudo-random",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l2.replacement"
       ],
       "notes": "Disagrees with plain random replacement (c-mh-v2-l2-random-repl) for same-core lines; vol 8 reads a patent as strict LRU (c-mh-v8-l2-lru-patent).",
@@ -25523,7 +25518,15 @@
       "name": "Decode RAS with fetch mini-RAS",
       "block": "ras",
       "status": "speculative",
-      "description": "The main return stack is kept at decode, and a small fetch-side stack covers only returns whose calls decode has not yet seen."
+      "description": "The main return stack is kept at decode, and a small fetch-side stack covers only returns whose calls decode has not yet seen.",
+      "judgment": {
+        "basis": [
+          "c-mh-v4-ras-at-decode",
+          "c-mh-v4-ras-mini"
+        ],
+        "verdict": "likely",
+        "text": "Both patents predate the M1, and nothing measured goes against a main stack at decode with a small fetch-side stack."
+      }
     },
     "ittage_indirect": {
       "claims": [
@@ -25630,7 +25633,17 @@
       "name": "Uop splitting and merging",
       "block": "decode",
       "status": "measured",
-      "description": "Shifted or extended ALU ops are one uop that issues twice, LDP and fused pairs issue once, NOP and B never issue, and pre- or post-indexed accesses add a base-update uop."
+      "description": "Shifted or extended ALU ops are one uop that issues twice, LDP and fused pairs issue once, NOP and B never issue, and pre- or post-indexed accesses add a base-update uop.",
+      "judgment": {
+        "basis": [
+          "c-ox-nop-decoder",
+          "c-mh-v1-nop-rob-slot",
+          "c-dj-nop-b-no-issue",
+          "c-mh-v1-nop-window"
+        ],
+        "verdict": "settled",
+        "text": "NOPs never issue and use no unit, but they are not dropped at decode; each takes a retire slot, which is why over 2200 fit in the window."
+      }
     },
     "iq_bypass_fixup": {
       "claims": [
@@ -25642,7 +25655,15 @@
       "name": "Instruction-queue bypass and fix-up",
       "block": "iq",
       "status": "speculative",
-      "description": "Fetch bypasses the instruction queue when it is empty; in the queue, instructions a taken short forward branch skips are deleted without resteering fetch."
+      "description": "Fetch bypasses the instruction queue when it is empty; in the queue, instructions a taken short forward branch skips are deleted without resteering fetch.",
+      "judgment": {
+        "basis": [
+          "c-mh-v4-iq-bypass",
+          "c-mh-v8-sfb-patent"
+        ],
+        "verdict": "likely",
+        "text": "Likely for bypassing an empty queue. Deleting the instructions a short forward branch skips comes from a post-M1 patent and stays open."
+      }
     },
     "control_independence": {
       "claims": [
@@ -25756,7 +25777,15 @@
       "name": "Matrix scheduler",
       "block": "sched_int",
       "status": "speculative",
-      "description": "Queues do not shift: a dependency matrix indexed by scheduler entry wakes dependents over a wide bus, an age matrix picks the oldest ready uop, and operands are read at issue."
+      "description": "Queues do not shift: a dependency matrix indexed by scheduler entry wakes dependents over a wide bus, an age matrix picks the oldest ready uop, and operands are read at issue.",
+      "judgment": {
+        "basis": [
+          "c-mh-v1-read-at-issue",
+          "c-mh-v1-age-matrix"
+        ],
+        "verdict": "likely",
+        "text": "Nothing measured goes against it, and it fits operands read at issue from queues that do not shift."
+      }
     },
     "load_replay_shadow": {
       "claims": [
@@ -26116,7 +26145,16 @@
         "sq.entries"
       ],
       "sim_switch": "lsq_alloc_issue",
-      "detection_rule": "same filler gives different knees under a miss delay and an ALU delay"
+      "detection_rule": "same filler gives different knees under a miss delay and an ALU delay",
+      "judgment": {
+        "basis": [
+          "c-mh-v1-virtual-lsq",
+          "c-mh-v1-lq-dram-125",
+          "c-mh-v1-lq-storeaddr-188"
+        ],
+        "verdict": "likely",
+        "text": "Allocation at issue explains why the apparent queue sizes change with the delay used (about 330, 125 and 100, 188 and 118)."
+      }
     },
     "register_security_tag": {
       "claims": [
@@ -26401,7 +26439,16 @@
         "lsu.store_load_latency"
       ],
       "sim_switch": null,
-      "detection_rule": "a store and reload through the same base register shortens a load-to-DIV dependency chain; the same address through a different register does not"
+      "detection_rule": "a store and reload through the same base register shortens a load-to-DIV dependency chain; the same address through a different register does not",
+      "judgment": {
+        "basis": [
+          "c-mh-v1-zcl-5-vs-7",
+          "c-mh-v1-zcl-addressing",
+          "c-ox-no-aliasing"
+        ],
+        "verdict": "likely",
+        "text": "Present but narrow. Handley's probes speed up only a load that uses the store's address register with an immediate offset, a case ocxtal's tests need not have hit."
+      }
     },
     "banked_prf_power": {
       "claims": [
@@ -26528,7 +26575,16 @@
         "l2.core_capacity"
       ],
       "sim_switch": null,
-      "detection_rule": "single-core bandwidth sweeps step at ~3 MiB and ~7.5 MiB, short of the 12 MiB L2"
+      "detection_rule": "single-core bandwidth sweeps step at ~3 MiB and ~7.5 MiB, short of the 12 MiB L2",
+      "judgment": {
+        "basis": [
+          "c-mh-v2-l2-transitions",
+          "c-mh-v2-l2-inner-bw",
+          "c-s2c-l2-slices"
+        ],
+        "verdict": "likely",
+        "text": "Likely in effect. One core's bandwidth changes at 3 MiB and 7.5 MiB, and S2C's two hashed index bits fit four slices; whether the cachelets are physical is open."
+      }
     },
     "dczva_l2_zero": {
       "claims": [
@@ -26751,7 +26807,16 @@
         "prefetch.kinds"
       ],
       "sim_switch": null,
-      "detection_rule": "loading a line of pointers makes later chases through those pointers faster although no load ever used their addresses"
+      "detection_rule": "loading a line of pointers makes later chases through those pointers faster although no load ever used their addresses",
+      "judgment": {
+        "basis": [
+          "c-slap-m1-hid11-dmp",
+          "c-aug-not-disableable",
+          "c-gf-no-disable"
+        ],
+        "verdict": "settled",
+        "text": "Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2; no control outside the kernel does, which is what Augury and GoFetch found."
+      }
     },
     "barrier_colors": {
       "claims": [
@@ -26879,7 +26944,15 @@
         "US10963392B1"
       ],
       "sim_switch": null,
-      "detection_rule": "one pass over a footprint larger than the L1 leaves little for a second pass to hit in the L2, while repeated passes build up L2 hits"
+      "detection_rule": "one pass over a footprint larger than the L1 leaves little for a second pass to hit in the L2, while repeated passes build up L2 hits",
+      "judgment": {
+        "basis": [
+          "c-ilk-l2-inclusive",
+          "c-s2c-l2-inclusive"
+        ],
+        "verdict": "unlikely",
+        "text": "Not as stated on the M1. With an inclusive L2, measured by two labs, DRAM fills enter the L2 as well as the L1."
+      }
     },
     "l2_insertion_priority": {
       "claims": [
@@ -26928,7 +27001,17 @@
         "l2.size"
       ],
       "sim_switch": null,
-      "detection_rule": "the cached region seen by one core extends to about the L2 share plus the SLC, not to the larger of the two"
+      "detection_rule": "the cached region seen by one core extends to about the L2 share plus the SLC, not to the larger of the two",
+      "judgment": {
+        "basis": [
+          "c-mh-v3-cpu-no-slc-alloc",
+          "c-mh-v8-slc-victim",
+          "c-mh-v2-slc-spatial",
+          "c-mh-v2-region-prefetch"
+        ],
+        "verdict": "likely",
+        "text": "Handley's later readings agree that CPU misses do not allocate in the SLC; his result of about 50 cycles in random boxes fits region prefetch into the L2 better than an SLC prefetcher."
+      }
     },
     "coherence_duplicate_tags": {
       "claims": [
@@ -27212,7 +27295,14 @@
         "US9471322B2"
       ],
       "sim_switch": null,
-      "detection_rule": "a loop body shorter than the 8-wide dispatch group sustaining more than one iteration (taken loop-back branch) per cycle would show loop packing"
+      "detection_rule": "a loop body shorter than the 8-wide dispatch group sustaining more than one iteration (taken loop-back branch) per cycle would show loop packing",
+      "judgment": {
+        "basis": [
+          "c-mh-v4-loop-buffers-m1"
+        ],
+        "verdict": "likely",
+        "text": "Handley says the M1 has loop buffers to save energy; a loop's backward branch already costs nothing, so they should not change timing."
+      }
     },
     "fill_forwarding": {
       "claims": [
@@ -27258,11 +27348,20 @@
       ],
       "name": "Trace cache built on stable taken branches",
       "block": "fetch",
+      "chip": "m4",
       "status": "speculative",
       "description": "Straight-line runs joined by stable taken branches are copied from the instruction queue into a trace cache, so one fetch can cross several taken branches.",
       "params": [],
       "sim_switch": null,
-      "detection_rule": "a loop body joined by always-taken branches sustains more than one taken branch per cycle"
+      "detection_rule": "a loop body joined by always-taken branches sustains more than one taken branch per cycle",
+      "judgment": {
+        "basis": [
+          "c-ox-two-branches",
+          "c-mh-v8-trace-cache"
+        ],
+        "verdict": "unlikely",
+        "text": "Not on the M1. ocxtal measured at most one taken branch per cycle, and Handley places the trace cache on the M4."
+      }
     },
     "prefetch_deny_list": {
       "claims": [
@@ -27291,6 +27390,7 @@
       ],
       "name": "Hierarchical store queue",
       "block": "sq",
+      "chip": "post-m1",
       "status": "speculative",
       "description": "A primary store queue holds the oldest stores, serves three load searches at once and writes to the L1; younger stores wait in a slower secondary queue searched one load at a time.",
       "params": [
@@ -27298,7 +27398,16 @@
         "lsu.store_load_latency"
       ],
       "sim_switch": null,
-      "detection_rule": "with many older stores in flight, forwarding from one of the youngest stores takes about 11 cycles instead of about 4"
+      "detection_rule": "with many older stores in flight, forwarding from one of the youngest stores takes about 11 cycles instead of about 4",
+      "judgment": {
+        "basis": [
+          "c-mh-v8-hsq-two-queues",
+          "c-mh-v2-sq-banks-guess",
+          "c-dj-stores"
+        ],
+        "verdict": "unlikely",
+        "text": "Not in this form on the M1. The two-queue design comes from a post-M1 patent; the M1's 60 stores fit one queue, banked as Handley guesses from the mixed-stream stall."
+      }
     },
     "early_barrier_completion": {
       "claims": [
@@ -27314,11 +27423,20 @@
       ],
       "name": "Early barrier completion",
       "block": "lsu",
+      "chip": "post-m1",
       "status": "speculative",
       "description": "ISB and DSB flush younger work at decode and complete once the relevant older instructions finish, poisoning rare conflicting instructions instead of waiting for the barrier to reach the ROB head.",
       "params": [],
       "sim_switch": null,
-      "detection_rule": "an ISB or DSB costs little more than a refetch when no older memory or system-register work is pending, and its cost grows with outstanding older loads and stores rather than with older ALU work"
+      "detection_rule": "an ISB or DSB costs little more than a refetch when no older memory or system-register work is pending, and its cost grows with outstanding older loads and stores rather than with older ALU work",
+      "judgment": {
+        "basis": [
+          "c-dimva-dmb-dsb",
+          "c-mh-v8-dsb-early"
+        ],
+        "verdict": "unlikely",
+        "text": "Not on the M1 for DSB. A DSB alone does not stop speculation past a mispredicted branch on the M1; the design comes from post-M1 patents."
+      }
     },
     "coherence_directory": {
       "claims": [
@@ -27493,6 +27611,1418 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "with ACTLR_EL1.EnTSO set, cache-hitting loads wider than 16 B run over 10x slower on an M1 P core and an 8-byte load forwarded from a 4-byte store runs several times slower than with the bit clear"
+    }
+  },
+  "questions": {
+    "slc.alloc": {
+      "block": "slc",
+      "label": "allocation",
+      "q": "What allocates in the SLC",
+      "answers": [
+        "slc_victim_fill",
+        "slc.allocation",
+        "slc_address_ranges",
+        "slc_memory_side"
+      ],
+      "state": "inferred"
+    },
+    "slc.partition": {
+      "block": "slc",
+      "label": "partitioning",
+      "q": "Partitioning and quotas",
+      "answers": [
+        "slc_sticky_quota",
+        "slc_address_ranges"
+      ],
+      "state": "inferred"
+    },
+    "slc.repl": {
+      "block": "slc",
+      "label": "replacement",
+      "q": "Replacement",
+      "answers": [
+        "slc.replacement"
+      ],
+      "state": "inferred"
+    },
+    "slc.spec_read": {
+      "block": "slc",
+      "label": "speculative reads",
+      "q": "Speculative DRAM reads around the SLC",
+      "answers": [
+        "slc_speculative_read"
+      ],
+      "state": "inferred"
+    },
+    "slc.power": {
+      "block": "slc",
+      "label": "power",
+      "q": "Power gating",
+      "answers": [
+        "slc_power_gating"
+      ],
+      "state": "inferred"
+    },
+    "slc.line": {
+      "block": "slc",
+      "label": "line states",
+      "q": "SLC line format: size, sectors and coherence states",
+      "answers": [
+        "slc_line_states"
+      ],
+      "state": "patent"
+    },
+    "slc.latency": {
+      "block": "slc",
+      "label": "latency",
+      "q": "Whether SLC hit latency varies with where a line sits",
+      "answers": [],
+      "state": "open"
+    },
+    "slc.org": {
+      "block": "slc",
+      "label": "organization",
+      "q": "Slicing and how an address picks a slice",
+      "answers": [
+        "slc_slices",
+        "slc_memory_side"
+      ],
+      "state": "inferred"
+    },
+    "slc.place": {
+      "block": "slc",
+      "label": "placement",
+      "q": "Where the SLC sits relative to coherence and the memory controller, and what a write that reaches it means",
+      "answers": [
+        "slc_memory_side"
+      ],
+      "state": "patent"
+    },
+    "slc.dirty": {
+      "block": "slc",
+      "label": "dirty tracking",
+      "q": "How partial-line writes and dirtiness below a full line are tracked",
+      "answers": [
+        "slc_line_states"
+      ],
+      "state": "patent"
+    },
+    "mc.sched": {
+      "block": "memctrl",
+      "label": "scheduling",
+      "q": "How DRAM requests are scheduled",
+      "answers": [
+        "shared_rw_memory_path",
+        "dram_qos_scheduler",
+        "dram_rw_turns"
+      ],
+      "state": "inferred"
+    },
+    "mc.page": {
+      "block": "memctrl",
+      "label": "page policy",
+      "q": "DRAM page policy and refresh",
+      "answers": [
+        "dram_refresh_scheduling",
+        "dram_qos_scheduler"
+      ],
+      "state": "patent"
+    },
+    "mc.compress": {
+      "block": "memctrl",
+      "label": "compression",
+      "q": "Memory compression",
+      "answers": [
+        "pattern_index_transfer",
+        "cluster_compression_engines"
+      ],
+      "state": "patent"
+    },
+    "mc.interleave": {
+      "block": "memctrl",
+      "label": "interleave",
+      "q": "How physical addresses map to memory controllers, and whether controllers power down",
+      "answers": [
+        "address_interleave_hash"
+      ],
+      "state": "patent"
+    },
+    "mc.dvfs": {
+      "block": "memctrl",
+      "label": "DRAM clocks",
+      "q": "Whether DRAM and controller clocks change with load",
+      "answers": [
+        "dram_clock_scaling"
+      ],
+      "state": "inferred"
+    },
+    "mc.write": {
+      "block": "memctrl",
+      "label": "write policy",
+      "q": "How writes are queued and merged, and how reads that overlap queued writes are served",
+      "answers": [
+        "mc_write_merge"
+      ],
+      "state": "patent"
+    },
+    "mc.power": {
+      "block": "memctrl",
+      "label": "power states",
+      "q": "DRAM and memory-controller clocks, performance states, self-refresh and calibration",
+      "answers": [
+        "dram_power_states"
+      ],
+      "state": "patent"
+    },
+    "fabric.coherence": {
+      "block": "fabric",
+      "label": "coherence",
+      "q": "Coherence point, directory and protocol",
+      "answers": [
+        "coherence_duplicate_tags",
+        "coherence_directory",
+        "chip.coherence_protocol",
+        "unshared_snoop_skip",
+        "slc_io_cache_proxy"
+      ],
+      "state": "inferred"
+    },
+    "fabric.qos": {
+      "block": "fabric",
+      "label": "QoS",
+      "q": "QoS classes, virtual channels and credits",
+      "answers": [
+        "fabric_qos_credits"
+      ],
+      "state": "inferred"
+    },
+    "fabric.pio": {
+      "block": "fabric",
+      "label": "device traffic",
+      "q": "Device and control traffic",
+      "answers": [
+        "pio_network",
+        "uncached_line_handling"
+      ],
+      "state": "inferred"
+    },
+    "fabric.networks": {
+      "block": "fabric",
+      "label": "networks",
+      "q": "How many separate networks carry traffic and which clients use each",
+      "answers": [
+        "noc_rings_lanes"
+      ],
+      "state": "patent"
+    },
+    "fabric.maintenance": {
+      "block": "fabric",
+      "label": "maintenance",
+      "q": "How cache and TLB maintenance requests from other cores are delivered and paced",
+      "answers": [
+        "remote_maintenance_pacing"
+      ],
+      "state": "patent"
+    },
+    "fabric.topology": {
+      "block": "fabric",
+      "label": "topology",
+      "q": "How the networks are laid out (tiers, rings, lanes, ports) and how commands and data travel",
+      "answers": [
+        "noc_layout",
+        "noc_split_paths",
+        "noc_rings_lanes"
+      ],
+      "state": "patent"
+    },
+    "fabric.interleave": {
+      "block": "fabric",
+      "label": "interleave",
+      "q": "How addresses are spread over coherence, SLC and memory-controller units and over DRAM channels, ranks and banks",
+      "answers": [
+        "address_interleave_hash"
+      ],
+      "state": "patent"
+    },
+    "fabric.ordering": {
+      "block": "fabric",
+      "label": "ordering",
+      "q": "How same-address requests are ordered, and what a request does when it meets a busy line or a full resource",
+      "answers": [
+        "same_address_ordering"
+      ],
+      "state": "patent"
+    },
+    "power.dvfs": {
+      "block": "power",
+      "label": "DVFS",
+      "q": "Clock domains and frequency control",
+      "answers": [
+        "pcluster.clock_domain",
+        "dvfs_transition",
+        "perf_controller",
+        "predictive_clock_crossing",
+        "clock_ramp",
+        "power_estimator_throttle"
+      ],
+      "state": "measured"
+    },
+    "power.throttle": {
+      "block": "power",
+      "label": "throttling",
+      "q": "Power estimation and throttling",
+      "answers": [
+        "power_estimator_throttle"
+      ],
+      "state": "patent"
+    },
+    "power.idle": {
+      "block": "power",
+      "label": "idle",
+      "q": "Idle and stall clocking, core power-up",
+      "answers": [
+        "idle_clock_division",
+        "core_power_cycle",
+        "l2_snoop_filter"
+      ],
+      "state": "patent"
+    },
+    "power.irq": {
+      "block": "power",
+      "label": "interrupts",
+      "q": "How interrupts reach a core (routing over clusters, holding while cores sleep, refusal, ordering behind device writes)",
+      "answers": [
+        "interrupt_routing"
+      ],
+      "state": "patent"
+    },
+    "l2.org": {
+      "block": "l2",
+      "label": "organization",
+      "q": "Slicing and banking",
+      "answers": [
+        "l2_cachelets",
+        "noc_split_paths"
+      ],
+      "state": "patent"
+    },
+    "l2.inclusion": {
+      "block": "l2",
+      "label": "inclusion",
+      "q": "Inclusion and fill path",
+      "answers": [
+        "l2.inclusion",
+        "l2_autolock",
+        "l2_victim_fill",
+        "l2_half_lines",
+        "uncached_line_handling"
+      ],
+      "state": "measured"
+    },
+    "l2.repl": {
+      "block": "l2",
+      "label": "replacement",
+      "q": "Replacement and insertion",
+      "answers": [
+        "l2.replacement",
+        "l2_insertion_priority",
+        "ipv_replacement",
+        "l2_core_lru",
+        "l2_half_lines"
+      ],
+      "state": "measured"
+    },
+    "l2.snoop": {
+      "block": "l2",
+      "label": "snoop",
+      "q": "Snoop filtering for the cores",
+      "answers": [
+        "l2_snoop_filter"
+      ],
+      "state": "patent"
+    },
+    "l2.arb": {
+      "block": "l2",
+      "label": "arbitration",
+      "q": "Arbitration among cores and request priority",
+      "answers": [
+        "l2_core_round_robin"
+      ],
+      "state": "ours"
+    },
+    "l2.queues": {
+      "block": "l2",
+      "label": "queues",
+      "q": "L2 miss handling and queues",
+      "answers": [
+        "l2_line_ordering"
+      ],
+      "state": "patent"
+    },
+    "l2.power": {
+      "block": "l2",
+      "label": "power",
+      "q": "Power gating of ways",
+      "answers": [
+        "l2_way_power",
+        "l2_zero_line_tags"
+      ],
+      "state": "patent"
+    },
+    "l2.clients": {
+      "block": "l2",
+      "label": "clients",
+      "q": "Which cores and clusters may use an L2",
+      "answers": [
+        "ecores_share_pl2"
+      ],
+      "state": "patent"
+    },
+    "l2.lookup": {
+      "block": "l2",
+      "label": "lookup",
+      "q": "How an L2 access finds its set and way (index hashing",
+      "answers": [
+        "l2_hashed_way_filter"
+      ],
+      "state": "inferred"
+    },
+    "l2.zero_lines": {
+      "block": "l2",
+      "label": "zero lines",
+      "q": "Whether all-zero lines get a special form (a tag bit",
+      "answers": [
+        "l2_zero_line_tags"
+      ],
+      "state": "patent"
+    },
+    "l2.index": {
+      "block": "l2",
+      "label": "indexing",
+      "q": "Which physical address bits pick the set, and how they are hashed",
+      "answers": [
+        "l2_physical_index"
+      ],
+      "state": "measured"
+    },
+    "amx.issue": {
+      "block": "amx",
+      "label": "issue",
+      "q": "How the core sends AMX work and orders against it",
+      "answers": [
+        "coprocessor_ordering_table",
+        "amx_lsu_issue"
+      ],
+      "state": "inferred"
+    },
+    "amx.internals": {
+      "block": "amx",
+      "label": "internals",
+      "q": "AMX register state, datapath and memory access",
+      "answers": [
+        "amx_datapath",
+        "amx_shared_contexts"
+      ],
+      "state": "inferred"
+    },
+    "amx.ops": {
+      "block": "amx",
+      "label": "operations",
+      "q": "Which operations, data types and operand layouts AMX supports",
+      "answers": [
+        "amx_op_set"
+      ],
+      "state": "inferred"
+    },
+    "amx.sharing": {
+      "block": "amx",
+      "label": "sharing",
+      "q": "How one AMX unit serves the cores of its cluster",
+      "answers": [
+        "amx_shared_contexts"
+      ],
+      "state": "inferred"
+    },
+    "lsu.alloc": {
+      "block": "lsu",
+      "label": "allocation",
+      "q": "When LSQ entries are taken",
+      "answers": [
+        "lsq_at_issue"
+      ],
+      "state": "patent"
+    },
+    "lsu.disamb": {
+      "block": "lsu",
+      "label": "disambiguation",
+      "q": "How memory dependences are predicted and what the predictor blocks",
+      "answers": [
+        "lsu.disambiguation",
+        "store_load_dep_predictor"
+      ],
+      "state": "measured"
+    },
+    "lsu.forward": {
+      "block": "lsu",
+      "label": "forwarding",
+      "q": "Store-to-load forwarding cases, sizes and failures",
+      "answers": [
+        "lsu.forwarding",
+        "zero_cycle_loads",
+        "sq_partial_forwarding"
+      ],
+      "state": "measured"
+    },
+    "lsu.ordering": {
+      "block": "lsu",
+      "label": "ordering",
+      "q": "How Arm ordering, barriers and snoops are enforced on loads and stores",
+      "answers": [
+        "load_poison_bits",
+        "barrier_colors",
+        "early_barrier_completion",
+        "tso_mode"
+      ],
+      "state": "measured"
+    },
+    "lsu.exclusive": {
+      "block": "lsu",
+      "label": "exclusives",
+      "q": "Exclusives and atomics",
+      "answers": [
+        "exclusive_monitor_l1",
+        "stxr_barrier_fusion"
+      ],
+      "state": "measured"
+    },
+    "lsu.data_spec": {
+      "block": "lsu",
+      "label": "data speculation",
+      "q": "Load value and address prediction",
+      "answers": [
+        "load_value_prediction",
+        "load_address_prediction"
+      ],
+      "state": "measured"
+    },
+    "lsu.split": {
+      "block": "lsu",
+      "label": "line and page splits",
+      "q": "Accesses that cross a line or a page",
+      "answers": [
+        "split_access_handling"
+      ],
+      "state": "measured"
+    },
+    "lsu.coproc": {
+      "block": "lsu",
+      "label": "coprocessor order",
+      "q": "Ordering against AMX and other coprocessor traffic",
+      "answers": [
+        "coprocessor_ordering_table"
+      ],
+      "state": "patent"
+    },
+    "lsu.agen": {
+      "block": "lsu",
+      "label": "address generation",
+      "q": "How a load's address is formed and checked inside the LSU (load-to-load bypass",
+      "answers": [
+        "lsu_load_to_load_bypass",
+        "agu_same_page_check"
+      ],
+      "state": "inferred"
+    },
+    "lsu.elim": {
+      "block": "lsu",
+      "label": "repeat removal",
+      "q": "Whether repeated or overwritten loads and stores are removed",
+      "answers": [
+        "redundant_mem_op_elim"
+      ],
+      "state": "measured"
+    },
+    "lsu.spec_fault": {
+      "block": "lsu",
+      "label": "faulting loads",
+      "q": "What a speculative load or fetch does with an address that would fault",
+      "answers": [
+        "spec_fault_no_access"
+      ],
+      "state": "measured"
+    },
+    "l1i.repl": {
+      "block": "l1i",
+      "label": "replacement",
+      "q": "Which line a fill replaces",
+      "answers": [
+        "l1i_tree_plru"
+      ],
+      "state": "ours"
+    },
+    "l1i.fill": {
+      "block": "l1i",
+      "label": "fill",
+      "q": "How lines come in (demand only, next-line, prediction-directed prefetch)",
+      "answers": [
+        "ftq.fdip",
+        "scan_on_fill_nfp",
+        "cold_start_mode",
+        "decoupled_fetch"
+      ],
+      "state": "measured"
+    },
+    "l1i.way": {
+      "block": "l1i",
+      "label": "way lookup",
+      "q": "How the way is found (way prediction or parallel lookup)",
+      "answers": [
+        "l1i_way_prediction"
+      ],
+      "state": "patent"
+    },
+    "l1i.predecode": {
+      "block": "l1i",
+      "label": "predecode",
+      "q": "What is stored beside each line (predecode, branch marks)",
+      "answers": [
+        "biased_branch_filter",
+        "scan_on_fill_nfp",
+        "l1i_predecode"
+      ],
+      "state": "inferred"
+    },
+    "l1i.coherence": {
+      "block": "l1i",
+      "label": "coherence",
+      "q": "How stores to code and cache maintenance reach the L1I",
+      "answers": [
+        "l1i_maintenance_only"
+      ],
+      "state": "ours"
+    },
+    "itlb.org": {
+      "block": "itlb",
+      "label": "organization",
+      "q": "User and kernel iTLBs and their shape",
+      "answers": [
+        "itlb.org"
+      ],
+      "state": "measured"
+    },
+    "itlb.miss": {
+      "block": "itlb",
+      "label": "miss path",
+      "q": "Where an iTLB miss goes (L1 dTLB, L2 TLB, walker)",
+      "answers": [
+        "itlb_victims_to_dtlb"
+      ],
+      "state": "inferred"
+    },
+    "btb.levels": {
+      "block": "btb",
+      "label": "levels",
+      "q": "The BTB tiers and what a hit in each costs",
+      "answers": [
+        "l1i_coupled_btb"
+      ],
+      "state": "inferred"
+    },
+    "btb.alloc": {
+      "block": "btb",
+      "label": "allocation",
+      "q": "Which branches get entries and when (decode, retire, line fill)",
+      "answers": [
+        "scan_on_fill_nfp",
+        "nfp_training"
+      ],
+      "state": "inferred"
+    },
+    "btb.index": {
+      "block": "btb",
+      "label": "index and tags",
+      "q": "Indexing, tags, aliasing and context",
+      "answers": [
+        "phantom_fetch",
+        "next_fetch_groups"
+      ],
+      "state": "measured"
+    },
+    "btb.special": {
+      "block": "btb",
+      "label": "one-way branches",
+      "q": "Special handling of branches that always go one way",
+      "answers": [
+        "biased_branch_filter"
+      ],
+      "state": "patent"
+    },
+    "dirpred.struct": {
+      "block": "dirpred",
+      "label": "structure",
+      "q": "Tables, tags and how the provider is chosen",
+      "answers": [
+        "dirpred.kind",
+        "tage_tables"
+      ],
+      "state": "measured"
+    },
+    "dirpred.history": {
+      "block": "dirpred",
+      "label": "history",
+      "q": "What the history holds and how it updates",
+      "answers": [
+        "path_history_shift_xor"
+      ],
+      "state": "measured"
+    },
+    "dirpred.update": {
+      "block": "dirpred",
+      "label": "training",
+      "q": "When entries train and allocate (execute or retire; on mispredict)",
+      "answers": [
+        "retire_time_training",
+        "cold_start_mode"
+      ],
+      "state": "patent"
+    },
+    "dirpred.recovery": {
+      "block": "dirpred",
+      "label": "recovery",
+      "q": "How speculative history is repaired after a mispredict",
+      "answers": [
+        "path_history_rewind"
+      ],
+      "state": "ours"
+    },
+    "dirpred.side": {
+      "block": "dirpred",
+      "label": "side predictors",
+      "q": "Side predictors (loop predictor, statistical corrector)",
+      "answers": [
+        "loop_predictor"
+      ],
+      "state": "patent"
+    },
+    "dirpred.isolation": {
+      "block": "dirpred",
+      "label": "isolation",
+      "q": "Context or privilege isolation",
+      "answers": [
+        "bpu_isolation"
+      ],
+      "state": "measured"
+    },
+    "dirpred.power": {
+      "block": "dirpred",
+      "label": "power",
+      "q": "How the branch predictors save energy (clock gating from fetch-predictor hints, staged table lookup, tables powered off)",
+      "answers": [
+        "predictor_power_gating"
+      ],
+      "state": "patent"
+    },
+    "ras.overflow": {
+      "block": "ras",
+      "label": "overflow",
+      "q": "What happens when calls nest deeper than the stack",
+      "answers": [
+        "ras_overflow_clear",
+        "two_level_ras"
+      ],
+      "state": "inferred"
+    },
+    "ras.repair": {
+      "block": "ras",
+      "label": "repair",
+      "q": "How the stack is repaired after wrong-path calls and returns",
+      "answers": [
+        "two_level_ras"
+      ],
+      "state": "patent"
+    },
+    "ras.target": {
+      "block": "ras",
+      "label": "return target",
+      "q": "How fetch after a return gets its target and fetch-group length",
+      "answers": [
+        "return_fetch_table"
+      ],
+      "state": "patent"
+    },
+    "ras.pac": {
+      "block": "ras",
+      "label": "pointer auth",
+      "q": "How pointer authentication of return addresses interacts with the return stack",
+      "answers": [
+        "ras_pac_check"
+      ],
+      "state": "patent"
+    },
+    "indpred.struct": {
+      "block": "indpred",
+      "label": "structure",
+      "q": "Structure and history used for indirect targets",
+      "answers": [
+        "indpred.kind",
+        "ittage_indirect",
+        "objc_msgsend_predictor"
+      ],
+      "state": "inferred"
+    },
+    "indpred.context": {
+      "block": "indpred",
+      "label": "context",
+      "q": "Context tagging and checks",
+      "answers": [
+        "ibp_context_check"
+      ],
+      "state": "measured"
+    },
+    "fetch.coupling": {
+      "block": "fetch",
+      "label": "coupling",
+      "q": "How prediction steers fetch (coupled or decoupled)",
+      "answers": [
+        "decoupled_fetch"
+      ],
+      "state": "measured"
+    },
+    "fetch.block": {
+      "block": "fetch",
+      "label": "fetch block",
+      "q": "What one fetch delivers (alignment, line crossing, stop at taken branch)",
+      "answers": [
+        "next_fetch_groups"
+      ],
+      "state": "inferred"
+    },
+    "fetch.multi_taken": {
+      "block": "fetch",
+      "label": "several taken",
+      "q": "Whether more than one taken branch can be fetched per cycle",
+      "answers": [
+        "trace_cache",
+        "next_fetch_groups"
+      ],
+      "state": "inferred"
+    },
+    "fetch.redirect": {
+      "block": "fetch",
+      "label": "redirects",
+      "q": "How redirects (mispredict, BTB miss, decode-time correction) flow back to fetch",
+      "answers": [
+        "staged_fetch_redirect",
+        "wrong_path_redirect",
+        "control_independence"
+      ],
+      "state": "measured"
+    },
+    "ftq.queue": {
+      "block": "ftq",
+      "label": "queue",
+      "q": "Whether predicted addresses queue ahead of fetch",
+      "answers": [
+        "decoupled_fetch"
+      ],
+      "state": "measured"
+    },
+    "ftq.prefetch": {
+      "block": "ftq",
+      "label": "prefetch",
+      "q": "Whether queued addresses drive I-cache prefetch",
+      "answers": [
+        "ftq.fdip",
+        "decoupled_fetch"
+      ],
+      "state": "measured"
+    },
+    "decode.crack": {
+      "block": "decode",
+      "label": "cracking",
+      "q": "Which instructions become several uops, and where they split",
+      "answers": [
+        "uop_split_merge",
+        "ldpq_lsu_split"
+      ],
+      "state": "measured"
+    },
+    "decode.fusion": {
+      "block": "decode",
+      "label": "fusion",
+      "q": "Which pairs fuse and at which stage",
+      "answers": [
+        "rename.fusion",
+        "load_op_fusion",
+        "macro_op_fusion"
+      ],
+      "state": "measured"
+    },
+    "decode.loop": {
+      "block": "decode",
+      "label": "loops",
+      "q": "Loop buffer or replay of loops from a queue",
+      "answers": [
+        "loop_modes"
+      ],
+      "state": "patent"
+    },
+    "decode.barrier": {
+      "block": "decode",
+      "label": "barriers",
+      "q": "How barriers and system instructions are handled early",
+      "answers": [
+        "early_barrier_completion",
+        "speculation_barriers"
+      ],
+      "state": "measured"
+    },
+    "iq.role": {
+      "block": "iq",
+      "label": "role",
+      "q": "What the queue between fetch and decode does (skid, loop source, bypass when empty)",
+      "answers": [
+        "loop_modes",
+        "iq_bypass_fixup"
+      ],
+      "state": "patent"
+    },
+    "rename.map": {
+      "block": "rename",
+      "label": "in-group dependences",
+      "q": "How dependencies inside one 8-wide group are resolved",
+      "answers": [
+        "group_map"
+      ],
+      "state": "inferred"
+    },
+    "rename.elim": {
+      "block": "rename",
+      "label": "eliminations",
+      "q": "Move elimination, zero idioms and immediates (how they share registers)",
+      "answers": [
+        "rename.mov_elimination",
+        "rename.zero_idiom",
+        "immediate_regs",
+        "move_elimination",
+        "rename_retire_queue"
+      ],
+      "state": "measured"
+    },
+    "rename.recovery": {
+      "block": "rename",
+      "label": "recovery",
+      "q": "How the map is restored after a mispredict or exception",
+      "answers": [
+        "rename_retire_queue"
+      ],
+      "state": "inferred"
+    },
+    "rename.security": {
+      "block": "rename",
+      "label": "security tag",
+      "q": "Security tags on register mappings",
+      "answers": [
+        "register_security_tag"
+      ],
+      "state": "patent"
+    },
+    "rename.sysreg": {
+      "block": "rename",
+      "label": "system registers",
+      "q": "How writes to flags and special registers are renamed instead of serialized",
+      "answers": [
+        "speculative_special_regs"
+      ],
+      "state": "patent"
+    },
+    "rename.reconverge": {
+      "block": "rename",
+      "label": "reconvergence",
+      "q": "Whether work past the reconvergence point of a mispredicted branch is kept rather than redone",
+      "answers": [
+        "control_independence"
+      ],
+      "state": "patent"
+    },
+    "regfile.free": {
+      "block": "int_prf",
+      "label": "freeing",
+      "q": "When a physical register is freed",
+      "answers": [
+        "rename_retire_queue"
+      ],
+      "state": "inferred"
+    },
+    "regfile.banks": {
+      "block": "int_prf",
+      "label": "banks",
+      "q": "Banking, read ports and power",
+      "answers": [
+        "banked_prf_power",
+        "writeback_overflow_pool"
+      ],
+      "state": "patent"
+    },
+    "regfile.flags": {
+      "block": "flags_prf",
+      "label": "flags",
+      "q": "How condition flags are renamed and stored",
+      "answers": [
+        "split_flag_files"
+      ],
+      "state": "measured"
+    },
+    "dispatch.buffers": {
+      "block": "dispatch",
+      "label": "buffers",
+      "q": "Buffers between rename and the schedulers",
+      "answers": [
+        "dispatch_buffers"
+      ],
+      "state": "inferred"
+    },
+    "dispatch.steer": {
+      "block": "dispatch",
+      "label": "steering",
+      "q": "How a uop picks its scheduler queue",
+      "answers": [
+        "dispatch_buffers"
+      ],
+      "state": "inferred"
+    },
+    "dispatch.stall": {
+      "block": "dispatch",
+      "label": "stalls",
+      "q": "What stalls rename when a buffer or queue is full",
+      "answers": [
+        "dispatch_buffers"
+      ],
+      "state": "inferred"
+    },
+    "sched.select": {
+      "block": "sched_int",
+      "label": "select",
+      "q": "Which ready uop issues first",
+      "answers": [
+        "matrix_scheduler"
+      ],
+      "state": "patent"
+    },
+    "sched.pairing": {
+      "block": "sched_int",
+      "label": "pairing",
+      "q": "Paired or shared queues",
+      "answers": [
+        "paired_sched_queues"
+      ],
+      "state": "inferred"
+    },
+    "sched.wakeup": {
+      "block": "sched_int",
+      "label": "wakeup",
+      "q": "How dependents wake (tag broadcast, speculative wakeup behind loads)",
+      "answers": [
+        "matrix_scheduler"
+      ],
+      "state": "patent"
+    },
+    "sched.replay": {
+      "block": "sched_int",
+      "label": "replay",
+      "q": "What happens to dependents of a load that misses or conflicts",
+      "answers": [
+        "fill_forwarding",
+        "load_replay_shadow"
+      ],
+      "state": "inferred"
+    },
+    "sched.flush": {
+      "block": "sched_int",
+      "label": "mispredict flush",
+      "q": "How scheduler entries younger than a mispredict or exception are found and flushed",
+      "answers": [
+        "issue_age_flush"
+      ],
+      "state": "patent"
+    },
+    "sched.ls_split": {
+      "block": "sched_ls",
+      "label": "load/store split",
+      "q": "How load and store uops split across the memory queues",
+      "answers": [
+        "paired_sched_queues",
+        "sched_ls.queues"
+      ],
+      "state": "measured"
+    },
+    "exec.unpipelined": {
+      "block": "eu_int",
+      "label": "unpipelined units",
+      "q": "Dividers and other unpipelined units, and how they block issue",
+      "answers": [
+        "divider_pipe"
+      ],
+      "state": "inferred"
+    },
+    "exec.roles": {
+      "block": "eu_int",
+      "label": "roles",
+      "q": "Which units take which operations",
+      "answers": [
+        "eu_int.roles",
+        "eu_fp.roles"
+      ],
+      "state": "measured"
+    },
+    "exec.bypass": {
+      "block": "eu_fp",
+      "label": "bypass",
+      "q": "Forwarding network and cross-domain (int to FP) delays",
+      "answers": [
+        "fp_back_to_back_fusion",
+        "exec_forwarding"
+      ],
+      "state": "measured"
+    },
+    "exec.power": {
+      "block": "eu_fp",
+      "label": "power",
+      "q": "Power and throttling of the execution units",
+      "answers": [
+        "simd_power_down",
+        "power_estimator_throttle"
+      ],
+      "state": "patent"
+    },
+    "retire.groups": {
+      "block": "retire",
+      "label": "groups",
+      "q": "How uops retire (groups, rows, rate)",
+      "answers": [
+        "retire_groups"
+      ],
+      "state": "inferred"
+    },
+    "retire.renames": {
+      "block": "retire",
+      "label": "renames",
+      "q": "What limits renames in flight",
+      "answers": [
+        "rename_retire_queue"
+      ],
+      "state": "inferred"
+    },
+    "retire.branches": {
+      "block": "retire",
+      "label": "branches",
+      "q": "How in-flight branches are tracked and limited",
+      "answers": [
+        "retire_time_training"
+      ],
+      "state": "patent"
+    },
+    "retire.exceptions": {
+      "block": "retire",
+      "label": "exceptions",
+      "q": "How exceptions and interrupts are taken",
+      "answers": [
+        "abandonable_requests",
+        "interrupt_routing"
+      ],
+      "state": "patent"
+    },
+    "retire.release": {
+      "block": "retire",
+      "label": "early release",
+      "q": "Which resources are released before retire",
+      "answers": [
+        "lsq_early_release"
+      ],
+      "state": "inferred"
+    },
+    "lq.release": {
+      "block": "lq",
+      "label": "early release",
+      "q": "When load entries free",
+      "answers": [
+        "lsq_early_release"
+      ],
+      "state": "inferred"
+    },
+    "lq.check": {
+      "block": "lq",
+      "label": "ordering check",
+      "q": "How loads are checked against later stores and snoops",
+      "answers": [
+        "load_poison_bits",
+        "late_ordering_check"
+      ],
+      "state": "measured"
+    },
+    "sq.structure": {
+      "block": "sq",
+      "label": "structure",
+      "q": "Store queue organization and search",
+      "answers": [
+        "hierarchical_store_queue"
+      ],
+      "state": "patent"
+    },
+    "sq.commit": {
+      "block": "sq",
+      "label": "commit",
+      "q": "How stores leave the queue (order, merging, write combining)",
+      "answers": [
+        "sq_32b_slots",
+        "uncached_line_handling"
+      ],
+      "state": "inferred"
+    },
+    "sq.stream": {
+      "block": "sq",
+      "label": "streaming",
+      "q": "Streaming and zeroing stores",
+      "answers": [
+        "streaming_store_nt",
+        "dczva_l2_zero"
+      ],
+      "state": "inferred"
+    },
+    "l1d.banking": {
+      "block": "l1d",
+      "label": "banking",
+      "q": "Banks, ports and access merging",
+      "answers": [
+        "l1d_banked_piggyback"
+      ],
+      "state": "inferred"
+    },
+    "l1d.way": {
+      "block": "l1d",
+      "label": "way lookup",
+      "q": "Way lookup and placement",
+      "answers": [
+        "l1d_way_lookup",
+        "l1d_hashed_way"
+      ],
+      "state": "patent"
+    },
+    "l1d.repl": {
+      "block": "l1d",
+      "label": "replacement",
+      "q": "Replacement",
+      "answers": [
+        "l1d.replacement",
+        "l1d_tree_plru"
+      ],
+      "state": "measured"
+    },
+    "l1d.write": {
+      "block": "l1d",
+      "label": "write policy",
+      "q": "Write policy and what a store miss does",
+      "answers": [
+        "l1d_write_allocate"
+      ],
+      "state": "ours"
+    },
+    "l1d.fill": {
+      "block": "l1d",
+      "label": "fill",
+      "q": "How fills return and wake loads",
+      "answers": [
+        "fill_forwarding",
+        "fill_bank_conflicts"
+      ],
+      "state": "inferred"
+    },
+    "l1d.coherence": {
+      "block": "l1d",
+      "label": "coherence",
+      "q": "Coherence states held and how snoops reach the L1D",
+      "answers": [
+        "l2_snoop_filter",
+        "l1_l2_coherence_limit"
+      ],
+      "state": "inferred"
+    },
+    "l1d.power": {
+      "block": "l1d",
+      "label": "power",
+      "q": "How idle L1D SRAM is powered down and what waking it costs",
+      "answers": [
+        "cache_subarray_power"
+      ],
+      "state": "inferred"
+    },
+    "l1d.index": {
+      "block": "l1d",
+      "label": "indexing",
+      "q": "Which address bits pick the set, and whether they are virtual or physical",
+      "answers": [
+        "l1d_page_offset_index"
+      ],
+      "state": "measured"
+    },
+    "dtlb.levels": {
+      "block": "dtlb",
+      "label": "levels",
+      "q": "TLB levels and what each holds",
+      "answers": [
+        "dtlb.l1_org",
+        "dtlb.l2_org",
+        "itlb_victims_to_dtlb",
+        "tlb_mixed_page_sizes",
+        "cluster_l2_tlb"
+      ],
+      "state": "measured"
+    },
+    "dtlb.port": {
+      "block": "dtlb",
+      "label": "ports",
+      "q": "Lookups per cycle and sharing",
+      "answers": [
+        "dtlb_piggyback"
+      ],
+      "state": "inferred"
+    },
+    "dtlb.walk": {
+      "block": "dtlb",
+      "label": "page walks",
+      "q": "Page table walks (walkers in flight, walk caches, where entries are cached)",
+      "answers": [
+        "mmu_walk_cache",
+        "cluster_l2_tlb",
+        "content_directed_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "dtlb.context": {
+      "block": "dtlb",
+      "label": "context",
+      "q": "ASID and VMID tags, invalidation",
+      "answers": [
+        "tlb_invalidation_shortcuts",
+        "itlb_victims_to_dtlb"
+      ],
+      "state": "inferred"
+    },
+    "dtlb.perm": {
+      "block": "dtlb",
+      "label": "permissions",
+      "q": "How page permissions are encoded and changed",
+      "answers": [
+        "indexed_page_permissions"
+      ],
+      "state": "patent"
+    },
+    "dtlb.repl": {
+      "block": "dtlb",
+      "label": "replacement",
+      "q": "Which entry a TLB fill replaces",
+      "answers": [
+        "dtlb_random_replacement"
+      ],
+      "state": "inferred"
+    },
+    "dtlb.power": {
+      "block": "dtlb",
+      "label": "power",
+      "q": "Whether TLB banks sleep or power down and what waking costs",
+      "answers": [
+        "l2_way_power"
+      ],
+      "state": "patent"
+    },
+    "prefetch.train": {
+      "block": "prefetch",
+      "label": "training",
+      "q": "What the prefetchers train on",
+      "answers": [
+        "lsu_virtual_prefetch",
+        "ampm_prefetcher",
+        "content_directed_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "prefetch.kinds": {
+      "block": "prefetch",
+      "label": "kinds",
+      "q": "Which prefetchers exist and what patterns each covers",
+      "answers": [
+        "prefetch.kinds",
+        "content_directed_prefetch",
+        "ampm_prefetcher",
+        "temporal_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "prefetch.throttle": {
+      "block": "prefetch",
+      "label": "throttling",
+      "q": "Throttling, accuracy feedback and deny lists",
+      "answers": [
+        "prefetch_deny_list",
+        "prefetch_throttle",
+        "content_directed_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "prefetch.target": {
+      "block": "prefetch",
+      "label": "fill level",
+      "q": "Which level each prefetcher fills",
+      "answers": [
+        "content_directed_prefetch",
+        "lsu_virtual_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "prefetch.nt": {
+      "block": "prefetch",
+      "label": "non-temporal",
+      "q": "Non-temporal handling",
+      "answers": [
+        "nt_load_handling"
+      ],
+      "state": "inferred"
+    },
+    "prefetch.control": {
+      "block": "prefetch",
+      "label": "controls",
+      "q": "Which control bits or modes (HID bits, DIT) turn a prefetcher off",
+      "answers": [
+        "content_directed_prefetch"
+      ],
+      "state": "inferred"
+    },
+    "mshr.merge": {
+      "block": "mshr",
+      "label": "merging",
+      "q": "Whether misses to one line merge",
+      "answers": [
+        "fill_buffer_pool"
+      ],
+      "state": "ours"
+    },
+    "mshr.store": {
+      "block": "mshr",
+      "label": "store misses",
+      "q": "How store misses are handled",
+      "answers": [
+        "l1d_write_allocate"
+      ],
+      "state": "ours"
+    },
+    "mshr.share": {
+      "block": "mshr",
+      "label": "sharing",
+      "q": "Sharing between loads, stores and prefetches, and what happens when full",
+      "answers": [
+        "fill_buffer_pool"
+      ],
+      "state": "ours"
     }
   }
 }

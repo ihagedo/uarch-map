@@ -283,6 +283,34 @@
                   "type": "boolean"
                 }
               }
+            },
+            "judgment": {
+              "type": "object",
+              "description": "ours: a verdict on a source's mechanism or a settled conflict",
+              "required": [
+                "verdict",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "verdict": {
+                  "enum": [
+                    "likely",
+                    "unlikely",
+                    "open",
+                    "settled"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
             }
           }
         }
@@ -540,6 +568,78 @@
             },
             "detection_rule": {
               "type": "string"
+            },
+            "judgment": {
+              "type": "object",
+              "description": "ours: a verdict on a source's mechanism or a settled conflict",
+              "required": [
+                "verdict",
+                "text"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "verdict": {
+                  "enum": [
+                    "likely",
+                    "unlikely",
+                    "open",
+                    "settled"
+                  ]
+                },
+                "text": {
+                  "type": "string"
+                },
+                "basis": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "questions": {
+      "type": "object",
+      "description": "what a model of each block must decide, and what answers it",
+      "patternProperties": {
+        "^[a-z0-9_.]+$": {
+          "type": "object",
+          "required": [
+            "block",
+            "label",
+            "q",
+            "answers",
+            "state"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "block": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "q": {
+              "type": "string"
+            },
+            "answers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "state": {
+              "enum": [
+                "measured",
+                "inferred",
+                "patent",
+                "ours",
+                "open"
+              ]
             }
           }
         }
