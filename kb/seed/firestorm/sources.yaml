@@ -214,3 +214,9 @@ sources:
     author: Johnson, Dougall
     year: 2020
     url: https://gist.github.com/dougallj/7a75a3be1ec69ca550e7c36dc75e0d6f
+  corsix-amx:
+    type: repo
+    title: "Apple AMX instruction set"
+    author: Cawley, Peter
+    year: 2022
+    url: https://github.com/corsix/amx

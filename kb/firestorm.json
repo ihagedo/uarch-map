@@ -5869,6 +5869,146 @@
       "supports": [],
       "entered": "chipsandcheese-ocxtal"
     },
+    "c-cx-fp-types": {
+      "text": "AMX floating-point multiply-adds take fp16, fp32 or fp64 with all three operands the same width, or fp16 multiplicands accumulating into fp32",
+      "loc": "p001",
+      "quote": "IEEE754 f16 or f32 or f64 (same width for all three fused-multiply-add operands) ... IEEE754 f16 multiplicands, accumulating onto f32",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Reverse engineered on an M1 Max.",
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-m2-bf16": {
+      "text": "The M2 adds bf16 multiplicands, accumulating into bf16 or fp32",
+      "loc": "p001",
+      "quote": "On M2 hardware, bf16 multiplicands, accumulating onto bf16 or IEEE754 f32",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m2",
+      "source": "corsix-amx",
+      "entered": "corsix-amx"
+    },
+    "c-cx-m3-modes": {
+      "text": "The M3 adds one mode each to the X load, the Y load and the integer outer product",
+      "loc": "p001",
+      "quote": "The M2 to M3 transition [adds one extra mode to each of `ldx` and `ldy` and `matint`]",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m3",
+      "source": "corsix-amx",
+      "entered": "corsix-amx"
+    },
+    "c-cx-m4-offsets": {
+      "text": "On the M4 some modes of the extract and vector operations ignore the low bits of the X or Y offset",
+      "loc": "p001",
+      "quote": "The M3 to M4 transition [causes some modes of `extrh`, `extrv`, `vecfp`, and `vecint` to ignore low bits of X/Y offset]",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m4",
+      "source": "corsix-amx",
+      "entered": "corsix-amx"
+    },
+    "c-cx-regs": {
+      "text": "Each core's AMX state is 80 registers of 64 bytes, 8 in the X pool, 8 in the Y pool and 64 forming the 64x64-byte Z grid",
+      "loc": "p002",
+      "quote": "The architectural state contains 80 such registers: 8 of which in the X pool, 8 of which in the Y pool, and the remaining 64 forming a 64x64 grid called Z.",
+      "derivation": "measured",
+      "value": 80,
+      "unit": "registers",
+      "supports": [],
+      "notes": "About 5 KB in all.",
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-circular": {
+      "text": "The X pool, and likewise the Y pool, acts as a 512-byte circular buffer from which most instructions can take any contiguous 64 bytes",
+      "loc": "p002",
+      "quote": "The entire X register pool can be concatenated to form a circular buffer of 512 bytes. Most instructions can operate on _any_ contiguous 64 byte range from this circular buffer.",
+      "derivation": "measured",
+      "value": 512,
+      "unit": "B",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-no-moves": {
+      "text": "No instruction moves data directly between AMX registers and the core's general or SIMD registers; data goes through memory",
+      "loc": "p002",
+      "quote": "There is no direct movement between AMX registers and A64 general purpose registers or SIMD registers; data has to go via memory.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-vec-mat": {
+      "text": "Vector operations combine X, Y and one Z register lane by lane, while matrix operations write an outer product across as many Z registers as X and Y have lanes",
+      "loc": "p002",
+      "quote": "Vector: Select one register from Z, and combine X/Y/Z in a standard SIMD manner ... Matrix: Select a number of registers from Z equal to the number of lanes in X and Y",
+      "derivation": "measured",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-indexed": {
+      "text": "Some operations read X or Y through an indexed load, treating 2-, 4- or 5-bit fields as lane indices into another register",
+      "loc": "p002",
+      "quote": "Some operations support _indexed loads_ rather than 64-byte span loads. ... the index size (`IS`) is 2/4/5 bits",
+      "derivation": "measured",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-mixed-full-z": {
+      "text": "A full outer product of 16-bit X and Y into 32-bit Z needs 1024 Z values, which takes all 64 Z registers",
+      "loc": "p002",
+      "quote": "which there is _just_ space for: use all 64 Z registers, with 16 elements in each.",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "registers",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-setclr": {
+      "text": "Setting up AMX zeroes all its registers and faults if AMX is already set up; clearing it leaves the registers uninitialised so they need no saving on a context switch",
+      "loc": "p003",
+      "quote": "Raises invalid instruction exception if already setup. All registers set to zero. ... All registers set to uninitialised, no longer need saving/restoring on context switch.",
+      "derivation": "measured",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-matint-opts": {
+      "text": "The integer outer product can take indexed or shuffled X and Y and offers a right shift, a sqrdmlah-style rounding multiply and a popcount mode",
+      "loc": "p003",
+      "quote": "Indexed X or Y, shuffle X, shuffle Y,<br/>right shift, `sqrdmlah`, `popcnt`",
+      "derivation": "measured",
+      "supports": [],
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
+    "c-cx-matint-int8": {
+      "text": "In ALU mode 8 the integer outer product multiplies 8-bit X and Y and accumulates into 16-bit or 32-bit Z, with an unusual data layout",
+      "loc": "p004",
+      "quote": "When 47=8, FMA is performed with 8-bit multiplicands, accumlating onto 16-bit or 32-bit Z, using a slightly unusual (for AMX) data layout.",
+      "derivation": "measured",
+      "value": true,
+      "supports": [],
+      "notes": "Reverse engineered on an M1 Max; only the 8-bit by 16-bit variant is marked M3 only. Contradicts c-mh-v3-amx-no-int8 and the \"no int8\" in amx_op_set.",
+      "source": "corsix-amx",
+      "chip": "m1",
+      "entered": "corsix-amx"
+    },
     "c-cq-phr-100": {
       "text": "Firestorm's path history register records the most recent 100 taken branches",
       "loc": "p005",
@@ -25122,6 +25262,13 @@
       "year": 2020,
       "url": "https://gist.github.com/dougallj/7a75a3be1ec69ca550e7c36dc75e0d6f"
     },
+    "corsix-amx": {
+      "type": "repo",
+      "title": "Apple AMX instruction set",
+      "author": "Cawley, Peter",
+      "year": 2022,
+      "url": "https://github.com/corsix/amx"
+    },
     "us20210064376a1": {
       "type": "patent",
       "title": "Last physical register reference scheme",
@@ -25414,6 +25561,9 @@
     },
     "amx_datapath": {
       "claims": [
+        "c-cx-regs",
+        "c-cx-circular",
+        "c-cx-no-moves",
         "c-dj-amx-l2",
         "c-dj-amx-l1-penalty",
         "c-dj-amx-ldst-bound",
@@ -25454,6 +25604,16 @@
     },
     "amx_op_set": {
       "claims": [
+        "c-cx-fp-types",
+        "c-cx-m2-bf16",
+        "c-cx-m3-modes",
+        "c-cx-m4-offsets",
+        "c-cx-vec-mat",
+        "c-cx-indexed",
+        "c-cx-mixed-full-z",
+        "c-cx-setclr",
+        "c-cx-matint-opts",
+        "c-cx-matint-int8",
         "c-dj-amx-enable",
         "c-dj-amx-ldst-size",
         "c-dj-amx-fma-shapes",
