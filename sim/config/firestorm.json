@@ -172,7 +172,7 @@
   "mshr.outstanding": {
     "value": null,
     "sim_key": "mlp",
-    "confidence": "unknown"
+    "confidence": "conjecture"
   },
   "l2.size": {
     "value": 12,

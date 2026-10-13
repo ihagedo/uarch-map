@@ -13,12 +13,11 @@ blocks 40, links 37, params 147, claims 1620, sources 39, mechanisms 164
 ## By confidence
 
 - confirmed: 16
-- conjecture: 3
+- conjecture: 4
 - corroborated: 30
 - derived: 13
 - inferred: 32
 - single: 52
-- unknown: 1
 
 ## Holes (4)
 

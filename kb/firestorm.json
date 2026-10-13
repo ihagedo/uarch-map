@@ -1635,7 +1635,17 @@
       "sim_key": "mlp",
       "status": "open",
       "value": null,
-      "confidence": "unknown"
+      "confidence": "conjecture",
+      "conjecture": {
+        "basis": [
+          "c-mh-v2-l2-load-85",
+          "c-mh-v2-l2-latency-17",
+          "c-7cpu-ram-read-bw",
+          "c-7cpu-dram-latency"
+        ],
+        "value": "\u22657",
+        "text": "By Little's law, about 7 L1D fills must be in flight to draw 85 GB/s from the L2 at 17 cycles, and about 48 L2 lines of 128 B beyond the L2 to draw 64 GB/s from DRAM at about 97 ns."
+      }
     },
     "prefetch.kinds": {
       "claims": [
