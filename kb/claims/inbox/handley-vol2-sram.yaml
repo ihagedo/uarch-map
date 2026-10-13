@@ -81,3 +81,6 @@ claims:
 
 mechanism_claims:
   l1d_banked_piggyback: [c-mh-v2-coalesce-patent]
+  cache_subarray_power: [c-mh-v2-small-subarrays, c-mh-v2-subarray-precharge, c-mh-v2-sram-supply]
+  l2_hashed_way_filter: [c-mh-v2-l2-way-filter]
+  agu_same_page_check: [c-mh-v2-masked-sum-compare]

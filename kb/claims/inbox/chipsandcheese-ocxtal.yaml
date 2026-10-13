@@ -794,6 +794,7 @@ new_params:
 new_mechanisms:
   l1i_coupled_btb:
     name: Branch targets tied to the L1I
+    block: btb
     status: inferred
     description: A branch that misses the first-level BTB takes its target from the L1I, with a two-cycle bubble.
     params: [btb.l0_entries, btb.l1_entries, btb.taken_bubble, btb.l0_footprint]
@@ -802,3 +803,17 @@ new_mechanisms:
 
 mechanism_claims:
   l1i_coupled_btb: [c-ox-btb-1024, c-ox-btb-miss-bubble, c-cc-oryon-m1-taken-footprint, c-mh-v4-btb-l0]
+  group_map: [c-ox-chained-mov]
+  uop_split_merge: [c-ox-nop-decoder, c-ox-agu-index, c-ox-shift-form]
+  move_elimination: [c-ox-simd-zero-reg, c-ox-eor-no-idiom]
+  trace_cache: [c-ox-two-branches]
+  split_access_handling: [c-ox-load-penalty, c-ox-page-cross]
+  zero_cycle_loads: [c-ox-no-aliasing]
+  divider_pipe: [c-ox-div-throughput, c-ox-div-pipeline]
+  exec_forwarding: [c-ox-xfer-fwd, c-ox-xfer-rev, c-ox-xfer-latency]
+  macro_op_fusion: [c-ox-xfer-fusion]
+  split_flag_files: [c-ox-flag-files, c-ox-flag-xfer]
+  ras_overflow_clear: [c-cc-oryon-m1-ras-overflow]
+  decoupled_fetch: [c-cc-oryon-m1-l1i-miss-fetch]
+  dispatch_buffers: [c-cc-oryon-m1-fp-sched]
+  clock_ramp: [c-cc-clk-m1-ramp, c-cc-clk-m1max-ramp, c-cc-clk-m1max-hw-boost]

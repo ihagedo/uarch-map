@@ -87,6 +87,7 @@ params:
 mechanisms:
   retire_groups:
     name: Coalesced retire groups
+    block: retire
     status: inferred
     description: Uops retire in groups of up to seven; a memory op starts a group and a branch ends one.
     params: [retire.model, retire.groups, retire.group_max_uops, retire.group_issuing_uops, retire.nop_window,
@@ -95,6 +96,7 @@ mechanisms:
     detection_rule: NOP knee divided by load, store or branch knee is close to a whole number >= 2
   rename_retire_queue:
     name: Rename retire queue (history file)
+    block: retire
     status: inferred
     description: A second queue of about 620 entries limits instructions that change the register map.
     params: [retire.rename_queue, retire.rate_renames]
@@ -102,6 +104,7 @@ mechanisms:
     detection_rule: register-writing fillers knee far below the NOP knee and above the physical register count
   lsq_at_issue:
     name: Load/store queue entries allocated at issue
+    block: lsu
     status: speculative
     description: Load and store queue entries are taken at issue, not at dispatch.
     params: [lsu.allocation, lq.entries, sq.entries]
@@ -109,6 +112,7 @@ mechanisms:
     detection_rule: same filler gives different knees under a miss delay and an ALU delay
   register_security_tag:
     name: Register mapping security tag
+    block: rename
     status: speculative
     description: Reading a register the process has not written slows integer issue to about 4-wide.
     params: [rename.security_tag]
@@ -116,6 +120,7 @@ mechanisms:
     detection_rule: throughput drop when reading unclaimed registers
   decoupled_fetch:
     name: Decoupled fetch with fetch-directed prefetch
+    block: ftq
     status: absent
     description: Fetch is not fully decoupled from branch prediction on the M1.
     params: [ftq.present, ftq.depth, ftq.fdip]

@@ -286,6 +286,7 @@ new_params:
 new_mechanisms:
   load_value_prediction:
     name: Load value prediction
+    block: lsu
     status: absent
     description: A PC-tagged predictor hands a load's last constant value to dependent instructions early; not found on M1 or M2, present from M3/A17 Pro.
     params: [lsu.value_prediction]

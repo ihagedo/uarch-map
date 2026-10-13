@@ -160,6 +160,7 @@ claims:
 new_mechanisms:
   ibp_context_check:
     name: Indirect target context check
+    block: indpred
     status: measured
     description: Indirect-predictor entries are shared across privilege levels and ASIDs; a target trained in another context is fetched but not executed.
     params: []
@@ -169,6 +170,7 @@ new_mechanisms:
       target's I-cache line comes back fetched (Flush+Reload hit) while a load at the target stays at SLC latency
   phantom_fetch:
     name: Phantom fetch on non-branches
+    block: btb
     status: measured
     description: A non-branch at the address of a trained branch redirects fetch to the trained target, which is fetched but never executed.
     params: []
@@ -180,5 +182,5 @@ new_mechanisms:
 mechanism_claims:
   bpu_isolation: [c-fr-cbp-no-isolation, c-fr-ice-cbp-no-priv-isolation, c-fr-ice-cbp-no-asid-isolation]
   ibp_context_check: [c-fr-csv2, c-fr-ibp-same-context, c-fr-ibp-priv-no-exec, c-fr-ibp-priv-fetch,
-                      c-fr-ibp-shared-entries, c-fr-ibp-fetch-race, c-fr-ibp-asid, c-fr-ice-ibp]
+    c-fr-ibp-shared-entries, c-fr-ibp-fetch-race, c-fr-ibp-asid, c-fr-ice-ibp, c-fr-bp-virtual]
   phantom_fetch: [c-fr-phantom-fetch, c-fr-phantom-no-exec, c-fr-ice-phantom]

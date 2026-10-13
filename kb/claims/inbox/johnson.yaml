@@ -825,6 +825,12 @@ new_params:
 
 mechanism_claims:
   retire_groups: [c-dj-rob-model, c-dj-group-boundaries, c-dj-retire-groups, c-dj-group-size, c-dj-nop-window, c-dj-issuing-window, c-dj-group-issuing]
-  rename_retire_queue: [c-dj-reclaim-table, c-dj-rename-retire, c-dj-rename-cost]
+  rename_retire_queue: [c-dj-reclaim-table, c-dj-rename-retire, c-dj-rename-cost, c-dj-lsq-prf-not-late]
   lsq_at_issue: [c-dj-lsq-alloc-issue, c-dj-lsq-store-107, c-dj-lsq-branch-loads-188, c-dj-lsq-branch-stores-118, c-dj-lsq-extra-58, c-dj-lsq-scheduler-47]
   lsq_early_release: [c-dj-ooo-commit, c-dj-lsq-fsqrt-329, c-dj-lsq-release-nonspec, c-dj-lsq-release-in-order]
+  dispatch_buffers: [c-dj-pipeline-flow, c-dj-lsq-dispatch-stall]
+  uop_split_merge: [c-dj-fewer-issues, c-dj-shift-extend-issues, c-dj-nop-b-no-issue]
+  macro_op_fusion: [c-dj-fusion-cbz, c-dj-fusion-crypto, c-dj-fusion-amx, c-dj-fusion-branch-limits,
+    c-dj-no-fusion]
+  exec_forwarding: [c-dj-index-shift-penalty, c-dj-madd-acc-latency, c-dj-int-simd-roundtrip]
+  store_load_dep_predictor: [c-dj-lsq-x29-base, c-dj-lsq-mov-counter]

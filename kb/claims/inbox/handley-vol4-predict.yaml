@@ -856,6 +856,7 @@ new_params:
 new_mechanisms:
   loop_modes:
     name: Tiered loop modes
+    block: iq
     status: speculative
     description: Loops run from the instruction queue, a loop buffer or an L0 cache.
     params: []
@@ -870,3 +871,23 @@ mechanism_claims:
                c-mh-v4-loop-packing, c-mh-v4-loop-buffer-96, c-mh-v4-l0-cache, c-mh-v4-l0-size, c-mh-v4-loop-table,
                c-mh-v4-loop-iq-mode, c-mh-v4-loop-exit-predictor]
   bpu_isolation: [c-mh-v4-bp-security-tag]
+  retire_time_training: [c-mh-v4-bp-confidence-retrain, c-mh-v4-bit-tables, c-mh-v4-not-taken-untrained,
+    c-mh-v4-bit-60, c-mh-v4-tbit-96, c-mh-v4-bit-overwrite]
+  tage_tables: [c-mh-v4-bp-line-rows, c-mh-v4-tage-assoc]
+  predictor_power_gating: [c-mh-v4-bp-half-banks, c-mh-v4-tage-sequential, c-mh-v4-tage-power-gating,
+    c-mh-v4-fetch-pred-gating, c-mh-v4-fetch-pred-split, c-mh-v4-subroutine-power]
+  ittage_indirect: [c-mh-v4-ibp-2013-tables, c-mh-v4-ibp-2013-training, c-mh-v4-ibp-hysteresis,
+    c-mh-v4-ibp-m1-long-history, c-mh-v4-ibp-btp-hit]
+  objc_msgsend_predictor: [c-mh-v4-objc-predictor-not-m1, c-mh-v4-objc-predictor-m2, c-mh-v4-mop-pred-uop,
+    c-mh-v4-mop-cache, c-mh-v4-ibp-prev-call-pc]
+  next_fetch_groups: [c-mh-v4-fetch-one-group, c-mh-v4-nfp-contents]
+  two_level_ras: [c-mh-v4-ras-two, c-mh-v4-ras-linked-guess, c-mh-v4-ras-at-decode, c-mh-v4-ras-mini]
+  l1i_predecode: [c-mh-v4-predecode-call-ret, c-mh-v4-predecode-offset, c-mh-v4-predecode-undef]
+  ras_pac_check: [c-mh-v4-pac-ras]
+  l1i_way_prediction: [c-mh-v4-seq-line-power, c-mh-v4-seq-way-pred, c-mh-v4-fetch-bitmaps]
+  rename_retire_queue: [c-mh-v4-checkpoints]
+  path_history_shift_xor: [c-mh-v4-path-histories]
+  iq_bypass_fixup: [c-mh-v4-iq-bypass, c-mh-v4-iq-fixup]
+  cold_start_mode: [c-mh-v4-cold-start-fetch, c-mh-v4-cold-start-tage]
+  prefetch_throttle: [c-mh-v4-prefetch-boost]
+  simd_power_down: [c-mh-v4-decode-vector-gating]

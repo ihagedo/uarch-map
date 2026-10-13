@@ -277,3 +277,8 @@ claims:
     hedge: "there is no indication"
     supports: []
 
+mechanism_claims:
+  l2_physical_index: [c-ilk-l2-phys-indexed]
+  l2_half_lines: [c-ilk-l2-half-line]
+  l2_core_lru: [c-ilk-l2-three-passes]
+  spec_fault_no_access: [c-ilk-no-meltdown]

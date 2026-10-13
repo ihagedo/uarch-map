@@ -1052,6 +1052,7 @@ new_params:
 new_mechanisms:
   barrier_colors:
     name: Color-tagged barriers at the L1-L2 boundary
+    block: lsu
     status: speculative
     description: Barriers advance a color tag on memory requests, and ordering is enforced between the L1 and the L2, not in the LSU.
     params: []
@@ -1060,6 +1061,7 @@ new_mechanisms:
     detection_rule: a DMB between stores that hit in the L1 costs little, while one between stores that miss to the L2 waits for the earlier misses
   load_poison_bits:
     name: Load poison bits for load-load ordering
+    block: lq
     status: speculative
     description: A load whose line is modified by another core before it becomes non-speculative is poisoned and replayed or flushed.
     params: []
@@ -1068,6 +1070,7 @@ new_mechanisms:
     detection_rule: same-address loads on one core take extra machine clears only when another core writes the line between them
   l2_snoop_filter:
     name: L2 duplicate L1 tags (snoop filter and flush engine)
+    block: l2
     status: speculative
     description: The L2 keeps duplicate tags of its cores' L1s, filters snoops for them, and drives a flush engine that pulls dirty L1 lines before a core powers down.
     params: [l2.inclusion]
@@ -1076,6 +1079,7 @@ new_mechanisms:
     detection_rule: an idle core keeps its L1 contents through the other cores' sharing traffic, and stores to lines no other L1 holds see no snoop delay
   l2_way_power:
     name: L2 way-group sleep and power-down
+    block: l2
     status: speculative
     description: L2 ways sit in three separately powered groups that sleep after an idle count set by leakage and temperature, or power off when use is concentrated.
     params: [l2.power_groups]
@@ -1086,6 +1090,7 @@ new_mechanisms:
       capacity drops to two thirds or one third until miss pressure restores it
   l2_victim_fill:
     name: L2 as a selective victim cache for L1 data
+    block: l2
     status: speculative
     description: DRAM fills go to the L1 only; L1 castouts enter the L2 as victims, clean ones only when their set has shown reuse and the L1-L2 path is free.
     params: [l2.inclusion]
@@ -1094,6 +1099,7 @@ new_mechanisms:
     detection_rule: one pass over a footprint larger than the L1 leaves little for a second pass to hit in the L2, while repeated passes build up L2 hits
   l2_insertion_priority:
     name: L2 insertion position by line history
+    block: l2
     status: speculative
     description: L2 victims enter at LRU positions chosen by stream, prefetch and trip bits, so streams and unused prefetches cycle through a few ways.
     params: [l2.replacement]
@@ -1115,8 +1121,8 @@ mechanism_claims:
                    c-mh-v3-selective-victim, c-mh-v3-dram-fill-l1-only, c-mh-v3-l1-victim-to-l2,
                    c-mh-v3-l2-writeback-path, c-mh-v3-slc-victim-allocator, c-mh-v3-clean-victim-modes]
   l2_insertion_priority: [c-mh-v3-l2-inclusive-2013, c-mh-v3-line-state-bits, c-mh-v3-l2-lru-placement,
-                          c-mh-v3-l2-stream-lru0, c-mh-v3-l2-prefetch-slots, c-mh-v3-l2-trip-lines, c-mh-v3-true-lru,
-                          c-mh-v3-l2-cpu-quota, c-mh-v3-superways]
+    c-mh-v3-l2-stream-lru0, c-mh-v3-l2-prefetch-slots, c-mh-v3-l2-trip-lines, c-mh-v3-true-lru,
+    c-mh-v3-l2-cpu-quota, c-mh-v3-superways, c-mh-v3-replacement-policy-bit]
   coherence_duplicate_tags: [c-mh-v3-slc-neither-incl-excl, c-mh-v3-coherence-point, c-mh-v3-four-hop, c-mh-v3-three-hop,
                        c-mh-v3-ctt-queues, c-mh-v3-victim-addq, c-mh-v3-parallel-coherence-pipes,
                        c-mh-v3-slc-dup-tags-l2, c-mh-v3-directory, c-mh-v3-moesi, c-mh-v3-scalable-coherence,
@@ -1124,3 +1130,19 @@ mechanism_claims:
                        c-mh-v3-dma-into-l2]
   streaming_store_nt: [c-mh-v3-full-line-write-l2]
   lsu_virtual_prefetch: [c-mh-v3-prefetch-no-slc, c-mh-v3-prefetch-two-targets]
+  pio_network: [c-mh-v3-pio-strands, c-mh-v3-device-store-path]
+  early_barrier_completion: [c-mh-v3-dsb-excluded-region, c-mh-v3-remote-dsb]
+  stxr_barrier_fusion: [c-mh-v3-fused-stxr-barrier]
+  remote_maintenance_pacing: [c-mh-v3-fiu-throttle, c-mh-v3-deferred-invalidate-poison]
+  l2_zero_line_tags: [c-mh-v3-sparse-zero-lines, c-mh-v3-sparse-loser-bank]
+  ecores_share_pl2: [c-mh-v3-a10-shared-l2, c-mh-v3-ecluster-uses-pl2]
+  slc_slices: [c-mh-v3-slc-four-slices, c-mh-v3-slc-slice-hash]
+  unshared_snoop_skip: [c-mh-v3-page-unshared-snoop, c-mh-v3-sharing-tracking]
+  slc_address_ranges: [c-mh-v3-cache-as-ram, c-mh-v3-slc-dynamic-ram, c-mh-v3-slc-tagless-ram,
+    c-mh-v3-display-from-slc, c-mh-v3-cache-filter]
+  power_estimator_throttle: [c-mh-v3-fill-source-telemetry]
+  cluster_l2_tlb: [c-mh-v3-mmu-at-slc, c-mh-v3-atu-in-cluster]
+  indexed_page_permissions: [c-mh-v3-sprr-index]
+  uncached_line_handling: [c-mh-v3-uncached-load-merge]
+  l2_line_ordering: [c-mh-v3-l2-order-unit, c-mh-v3-l2-half-line-bypass]
+  dvfs_transition: [c-mh-v3-cluster-shared-frequency]

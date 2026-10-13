@@ -379,6 +379,7 @@ claims:
 new_mechanisms:
   load_address_prediction:
     name: Load address prediction
+    block: lsu
     status: absent
     description: A PC-tagged predictor loads from a strided address before the real address is known; absent on M1, present from M2/A15.
     params: [lsu.address_prediction]

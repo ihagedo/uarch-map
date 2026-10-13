@@ -97,6 +97,9 @@ Derivation:
   for later chips without affecting M1 values.
 - Do not resolve a dispute by deleting a claim. Add a `resolutions` entry with a reason.
 - Do not edit `kb/firestorm.json`.
+- A mechanism names its `block` and, when only a later chip or a post-M1 patent shows it, its `chip`.
+  Mechanisms drawn from several sources live in `kb/seed/firestorm/mechanisms.yaml`; each claim file
+  attaches its own claims under `mechanism_claims`.
 
 ## How the merge decides
 

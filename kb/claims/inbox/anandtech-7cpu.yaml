@@ -772,6 +772,7 @@ new_params:
 new_mechanisms:
   streaming_store_nt:
     name: Automatic non-temporal streaming stores
+    block: sq
     status: inferred
     description: Streaming stores become non-temporal without software hints.
     params: []
@@ -781,3 +782,5 @@ new_mechanisms:
 mechanism_claims:
   streaming_store_nt: [c-at-streaming-stores]
   rename_retire_queue: [c-at-rob-630]
+  slc_victim_fill: [c-7cpu-slc-exclusive]
+  split_access_handling: [c-7cpu-8b-cross]

@@ -35,3 +35,4 @@ claims:
 
 mechanism_claims:
   lsq_at_issue: [c-mh-v1-lsq-order-tags]
+  group_map: [c-mh-v1-map-stage]

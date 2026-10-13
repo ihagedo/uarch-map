@@ -1069,6 +1069,7 @@ new_params:
 new_mechanisms:
   l2_cachelets:
     name: Per-core L2 cachelets (inner and outer L2)
+    block: l2
     status: speculative
     description: The 12 MiB L2 behaves as four 3 MiB cachelets, one beside each core.
     params: [l2.inner_slice, l2.core_capacity]
@@ -1076,6 +1077,7 @@ new_mechanisms:
     detection_rule: single-core bandwidth sweeps step at ~3 MiB and ~7.5 MiB, short of the 12 MiB L2
   dczva_l2_zero:
     name: DC ZVA zero-allocates lines in L2
+    block: l2
     status: inferred
     description: DC ZVA allocates zeroed lines directly in the L2.
     params: []
@@ -1083,6 +1085,7 @@ new_mechanisms:
     detection_rule: a DC ZVA stream beats the plain-store fill rate beyond L1 and shows no L1 writebacks
   nt_load_handling:
     name: Non-temporal loads skip L1 fill
+    block: prefetch
     status: inferred
     description: Non-temporal loads are not prefetched into the L1.
     params: []
@@ -1099,3 +1102,13 @@ mechanism_claims:
   nt_load_handling: [c-mh-v2-ldnp-l1-ignored, c-mh-v2-nt-load-no-l1-prefetch, c-mh-v2-nt-load-dram-10pct,
                      c-mh-v2-ldnt-copy-l2, c-mh-v2-nt-load-buffer-model, c-mh-v2-copy-beyond-l2,
                      c-mh-v2-memmove-nt-dropped, c-mh-v2-l2-random-repl]
+  idle_clock_division: [c-mh-v2-clock-variation]
+  ldpq_lsu_split: [c-mh-v2-ldpq-cracked-lsu]
+  cache_subarray_power: [c-mh-v2-multiarray-falloff]
+  lsu_virtual_prefetch: [c-mh-v2-temporal-prefetch-l1]
+  fill_bank_conflicts: [c-mh-v2-l2-overhead-l1-side, c-mh-v2-l2-store-no-overhead]
+  sq_32b_slots: [c-mh-v2-store-path-16b]
+  l1_l2_coherence_limit: [c-mh-v2-coherence-hypothesis, c-mh-v2-unbalanced-l2-100]
+  shared_rw_memory_path: [c-mh-v2-copy-no-turnaround, c-mh-v2-shared-load-store-path]
+  slc_slices: [c-mh-v2-m1max-slc-split, c-mh-v2-slc-even-odd]
+  l1d_banked_piggyback: [c-mh-v2-add-overwrite-200]

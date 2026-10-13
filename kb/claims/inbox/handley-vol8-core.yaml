@@ -931,6 +931,7 @@ claims:
 new_mechanisms:
   fill_forwarding:
     name: Fill forwarding to waiting loads
+    block: l1d
     status: inferred
     description: A load that missed the L1 is woken as its line arrives and takes its bytes during the fill, not by replaying afterwards.
     params: []
@@ -942,3 +943,32 @@ new_mechanisms:
 mechanism_claims:
   l1d_way_lookup: [c-mh-v8-l1d-no-way-mispredict]
   fill_forwarding: [c-mh-v8-fill-forward]
+  immediate_regs: [c-mh-v8-a15-adr-rename]
+  noc_rings_lanes: [c-mh-v8-noc-networks]
+  address_interleave_hash: [c-mh-v8-mc-hash-bits, c-mh-v8-mc-shutdown]
+  power_estimator_throttle: [c-mh-v8-power-levels]
+  dram_qos_scheduler: [c-mh-v8-mc-gen4, c-mh-v8-mc-ranks]
+  fabric_qos_credits: [c-mh-v8-mc-rt-credits]
+  slc_sticky_quota: [c-mh-v8-realtime-lines, c-mh-v8-slc-quota]
+  pattern_index_transfer: [c-mh-v8-zero-pattern]
+  slc_line_states: [c-mh-v8-slc-states, c-mh-v8-slc-line-512, c-mh-v8-slc-partial-valid]
+  l1i_way_prediction: [c-mh-v8-way-confirm]
+  l1d_tree_plru: [c-mh-v8-l1-plru]
+  ipv_replacement: [c-mh-v8-critical-lines, c-mh-v8-l2-lru-patent]
+  prefetch_throttle: [c-mh-v8-thrash-detect]
+  issue_age_flush: [c-mh-v8-age-tracking]
+  writeback_overflow_pool: [c-mh-v8-writeback-pool]
+  fp_back_to_back_fusion: [c-mh-v8-m3-fadd-fusion]
+  load_op_fusion: [c-mh-v8-m1-no-load-op-fusion, c-mh-v8-load-op-patent, c-mh-v8-load-op-rules]
+  load_value_prediction: [c-mh-v8-tage-lvp-patent, c-mh-v8-m3-lvp, c-mh-v8-m3-lvp-entries,
+    c-mh-v8-m3-lvp-train]
+  iq_bypass_fixup: [c-mh-v8-sfb-patent]
+  loop_modes: [c-mh-v8-short-loop-unroll]
+  return_fetch_table: [c-mh-v8-return-fetch-stack, c-mh-v8-return-trace-not-stored, c-mh-v8-return-params]
+  predictor_power_gating: [c-mh-v8-bp-bank-hint]
+  amx_lsu_issue: [c-mh-v8-amx-store-pipe]
+  amx_shared_contexts: [c-mh-v8-amx-reg-sets, c-mh-v8-cluster-shared, c-mh-v8-amx-per-cluster]
+  abandonable_requests: [c-mh-v8-abandonable-requests]
+  early_barrier_completion: [c-mh-v8-faster-isb]
+  load_address_prediction: [c-mh-v8-m2-lap, c-mh-v8-lap-stride, c-mh-v8-m2-lap-train, c-mh-v8-m3-lap-train,
+    c-mh-v8-lap-patent-6bit, c-mh-v8-a15-lap-stepping]

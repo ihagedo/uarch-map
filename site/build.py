@@ -269,6 +269,8 @@ def view_data(kb, geo):
             m.id: {
                 "name": m.name,
                 "status": m.status,
+                "block": m.block.id if m.block else None,
+                "chip": m.chip,
                 "description": m.description,
                 "params": [p.id for p in m.params],
                 "claims": [c.id for c in m.claims],

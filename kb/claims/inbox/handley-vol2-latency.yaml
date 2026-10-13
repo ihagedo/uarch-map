@@ -908,6 +908,7 @@ new_params:
 new_mechanisms:
   lsu_virtual_prefetch:
     name: LSU-resident virtual-address prefetcher
+    block: prefetch
     status: inferred
     description: The prefetcher trains on every load and store virtual address at the LSU.
     params: [prefetch.kinds, prefetch.streams]
@@ -917,6 +918,7 @@ new_mechanisms:
       prefetcher can follow lose the L1 TLB miss cost; a physical-address prefetcher would restart at each page
   l1d_hashed_way:
     name: L1D way chosen from physical page bits
+    block: l1d
     status: speculative
     description: A line's way seems fixed by a hash of physical page bits.
     params: [l1d.assoc]
@@ -926,6 +928,7 @@ new_mechanisms:
       for others, with no extra-cycle way-mispredict outliers
   content_directed_prefetch:
     name: Content-directed (data memory-dependent) prefetch
+    block: prefetch
     status: inferred
     description: Pointer-like values in filled lines are prefetched into the L2.
     params: [prefetch.kinds]
@@ -935,8 +938,25 @@ new_mechanisms:
       their addresses
 
 mechanism_claims:
-  lsu_virtual_prefetch: [c-mh-v2-prefetch-at-lsu, c-mh-v2-stride-to-dram, c-mh-v2-no-tlb2-prefetcher, c-mh-v2-tlb1-prefetch,
-                         c-mh-v2-ampm-2k, c-mh-v2-ampm-map, c-mh-v2-prefetch-filter, c-mh-v2-unified-prefetch,
-                         c-mh-v2-prefetch-kinds, c-mh-v2-region-to-l2]
+  lsu_virtual_prefetch: [c-mh-v2-prefetch-at-lsu, c-mh-v2-stride-to-dram, c-mh-v2-no-tlb2-prefetcher,
+    c-mh-v2-tlb1-prefetch, c-mh-v2-ampm-2k, c-mh-v2-ampm-map, c-mh-v2-prefetch-filter,
+    c-mh-v2-unified-prefetch, c-mh-v2-prefetch-kinds, c-mh-v2-region-to-l2, c-mh-v2-slc-spatial,
+    c-mh-v2-prefetch-not-slc]
   l1d_hashed_way: [c-mh-v2-l1d-way-hash, c-mh-v2-l1d-8way-tlb]
   content_directed_prefetch: [c-mh-v2-content-directed, c-mh-v2-augury-dmp, c-at-pointer-prefetch]
+  lsu_load_to_load_bypass: [c-mh-v2-ptr-chase-fastpath, c-mh-v2-ldp-ptr-first]
+  ampm_prefetcher: [c-mh-v2-stride-max, c-mh-v2-backward-stride, c-mh-v2-spatial-prefetch,
+    c-mh-v2-stride-lockon, c-mh-v2-region-prefetch, c-mh-v2-hybrid-prefetch, c-mh-v2-next-line,
+    c-mh-v2-three-prefetchers, c-mh-v2-density-pattern, c-mh-v2-mini-access-maps, c-mh-v2-ampm-granularity,
+    c-mh-v2-large-stride, c-mh-v2-sms, c-mh-v2-secondary-coverage]
+  temporal_prefetch: [c-mh-v2-ghb-box, c-mh-v2-temporal]
+  prefetch_throttle: [c-mh-v2-ampm-throttle, c-mh-v2-prefetch-throttle]
+  decoupled_fetch: [c-mh-v2-no-i-stream-prefetch]
+  dtlb_random_replacement: [c-mh-v2-dtlb-random-repl]
+  tlb_mixed_page_sizes: [c-mh-v2-no-large-pages-tlb, c-mh-v2-splinter-page-sizes, c-mh-v2-page-size-presence]
+  l2_way_power: [c-mh-v2-tlb2-drowsy, c-mh-v2-l2-segments]
+  mmu_walk_cache: [c-mh-v2-page-table-3, c-mh-v2-mmu-cache, c-mh-v2-no-pte-prefetch, c-mh-v2-mmu-cache-patent]
+  cluster_l2_tlb: [c-mh-v2-tlb2-shared-guess, c-mh-v2-tlb2-per-cluster]
+  tlb_invalidation_shortcuts: [c-mh-v2-tlbi-range, c-mh-v2-tlb-striping, c-mh-v2-accel-tlbi]
+  l2_hashed_way_filter: [c-mh-v2-l2-not-24way, c-mh-v2-l2-assoc-hash]
+  l2_cachelets: [c-mh-v2-l2-cpu-hash, c-mh-v2-l2-p2p]

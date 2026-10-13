@@ -1,0 +1,708 @@
+# mechanisms.yaml
+# Isaac Hagedorn, 2026-10-13
+# Mechanisms drawn from claims across sources; each claim file attaches its own claims.
+
+mechanisms:
+  address_interleave_hash:
+    name: Hashed address interleave
+    block: chip
+    status: speculative
+    description: >-
+      Addresses are hashed across the coherence, SLC and memory-controller pipelines and over DRAM channels,
+      ranks and banks; later patents let the OS shut an idle controller after moving its pages.
+  noc_layout:
+    name: Layered fabric, one port per cluster
+    block: chip
+    status: speculative
+    description: >-
+      Each CPU cluster is one requester on a coherent fabric joining memory, SLC, CPU and GPU through switch
+      levels, bridged to a non-coherent IO fabric for PCIe and USB.
+  noc_rings_lanes:
+    name: 'Later NoCs: rings, lanes, split networks'
+    block: chip
+    chip: post-m1
+    status: speculative
+    description: >-
+      Later NoCs use two counter-rotating rings, add a parallel lane for bandwidth, split CPU, IO and GPU
+      networks, and give each P-cluster two ports chosen by address hash.
+  noc_split_paths:
+    name: Separate command and data paths
+    block: chip
+    status: speculative
+    description: >-
+      Commands and data travel apart: write data is buffered once at fabric entry and moved once, only a small
+      control packet is routed, and most read returns skip Coherence.
+  remote_maintenance_pacing:
+    name: Paced remote maintenance
+    block: chip
+    status: speculative
+    description: >-
+      Cache and TLB maintenance requests wait in a per-cluster unit, and a core that has taken many refuses
+      more until it progresses; a later design poisons invalidated lines and syncs them later.
+  same_address_ordering:
+    name: Linked same-address waiting
+    block: chip
+    status: speculative
+    description: >-
+      A request blocked by same-address work waits linked behind it in a retry queue, a pending SLC line or a
+      hashed write table, or retries once the blocking transaction's response passes.
+  slc_io_cache_proxy:
+    name: SLC as controller for IO caches
+    block: chip
+    status: speculative
+    description: >-
+      The SLC acts as cache controller for small caches in IO blocks outside the coherence domain, turning one
+      request into the simpler commands such a cache needs.
+  unshared_snoop_skip:
+    name: Snoop skipping for unshared lines
+    block: chip
+    status: speculative
+    description: >-
+      Lines in pages marked never-shared, or lines a device has learned no other requester can hold, skip
+      snoop broadcasts.
+  amx_datapath:
+    name: AMX outer-product grid
+    block: pcluster
+    status: speculative
+    description: >-
+      AMX accumulates X-by-Y outer products into Z, held across an 8x8 grid of processing elements, and runs a
+      load or store to the L2 alongside each arithmetic operation.
+  amx_lsu_issue:
+    name: AMX issue through the store queue
+    block: pcluster
+    status: inferred
+    description: >-
+      AMX instructions pass through the core's load/store pipeline, wait in the store queue until non-
+      speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four.
+  amx_op_set:
+    name: AMX operation set
+    block: pcluster
+    status: inferred
+    description: >-
+      AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add
+      2x2 packing, lookup tables, strided dots, mixed precision and row moves.
+  amx_shared_contexts:
+    name: One AMX unit per cluster
+    block: pcluster
+    status: inferred
+    description: >-
+      One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor
+      tells the OS when several cores overload it.
+  clock_ramp:
+    name: Clock ramp from idle
+    block: pcluster
+    status: measured
+    description: >-
+      From idle the P-cluster clock starts rising within about 10 to 20 ms and reaches its maximum after
+      roughly 40 to 100 ms, in steps that may be set by hardware.
+  core_power_cycle:
+    name: Core power-down and restart
+    block: pcluster
+    status: speculative
+    description: >-
+      A powered-down core restarts from an address the always-on power manager supplies and reloads its saved
+      state from the L2, the SLC or DRAM, depending on what else slept.
+  dvfs_transition:
+    name: DVFS transition sequence
+    block: pcluster
+    status: speculative
+    description: >-
+      A cluster's cores, L2 and bus interface change performance state together: voltage rises and is sensed
+      settled first, then the PLL retargets behind a divider stepping from 4 to 1.
+    params: [pcluster.clock_domain]
+  interrupt_routing:
+    name: Power-aware interrupt routing
+    block: pcluster
+    status: speculative
+    description: >-
+      Device interrupts follow the device's writes, are held while all cores sleep, and are offered cluster by
+      cluster in soft, hard and force rounds that a busy core may refuse.
+  perf_controller:
+    name: Closed-loop performance controller
+    block: pcluster
+    status: speculative
+    description: >-
+      A closed-loop controller maps each thread group's control effort to a cluster type and DVFS level, and
+      raises NoC, DRAM or feeding-cluster clocks when cores stall on memory.
+  predictive_clock_crossing:
+    name: Predictive clock-domain crossing
+    block: pcluster
+    status: speculative
+    description: >-
+      Clock-domain crossings predict the other clock's edges from history instead of using two-cycle
+      synchronizers, passing one-bit pointer increments through small event FIFOs.
+  slc_address_ranges:
+    name: Address ranges held in the SLC
+    block: slc
+    status: speculative
+    description: >-
+      Range registers can map an address range into SLC lines as memory, such as camera or static display
+      frames, or let a filtered range keep only part of its lines.
+  slc_line_states:
+    name: SLC line states and sectors
+    block: slc
+    status: speculative
+    description: >-
+      SLC lines hold only invalid, valid and modified states with per-sector valid flags; partial writes keep
+      a byte mask, and later designs track dirtiness per 64 B half.
+  slc_memory_side:
+    name: Memory-side SLC
+    block: slc
+    status: speculative
+    description: >-
+      The SLC sits behind coherence as a front end owned by the memory controller, caching any range, even
+      uncacheable ones, and a write that reaches it counts as written to DRAM.
+  slc_slices:
+    name: SLC slices
+    block: slc
+    status: inferred
+    description: >-
+      The SLC is split into slices picked by physical address bits or a hash, each behind its own arbiter;
+      readings give two slices (even and odd lines) or four on the M1.
+  cluster_compression_engines:
+    name: Cluster page-compression engines
+    block: memctrl
+    status: speculative
+    description: >-
+      Each cluster has WKDM and LZ page-compression engines at the L2, fed through a core's store pipeline
+      like AMX, which the OS uses under a backlog or to save power or heat.
+  dram_clock_scaling:
+    name: DRAM frequency scaling
+    block: memctrl
+    status: inferred
+    description: >-
+      DRAM latency varies widely and drops under heavier DRAM load, which is put down to the DRAM clock rising
+      with demand.
+  dram_power_states:
+    name: DRAM power states
+    block: memctrl
+    status: speculative
+    description: >-
+      When quiet, the memory controller and DRAM drop to half clock or self-refresh with writes held; DRAM
+      performance states are revisited every 50 µs to 20 ms and the PHY recalibrates at run time.
+  dram_qos_scheduler:
+    name: DRAM bank scheduler
+    block: memctrl
+    status: speculative
+    description: >-
+      Each DRAM bank picks its highest-category request from per-page and per-channel lists, favouring page
+      hits up to a streak cap; waiting requests gain priority with age or merging.
+  dram_refresh_scheduling:
+    name: Flexible refresh placement
+    block: memctrl
+    status: speculative
+    description: >-
+      Bank refreshes slip within a refresh window, first into write turns, then into read turns, and are
+      forced with a shorter window and lookahead once time runs short.
+  dram_rw_turns:
+    name: Read and write turns
+    block: memctrl
+    status: speculative
+    description: >-
+      The controller leaves write mode by write-queue watermarks, earlier when latency tolerance is low or
+      low-latency reads wait, and sizes turns against an access-efficiency target.
+  mc_write_merge:
+    name: Write merging in the memory controller
+    block: memctrl
+    status: speculative
+    description: >-
+      Writes to one address merge by byte enable; a read overlapping a queued partial write goes first and
+      takes the write data on its way out, and read-modify-write reads end a read turn.
+  pattern_index_transfer:
+    name: Data-pattern transfer compression
+    block: memctrl
+    chip: post-m1
+    status: speculative
+    description: >-
+      Caches track common data patterns, such as all zeros, and send a pattern index over the NoC instead of
+      the data.
+  shared_rw_memory_path:
+    name: Shared load/store path beyond the L2
+    block: memctrl
+    status: inferred
+    description: >-
+      Loads and stores share one path through DRAM and probably the NoC and SLC, so mixing them adds no
+      bandwidth and costs none; DRAM read-write turnaround stays hidden.
+  ecores_share_pl2:
+    name: E cores use the P-cluster L2
+    block: l2
+    status: speculative
+    description: >-
+      While the P cores sleep the E cores can use the P cluster's L2, which then stays powered and takes its
+      DVFS state from the E cores.
+  l2_core_lru:
+    name: Per-core LRU in the L2
+    block: l2
+    status: measured
+    description: >-
+      L2 replacement follows LRU order among lines from one core but not when lines from different cores share
+      a set, so a cross-core eviction set needs several passes.
+    params: [l2.replacement]
+  l2_half_lines:
+    name: Two L1 lines per L2 line
+    block: l2
+    status: measured
+    description: >-
+      Each 128 B L2 line holds two 64 B L1 lines that fill and evict on their own; one study finds only the
+      accessed half enters the L1, another finds both halves do.
+  l2_hashed_way_filter:
+    name: Hashed L2 index with partial-tag way filter
+    block: l2
+    status: inferred
+    description: >-
+      The L2 index seems hashed, so some strides crowd onto a fraction of the cache, and an early partial-tag
+      compare limits which ways are read instead of a full tag compare per way.
+  l2_line_ordering:
+    name: Per-line ordering at the L2
+    block: l2
+    status: speculative
+    description: >-
+      Requests queued at the L2 stay in order within one 128 B L2 line but not across lines, so a core's read
+      may pass its own write to the other half of a line.
+  l2_physical_index:
+    name: Physical L2 index
+    block: l2
+    status: measured
+    description: >-
+      The L2 picks one of 8192 sets from physical address bits in the page offset and page frame; one study
+      finds two of the bits are XORs of higher page-number bits.
+  l2_zero_line_tags:
+    name: Zero-line tags and loser bank
+    block: l2
+    status: speculative
+    description: >-
+      All-zero lines are recorded as a tag bit without touching the data array, and invalid and zero lines
+      share a loser bank kept powered off until real data needs it.
+  uncached_line_handling:
+    name: Uncacheable line handling
+    block: l2
+    status: speculative
+    description: >-
+      Uncacheable reads fill a few L2 ways set aside for them or merge in per-controller buffers, and
+      uncacheable writes are gathered into full lines that skip the L1 and L2.
+  agu_same_page_check:
+    name: Early same-page address check
+    block: lsu
+    status: speculative
+    description: >-
+      During address generation a masked compare tells whether base plus offset stays on the base register's
+      page without waiting for the full add.
+  ldpq_lsu_split:
+    name: Vector load pair split at cache access
+    block: lsu
+    status: inferred
+    description: >-
+      An LDP of Q registers is one instruction through rename and the ROB and splits into two 16 B cache
+      requests only at cache access; an LDP of X registers stays one request.
+  lsu_load_to_load_bypass:
+    name: Load-to-load address bypass in the LSU
+    block: lsu
+    status: inferred
+    description: >-
+      A load whose base comes from a just-issued load that hit the L1 takes the value inside the LSU, 3 cycles
+      instead of 4; for an LDP only the first register qualifies.
+  redundant_mem_op_elim:
+    name: Removal of repeated loads and stores
+    block: lsu
+    status: absent
+    description: >-
+      Back-to-back identical loads or identical stores all execute; none is removed as redundant.
+  spec_fault_no_access:
+    name: No speculative access to faulting addresses
+    block: lsu
+    status: measured
+    description: >-
+      A speculative load or fetch through a pointer that failed its AUT check is not performed and leaves no
+      TLB trace, and no Meltdown-style reads across address spaces are seen.
+  split_access_handling:
+    name: Line- and page-crossing accesses
+    block: lsu
+    status: measured
+    description: >-
+      An unaligned or line-crossing access stays one op that sends two line requests for about one cycle more;
+      a page-crossing load takes about 28 to 31 cycles more, presumed microcode.
+  sq_partial_forwarding:
+    name: Partial store-to-load forwarding
+    block: lsu
+    status: measured
+    description: >-
+      A load overlapping queued stores takes their bytes and the rest from the L1 at full rate; combining
+      bytes from two store-queue entries costs about one extra cycle.
+  store_load_dep_predictor:
+    name: Store/load PC-pair dependence predictor
+    block: lsu
+    status: inferred
+    description: >-
+      A table of about 74 store/load PC pairs makes a matching load wait for its store; other loads are
+      predicted not to alias, and entries are replaced round-robin.
+    params: [lsu.disambiguation, lsu.lsdp_entries]
+  stxr_barrier_fusion:
+    name: Store-exclusive and barrier fusion
+    block: lsu
+    status: speculative
+    description: >-
+      A store-exclusive and the barrier right after it fuse in the LSU into one operation that needs a single
+      trip to the point of coherency.
+  cold_start_mode:
+    name: Cold-start fetch and predictor mode
+    block: l1i
+    status: speculative
+    description: >-
+      After power-up with empty caches, each instruction miss to the L2 brings three lines, and a new branch
+      is written into four TAGE entries instead of one or two.
+  l1i_predecode:
+    name: I-cache predecode on fill
+    block: l1i
+    status: speculative
+    description: >-
+      Lines are predecoded on fill: calls and returns are marked, PC-relative branch targets keep their low 14
+      bits, and all undefined encodings become one value.
+  l1i_way_prediction:
+    name: I-cache way and translation from predictors
+    block: l1i
+    status: speculative
+    description: >-
+      The fetch predictor and a sequential way predictor supply the I-cache way and translation, so most
+      fetches read one way and skip the iTLB and tag lookups.
+  nfp_training:
+    name: Fetch-predictor training and hysteresis
+    block: btb
+    status: speculative
+    description: >-
+      The slower predictors that check the fetch predictor also write it; hysteresis keeps an entry until it
+      is wrong twice, and a new entry meeting a strong set goes to a FIFO overflow table.
+  predictor_power_gating:
+    name: Predictor power gating
+    block: dirpred
+    status: speculative
+    description: >-
+      Fetch-predictor entries record which predictors the coming groups need so the others are clock-gated,
+      and TAGE tables are probed in stages or powered off when little used.
+  retire_time_training:
+    name: Branch information tables and retire-time training
+    block: dirpred
+    status: speculative
+    description: >-
+      Each branch carries its predictor indices and state from decode to retire in branch information tables;
+      predictors train at retire, only on mispredictions or weak predictions.
+  tage_tables:
+    name: TAGE table layout
+    block: dirpred
+    status: measured
+    description: >-
+      Six tagged tables, each with its own associativity, are indexed by PC bits 18:2 and history and split by
+      PC bit 6, so two branches in one block are read together.
+    params: [dirpred.tables, dirpred.capacity]
+  ras_overflow_clear:
+    name: Return stack cleared on overflow
+    block: ras
+    status: inferred
+    description: >-
+      Once calls nest deeper than the return stack, call and return time rises sharply, read as the core
+      clearing the stack on overflow.
+  ras_pac_check:
+    name: Pointer authentication at the RAS
+    block: ras
+    status: speculative
+    description: >-
+      Pointer authentication codes in the high bits of return addresses are checked in the logic that pushes
+      and pops the return stack.
+  return_fetch_table:
+    name: Return fetch table
+    block: ras
+    status: speculative
+    description: >-
+      Fetch groups ending in a return sit in a separate table holding no target or length; the RAS gives the
+      target, and fetch after the return assumes the maximum length.
+  two_level_ras:
+    name: Decode RAS with fetch mini-RAS
+    block: ras
+    status: speculative
+    description: >-
+      The main return stack is kept at decode, and a small fetch-side stack covers only returns whose calls
+      decode has not yet seen.
+  ittage_indirect:
+    name: Tagged history tables for indirect targets
+    block: indpred
+    status: speculative
+    description: >-
+      Indirect targets come from tagged tables indexed by PC and path history, with usefulness bits and
+      hysteresis that keeps a target until it misses twice.
+    params: [indpred.kind, indpred.capacity]
+  objc_msgsend_predictor:
+    name: objc_msgSend method predictor
+    block: indpred
+    chip: m2
+    status: speculative
+    description: >-
+      For one configured hot indirect branch, a predict uop hashes the class and selector registers into a
+      method cache that redirects fetch; the M1 lacks it.
+  next_fetch_groups:
+    name: Next-fetch-predictor fetch groups
+    block: fetch
+    status: inferred
+    description: >-
+      The fetch predictor, indexed and tagged by the fetch PC, gives the next fetch group's target, length and
+      ending branch type; one group, ending at a taken branch, is fetched per cycle.
+  staged_fetch_redirect:
+    name: Staged fetch redirects
+    block: fetch
+    status: speculative
+    description: >-
+      Slower predictors and decode check the single-cycle fetch prediction and refetch in a few cycles when
+      they disagree, well short of a flush; fetch halts when no target is known.
+  wrong_path_redirect:
+    name: Wrong-path branch redirect
+    block: fetch
+    status: measured
+    description: >-
+      A mispredicted indirect branch on the wrong path of an older mispredict is squashed as soon as its
+      target is computed, and fetch moves to that target.
+  load_op_fusion:
+    name: Load-op fusion
+    block: decode
+    chip: post-m1
+    status: speculative
+    description: >-
+      A small ALU in the load/store unit applies an ADD, XOR, shift, rotate, CBZ or TBZ decoded in the same
+      cycle to the loaded value; the M1 has no load-op fusion.
+  speculation_barriers:
+    name: Barriers that stop speculation
+    block: decode
+    status: measured
+    description: >-
+      A CSDB or ISB placed after a bounds check stops speculative execution past a mispredicted branch; a DMB
+      or DSB on its own does not.
+  uop_split_merge:
+    name: Uop splitting and merging
+    block: decode
+    status: measured
+    description: >-
+      Shifted or extended ALU ops are one uop that issues twice, LDP and fused pairs issue once, NOP and B
+      never issue, and pre- or post-indexed accesses add a base-update uop.
+  iq_bypass_fixup:
+    name: Instruction-queue bypass and fix-up
+    block: iq
+    status: speculative
+    description: >-
+      Fetch bypasses the instruction queue when it is empty; in the queue, instructions a taken short forward
+      branch skips are deleted without resteering fetch.
+  control_independence:
+    name: Reuse past reconvergence
+    block: rename
+    chip: post-m1
+    status: speculative
+    description: >-
+      After a mispredicted short forward branch, loads past the reconvergence point that do not depend on the
+      wrong path keep their values, and branch outcomes there pass to fetch.
+  group_map:
+    name: Group dependency map
+    block: rename
+    status: inferred
+    description: >-
+      A Map stage ahead of Rename resolves register dependences among the up to eight instructions of a cycle,
+      so chains of eliminated scalar moves still complete at rename.
+  macro_op_fusion:
+    name: Macro-op fusion
+    block: rename
+    status: measured
+    description: >-
+      Decode spots pairs (an ALU op and a following conditional branch, cbz or cbnz; AES and PMULL pairs; AMX
+      pairs) and Map merges them into one uop; adrp+add and mov+movk do not fuse.
+    params: [rename.fusion, rename.fusion_read_limit]
+  move_elimination:
+    name: Move elimination and zeroing
+    block: rename
+    status: measured
+    description: >-
+      Full-width register moves finish at rename and vector zeroing costs nothing; sub-register moves, MOV
+      from xzr and EOR self-zeroing run as ordinary ops.
+    params: [rename.mov_elimination, rename.zero_idiom]
+  speculative_special_regs:
+    name: Speculative special-register writes
+    block: rename
+    status: speculative
+    description: >-
+      Flag moves are handled at the rename map, and other special-register writes go out of order into
+      speculative storage made permanent at retire, so they do not serialize.
+  writeback_overflow_pool:
+    name: Writeback overflow pool
+    block: int_prf
+    chip: post-m1
+    status: speculative
+    description: >-
+      Results beyond the register file's write ports go to a temporary pool and drain later instead of
+      stalling issue.
+  split_flag_files:
+    name: Split flag register files
+    block: flags_prf
+    status: measured
+    description: >-
+      Scalar and SIMD/fp code keep separate condition-flag register files; flag chains within a domain cost
+      nothing, and moving flags across costs about six cycles.
+    params: [flags_prf.total]
+  issue_age_flush:
+    name: Age bits for mispredict flush
+    block: sched_int
+    status: speculative
+    description: >-
+      One possibly-mispredicting op issues per cycle, and age bits built from short per-entry offsets tell
+      recovery which younger work in each pipeline to flush.
+  matrix_scheduler:
+    name: Matrix scheduler
+    block: sched_int
+    status: speculative
+    description: >-
+      Queues do not shift: a dependency matrix indexed by scheduler entry wakes dependents over a wide bus, an
+      age matrix picks the oldest ready uop, and operands are read at issue.
+  load_replay_shadow:
+    name: Load replay with a shadow window
+    block: sched_ls
+    status: speculative
+    description: >-
+      Uops issued behind a load stay in their queue under a shadow timer and reissue if the load replays; the
+      replaying load waits in a load execution queue bank of its pipe.
+  divider_pipe:
+    name: Side-pipeline integer divider
+    block: eu_int
+    status: inferred
+    description: >-
+      The integer divider is a separate pipeline behind one unit's queue: back-to-back divides issue every
+      other cycle, and other work on that unit is not held up.
+  exec_forwarding:
+    name: Forwarding and domain crossing
+    block: eu_fp
+    status: measured
+    description: >-
+      Integer-to-SIMD moves and conversions travel through a load slot as a fake load and the reverse use a
+      dedicated path, about six cycles each way; a MADD feeds the next addend in one cycle.
+  fp_back_to_back_fusion:
+    name: Back-to-back FADD fusion
+    block: eu_fp
+    chip: m3
+    status: inferred
+    description: >-
+      A dependent pair of FADDs is fused back to back, taking 5 cycles instead of 6.
+  abandonable_requests:
+    name: Abandonable cache requests
+    block: retire
+    chip: post-m1
+    status: speculative
+    description: >-
+      Prefetches, instruction fetches and speculative loads are flagged abandonable, so on an interrupt the
+      caches may drop them and the core drains faster.
+  late_ordering_check:
+    name: Late store/load address recheck
+    block: lq
+    status: measured
+    description: >-
+      The store/load address check is repeated as the load's data reaches its register, so a store address
+      resolving two to four cycles late causes a replay, not a flush.
+  sq_32b_slots:
+    name: 32 B store-queue slots over 16 B store paths
+    block: sq
+    status: inferred
+    description: >-
+      Store-queue slots seem to be 32 B and gather stores within a slot, a line-crossing store taking two;
+      stores reach the L1D over 16 B paths with no full-line write.
+  cache_subarray_power:
+    name: SRAM sub-array power-down
+    block: l1d
+    status: inferred
+    description: >-
+      Caches are built from many small SRAM sub-arrays on a separate supply that power down when idle and
+      precharge on demand; waking may reject an L1D load for a cycle.
+  fill_bank_conflicts:
+    name: L1D fills take bank cycles from loads
+    block: l1d
+    status: inferred
+    description: >-
+      Lines prefetched from the L2 wait in buffers and are written into the L1D banks, blocking loads to those
+      banks and costing about one cycle in seven; stores see no such loss.
+  l1_l2_coherence_limit:
+    name: L1-L2 coherence work limits mixed traffic
+    block: l1d
+    status: inferred
+    description: >-
+      Coherence work between the L1 and the L2, perhaps one line every other cycle, caps L1 copies near 150
+      GB/s and mixed load/store traffic in the L2 near 100 GB/s.
+  l1d_page_offset_index:
+    name: Page-offset L1D index
+    block: l1d
+    status: measured
+    description: >-
+      The L1D set comes from address bits 6-13, inside the 16 KiB page offset, so the cache is indexed by the
+      virtual address.
+  l1d_tree_plru:
+    name: Tree-PLRU L1D replacement
+    block: l1d
+    status: measured
+    description: >-
+      Each 8-way L1D set picks its victim by a tree pseudo-LRU, and access sequences built on that state
+      produce the predicted misses.
+    params: [l1d.replacement]
+  cluster_l2_tlb:
+    name: Cluster-shared L2 TLB
+    block: dtlb
+    status: speculative
+    description: >-
+      Cores keep small L1 TLBs, while the L2 TLB and the page walkers sit beside the L2 in a unit the
+      cluster's cores share.
+  dtlb_random_replacement:
+    name: Random L1 dTLB replacement
+    block: dtlb
+    status: inferred
+    description: >-
+      The L1 dTLB seems to replace entries at random, since latency past its capacity climbs linearly from 3
+      to 9 cycles instead of stepping.
+  indexed_page_permissions:
+    name: Indexed page permissions
+    block: dtlb
+    status: speculative
+    description: >-
+      A page holds an index into a 4-entry permission table instead of permission bits, so one core can switch
+      a page's permissions without a TLB shootdown.
+  mmu_walk_cache:
+    name: Page walks through an MMU walk cache
+    block: dtlb
+    status: inferred
+    description: >-
+      L2 TLB misses walk a three-level 16 KiB page table through an MMU walk cache for the upper levels, with
+      leaf entries read from the L2.
+  tlb_invalidation_shortcuts:
+    name: Faster TLB invalidation
+    block: dtlb
+    status: speculative
+    description: >-
+      A range invalidation picks the faster of scanning all entries or looking up each page, ASID/VMID fields
+      are striped to compare four at once, and accelerator invalidations are bundled.
+  tlb_mixed_page_sizes:
+    name: Mixed page sizes in one TLB
+    block: dtlb
+    chip: m2
+    status: speculative
+    description: >-
+      TLB entries carry a page-size field so one TLB holds up to five sizes, and a per-context presence vector
+      limits lookups to sizes in use; the M1 shows only 16 KiB pages.
+  ampm_prefetcher:
+    name: Access-map prefetcher with stride side tables
+    block: prefetch
+    status: inferred
+    description: >-
+      An access-map prefetcher matches region line maps against stride and density patterns, helped by large-
+      stride and SMS tables; the M1 shows stride, region and hybrid prefetching.
+    params: [prefetch.kinds, prefetch.streams]
+  prefetch_throttle:
+    name: Prefetch throttling
+    block: prefetch
+    status: speculative
+    description: >-
+      Every 32 cycles the L2 rates its per-core prefetch queues and sets a throttle level; credits cap a
+      region at about four prefetches in flight, and prefetch grows bolder when misses return late.
+  temporal_prefetch:
+    name: Temporal history prefetcher
+    block: prefetch
+    status: inferred
+    description: >-
+      A temporal prefetcher with a GHB-like history of a little under 256 entries covers random accesses
+      inside a 15 KiB region but not inside a 16 KiB one.

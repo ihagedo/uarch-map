@@ -125,3 +125,4 @@ new_params:
 
 mechanism_claims:
   path_history_shift_xor: [c-cq-phr-100, c-cq-phr-split, c-cq-footprint-bits]
+  tage_tables: [c-cq-pc-input, c-cq-partition-pc6]

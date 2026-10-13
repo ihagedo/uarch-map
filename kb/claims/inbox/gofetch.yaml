@@ -246,6 +246,10 @@ new_params:
   prefetch.dmp_region:         {block: prefetch, name: DMP pointer region (pointer and its line share upper bits), unit: GiB, mechanism: content_directed_prefetch}
 
 mechanism_claims:
-  content_directed_prefetch: [c-gf-firestorm-only, c-gf-no-deref-needed, c-gf-one-load, c-gf-store-no, c-gf-l1-fill, c-gf-once,
-    c-gf-filter-128, c-gf-filter-per-core, c-gf-l1-half, c-gf-l2-to-l1, c-gf-do-not-scan, c-gf-4g-region, c-gf-tbi,
-    c-gf-next-line, c-gf-two-lines, c-gf-dit-m1]
+  content_directed_prefetch: [c-gf-firestorm-only, c-gf-no-deref-needed, c-gf-one-load, c-gf-store-no,
+    c-gf-l1-fill, c-gf-once, c-gf-filter-128, c-gf-filter-per-core, c-gf-l1-half, c-gf-l2-to-l1,
+    c-gf-do-not-scan, c-gf-4g-region, c-gf-tbi, c-gf-next-line, c-gf-two-lines, c-gf-dit-m1,
+    c-gf-iterate-enough, c-gf-l2-hit, c-gf-filter-patent, c-gf-scan-chunks, c-gf-tlb-walk, c-gf-dit-m3,
+    c-gf-no-disable, c-gf-m2, c-gf-m3, c-gf-icestorm-none]
+  l2_half_lines: [c-gf-other-half-l2]
+  l2_physical_index: [c-gf-l2-sets]

@@ -115,3 +115,5 @@ claims:
       Cites Zhou's M1_BPU_Experiments and Jia's microarchitecture comparison page. Equals both btb.l0_entries and
       indpred.capacity (c-zhou-ibtb); the paper does not say which structure.
 
+mechanism_claims:
+  l1i_coupled_btb: [c-kc-m2-btb-third-run, c-kc-m2-btb-two-level, c-kc-m2-btb-prefetch]

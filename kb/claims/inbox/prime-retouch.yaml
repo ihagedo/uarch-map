@@ -238,3 +238,7 @@ claims:
 new_params:
   l1d.replacement: {block: l1d, name: L1D replacement policy}
   l2.assoc: {block: l2, name: L2 associativity, unit: ways}
+
+mechanism_claims:
+  l1d_page_offset_index: [c-prt-l1d-index, c-prt-ice-l1d-index]
+  l1d_tree_plru: [c-prt-ice-l1d-tree-plru]

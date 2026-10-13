@@ -111,6 +111,8 @@ class Mechanism:
     id: str
     name: str
     status: str
+    block: "Block" = None
+    chip: str = "m1"
     description: str = ""
     params: list = field(default_factory=list)
     claims: list = field(default_factory=list)
@@ -232,6 +234,8 @@ class KB:
                 id=k,
                 name=v["name"],
                 status=v.get("status", ""),
+                block=self.blocks.get(v.get("block")),
+                chip=v.get("chip", "m1"),
                 description=" ".join(v.get("description", "").split()),
                 claims=[self.claims[c] for c in v.get("claims", []) if c in self.claims],
                 sim_switch=v.get("sim_switch"),

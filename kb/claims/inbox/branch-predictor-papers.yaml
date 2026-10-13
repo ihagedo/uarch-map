@@ -341,6 +341,7 @@ new_params:
 new_mechanisms:
   path_history_shift_xor:
     name: Path history register (shift-and-XOR)
+    block: dirpred
     status: measured
     description: The 100-bit history shifts and XORs in branch address bits, not outcomes.
     params: [dirpred.history, dirpred.history_update, dirpred.history_inputs]
@@ -350,6 +351,7 @@ new_mechanisms:
       outcomes ~0 % mispredicts while the bit is in the history and ~25 % (3-bit counters) once it has aged out
   bpu_isolation:
     name: Branch predictor context isolation
+    block: dirpred
     status: absent
     description: The conditional predictor keeps no privilege or process tag.
     params: []
@@ -366,3 +368,4 @@ mechanism_claims:
   bpu_isolation: [c-tm-no-user-kernel-isolation, c-tm-no-cross-process-isolation, c-tm-ice-user-kernel-isolation,
                   c-tm-ice-no-cross-process-isolation, c-tm-patent-security-tag,
                   c-pat-us20200192673a1-context-encrypted-targets]
+  speculation_barriers: [c-dimva-csdb, c-dimva-isb, c-dimva-dmb-dsb]

@@ -456,6 +456,7 @@ claims:
 new_mechanisms:
   tso_mode:
     name: Runtime-selectable TSO memory model
+    block: lsu
     status: measured
     description: A privileged control bit switches a core to x86-TSO ordering for Rosetta while keeping out-of-order loads.
     params: []
@@ -472,3 +473,4 @@ mechanism_claims:
              c-tso-ecore-ss, c-tso-mlp-8, c-tso-mlp-squash, c-tso-cactu-misses, c-tso-outliers, c-tso-overall,
              c-tso-suite-fixed]
   load_poison_bits: [c-tso-ll-squash-rule]
+  l1d_page_offset_index: [c-tso-l1-virt-indexed]

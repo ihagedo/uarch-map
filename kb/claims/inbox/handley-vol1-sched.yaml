@@ -756,6 +756,7 @@ new_params:
 new_mechanisms:
   dispatch_buffers:
     name: Two-level dispatch through unordered buffers
+    block: dispatch
     status: inferred
     description: Rename writes into unordered dispatch buffers that feed one scheduler queue per unit.
     params: [dispatch.int_entries, dispatch.mul_entries, dispatch.ls_entries, dispatch.fp_entries,
@@ -766,6 +767,7 @@ new_mechanisms:
       cycles; a filler limited to three integer units fills a 12-entry buffer, not 24
   paired_sched_queues:
     name: Paired scheduler queues
+    block: sched_int
     status: inferred
     description: Scheduler queues are paired; a queue with nothing ready issues from its partner.
     params: [sched_int.entries_per_queue, sched_int.queues, sched_fp.entries_per_queue, sched_ls.entries,
@@ -774,6 +776,7 @@ new_mechanisms:
     detection_rule: a filler that can issue to only one unit of a pair sees about half the queue capacity of one that can issue to both
   immediate_regs:
     name: Immediate register pool written at rename
+    block: rename
     status: inferred
     description: A MOV of a non-zero immediate completes at rename into a pool of about 36 registers.
     params: [rename.mov_imm_limit, int_prf.imm_regs, int_prf.total, rename.zero_idiom]
@@ -789,6 +792,13 @@ mechanism_claims:
                      c-mh-v1-dispatch-fp-single]
   paired_sched_queues: [c-mh-v1-sched-johnson-2x, c-mh-v1-sched-pairing, c-mh-v1-sched-ls-pairing,
                         c-mh-v1-sched-int-unpaired, c-mh-v1-sched-fp-pairing, c-mh-v1-pairing-patent]
-  immediate_regs: [c-mh-v1-int-prf-movimm, c-mh-v1-mov-imm-8wide, c-mh-v1-mov-zero-rename, c-mh-v1-imm-pool-reason,
-                   c-mh-v1-iregs-separate, c-mh-v1-iregs-36, c-mh-v1-iregs-exhausted, c-mh-v1-zpr, c-mh-v1-imm-model]
-  rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630, c-mh-v1-hf-movreg-620]
+  immediate_regs: [c-mh-v1-int-prf-movimm, c-mh-v1-mov-imm-8wide, c-mh-v1-mov-zero-rename,
+    c-mh-v1-imm-pool-reason, c-mh-v1-iregs-separate, c-mh-v1-iregs-36, c-mh-v1-iregs-exhausted, c-mh-v1-zpr,
+    c-mh-v1-imm-model, c-mh-v1-fp-imm-not-special]
+  rename_retire_queue: [c-mh-v1-hf-shared-int-fp, c-mh-v1-hf-630, c-mh-v1-hf-movreg-620, c-mh-v1-no-rda]
+  matrix_scheduler: [c-mh-v1-age-matrix, c-mh-v1-matrix-scheduler]
+  uop_split_merge: [c-mh-v1-microcode-dispatch]
+  group_map: [c-mh-v1-mov-imm-dependent]
+  macro_op_fusion: [c-mh-v1-movk-not-fused]
+  move_elimination: [c-mh-v1-mov-xzr-not-elim, c-mh-v1-subreg-mov-not-elim, c-mh-v1-zero-other-6wide,
+    c-mh-v1-eor-zero-not-idiom]

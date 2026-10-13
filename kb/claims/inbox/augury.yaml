@@ -272,6 +272,11 @@ new_params:
   prefetch.dmp_max_distance:  {block: prefetch, name: DMP maximum reach past the trained array, unit: KiB, mechanism: content_directed_prefetch}
 
 mechanism_claims:
-  content_directed_prefetch: [c-aug-dmp-exists, c-aug-firestorm-only, c-aug-single-level, c-aug-fills-l2, c-aug-min-accesses,
-    c-aug-depth-confidence, c-aug-align-8, c-aug-not-ip-indexed, c-aug-max-distance, c-aug-max-stride, c-aug-2m-retrain,
-    c-aug-tlb-fill]
+  content_directed_prefetch: [c-aug-dmp-exists, c-aug-firestorm-only, c-aug-single-level, c-aug-fills-l2,
+    c-aug-min-accesses, c-aug-depth-confidence, c-aug-align-8, c-aug-not-ip-indexed, c-aug-max-distance,
+    c-aug-max-stride, c-aug-2m-retrain, c-aug-tlb-fill, c-aug-icestorm-none, c-aug-speculative-train,
+    c-aug-barriers-block, c-aug-backward, c-aug-pow2-stride, c-aug-16k-deadzone, c-aug-va-range,
+    c-aug-line-granularity, c-aug-not-disableable, c-aug-a14]
+  lsu_virtual_prefetch: [c-aug-stride-pf-l1, c-aug-stride-crosses-16k]
+  l2_half_lines: [c-aug-l1-pair-fill]
+  dram_clock_scaling: [c-aug-dram-scaling]

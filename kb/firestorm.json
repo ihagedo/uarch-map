@@ -24610,6 +24610,1208 @@
     }
   },
   "mechanisms": {
+    "address_interleave_hash": {
+      "claims": [
+        "c-mh-v3-dram-hash",
+        "c-mh-v3-two-pipelines",
+        "c-mh-v3-eight-pipelines",
+        "c-mh-v8-mc-hash-bits",
+        "c-mh-v8-mc-shutdown"
+      ],
+      "name": "Hashed address interleave",
+      "block": "chip",
+      "status": "speculative",
+      "description": "Addresses are hashed across the coherence, SLC and memory-controller pipelines and over DRAM channels, ranks and banks; later patents let the OS shut an idle controller after moving its pages."
+    },
+    "noc_layout": {
+      "claims": [
+        "c-mh-v3-fabric-tiers",
+        "c-mh-v3-2012-xbars",
+        "c-mh-v3-cluster-one-requester"
+      ],
+      "name": "Layered fabric, one port per cluster",
+      "block": "chip",
+      "status": "speculative",
+      "description": "Each CPU cluster is one requester on a coherent fabric joining memory, SLC, CPU and GPU through switch levels, bridged to a non-coherent IO fabric for PCIe and USB."
+    },
+    "noc_rings_lanes": {
+      "claims": [
+        "c-mh-v8-noc-networks",
+        "c-mh-v8-noc-classes",
+        "c-mh-v8-noc-two-lanes",
+        "c-mh-v8-dual-noc-port",
+        "c-mh-v8-noc-port-split",
+        "c-mh-v8-noc-rings"
+      ],
+      "name": "Later NoCs: rings, lanes, split networks",
+      "block": "chip",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "Later NoCs use two counter-rotating rings, add a parallel lane for bandwidth, split CPU, IO and GPU networks, and give each P-cluster two ports chosen by address hash."
+    },
+    "noc_split_paths": {
+      "claims": [
+        "c-mh-v3-cmd-data-pack",
+        "c-mh-v3-split-paths",
+        "c-mh-v3-return-no-coherence",
+        "c-mh-v3-l2-link-combined"
+      ],
+      "name": "Separate command and data paths",
+      "block": "chip",
+      "status": "speculative",
+      "description": "Commands and data travel apart: write data is buffered once at fabric entry and moved once, only a small control packet is routed, and most read returns skip Coherence."
+    },
+    "remote_maintenance_pacing": {
+      "claims": [
+        "c-mh-v3-fiu-throttle",
+        "c-mh-v3-deferred-invalidate-poison"
+      ],
+      "name": "Paced remote maintenance",
+      "block": "chip",
+      "status": "speculative",
+      "description": "Cache and TLB maintenance requests wait in a per-cluster unit, and a core that has taken many refuses more until it progresses; a later design poisons invalidated lines and syncs them later."
+    },
+    "same_address_ordering": {
+      "claims": [
+        "c-mh-v3-retry-id",
+        "c-mh-v3-retry-queue",
+        "c-mh-v3-write-table",
+        "c-mh-v3-slc-pending",
+        "c-mh-v8-retry-queue"
+      ],
+      "name": "Linked same-address waiting",
+      "block": "chip",
+      "status": "speculative",
+      "description": "A request blocked by same-address work waits linked behind it in a retry queue, a pending SLC line or a hashed write table, or retries once the blocking transaction's response passes."
+    },
+    "slc_io_cache_proxy": {
+      "claims": [
+        "c-mh-v3-slc-io-proxy"
+      ],
+      "name": "SLC as controller for IO caches",
+      "block": "chip",
+      "status": "speculative",
+      "description": "The SLC acts as cache controller for small caches in IO blocks outside the coherence domain, turning one request into the simpler commands such a cache needs."
+    },
+    "unshared_snoop_skip": {
+      "claims": [
+        "c-mh-v3-page-unshared-snoop",
+        "c-mh-v3-sharing-tracking"
+      ],
+      "name": "Snoop skipping for unshared lines",
+      "block": "chip",
+      "status": "speculative",
+      "description": "Lines in pages marked never-shared, or lines a device has learned no other requester can hold, skip snoop broadcasts."
+    },
+    "amx_datapath": {
+      "claims": [
+        "c-mh-v3-amx-z-layout",
+        "c-mh-v3-amx-pe-grid",
+        "c-mh-v3-amx-z-in-pe",
+        "c-mh-v3-amx-two-issue",
+        "c-mh-v3-amx-from-l2",
+        "c-mh-v8-amx-m3-throughput"
+      ],
+      "name": "AMX outer-product grid",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "AMX accumulates X-by-Y outer products into Z, held across an 8x8 grid of processing elements, and runs a load or store to the L2 alongside each arithmetic operation."
+    },
+    "amx_lsu_issue": {
+      "claims": [
+        "c-mh-v3-amx-via-lsu",
+        "c-mh-v3-amx-stq-nonspec",
+        "c-mh-v3-amx-two-per-cycle",
+        "c-mh-v3-amx-bundling",
+        "c-mh-v8-amx-store-pipe"
+      ],
+      "name": "AMX issue through the store queue",
+      "block": "pcluster",
+      "status": "inferred",
+      "description": "AMX instructions pass through the core's load/store pipeline, wait in the store queue until non- speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four."
+    },
+    "amx_op_set": {
+      "claims": [
+        "c-mh-v3-amx-types",
+        "c-mh-v3-amx-fms",
+        "c-mh-v3-amx-2x2",
+        "c-mh-v3-amx-no-2x2-fp",
+        "c-mh-v3-amx-lut",
+        "c-mh-v3-amx-no-int8",
+        "c-mh-v3-amx-int16-bits",
+        "c-mh-v3-amx-strided-dot",
+        "c-mh-v3-amx-mixed-precision",
+        "c-mh-v3-amx-vector-mode",
+        "c-mh-v3-amx-transcendental",
+        "c-mh-v3-amx-extract",
+        "c-mh-v8-matmul-loop",
+        "c-mh-v8-fusion-buffer"
+      ],
+      "name": "AMX operation set",
+      "block": "pcluster",
+      "status": "inferred",
+      "description": "AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add 2x2 packing, lookup tables, strided dots, mixed precision and row moves."
+    },
+    "amx_shared_contexts": {
+      "claims": [
+        "c-mh-v8-amx-six-sets",
+        "c-mh-v8-amx-queue-monitor",
+        "c-mh-v8-m4-amx-cosched",
+        "c-mh-v8-amx-reg-sets",
+        "c-mh-v8-cluster-shared",
+        "c-mh-v8-amx-per-cluster"
+      ],
+      "name": "One AMX unit per cluster",
+      "block": "pcluster",
+      "status": "inferred",
+      "description": "One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor tells the OS when several cores overload it."
+    },
+    "clock_ramp": {
+      "claims": [
+        "c-cc-clk-m1-ramp",
+        "c-cc-clk-m1max-ramp",
+        "c-cc-clk-m1max-hw-boost"
+      ],
+      "name": "Clock ramp from idle",
+      "block": "pcluster",
+      "status": "measured",
+      "description": "From idle the P-cluster clock starts rising within about 10 to 20 ms and reaches its maximum after roughly 40 to 100 ms, in steps that may be set by hardware."
+    },
+    "core_power_cycle": {
+      "claims": [
+        "c-mh-v3-reset-vector",
+        "c-mh-v3-wake-state-restore"
+      ],
+      "name": "Core power-down and restart",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "A powered-down core restarts from an address the always-on power manager supplies and reloads its saved state from the L2, the SLC or DRAM, depending on what else slept."
+    },
+    "dvfs_transition": {
+      "claims": [
+        "c-mh-v3-cluster-shared-frequency",
+        "c-mh-v3-voltage-detect",
+        "c-mh-v3-cpu-l2-scale-together",
+        "c-mh-v3-pll-divider-ramp"
+      ],
+      "name": "DVFS transition sequence",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "A cluster's cores, L2 and bus interface change performance state together: voltage rises and is sensed settled first, then the PLL retargets behind a divider stepping from 4 to 1.",
+      "params": [
+        "pcluster.clock_domain"
+      ]
+    },
+    "interrupt_routing": {
+      "claims": [
+        "c-mh-v3-irq-coalesce",
+        "c-mh-v3-cluster-irq-ctrl",
+        "c-mh-v3-ultra-irq",
+        "c-mh-v3-fabric-interrupts",
+        "c-mh-v3-irq-soft-hard-force",
+        "c-mh-v3-irq-rob-nack"
+      ],
+      "name": "Power-aware interrupt routing",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "Device interrupts follow the device's writes, are held while all cores sleep, and are offered cluster by cluster in soft, hard and force rounds that a busy core may refuse."
+    },
+    "perf_controller": {
+      "claims": [
+        "c-mh-v3-clpc-knobs",
+        "c-mh-v3-control-effort",
+        "c-mh-v6-boost-noc-dram",
+        "c-mh-v8-stall-boost",
+        "c-mh-v8-cluster-fill-ratio",
+        "c-mh-v8-energy-heuristic",
+        "c-mh-v8-perf-islands",
+        "c-mh-v8-dram-vs-cpu-power"
+      ],
+      "name": "Closed-loop performance controller",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "A closed-loop controller maps each thread group's control effort to a cluster type and DVFS level, and raises NoC, DRAM or feeding-cluster clocks when cores stall on memory."
+    },
+    "predictive_clock_crossing": {
+      "claims": [
+        "c-mh-v3-cdc-predict"
+      ],
+      "name": "Predictive clock-domain crossing",
+      "block": "pcluster",
+      "status": "speculative",
+      "description": "Clock-domain crossings predict the other clock's edges from history instead of using two-cycle synchronizers, passing one-bit pointer increments through small event FIFOs."
+    },
+    "slc_address_ranges": {
+      "claims": [
+        "c-mh-v3-cache-as-ram",
+        "c-mh-v3-slc-dynamic-ram",
+        "c-mh-v3-slc-tagless-ram",
+        "c-mh-v3-display-from-slc",
+        "c-mh-v3-cache-filter"
+      ],
+      "name": "Address ranges held in the SLC",
+      "block": "slc",
+      "status": "speculative",
+      "description": "Range registers can map an address range into SLC lines as memory, such as camera or static display frames, or let a filtered range keep only part of its lines."
+    },
+    "slc_line_states": {
+      "claims": [
+        "c-mh-v3-partial-dirty",
+        "c-mh-v8-slc-states",
+        "c-mh-v8-slc-line-512",
+        "c-mh-v8-slc-partial-valid",
+        "c-mh-v8-64b-dirty"
+      ],
+      "name": "SLC line states and sectors",
+      "block": "slc",
+      "status": "speculative",
+      "description": "SLC lines hold only invalid, valid and modified states with per-sector valid flags; partial writes keep a byte mask, and later designs track dirtiness per 64 B half."
+    },
+    "slc_memory_side": {
+      "claims": [
+        "c-mh-v2-slc-memory-side",
+        "c-mh-v3-slc-mc-frontend",
+        "c-mh-v3-dma-write-slc",
+        "c-mh-v3-uncacheable-caching",
+        "c-mh-v3-slc-behind-mc"
+      ],
+      "name": "Memory-side SLC",
+      "block": "slc",
+      "status": "speculative",
+      "description": "The SLC sits behind coherence as a front end owned by the memory controller, caching any range, even uncacheable ones, and a write that reaches it counts as written to DRAM."
+    },
+    "slc_slices": {
+      "claims": [
+        "c-mh-v2-m1max-slc-split",
+        "c-mh-v2-slc-even-odd",
+        "c-mh-v3-slc-four-slices",
+        "c-mh-v3-slc-slice-hash"
+      ],
+      "name": "SLC slices",
+      "block": "slc",
+      "status": "inferred",
+      "description": "The SLC is split into slices picked by physical address bits or a hash, each behind its own arbiter; readings give two slices (even and odd lines) or four on the M1."
+    },
+    "cluster_compression_engines": {
+      "claims": [
+        "c-mh-v3-compress-policy",
+        "c-mh-v3-lz-word-size",
+        "c-mh-v3-wkdm-engine",
+        "c-mh-v3-lz-engine-l2"
+      ],
+      "name": "Cluster page-compression engines",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "Each cluster has WKDM and LZ page-compression engines at the L2, fed through a core's store pipeline like AMX, which the OS uses under a backlog or to save power or heat."
+    },
+    "dram_clock_scaling": {
+      "claims": [
+        "c-aug-dram-scaling"
+      ],
+      "name": "DRAM frequency scaling",
+      "block": "memctrl",
+      "status": "inferred",
+      "description": "DRAM latency varies widely and drops under heavier DRAM load, which is put down to the DRAM clock rising with demand."
+    },
+    "dram_power_states": {
+      "claims": [
+        "c-mh-v3-write-queue-freeze",
+        "c-mh-v3-phy-calibration",
+        "c-mh-v3-dram-half-clock",
+        "c-mh-v3-dram-pstate-interval",
+        "c-mh-v8-mem-usage-hints"
+      ],
+      "name": "DRAM power states",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "When quiet, the memory controller and DRAM drop to half clock or self-refresh with writes held; DRAM performance states are revisited every 50 \u00b5s to 20 ms and the PHY recalibrates at run time."
+    },
+    "dram_qos_scheduler": {
+      "claims": [
+        "c-mh-v3-dram-bank-arb",
+        "c-mh-v3-dram-linked-lists",
+        "c-mh-v3-page-streak-cap",
+        "c-mh-v3-2010-inband-upgrade",
+        "c-mh-v3-2010-aging",
+        "c-mh-v3-mc-affinity",
+        "c-mh-v3-merge-escalate",
+        "c-mh-v8-mc-gen4",
+        "c-mh-v8-mc-ranks"
+      ],
+      "name": "DRAM bank scheduler",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "Each DRAM bank picks its highest-category request from per-page and per-channel lists, favouring page hits up to a streak cap; waiting requests gain priority with age or merging."
+    },
+    "dram_refresh_scheduling": {
+      "claims": [
+        "c-mh-v3-refresh-window"
+      ],
+      "name": "Flexible refresh placement",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "Bank refreshes slip within a refresh window, first into write turns, then into read turns, and are forced with a shorter window and lookahead once time runs short."
+    },
+    "dram_rw_turns": {
+      "claims": [
+        "c-mh-v3-turn-latency",
+        "c-mh-v3-access-efficiency"
+      ],
+      "name": "Read and write turns",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "The controller leaves write mode by write-queue watermarks, earlier when latency tolerance is low or low-latency reads wait, and sizes turns against an access-efficiency target."
+    },
+    "mc_write_merge": {
+      "claims": [
+        "c-mh-v3-raw-merge",
+        "c-mh-v3-write-merge",
+        "c-mh-v3-rmw-last-read"
+      ],
+      "name": "Write merging in the memory controller",
+      "block": "memctrl",
+      "status": "speculative",
+      "description": "Writes to one address merge by byte enable; a read overlapping a queued partial write goes first and takes the write data on its way out, and read-modify-write reads end a read turn."
+    },
+    "pattern_index_transfer": {
+      "claims": [
+        "c-mh-v8-zero-pattern"
+      ],
+      "name": "Data-pattern transfer compression",
+      "block": "memctrl",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "Caches track common data patterns, such as all zeros, and send a pattern index over the NoC instead of the data."
+    },
+    "shared_rw_memory_path": {
+      "claims": [
+        "c-mh-v2-copy-no-turnaround",
+        "c-mh-v2-shared-load-store-path"
+      ],
+      "name": "Shared load/store path beyond the L2",
+      "block": "memctrl",
+      "status": "inferred",
+      "description": "Loads and stores share one path through DRAM and probably the NoC and SLC, so mixing them adds no bandwidth and costs none; DRAM read-write turnaround stays hidden."
+    },
+    "ecores_share_pl2": {
+      "claims": [
+        "c-mh-v3-a10-shared-l2",
+        "c-mh-v3-ecluster-uses-pl2"
+      ],
+      "name": "E cores use the P-cluster L2",
+      "block": "l2",
+      "status": "speculative",
+      "description": "While the P cores sleep the E cores can use the P cluster's L2, which then stays powered and takes its DVFS state from the E cores."
+    },
+    "l2_core_lru": {
+      "claims": [
+        "c-ilk-l2-three-passes",
+        "c-s2c-l2-repl-cross-8x",
+        "c-s2c-l2-repl-same-core",
+        "c-s2c-l2-repl"
+      ],
+      "name": "Per-core LRU in the L2",
+      "block": "l2",
+      "status": "measured",
+      "description": "L2 replacement follows LRU order among lines from one core but not when lines from different cores share a set, so a cross-core eviction set needs several passes.",
+      "params": [
+        "l2.replacement"
+      ]
+    },
+    "l2_half_lines": {
+      "claims": [
+        "c-aug-l1-pair-fill",
+        "c-gf-other-half-l2",
+        "c-ilk-l2-half-line"
+      ],
+      "name": "Two L1 lines per L2 line",
+      "block": "l2",
+      "status": "measured",
+      "description": "Each 128 B L2 line holds two 64 B L1 lines that fill and evict on their own; one study finds only the accessed half enters the L1, another finds both halves do."
+    },
+    "l2_hashed_way_filter": {
+      "claims": [
+        "c-mh-v2-l2-not-24way",
+        "c-mh-v2-l2-assoc-hash",
+        "c-mh-v2-l2-way-filter"
+      ],
+      "name": "Hashed L2 index with partial-tag way filter",
+      "block": "l2",
+      "status": "inferred",
+      "description": "The L2 index seems hashed, so some strides crowd onto a fraction of the cache, and an early partial-tag compare limits which ways are read instead of a full tag compare per way."
+    },
+    "l2_line_ordering": {
+      "claims": [
+        "c-mh-v3-l2-order-unit",
+        "c-mh-v3-l2-half-line-bypass"
+      ],
+      "name": "Per-line ordering at the L2",
+      "block": "l2",
+      "status": "speculative",
+      "description": "Requests queued at the L2 stay in order within one 128 B L2 line but not across lines, so a core's read may pass its own write to the other half of a line."
+    },
+    "l2_physical_index": {
+      "claims": [
+        "c-gf-l2-sets",
+        "c-ilk-l2-phys-indexed",
+        "c-s2c-l2-index"
+      ],
+      "name": "Physical L2 index",
+      "block": "l2",
+      "status": "measured",
+      "description": "The L2 picks one of 8192 sets from physical address bits in the page offset and page frame; one study finds two of the bits are XORs of higher page-number bits."
+    },
+    "l2_zero_line_tags": {
+      "claims": [
+        "c-mh-v3-sparse-zero-lines",
+        "c-mh-v3-sparse-loser-bank"
+      ],
+      "name": "Zero-line tags and loser bank",
+      "block": "l2",
+      "status": "speculative",
+      "description": "All-zero lines are recorded as a tag bit without touching the data array, and invalid and zero lines share a loser bank kept powered off until real data needs it."
+    },
+    "uncached_line_handling": {
+      "claims": [
+        "c-mh-v3-uncached-load-merge",
+        "c-mh-v3-uncached-l2-ways",
+        "c-mh-v3-uncached-write-gather"
+      ],
+      "name": "Uncacheable line handling",
+      "block": "l2",
+      "status": "speculative",
+      "description": "Uncacheable reads fill a few L2 ways set aside for them or merge in per-controller buffers, and uncacheable writes are gathered into full lines that skip the L1 and L2."
+    },
+    "agu_same_page_check": {
+      "claims": [
+        "c-mh-v2-masked-sum-compare"
+      ],
+      "name": "Early same-page address check",
+      "block": "lsu",
+      "status": "speculative",
+      "description": "During address generation a masked compare tells whether base plus offset stays on the base register's page without waiting for the full add."
+    },
+    "ldpq_lsu_split": {
+      "claims": [
+        "c-mh-v2-ldpq-cracked-lsu",
+        "c-mh-v2-ldp-x-single",
+        "c-mh-v2-ldpq-throughput",
+        "c-mh-v2-ldpq-late-crack"
+      ],
+      "name": "Vector load pair split at cache access",
+      "block": "lsu",
+      "status": "inferred",
+      "description": "An LDP of Q registers is one instruction through rename and the ROB and splits into two 16 B cache requests only at cache access; an LDP of X registers stays one request."
+    },
+    "lsu_load_to_load_bypass": {
+      "claims": [
+        "c-mh-v1-pointer-chase-patent",
+        "c-mh-v2-ptr-chase-fastpath",
+        "c-mh-v2-ldp-ptr-first"
+      ],
+      "name": "Load-to-load address bypass in the LSU",
+      "block": "lsu",
+      "status": "inferred",
+      "description": "A load whose base comes from a just-issued load that hit the L1 takes the value inside the LSU, 3 cycles instead of 4; for an LDP only the first register qualifies."
+    },
+    "redundant_mem_op_elim": {
+      "claims": [
+        "c-mh-v1-redundant-mem-ops"
+      ],
+      "name": "Removal of repeated loads and stores",
+      "block": "lsu",
+      "status": "absent",
+      "description": "Back-to-back identical loads or identical stores all execute; none is removed as redundant."
+    },
+    "spec_fault_no_access": {
+      "claims": [
+        "c-ilk-no-meltdown",
+        "c-pac-data-gadget",
+        "c-pac-instr-gadget"
+      ],
+      "name": "No speculative access to faulting addresses",
+      "block": "lsu",
+      "status": "measured",
+      "description": "A speculative load or fetch through a pointer that failed its AUT check is not performed and leaves no TLB trace, and no Meltdown-style reads across address spaces are seen."
+    },
+    "split_access_handling": {
+      "claims": [
+        "c-7cpu-8b-cross",
+        "c-ox-load-penalty",
+        "c-ox-page-cross",
+        "c-mh-v1-line-cross-4-per-cycle",
+        "c-mh-v2-page-cross-31",
+        "c-mh-v2-unaligned-free",
+        "c-mh-v2-misaligned-single-request",
+        "c-mh-v2-line-cross-loads"
+      ],
+      "name": "Line- and page-crossing accesses",
+      "block": "lsu",
+      "status": "measured",
+      "description": "An unaligned or line-crossing access stays one op that sends two line requests for about one cycle more; a page-crossing load takes about 28 to 31 cycles more, presumed microcode."
+    },
+    "sq_partial_forwarding": {
+      "claims": [
+        "c-mh-v1-partial-forward-bytes",
+        "c-mh-v1-stitch-extra-cycle",
+        "c-mh-v2-partial-forwarding"
+      ],
+      "name": "Partial store-to-load forwarding",
+      "block": "lsu",
+      "status": "measured",
+      "description": "A load overlapping queued stores takes their bytes and the rest from the L1 at full rate; combining bytes from two store-queue entries costs about one extra cycle."
+    },
+    "store_load_dep_predictor": {
+      "claims": [
+        "c-mh-v1-lsdp-patent-256",
+        "c-mh-v1-lsdp-arming",
+        "c-mh-v1-lsdp-confidence",
+        "c-mh-v1-lsdp-replay-entries",
+        "c-mh-v1-lsdp-replacement",
+        "c-mh-v1-lsdp-pc-indexed",
+        "c-mh-v1-lsdp-default-no-alias",
+        "c-mh-v1-stp-lsdp-third",
+        "c-dj-lsq-x29-base",
+        "c-dj-lsq-mov-counter"
+      ],
+      "name": "Store/load PC-pair dependence predictor",
+      "block": "lsu",
+      "status": "inferred",
+      "description": "A table of about 74 store/load PC pairs makes a matching load wait for its store; other loads are predicted not to alias, and entries are replaced round-robin.",
+      "params": [
+        "lsu.disambiguation",
+        "lsu.lsdp_entries"
+      ]
+    },
+    "stxr_barrier_fusion": {
+      "claims": [
+        "c-mh-v3-fused-stxr-barrier"
+      ],
+      "name": "Store-exclusive and barrier fusion",
+      "block": "lsu",
+      "status": "speculative",
+      "description": "A store-exclusive and the barrier right after it fuse in the LSU into one operation that needs a single trip to the point of coherency."
+    },
+    "cold_start_mode": {
+      "claims": [
+        "c-mh-v4-cold-start-fetch",
+        "c-mh-v4-cold-start-tage"
+      ],
+      "name": "Cold-start fetch and predictor mode",
+      "block": "l1i",
+      "status": "speculative",
+      "description": "After power-up with empty caches, each instruction miss to the L2 brings three lines, and a new branch is written into four TAGE entries instead of one or two."
+    },
+    "l1i_predecode": {
+      "claims": [
+        "c-mh-v4-predecode-call-ret",
+        "c-mh-v4-predecode-offset",
+        "c-mh-v4-predecode-undef"
+      ],
+      "name": "I-cache predecode on fill",
+      "block": "l1i",
+      "status": "speculative",
+      "description": "Lines are predecoded on fill: calls and returns are marked, PC-relative branch targets keep their low 14 bits, and all undefined encodings become one value."
+    },
+    "l1i_way_prediction": {
+      "claims": [
+        "c-mh-v4-pa-in-fp",
+        "c-mh-v4-seq-line-power",
+        "c-mh-v4-seq-way-pred",
+        "c-mh-v4-fetch-bitmaps",
+        "c-mh-v8-way-confirm"
+      ],
+      "name": "I-cache way and translation from predictors",
+      "block": "l1i",
+      "status": "speculative",
+      "description": "The fetch predictor and a sequential way predictor supply the I-cache way and translation, so most fetches read one way and skip the iTLB and tag lookups."
+    },
+    "nfp_training": {
+      "claims": [
+        "c-mh-v4-nfp-hysteresis",
+        "c-mh-v4-nfp-trained-by-predictors",
+        "c-mh-v4-loop-retrain-suppress",
+        "c-mh-v4-nfp-usefulness",
+        "c-mh-v4-nfp-overflow-table"
+      ],
+      "name": "Fetch-predictor training and hysteresis",
+      "block": "btb",
+      "status": "speculative",
+      "description": "The slower predictors that check the fetch predictor also write it; hysteresis keeps an entry until it is wrong twice, and a new entry meeting a strong set goes to a FIFO overflow table."
+    },
+    "predictor_power_gating": {
+      "claims": [
+        "c-mh-v4-bp-half-banks",
+        "c-mh-v4-tage-sequential",
+        "c-mh-v4-tage-power-gating",
+        "c-mh-v4-fetch-pred-gating",
+        "c-mh-v4-fetch-pred-split",
+        "c-mh-v4-subroutine-power",
+        "c-mh-v8-bp-bank-hint"
+      ],
+      "name": "Predictor power gating",
+      "block": "dirpred",
+      "status": "speculative",
+      "description": "Fetch-predictor entries record which predictors the coming groups need so the others are clock-gated, and TAGE tables are probed in stages or powered off when little used."
+    },
+    "retire_time_training": {
+      "claims": [
+        "c-mh-v4-separate-training",
+        "c-mh-v4-bp-confidence-retrain",
+        "c-mh-v4-bit-tables",
+        "c-mh-v4-not-taken-untrained",
+        "c-mh-v4-bit-60",
+        "c-mh-v4-tbit-96",
+        "c-mh-v4-bit-overwrite"
+      ],
+      "name": "Branch information tables and retire-time training",
+      "block": "dirpred",
+      "status": "speculative",
+      "description": "Each branch carries its predictor indices and state from decode to retire in branch information tables; predictors train at retire, only on mispredictions or weak predictions."
+    },
+    "tage_tables": {
+      "claims": [
+        "c-cq-pc-input",
+        "c-cq-partition-pc6",
+        "c-mh-v4-bp-line-rows",
+        "c-mh-v4-tage-assoc"
+      ],
+      "name": "TAGE table layout",
+      "block": "dirpred",
+      "status": "measured",
+      "description": "Six tagged tables, each with its own associativity, are indexed by PC bits 18:2 and history and split by PC bit 6, so two branches in one block are read together.",
+      "params": [
+        "dirpred.tables",
+        "dirpred.capacity"
+      ]
+    },
+    "ras_overflow_clear": {
+      "claims": [
+        "c-cc-oryon-m1-ras-overflow"
+      ],
+      "name": "Return stack cleared on overflow",
+      "block": "ras",
+      "status": "inferred",
+      "description": "Once calls nest deeper than the return stack, call and return time rises sharply, read as the core clearing the stack on overflow."
+    },
+    "ras_pac_check": {
+      "claims": [
+        "c-mh-v4-pac-ras"
+      ],
+      "name": "Pointer authentication at the RAS",
+      "block": "ras",
+      "status": "speculative",
+      "description": "Pointer authentication codes in the high bits of return addresses are checked in the logic that pushes and pops the return stack."
+    },
+    "return_fetch_table": {
+      "claims": [
+        "c-mh-v4-nfp-return-table",
+        "c-mh-v8-return-fetch-stack",
+        "c-mh-v8-return-trace-not-stored",
+        "c-mh-v8-return-params"
+      ],
+      "name": "Return fetch table",
+      "block": "ras",
+      "status": "speculative",
+      "description": "Fetch groups ending in a return sit in a separate table holding no target or length; the RAS gives the target, and fetch after the return assumes the maximum length."
+    },
+    "two_level_ras": {
+      "claims": [
+        "c-mh-v4-ras-two",
+        "c-mh-v4-ras-linked-guess",
+        "c-mh-v4-ras-at-decode",
+        "c-mh-v4-ras-mini"
+      ],
+      "name": "Decode RAS with fetch mini-RAS",
+      "block": "ras",
+      "status": "speculative",
+      "description": "The main return stack is kept at decode, and a small fetch-side stack covers only returns whose calls decode has not yet seen."
+    },
+    "ittage_indirect": {
+      "claims": [
+        "c-mh-v4-ibp-2013-tables",
+        "c-mh-v4-ibp-2013-training",
+        "c-mh-v4-ibp-hysteresis",
+        "c-mh-v4-ibp-m1-long-history",
+        "c-mh-v4-ibp-btp-hit"
+      ],
+      "name": "Tagged history tables for indirect targets",
+      "block": "indpred",
+      "status": "speculative",
+      "description": "Indirect targets come from tagged tables indexed by PC and path history, with usefulness bits and hysteresis that keeps a target until it misses twice.",
+      "params": [
+        "indpred.kind",
+        "indpred.capacity"
+      ]
+    },
+    "objc_msgsend_predictor": {
+      "claims": [
+        "c-mh-v4-objc-predictor-not-m1",
+        "c-mh-v4-objc-predictor-m2",
+        "c-mh-v4-mop-pred-uop",
+        "c-mh-v4-mop-cache",
+        "c-mh-v4-ibp-prev-call-pc"
+      ],
+      "name": "objc_msgSend method predictor",
+      "block": "indpred",
+      "chip": "m2",
+      "status": "speculative",
+      "description": "For one configured hot indirect branch, a predict uop hashes the class and selector registers into a method cache that redirects fetch; the M1 lacks it."
+    },
+    "next_fetch_groups": {
+      "claims": [
+        "c-mh-v4-one-trace-per-cycle",
+        "c-mh-v4-l1i-two-banks",
+        "c-mh-v4-nfp-trace-details",
+        "c-mh-v4-nfp-index-tag",
+        "c-mh-v4-nfp-overflow-groups",
+        "c-mh-v4-nfp-slices",
+        "c-mh-v4-fetch-one-group",
+        "c-mh-v4-nfp-contents"
+      ],
+      "name": "Next-fetch-predictor fetch groups",
+      "block": "fetch",
+      "status": "inferred",
+      "description": "The fetch predictor, indexed and tagged by the fetch PC, gives the next fetch group's target, length and ending branch type; one group, ending at a taken branch, is fetched per cycle."
+    },
+    "staged_fetch_redirect": {
+      "claims": [
+        "c-mh-v4-redirect-sources",
+        "c-mh-v4-indirect-halt",
+        "c-mh-v4-early-resteer"
+      ],
+      "name": "Staged fetch redirects",
+      "block": "fetch",
+      "status": "speculative",
+      "description": "Slower predictors and decode check the single-cycle fetch prediction and refetch in a few cycles when they disagree, well short of a flush; fetch halts when no target is known."
+    },
+    "wrong_path_redirect": {
+      "claims": [
+        "c-pac-eager-squash"
+      ],
+      "name": "Wrong-path branch redirect",
+      "block": "fetch",
+      "status": "measured",
+      "description": "A mispredicted indirect branch on the wrong path of an older mispredict is squashed as soon as its target is computed, and fetch moves to that target."
+    },
+    "load_op_fusion": {
+      "claims": [
+        "c-mh-v8-m1-no-load-op-fusion",
+        "c-mh-v8-load-op-patent",
+        "c-mh-v8-load-op-rules"
+      ],
+      "name": "Load-op fusion",
+      "block": "decode",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "A small ALU in the load/store unit applies an ADD, XOR, shift, rotate, CBZ or TBZ decoded in the same cycle to the loaded value; the M1 has no load-op fusion."
+    },
+    "speculation_barriers": {
+      "claims": [
+        "c-dimva-csdb",
+        "c-dimva-isb",
+        "c-dimva-dmb-dsb"
+      ],
+      "name": "Barriers that stop speculation",
+      "block": "decode",
+      "status": "measured",
+      "description": "A CSDB or ISB placed after a bounds check stops speculative execution past a mispredicted branch; a DMB or DSB on its own does not."
+    },
+    "uop_split_merge": {
+      "claims": [
+        "c-ox-nop-decoder",
+        "c-ox-agu-index",
+        "c-ox-shift-form",
+        "c-mh-v1-crack-merge",
+        "c-mh-v1-extr-intermediate",
+        "c-mh-v1-microcode-dispatch",
+        "c-dj-fewer-issues",
+        "c-dj-shift-extend-issues",
+        "c-dj-nop-b-no-issue"
+      ],
+      "name": "Uop splitting and merging",
+      "block": "decode",
+      "status": "measured",
+      "description": "Shifted or extended ALU ops are one uop that issues twice, LDP and fused pairs issue once, NOP and B never issue, and pre- or post-indexed accesses add a base-update uop."
+    },
+    "iq_bypass_fixup": {
+      "claims": [
+        "c-mh-v4-nfp-longer-trace",
+        "c-mh-v4-iq-bypass",
+        "c-mh-v4-iq-fixup",
+        "c-mh-v8-sfb-patent"
+      ],
+      "name": "Instruction-queue bypass and fix-up",
+      "block": "iq",
+      "status": "speculative",
+      "description": "Fetch bypasses the instruction queue when it is empty; in the queue, instructions a taken short forward branch skips are deleted without resteering fetch."
+    },
+    "control_independence": {
+      "claims": [
+        "c-mh-v8-wrong-path-reuse",
+        "c-mh-v8-wrong-path-branches"
+      ],
+      "name": "Reuse past reconvergence",
+      "block": "rename",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "After a mispredicted short forward branch, loads past the reconvergence point that do not depend on the wrong path keep their values, and branch outcomes there pass to fetch."
+    },
+    "group_map": {
+      "claims": [
+        "c-ox-chained-mov",
+        "c-mh-v1-mov-imm-dependent",
+        "c-mh-v1-map-stage"
+      ],
+      "name": "Group dependency map",
+      "block": "rename",
+      "status": "inferred",
+      "description": "A Map stage ahead of Rename resolves register dependences among the up to eight instructions of a cycle, so chains of eliminated scalar moves still complete at rename."
+    },
+    "macro_op_fusion": {
+      "claims": [
+        "c-ox-xfer-fusion",
+        "c-mh-v1-llvm-fusions",
+        "c-mh-v1-fusion-patent",
+        "c-mh-v1-movk-not-fused",
+        "c-dj-fusion-cbz",
+        "c-dj-fusion-crypto",
+        "c-dj-fusion-amx",
+        "c-dj-fusion-branch-limits",
+        "c-dj-no-fusion"
+      ],
+      "name": "Macro-op fusion",
+      "block": "rename",
+      "status": "measured",
+      "description": "Decode spots pairs (an ALU op and a following conditional branch, cbz or cbnz; AES and PMULL pairs; AMX pairs) and Map merges them into one uop; adrp+add and mov+movk do not fuse.",
+      "params": [
+        "rename.fusion",
+        "rename.fusion_read_limit"
+      ]
+    },
+    "move_elimination": {
+      "claims": [
+        "c-ox-simd-zero-reg",
+        "c-ox-eor-no-idiom",
+        "c-mh-v1-mov-xzr-not-elim",
+        "c-mh-v1-subreg-mov-not-elim",
+        "c-mh-v1-zero-other-6wide",
+        "c-mh-v1-eor-zero-not-idiom"
+      ],
+      "name": "Move elimination and zeroing",
+      "block": "rename",
+      "status": "measured",
+      "description": "Full-width register moves finish at rename and vector zeroing costs nothing; sub-register moves, MOV from xzr and EOR self-zeroing run as ordinary ops.",
+      "params": [
+        "rename.mov_elimination",
+        "rename.zero_idiom"
+      ]
+    },
+    "speculative_special_regs": {
+      "claims": [
+        "c-mh-v1-spr-speculative-writes"
+      ],
+      "name": "Speculative special-register writes",
+      "block": "rename",
+      "status": "speculative",
+      "description": "Flag moves are handled at the rename map, and other special-register writes go out of order into speculative storage made permanent at retire, so they do not serialize."
+    },
+    "writeback_overflow_pool": {
+      "claims": [
+        "c-mh-v8-writeback-pool"
+      ],
+      "name": "Writeback overflow pool",
+      "block": "int_prf",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "Results beyond the register file's write ports go to a temporary pool and drain later instead of stalling issue."
+    },
+    "split_flag_files": {
+      "claims": [
+        "c-ox-flag-files",
+        "c-ox-flag-xfer"
+      ],
+      "name": "Split flag register files",
+      "block": "flags_prf",
+      "status": "measured",
+      "description": "Scalar and SIMD/fp code keep separate condition-flag register files; flag chains within a domain cost nothing, and moving flags across costs about six cycles.",
+      "params": [
+        "flags_prf.total"
+      ]
+    },
+    "issue_age_flush": {
+      "claims": [
+        "c-mh-v8-age-tracking",
+        "c-mh-v8-mispredict-flush"
+      ],
+      "name": "Age bits for mispredict flush",
+      "block": "sched_int",
+      "status": "speculative",
+      "description": "One possibly-mispredicting op issues per cycle, and age bits built from short per-entry offsets tell recovery which younger work in each pipeline to flush."
+    },
+    "matrix_scheduler": {
+      "claims": [
+        "c-mh-v1-read-at-issue",
+        "c-mh-v1-age-matrix",
+        "c-mh-v1-matrix-scheduler"
+      ],
+      "name": "Matrix scheduler",
+      "block": "sched_int",
+      "status": "speculative",
+      "description": "Queues do not shift: a dependency matrix indexed by scheduler entry wakes dependents over a wide bus, an age matrix picks the oldest ready uop, and operands are read at issue."
+    },
+    "load_replay_shadow": {
+      "claims": [
+        "c-mh-v1-replay-shadow-window",
+        "c-mh-v1-leq-bank-per-pipe",
+        "c-mh-v1-rlb-patent"
+      ],
+      "name": "Load replay with a shadow window",
+      "block": "sched_ls",
+      "status": "speculative",
+      "description": "Uops issued behind a load stay in their queue under a shadow timer and reissue if the load replays; the replaying load waits in a load execution queue bank of its pipe."
+    },
+    "divider_pipe": {
+      "claims": [
+        "c-ox-div-throughput",
+        "c-ox-div-pipeline"
+      ],
+      "name": "Side-pipeline integer divider",
+      "block": "eu_int",
+      "status": "inferred",
+      "description": "The integer divider is a separate pipeline behind one unit's queue: back-to-back divides issue every other cycle, and other work on that unit is not held up."
+    },
+    "exec_forwarding": {
+      "claims": [
+        "c-ox-xfer-fwd",
+        "c-ox-xfer-rev",
+        "c-ox-xfer-latency",
+        "c-mh-v8-scvtf-fake-load",
+        "c-mh-v8-xfer-path",
+        "c-dj-index-shift-penalty",
+        "c-dj-madd-acc-latency",
+        "c-dj-int-simd-roundtrip"
+      ],
+      "name": "Forwarding and domain crossing",
+      "block": "eu_fp",
+      "status": "measured",
+      "description": "Integer-to-SIMD moves and conversions travel through a load slot as a fake load and the reverse use a dedicated path, about six cycles each way; a MADD feeds the next addend in one cycle."
+    },
+    "fp_back_to_back_fusion": {
+      "claims": [
+        "c-mh-v8-m3-fadd-fusion"
+      ],
+      "name": "Back-to-back FADD fusion",
+      "block": "eu_fp",
+      "chip": "m3",
+      "status": "inferred",
+      "description": "A dependent pair of FADDs is fused back to back, taking 5 cycles instead of 6."
+    },
+    "abandonable_requests": {
+      "claims": [
+        "c-mh-v8-abandonable-requests"
+      ],
+      "name": "Abandonable cache requests",
+      "block": "retire",
+      "chip": "post-m1",
+      "status": "speculative",
+      "description": "Prefetches, instruction fetches and speculative loads are flagged abandonable, so on an interrupt the caches may drop them and the core drains faster."
+    },
+    "late_ordering_check": {
+      "claims": [
+        "c-mh-v1-late-ordering-check-patent",
+        "c-mh-v1-same-addr-no-lsdp",
+        "c-mh-v1-delayed-both",
+        "c-mh-v1-late-check-window"
+      ],
+      "name": "Late store/load address recheck",
+      "block": "lq",
+      "status": "measured",
+      "description": "The store/load address check is repeated as the load's data reaches its register, so a store address resolving two to four cycles late causes a replay, not a flush."
+    },
+    "sq_32b_slots": {
+      "claims": [
+        "c-mh-v2-store-path-16b",
+        "c-mh-v2-sq-slot-32b"
+      ],
+      "name": "32 B store-queue slots over 16 B store paths",
+      "block": "sq",
+      "status": "inferred",
+      "description": "Store-queue slots seem to be 32 B and gather stores within a slot, a line-crossing store taking two; stores reach the L1D over 16 B paths with no full-line write."
+    },
+    "cache_subarray_power": {
+      "claims": [
+        "c-mh-v2-multiarray-falloff",
+        "c-mh-v2-small-subarrays",
+        "c-mh-v2-subarray-precharge",
+        "c-mh-v2-sram-supply"
+      ],
+      "name": "SRAM sub-array power-down",
+      "block": "l1d",
+      "status": "inferred",
+      "description": "Caches are built from many small SRAM sub-arrays on a separate supply that power down when idle and precharge on demand; waking may reject an L1D load for a cycle."
+    },
+    "fill_bank_conflicts": {
+      "claims": [
+        "c-mh-v2-l2-overhead-l1-side",
+        "c-mh-v2-l2-store-no-overhead"
+      ],
+      "name": "L1D fills take bank cycles from loads",
+      "block": "l1d",
+      "status": "inferred",
+      "description": "Lines prefetched from the L2 wait in buffers and are written into the L1D banks, blocking loads to those banks and costing about one cycle in seven; stores see no such loss."
+    },
+    "l1_l2_coherence_limit": {
+      "claims": [
+        "c-mh-v2-coherence-hypothesis",
+        "c-mh-v2-unbalanced-l2-100"
+      ],
+      "name": "L1-L2 coherence work limits mixed traffic",
+      "block": "l1d",
+      "status": "inferred",
+      "description": "Coherence work between the L1 and the L2, perhaps one line every other cycle, caps L1 copies near 150 GB/s and mixed load/store traffic in the L2 near 100 GB/s."
+    },
+    "l1d_page_offset_index": {
+      "claims": [
+        "c-prt-l1d-index",
+        "c-prt-ice-l1d-index",
+        "c-s2c-l1-index",
+        "c-tso-l1-virt-indexed"
+      ],
+      "name": "Page-offset L1D index",
+      "block": "l1d",
+      "status": "measured",
+      "description": "The L1D set comes from address bits 6-13, inside the 16 KiB page offset, so the cache is indexed by the virtual address."
+    },
+    "l1d_tree_plru": {
+      "claims": [
+        "c-mh-v8-l1-plru",
+        "c-prt-ice-l1d-tree-plru",
+        "c-s2c-l1-lru"
+      ],
+      "name": "Tree-PLRU L1D replacement",
+      "block": "l1d",
+      "status": "measured",
+      "description": "Each 8-way L1D set picks its victim by a tree pseudo-LRU, and access sequences built on that state produce the predicted misses.",
+      "params": [
+        "l1d.replacement"
+      ]
+    },
+    "cluster_l2_tlb": {
+      "claims": [
+        "c-mh-v2-tlb2-shared-guess",
+        "c-mh-v2-tlb2-per-cluster",
+        "c-mh-v3-mmu-at-slc",
+        "c-mh-v3-atu-in-cluster",
+        "c-mh-v3-cluster-l2tlb"
+      ],
+      "name": "Cluster-shared L2 TLB",
+      "block": "dtlb",
+      "status": "speculative",
+      "description": "Cores keep small L1 TLBs, while the L2 TLB and the page walkers sit beside the L2 in a unit the cluster's cores share."
+    },
+    "dtlb_random_replacement": {
+      "claims": [
+        "c-mh-v2-dtlb-random-repl"
+      ],
+      "name": "Random L1 dTLB replacement",
+      "block": "dtlb",
+      "status": "inferred",
+      "description": "The L1 dTLB seems to replace entries at random, since latency past its capacity climbs linearly from 3 to 9 cycles instead of stepping."
+    },
+    "indexed_page_permissions": {
+      "claims": [
+        "c-mh-v3-sprr-index"
+      ],
+      "name": "Indexed page permissions",
+      "block": "dtlb",
+      "status": "speculative",
+      "description": "A page holds an index into a 4-entry permission table instead of permission bits, so one core can switch a page's permissions without a TLB shootdown."
+    },
+    "mmu_walk_cache": {
+      "claims": [
+        "c-mh-v2-page-table-3",
+        "c-mh-v2-mmu-cache",
+        "c-mh-v2-no-pte-prefetch",
+        "c-mh-v2-mmu-cache-patent"
+      ],
+      "name": "Page walks through an MMU walk cache",
+      "block": "dtlb",
+      "status": "inferred",
+      "description": "L2 TLB misses walk a three-level 16 KiB page table through an MMU walk cache for the upper levels, with leaf entries read from the L2."
+    },
+    "tlb_invalidation_shortcuts": {
+      "claims": [
+        "c-mh-v2-tlbi-range",
+        "c-mh-v2-tlb-striping",
+        "c-mh-v2-accel-tlbi"
+      ],
+      "name": "Faster TLB invalidation",
+      "block": "dtlb",
+      "status": "speculative",
+      "description": "A range invalidation picks the faster of scanning all entries or looking up each page, ASID/VMID fields are striped to compare four at once, and accelerator invalidations are bundled."
+    },
+    "tlb_mixed_page_sizes": {
+      "claims": [
+        "c-mh-v2-no-large-pages",
+        "c-mh-v2-no-large-pages-tlb",
+        "c-mh-v2-splinter-page-sizes",
+        "c-mh-v2-page-size-presence"
+      ],
+      "name": "Mixed page sizes in one TLB",
+      "block": "dtlb",
+      "chip": "m2",
+      "status": "speculative",
+      "description": "TLB entries carry a page-size field so one TLB holds up to five sizes, and a per-context presence vector limits lookups to sizes in use; the M1 shows only 16 KiB pages."
+    },
+    "ampm_prefetcher": {
+      "claims": [
+        "c-mh-v2-stride-max",
+        "c-mh-v2-backward-stride",
+        "c-mh-v2-spatial-prefetch",
+        "c-mh-v2-stride-lockon",
+        "c-mh-v2-region-prefetch",
+        "c-mh-v2-hybrid-prefetch",
+        "c-mh-v2-next-line",
+        "c-mh-v2-three-prefetchers",
+        "c-mh-v2-density-pattern",
+        "c-mh-v2-mini-access-maps",
+        "c-mh-v2-ampm-granularity",
+        "c-mh-v2-large-stride",
+        "c-mh-v2-sms",
+        "c-mh-v2-secondary-coverage"
+      ],
+      "name": "Access-map prefetcher with stride side tables",
+      "block": "prefetch",
+      "status": "inferred",
+      "description": "An access-map prefetcher matches region line maps against stride and density patterns, helped by large- stride and SMS tables; the M1 shows stride, region and hybrid prefetching.",
+      "params": [
+        "prefetch.kinds",
+        "prefetch.streams"
+      ]
+    },
+    "prefetch_throttle": {
+      "claims": [
+        "c-mh-v2-ampm-throttle",
+        "c-mh-v2-prefetch-throttle",
+        "c-mh-v4-prefetch-boost",
+        "c-mh-v8-thrash-detect"
+      ],
+      "name": "Prefetch throttling",
+      "block": "prefetch",
+      "status": "speculative",
+      "description": "Every 32 cycles the L2 rates its per-core prefetch queues and sets a throttle level; credits cap a region at about four prefetches in flight, and prefetch grows bolder when misses return late."
+    },
+    "temporal_prefetch": {
+      "claims": [
+        "c-mh-v2-ghb-box",
+        "c-mh-v2-temporal"
+      ],
+      "name": "Temporal history prefetcher",
+      "block": "prefetch",
+      "status": "inferred",
+      "description": "A temporal prefetcher with a GHB-like history of a little under 256 entries covers random accesses inside a 15 KiB region but not inside a 16 KiB one."
+    },
     "retire_groups": {
       "claims": [
         "c-mh-v1-rob-rows-330",
@@ -24631,6 +25833,7 @@
         "c-dj-group-issuing"
       ],
       "name": "Coalesced retire groups",
+      "block": "retire",
       "status": "inferred",
       "description": "Uops retire in groups of up to seven; a memory op starts a group and a branch ends one.",
       "params": [
@@ -24660,14 +25863,19 @@
         "c-mh-v1-hf-free-rate",
         "c-mh-v1-no-bypass-early-release",
         "c-mh-v1-history-file",
+        "c-mh-v1-no-virtual-registers",
         "c-mh-v1-hf-shared-int-fp",
         "c-mh-v1-hf-630",
         "c-mh-v1-hf-movreg-620",
+        "c-mh-v1-no-rda",
+        "c-mh-v4-checkpoints",
         "c-dj-reclaim-table",
         "c-dj-rename-retire",
-        "c-dj-rename-cost"
+        "c-dj-rename-cost",
+        "c-dj-lsq-prf-not-late"
       ],
       "name": "Rename retire queue (history file)",
+      "block": "retire",
       "status": "inferred",
       "description": "A second queue of about 620 entries limits instructions that change the register map.",
       "params": [
@@ -24701,6 +25909,7 @@
         "c-dj-lsq-scheduler-47"
       ],
       "name": "Load/store queue entries allocated at issue",
+      "block": "lsu",
       "status": "speculative",
       "description": "Load and store queue entries are taken at issue, not at dispatch.",
       "params": [
@@ -24719,6 +25928,7 @@
         "c-mh-v1-no-hw-context-switch"
       ],
       "name": "Register mapping security tag",
+      "block": "rename",
       "status": "speculative",
       "description": "Reading a register the process has not written slows integer issue to about 4-wide.",
       "params": [
@@ -24731,6 +25941,8 @@
       "claims": [
         "c-pat-us10747539b1-scan-on-fill",
         "c-pat-us10642618b1-callgraph-prefetch",
+        "c-cc-oryon-m1-l1i-miss-fetch",
+        "c-mh-v2-no-i-stream-prefetch",
         "c-mh-v4-decoupled-iq",
         "c-mh-v4-fdip-absent",
         "c-mh-v4-fully-decoupled-no-win",
@@ -24743,6 +25955,7 @@
         "c-mh-v8-three-engines"
       ],
       "name": "Decoupled fetch with fetch-directed prefetch",
+      "block": "ftq",
       "status": "absent",
       "description": "Fetch is not fully decoupled from branch prediction on the M1.",
       "params": [
@@ -24769,6 +25982,7 @@
         "c-mh-v3-full-line-write-l2"
       ],
       "name": "Automatic non-temporal streaming stores",
+      "block": "sq",
       "status": "inferred",
       "description": "Streaming stores become non-temporal without software hints.",
       "params": [],
@@ -24791,6 +26005,7 @@
         "c-dj-lsq-release-in-order"
       ],
       "name": "Early release of load/store queue entries",
+      "block": "lsu",
       "status": "inferred",
       "description": "Loads and non-speculative stores give back their queue entries before retiring.",
       "params": [
@@ -24816,9 +26031,14 @@
         "c-cq-phr-100",
         "c-cq-phr-split",
         "c-cq-footprint-bits",
-        "c-ien-all-taken"
+        "c-mh-v4-path-histories",
+        "c-ien-all-taken",
+        "c-ien-phrb-pcore",
+        "c-ien-ecore-phrt-t48",
+        "c-ien-m4-pcore-nojumps"
       ],
       "name": "Path history register (shift-and-XOR)",
+      "block": "dirpred",
       "status": "measured",
       "description": "The 100-bit history shifts and XORs in branch address bits, not outcomes.",
       "params": [
@@ -24845,6 +26065,7 @@
         "c-ien-pht-shared-ecore"
       ],
       "name": "Branch predictor context isolation",
+      "block": "dirpred",
       "status": "absent",
       "description": "The conditional predictor keeps no privilege or process tag.",
       "params": [],
@@ -24866,9 +26087,13 @@
         "c-mh-v4-m2-l2-fp",
         "c-mh-v4-m1-nfp-dm",
         "c-mh-v8-nfp-hysteresis",
-        "c-mh-v8-pred-stages"
+        "c-mh-v8-pred-stages",
+        "c-kc-m2-btb-third-run",
+        "c-kc-m2-btb-two-level",
+        "c-kc-m2-btb-prefetch"
       ],
       "name": "Branch targets tied to the L1I",
+      "block": "btb",
       "status": "inferred",
       "description": "A branch that misses the first-level BTB takes its target from the L1I, with a two-cycle bubble.",
       "params": [
@@ -24905,9 +26130,14 @@
         "c-flop-pid-tag",
         "c-flop-kernel-addr",
         "c-flop-dit",
+        "c-mh-v8-tage-lvp-patent",
+        "c-mh-v8-m3-lvp",
+        "c-mh-v8-m3-lvp-entries",
+        "c-mh-v8-m3-lvp-train",
         "c-slap-m1-no-data-spec"
       ],
       "name": "Load value prediction",
+      "block": "lsu",
       "status": "absent",
       "description": "A PC-tagged predictor hands a load's last constant value to dependent instructions early; not found on M1 or M2, present from M3/A17 Pro.",
       "params": [
@@ -24925,9 +26155,11 @@
         "c-fr-ibp-shared-entries",
         "c-fr-ibp-fetch-race",
         "c-fr-ibp-asid",
-        "c-fr-ice-ibp"
+        "c-fr-ice-ibp",
+        "c-fr-bp-virtual"
       ],
       "name": "Indirect target context check",
+      "block": "indpred",
       "status": "measured",
       "description": "Indirect-predictor entries are shared across privilege levels and ASIDs; a target trained in another context is fetched but not executed.",
       "params": [],
@@ -24941,6 +26173,7 @@
         "c-fr-ice-phantom"
       ],
       "name": "Phantom fetch on non-branches",
+      "block": "btb",
       "status": "measured",
       "description": "A non-branch at the address of a trained branch redirects fetch to the trained target, which is fetched but never executed.",
       "params": [],
@@ -24949,6 +26182,7 @@
     },
     "zero_cycle_loads": {
       "claims": [
+        "c-ox-no-aliasing",
         "c-mh-v1-forwarding-rf",
         "c-mh-v1-zcl-patent-rf-lsdp",
         "c-mh-v1-sp-lsdp",
@@ -24960,6 +26194,7 @@
         "c-mh-v1-zcl-stack"
       ],
       "name": "Zero-cycle loads (register-file memory renaming)",
+      "block": "lsu",
       "status": "inferred",
       "description": "A load from a just-stored address is renamed to the register holding the stored value.",
       "params": [
@@ -24978,6 +26213,7 @@
         "c-mh-v1-split-power-gating"
       ],
       "name": "Banked register file with bank power gating",
+      "block": "int_prf",
       "status": "speculative",
       "description": "The register file has four banks that power down separately; waking one costs two or three cycles.",
       "params": [
@@ -24989,6 +26225,8 @@
     },
     "dispatch_buffers": {
       "claims": [
+        "c-cc-oryon-m1-fp-sched",
+        "c-mh-v1-ls-dispatch-unordered",
         "c-mh-v1-dispatch-unordered",
         "c-mh-v1-dispatch-load-balance",
         "c-mh-v1-dispatch-accept-patent",
@@ -24999,9 +26237,12 @@
         "c-mh-v1-dispatch-smoothing",
         "c-mh-v1-dispatch-accept-8",
         "c-mh-v1-queue-inflow-1",
-        "c-mh-v1-dispatch-fp-single"
+        "c-mh-v1-dispatch-fp-single",
+        "c-dj-pipeline-flow",
+        "c-dj-lsq-dispatch-stall"
       ],
       "name": "Two-level dispatch through unordered buffers",
+      "block": "dispatch",
       "status": "inferred",
       "description": "Rename writes into unordered dispatch buffers that feed one scheduler queue per unit.",
       "params": [
@@ -25018,14 +26259,17 @@
     },
     "paired_sched_queues": {
       "claims": [
+        "c-mh-v1-sched-ls-pairs",
         "c-mh-v1-sched-johnson-2x",
         "c-mh-v1-sched-pairing",
         "c-mh-v1-sched-ls-pairing",
         "c-mh-v1-sched-int-unpaired",
         "c-mh-v1-sched-fp-pairing",
-        "c-mh-v1-pairing-patent"
+        "c-mh-v1-pairing-patent",
+        "c-mh-v2-load-order"
       ],
       "name": "Paired scheduler queues",
+      "block": "sched_int",
       "status": "inferred",
       "description": "Scheduler queues are paired; a queue with nothing ready issues from its partner.",
       "params": [
@@ -25040,6 +26284,8 @@
     },
     "immediate_regs": {
       "claims": [
+        "c-mh-v1-eor-not-zero-idiom",
+        "c-mh-v1-no-add-imm-elim",
         "c-mh-v1-int-prf-movimm",
         "c-mh-v1-mov-imm-8wide",
         "c-mh-v1-mov-zero-rename",
@@ -25048,9 +26294,12 @@
         "c-mh-v1-iregs-36",
         "c-mh-v1-iregs-exhausted",
         "c-mh-v1-zpr",
-        "c-mh-v1-imm-model"
+        "c-mh-v1-imm-model",
+        "c-mh-v1-fp-imm-not-special",
+        "c-mh-v8-a15-adr-rename"
       ],
       "name": "Immediate register pool written at rename",
+      "block": "rename",
       "status": "inferred",
       "description": "A MOV of a non-zero immediate completes at rename into a pool of about 36 registers.",
       "params": [
@@ -25067,9 +26316,13 @@
         "c-mh-v2-l2-inner-bw",
         "c-mh-v2-l2-cachelets",
         "c-mh-v2-l2-transitions",
-        "c-mh-v2-a14-l2-effective"
+        "c-mh-v2-a14-l2-effective",
+        "c-mh-v2-l2-cpu-hash",
+        "c-mh-v2-l2-p2p",
+        "c-s2c-l2-slices"
       ],
       "name": "Per-core L2 cachelets (inner and outer L2)",
+      "block": "l2",
       "status": "speculative",
       "description": "The 12 MiB L2 behaves as four 3 MiB cachelets, one beside each core.",
       "params": [
@@ -25087,6 +26340,7 @@
         "c-mh-v2-dczva-with-store"
       ],
       "name": "DC ZVA zero-allocates lines in L2",
+      "block": "l2",
       "status": "inferred",
       "description": "DC ZVA allocates zeroed lines directly in the L2.",
       "params": [],
@@ -25105,6 +26359,7 @@
         "c-mh-v2-l2-random-repl"
       ],
       "name": "Non-temporal loads skip L1 fill",
+      "block": "prefetch",
       "status": "inferred",
       "description": "Non-temporal loads are not prefetched into the L1.",
       "params": [],
@@ -25123,6 +26378,7 @@
         "c-mh-v2-tlb-queue-overflow"
       ],
       "name": "Single-ported dTLB with piggyback ports",
+      "block": "dtlb",
       "status": "inferred",
       "description": "One dTLB lookup per cycle, shared with queued requests to the same page.",
       "params": [
@@ -25133,6 +26389,7 @@
     },
     "l1d_banked_piggyback": {
       "claims": [
+        "c-mh-v2-add-overwrite-200",
         "c-mh-v2-l1d-banks",
         "c-mh-v2-l1d-bank-width",
         "c-mh-v2-l1-entry-queues",
@@ -25147,9 +26404,13 @@
         "c-mh-v2-storeload-same-bank",
         "c-mh-v2-stores-free",
         "c-mh-v2-ld-unit-uop",
+        "c-mh-v2-width-independent",
+        "c-mh-v2-subarray-guess",
+        "c-mh-v2-no-parallel-sources",
         "c-mh-v2-coalesce-patent"
       ],
       "name": "Banked L1D with piggybacked loads and buffered stores",
+      "block": "l1d",
       "status": "inferred",
       "description": "Sixteen 16 B banks; loads to one element share an access and stores are buffered.",
       "params": [
@@ -25170,6 +26431,7 @@
         "c-mh-v8-l1d-no-way-mispredict"
       ],
       "name": "L1D way selection without visible misprediction",
+      "block": "l1d",
       "status": "speculative",
       "description": "Loads to random ways run as fast as loads to one way; no way misprediction shows.",
       "params": [
@@ -25180,6 +26442,9 @@
     },
     "lsu_virtual_prefetch": {
       "claims": [
+        "c-aug-stride-pf-l1",
+        "c-aug-stride-crosses-16k",
+        "c-mh-v2-temporal-prefetch-l1",
         "c-mh-v2-prefetch-at-lsu",
         "c-mh-v2-stride-to-dram",
         "c-mh-v2-no-tlb2-prefetcher",
@@ -25190,11 +26455,14 @@
         "c-mh-v2-unified-prefetch",
         "c-mh-v2-prefetch-kinds",
         "c-mh-v2-region-to-l2",
+        "c-mh-v2-slc-spatial",
+        "c-mh-v2-prefetch-not-slc",
         "c-mh-v3-prefetch-no-slc",
         "c-mh-v3-prefetch-two-targets",
         "c-mh-v8-prefetch-lsu"
       ],
       "name": "LSU-resident virtual-address prefetcher",
+      "block": "prefetch",
       "status": "inferred",
       "description": "The prefetcher trains on every load and store virtual address at the LSU.",
       "params": [
@@ -25210,6 +26478,7 @@
         "c-mh-v2-l1d-8way-tlb"
       ],
       "name": "L1D way chosen from physical page bits",
+      "block": "l1d",
       "status": "speculative",
       "description": "A line's way seems fixed by a hash of physical page bits.",
       "params": [
@@ -25232,6 +26501,16 @@
         "c-aug-max-stride",
         "c-aug-2m-retrain",
         "c-aug-tlb-fill",
+        "c-aug-icestorm-none",
+        "c-aug-speculative-train",
+        "c-aug-barriers-block",
+        "c-aug-backward",
+        "c-aug-pow2-stride",
+        "c-aug-16k-deadzone",
+        "c-aug-va-range",
+        "c-aug-line-granularity",
+        "c-aug-not-disableable",
+        "c-aug-a14",
         "c-gf-firestorm-only",
         "c-gf-no-deref-needed",
         "c-gf-one-load",
@@ -25248,6 +26527,16 @@
         "c-gf-next-line",
         "c-gf-two-lines",
         "c-gf-dit-m1",
+        "c-gf-iterate-enough",
+        "c-gf-l2-hit",
+        "c-gf-filter-patent",
+        "c-gf-scan-chunks",
+        "c-gf-tlb-walk",
+        "c-gf-dit-m3",
+        "c-gf-no-disable",
+        "c-gf-m2",
+        "c-gf-m3",
+        "c-gf-icestorm-none",
         "c-mh-v2-content-directed",
         "c-mh-v2-augury-dmp",
         "c-at-pointer-prefetch",
@@ -25257,6 +26546,7 @@
         "c-slap-dmp-vs-lap"
       ],
       "name": "Content-directed (data memory-dependent) prefetch",
+      "block": "prefetch",
       "status": "inferred",
       "description": "Pointer-like values in filled lines are prefetched into the L2.",
       "params": [
@@ -25271,6 +26561,7 @@
         "c-mh-v3-barrier-l1-l2"
       ],
       "name": "Color-tagged barriers at the L1-L2 boundary",
+      "block": "lsu",
       "status": "speculative",
       "description": "Barriers advance a color tag on memory requests, and ordering is enforced between the L1 and the L2, not in the LSU.",
       "params": [],
@@ -25288,6 +26579,7 @@
         "c-tso-ll-squash-rule"
       ],
       "name": "Load poison bits for load-load ordering",
+      "block": "lq",
       "status": "speculative",
       "description": "A load whose line is modified by another core before it becomes non-speculative is poisoned and replayed or flushed.",
       "params": [],
@@ -25316,9 +26608,12 @@
         "c-mh-v3-l2-covering-tags-hint",
         "c-mh-v3-l2-dup-tags-unclear",
         "c-mh-v3-flush-dirty-only",
-        "c-mh-v3-snoop-levels"
+        "c-mh-v3-snoop-levels",
+        "c-mh-v3-flush-engine",
+        "c-mh-v3-l2-modified-copy"
       ],
       "name": "L2 duplicate L1 tags (snoop filter and flush engine)",
+      "block": "l2",
       "status": "speculative",
       "description": "The L2 keeps duplicate tags of its cores' L1s, filters snoops for them, and drives a flush engine that pulls dirty L1 lines before a core powers down.",
       "params": [
@@ -25336,6 +26631,8 @@
     },
     "l2_way_power": {
       "claims": [
+        "c-mh-v2-tlb2-drowsy",
+        "c-mh-v2-l2-segments",
         "c-mh-v3-drowsy-l2",
         "c-mh-v3-l2-sleep-by-way",
         "c-mh-v3-l2-sleep-leakage",
@@ -25345,6 +26642,7 @@
         "c-mh-v3-l2-powerup"
       ],
       "name": "L2 way-group sleep and power-down",
+      "block": "l2",
       "status": "speculative",
       "description": "L2 ways sit in three separately powered groups that sleep after an idle count set by leakage and temperature, or power off when use is concentrated.",
       "params": [
@@ -25370,6 +26668,7 @@
         "c-mh-v3-clean-victim-modes"
       ],
       "name": "L2 as a selective victim cache for L1 data",
+      "block": "l2",
       "status": "speculative",
       "description": "DRAM fills go to the L1 only; L1 castouts enter the L2 as victims, clean ones only when their set has shown reuse and the L1-L2 path is free.",
       "params": [
@@ -25394,9 +26693,11 @@
         "c-mh-v3-l2-trip-lines",
         "c-mh-v3-true-lru",
         "c-mh-v3-l2-cpu-quota",
-        "c-mh-v3-superways"
+        "c-mh-v3-superways",
+        "c-mh-v3-replacement-policy-bit"
       ],
       "name": "L2 insertion position by line history",
+      "block": "l2",
       "status": "speculative",
       "description": "L2 victims enter at LRU positions chosen by stream, prefetch and trip bits, so streams and unused prefetches cycle through a few ways.",
       "params": [
@@ -25412,6 +26713,7 @@
     },
     "slc_victim_fill": {
       "claims": [
+        "c-7cpu-slc-exclusive",
         "c-mh-v3-victim-fill",
         "c-mh-v3-victim-request",
         "c-mh-v3-cpu-no-slc-alloc",
@@ -25419,6 +26721,7 @@
         "c-mh-v8-slc-victim"
       ],
       "name": "SLC filled by L2 victims",
+      "block": "slc",
       "status": "inferred",
       "description": "CPU lines move from L1 to L2 to the SLC as each level evicts them, so a CPU miss does not allocate in the SLC.",
       "params": [
@@ -25454,9 +26757,12 @@
         "c-mh-v3-dt-split",
         "c-mh-v3-2013-ccu",
         "c-mh-v3-remote-cache-slc",
+        "c-mh-v6-line-sharing",
+        "c-mh-v6-slc-coherent-gpu",
         "c-mh-v8-slc-dup-tags"
       ],
       "name": "Coherence point with duplicate tags",
+      "block": "chip",
       "status": "inferred",
       "description": "Before the SLC, a coherence point holds copies of every cache's L2 tags and states, a tag-only pseudo-L3 that orders same-address requests.",
       "params": [],
@@ -25485,9 +26791,13 @@
         "c-mh-v6-dsid-fallback",
         "c-mh-v6-drop-victim",
         "c-mh-v6-dsid-set",
-        "c-mh-v6-deprioritize"
+        "c-mh-v6-deprioritize",
+        "c-mh-v6-gpu-slc-working-set",
+        "c-mh-v8-realtime-lines",
+        "c-mh-v8-slc-quota"
       ],
       "name": "SLC sticky lines and group quotas",
+      "block": "slc",
       "status": "inferred",
       "description": "SLC lines carry a group ID and a sticky bit; driver-set quotas cap each group, and replacement skips sticky lines.",
       "params": [
@@ -25502,6 +26812,7 @@
         "c-mh-v3-spec-read-2012"
       ],
       "name": "DRAM read issued alongside the SLC lookup",
+      "block": "slc",
       "status": "inferred",
       "description": "A latency-sensitive read enters the memory controller pipeline while the coherence and SLC tag checks run, and is killed if either hits.",
       "params": [
@@ -25518,6 +26829,7 @@
         "c-mh-v3-slc-drowsy-qos"
       ],
       "name": "SLC way power-down and drowsy SRAM",
+      "block": "slc",
       "status": "inferred",
       "description": "The SLC powers down ways to match the share in use and holds idle SRAM at retention voltage, batching low-QoS requests until it wakes.",
       "params": [
@@ -25551,10 +26863,26 @@
         "c-mh-v3-buffer-at-source",
         "c-mh-v3-l2-cpu-qos",
         "c-mh-v3-bw-controller",
+        "c-mh-v3-cpu-qos-fixed",
+        "c-mh-v3-flowid-gone",
+        "c-mh-v3-vc-ordering",
+        "c-mh-v3-gen2-credits",
+        "c-mh-v3-2010-port-roles",
+        "c-mh-v3-2010-bw-ports",
+        "c-mh-v3-2010-aiu-arb",
+        "c-mh-v3-2011-nrt-throttle",
+        "c-mh-v3-2011-dwrr",
+        "c-mh-v3-tournament",
+        "c-mh-v3-coherence-no-qos",
+        "c-mh-v3-display-qos",
+        "c-mh-v3-cpu-qos-toggle",
+        "c-mh-v3-bulk-plus",
+        "c-mh-v8-mc-rt-credits",
         "c-mh-v8-credit-throttle",
         "c-mh-v8-eviction-accounting"
       ],
       "name": "Credit-gated fabric with QoS bands",
+      "block": "chip",
       "status": "inferred",
       "description": "Requests carry one of five QoS classes in three bands on six virtual channels; credits gate entry to the fabric and memory controller.",
       "params": [],
@@ -25563,13 +26891,17 @@
     },
     "pio_network": {
       "claims": [
+        "c-mh-v3-pio-strands",
+        "c-mh-v3-device-store-path",
         "c-mh-v3-pio-network",
         "c-mh-v3-pio-flat",
         "c-mh-v3-pio-control",
         "c-mh-v3-device-bypass",
+        "c-mh-v3-fast-ipi",
         "c-mh-v8-nsm-gateway"
       ],
       "name": "Separate PIO network",
+      "block": "chip",
       "status": "inferred",
       "description": "Device-memory accesses and short control messages such as interprocessor interrupts use a flat network that skips coherence, the SLC and DRAM.",
       "params": [],
@@ -25582,6 +26914,7 @@
         "c-mh-v3-amx-l2-id-release"
       ],
       "name": "Coprocessor memory-ordering table",
+      "block": "lsu",
       "status": "speculative",
       "description": "CPU loads and stores to a page with outstanding AMX (or LZ) accesses wait until the L2 reports those accesses done.",
       "params": [],
@@ -25590,6 +26923,7 @@
     },
     "power_estimator_throttle": {
       "claims": [
+        "c-mh-v3-fill-source-telemetry",
         "c-mh-v3-apsc-dpe",
         "c-mh-v3-dpe-throttle",
         "c-mh-v3-hw-dvfs",
@@ -25597,9 +26931,11 @@
         "c-mh-v3-energy-credits",
         "c-mh-v3-l2-slc-throttle",
         "c-mh-v3-freeze-levels",
+        "c-mh-v8-power-levels",
         "c-mh-v8-hw-dvfs"
       ],
       "name": "Digital power estimator throttling",
+      "block": "pcluster",
       "status": "speculative",
       "description": "Per-core event counts feed a power estimate and energy credits that block vector or AMX issue for a cycle or two and steer DVFS.",
       "params": [],
@@ -25608,10 +26944,12 @@
     },
     "idle_clock_division": {
       "claims": [
+        "c-mh-v2-clock-variation",
         "c-mh-v3-idle-clock-quarter",
         "c-mh-v3-clock-dither"
       ],
       "name": "Divided clock while the core waits",
+      "block": "pcluster",
       "status": "speculative",
       "description": "A core stalled on DRAM or waiting for an event receives one clock pulse in four instead of a frequency change.",
       "params": [],
@@ -25620,9 +26958,11 @@
     },
     "simd_power_down": {
       "claims": [
-        "c-mh-v3-simd-power-down"
+        "c-mh-v3-simd-power-down",
+        "c-mh-v4-decode-vector-gating"
       ],
       "name": "SIMD unit power-down with state offload",
+      "block": "eu_fp",
       "status": "speculative",
       "description": "After a long stretch without SIMD work the SIMD registers move to a low-leakage store and the SIMD unit loses power.",
       "params": [],
@@ -25639,6 +26979,7 @@
         "c-mh-v4-nfp-lookup-priority"
       ],
       "name": "Scan-on-fill next-fetch predictor",
+      "block": "btb",
       "status": "inferred",
       "description": "Prefetched instruction lines are scanned for branches before their first use.",
       "params": [],
@@ -25657,9 +26998,11 @@
         "c-mh-v4-l0-size",
         "c-mh-v4-loop-table",
         "c-mh-v4-loop-iq-mode",
-        "c-mh-v4-loop-exit-predictor"
+        "c-mh-v4-loop-exit-predictor",
+        "c-mh-v8-short-loop-unroll"
       ],
       "name": "Tiered loop modes",
+      "block": "iq",
       "status": "speculative",
       "description": "Loops run from the instruction queue, a loop buffer or an L0 cache.",
       "params": [],
@@ -25675,9 +27018,11 @@
     },
     "fill_forwarding": {
       "claims": [
+        "c-mh-v3-no-cwf-split",
         "c-mh-v8-fill-forward"
       ],
       "name": "Fill forwarding to waiting loads",
+      "block": "l1d",
       "status": "inferred",
       "description": "A load that missed the L1 is woken as its line arrives and takes its bytes during the fill, not by replaying afterwards.",
       "params": [],
@@ -25692,9 +27037,13 @@
         "c-mh-v8-bias-skip-tage",
         "c-mh-v8-light-branch-unit",
         "c-mh-v8-biased-indirect",
-        "c-mh-v8-biased-csel"
+        "c-mh-v8-biased-csel",
+        "c-mh-v8-m1-two-branch-units",
+        "c-mh-v8-m3-branch-pipes",
+        "c-mh-v8-m4-branch-pipes"
       ],
       "name": "Biased-branch filtering in the front end",
+      "block": "btb",
       "status": "speculative",
       "description": "Branches, indirect branches and CSELs that always go one way are marked at the I-cache, handled as jumps, NOPs or moves, kept out of the main predictors and checked on a lightweight branch unit.",
       "params": [],
@@ -25703,12 +27052,14 @@
     },
     "trace_cache": {
       "claims": [
+        "c-ox-two-branches",
         "c-mh-v8-trace-cache",
         "c-mh-v8-trace-well-biased",
         "c-mh-v8-fetch-pred-sizes",
         "c-mh-v8-trace-groups"
       ],
       "name": "Trace cache built on stable taken branches",
+      "block": "fetch",
       "status": "speculative",
       "description": "Straight-line runs joined by stable taken branches are copied from the instruction queue into a trace cache, so one fetch can cross several taken branches.",
       "params": [],
@@ -25719,9 +27070,11 @@
       "claims": [
         "c-mh-v8-deny-list",
         "c-mh-v8-deny-list-entry",
-        "c-mh-v8-deny-list-ration"
+        "c-mh-v8-deny-list-ration",
+        "c-mh-v8-prefetch-wake"
       ],
       "name": "Prefetch deny list",
+      "block": "prefetch",
       "status": "speculative",
       "description": "Addresses of prefetched lines evicted unused enter a small counted table that pushes back or drops later prefetches to them.",
       "params": [],
@@ -25730,6 +27083,7 @@
     },
     "hierarchical_store_queue": {
       "claims": [
+        "c-mh-v2-sq-banks-guess",
         "c-mh-v8-hsq-two-queues",
         "c-mh-v8-hsq-search-width",
         "c-mh-v8-hsq-fast-4",
@@ -25738,6 +27092,7 @@
         "c-mh-v8-hsq-split-loads"
       ],
       "name": "Hierarchical store queue",
+      "block": "sq",
       "status": "speculative",
       "description": "A primary store queue holds the oldest stores, serves three load searches at once and writes to the L1; younger stores wait in a slower secondary queue searched one load at a time.",
       "params": [
@@ -25749,6 +27104,9 @@
     },
     "early_barrier_completion": {
       "claims": [
+        "c-mh-v3-dsb-excluded-region",
+        "c-mh-v3-remote-dsb",
+        "c-mh-v8-faster-isb",
         "c-mh-v8-isb-decode-flush",
         "c-mh-v8-isb-tlbi",
         "c-mh-v8-dsb-early",
@@ -25757,6 +27115,7 @@
         "c-mh-v8-translation-barrier"
       ],
       "name": "Early barrier completion",
+      "block": "lsu",
       "status": "speculative",
       "description": "ISB and DSB flush younger work at decode and complete once the relevant older instructions finish, poisoning rare conflicting instructions instead of waiting for the barrier to reach the ROB head.",
       "params": [],
@@ -25771,6 +27130,7 @@
         "c-mh-v8-directory-way-bits"
       ],
       "name": "Coherence directory at the SLC",
+      "block": "slc",
       "status": "speculative",
       "description": "A hashed, set-associative directory at the SLC records which L2-level caches hold each line, replacing duplicate tags; a set overflow invalidates a line in its L2.",
       "params": [],
@@ -25779,10 +27139,14 @@
     },
     "ipv_replacement": {
       "claims": [
+        "c-mh-v4-l2-ilines",
         "c-mh-v8-ipv-encoding",
+        "c-mh-v8-critical-lines",
+        "c-mh-v8-l2-lru-patent",
         "c-mh-v8-ipv-replacement"
       ],
       "name": "Criticality-aware replacement vectors",
+      "block": "l2",
       "status": "speculative",
       "description": "Cache replacement order is updated by small insertion/promotion vectors chosen by each line's prefetched and critical bits.",
       "params": [],
@@ -25795,9 +27159,12 @@
         "c-pac-itlb-separate",
         "c-pac-dtlb-backs-itlb",
         "c-pac-itlb-victim-steps",
-        "c-pac-itlb-per-el"
+        "c-pac-itlb-per-el",
+        "c-pac-tlb-shared-el",
+        "c-pac-four-tlbs"
       ],
       "name": "L1 dTLB as backing store for the iTLBs",
+      "block": "dtlb",
       "status": "inferred",
       "description": "Translations evicted from the user or kernel L1 iTLB move into the shared L1 dTLB; loads cannot see the iTLB itself.",
       "params": [
@@ -25813,9 +27180,12 @@
         "c-s2c-erg-64",
         "c-s2c-one-reservation",
         "c-s2c-monitor-coherence",
-        "c-s2c-stxr-rob-head"
+        "c-s2c-stxr-rob-head",
+        "c-s2c-ice-stxr-l1-evict",
+        "c-s2c-m2-stxr"
       ],
       "name": "Exclusive monitor bound to L1D residency",
+      "block": "lsu",
       "status": "measured",
       "description": "A load-exclusive reservation lasts only while its line stays in the L1D, so evicting the line makes the store-exclusive fail; each core holds one reservation with a 64 B granule.",
       "params": [
@@ -25832,6 +27202,7 @@
         "c-s2c-l2-cross-core-l1-hit"
       ],
       "name": "Inclusive L2 that spares L1-resident lines (AutoLock)",
+      "block": "l2",
       "status": "measured",
       "description": "The L2 is inclusive of the L1Ds, and its replacement takes lines with no L1D copy before lines an L1D still holds.",
       "params": [
@@ -25843,6 +27214,12 @@
     },
     "load_address_prediction": {
       "claims": [
+        "c-mh-v8-m2-lap",
+        "c-mh-v8-lap-stride",
+        "c-mh-v8-m2-lap-train",
+        "c-mh-v8-m3-lap-train",
+        "c-mh-v8-lap-patent-6bit",
+        "c-mh-v8-a15-lap-stepping",
         "c-slap-m1-no-lap",
         "c-slap-a14-no-lap",
         "c-slap-ice-no-lap",
@@ -25870,6 +27247,7 @@
         "c-slap-m2-oldest-in-order"
       ],
       "name": "Load address prediction",
+      "block": "lsu",
       "status": "absent",
       "description": "A PC-tagged predictor loads from a strided address before the real address is known; absent on M1, present from M2/A15.",
       "params": [
@@ -25911,6 +27289,7 @@
         "c-tso-suite-fixed"
       ],
       "name": "Runtime-selectable TSO memory model",
+      "block": "lsu",
       "status": "measured",
       "description": "A privileged control bit switches a core to x86-TSO ordering for Rosetta while keeping out-of-order loads.",
       "params": [],

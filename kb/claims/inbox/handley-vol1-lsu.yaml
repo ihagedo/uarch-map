@@ -777,6 +777,7 @@ new_params:
 new_mechanisms:
   zero_cycle_loads:
     name: Zero-cycle loads (register-file memory renaming)
+    block: lsu
     status: inferred
     description: A load from a just-stored address is renamed to the register holding the stored value.
     params: [lsu.zero_cycle_load, lsu.forwarding, lsu.store_load_latency]
@@ -794,3 +795,16 @@ mechanism_claims:
   zero_cycle_loads: [c-mh-v1-forwarding-rf, c-mh-v1-zcl-patent-rf-lsdp, c-mh-v1-sp-lsdp, c-mh-v1-zcl-same-decode-group,
                      c-mh-v1-zcl-div-probe, c-mh-v1-zcl-addressing, c-mh-v1-zcl-5-vs-7, c-mh-v1-zcl-no-simd,
                      c-mh-v1-zcl-stack]
+  dispatch_buffers: [c-mh-v1-ls-dispatch-unordered]
+  paired_sched_queues: [c-mh-v1-sched-ls-pairs]
+  store_load_dep_predictor: [c-mh-v1-lsdp-patent-256, c-mh-v1-lsdp-arming, c-mh-v1-lsdp-confidence,
+    c-mh-v1-lsdp-replay-entries, c-mh-v1-lsdp-replacement, c-mh-v1-lsdp-pc-indexed,
+    c-mh-v1-lsdp-default-no-alias, c-mh-v1-stp-lsdp-third]
+  load_replay_shadow: [c-mh-v1-replay-shadow-window, c-mh-v1-leq-bank-per-pipe, c-mh-v1-rlb-patent]
+  late_ordering_check: [c-mh-v1-late-ordering-check-patent, c-mh-v1-same-addr-no-lsdp, c-mh-v1-delayed-both,
+    c-mh-v1-late-check-window]
+  immediate_regs: [c-mh-v1-eor-not-zero-idiom, c-mh-v1-no-add-imm-elim]
+  split_access_handling: [c-mh-v1-line-cross-4-per-cycle]
+  sq_partial_forwarding: [c-mh-v1-partial-forward-bytes, c-mh-v1-stitch-extra-cycle]
+  redundant_mem_op_elim: [c-mh-v1-redundant-mem-ops]
+  lsu_load_to_load_bypass: [c-mh-v1-pointer-chase-patent]

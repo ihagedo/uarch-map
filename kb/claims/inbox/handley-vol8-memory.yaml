@@ -1211,6 +1211,7 @@ new_params:
 new_mechanisms:
   biased_branch_filter:
     name: Biased-branch filtering in the front end
+    block: btb
     status: speculative
     description: >-
       Branches, indirect branches and CSELs that always go one way are marked at the I-cache, handled as jumps, NOPs
@@ -1222,6 +1223,7 @@ new_mechanisms:
       first flip of such a branch costs a full mispredict
   trace_cache:
     name: Trace cache built on stable taken branches
+    block: fetch
     status: speculative
     description: >-
       Straight-line runs joined by stable taken branches are copied from the instruction queue into a trace cache, so
@@ -1231,6 +1233,7 @@ new_mechanisms:
     detection_rule: a loop body joined by always-taken branches sustains more than one taken branch per cycle
   prefetch_deny_list:
     name: Prefetch deny list
+    block: prefetch
     status: speculative
     description: >-
       Addresses of prefetched lines evicted unused enter a small counted table that pushes back or drops later
@@ -1242,6 +1245,7 @@ new_mechanisms:
       once the lines are used on demand
   hierarchical_store_queue:
     name: Hierarchical store queue
+    block: sq
     status: speculative
     description: >-
       A primary store queue holds the oldest stores, serves three load searches at once and writes to the L1; younger
@@ -1253,6 +1257,7 @@ new_mechanisms:
       about 4
   early_barrier_completion:
     name: Early barrier completion
+    block: lsu
     status: speculative
     description: >-
       ISB and DSB flush younger work at decode and complete once the relevant older instructions finish, poisoning
@@ -1264,6 +1269,7 @@ new_mechanisms:
       cost grows with outstanding older loads and stores rather than with older ALU work
   coherence_directory:
     name: Coherence directory at the SLC
+    block: slc
     status: speculative
     description: >-
       A hashed, set-associative directory at the SLC records which L2-level caches hold each line, replacing duplicate
@@ -1275,6 +1281,7 @@ new_mechanisms:
       directory set
   ipv_replacement:
     name: Criticality-aware replacement vectors
+    block: l2
     status: speculative
     description: >-
       Cache replacement order is updated by small insertion/promotion vectors chosen by each line's prefetched and
@@ -1292,9 +1299,11 @@ mechanism_claims:
   decoupled_fetch: [c-mh-v8-three-engines]
   l1i_coupled_btb: [c-mh-v8-nfp-hysteresis, c-mh-v8-pred-stages]
   biased_branch_filter: [c-mh-v8-bias-m3-m4, c-mh-v8-bias-bits, c-mh-v8-bias-table, c-mh-v8-bias-skip-tage,
-    c-mh-v8-light-branch-unit, c-mh-v8-biased-indirect, c-mh-v8-biased-csel]
+    c-mh-v8-light-branch-unit, c-mh-v8-biased-indirect, c-mh-v8-biased-csel, c-mh-v8-m1-two-branch-units,
+    c-mh-v8-m3-branch-pipes, c-mh-v8-m4-branch-pipes]
   trace_cache: [c-mh-v8-trace-cache, c-mh-v8-trace-well-biased, c-mh-v8-fetch-pred-sizes, c-mh-v8-trace-groups]
-  prefetch_deny_list: [c-mh-v8-deny-list, c-mh-v8-deny-list-entry, c-mh-v8-deny-list-ration]
+  prefetch_deny_list: [c-mh-v8-deny-list, c-mh-v8-deny-list-entry, c-mh-v8-deny-list-ration,
+    c-mh-v8-prefetch-wake]
   hierarchical_store_queue: [c-mh-v8-hsq-two-queues, c-mh-v8-hsq-search-width, c-mh-v8-hsq-fast-4, c-mh-v8-hsq-slow-11,
     c-mh-v8-hsq-banks, c-mh-v8-hsq-split-loads]
   early_barrier_completion: [c-mh-v8-isb-decode-flush, c-mh-v8-isb-tlbi, c-mh-v8-dsb-early, c-mh-v8-tlbi-dsb-poison,
@@ -1306,3 +1315,9 @@ mechanism_claims:
   fabric_qos_credits: [c-mh-v8-credit-throttle, c-mh-v8-eviction-accounting]
   pio_network: [c-mh-v8-nsm-gateway]
   power_estimator_throttle: [c-mh-v8-hw-dvfs]
+  issue_age_flush: [c-mh-v8-mispredict-flush]
+  exec_forwarding: [c-mh-v8-scvtf-fake-load, c-mh-v8-xfer-path]
+  same_address_ordering: [c-mh-v8-retry-queue]
+  slc_line_states: [c-mh-v8-64b-dirty]
+  noc_rings_lanes: [c-mh-v8-noc-classes, c-mh-v8-noc-two-lanes, c-mh-v8-dual-noc-port,
+    c-mh-v8-noc-port-split, c-mh-v8-noc-rings]

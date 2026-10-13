@@ -257,3 +257,10 @@ claims:
 
 mechanism_claims:
   ipv_replacement: [c-mh-v8-ipv-encoding]
+  control_independence: [c-mh-v8-wrong-path-reuse, c-mh-v8-wrong-path-branches]
+  amx_op_set: [c-mh-v8-matmul-loop, c-mh-v8-fusion-buffer]
+  amx_shared_contexts: [c-mh-v8-amx-six-sets, c-mh-v8-amx-queue-monitor, c-mh-v8-m4-amx-cosched]
+  amx_datapath: [c-mh-v8-amx-m3-throughput]
+  perf_controller: [c-mh-v8-stall-boost, c-mh-v8-cluster-fill-ratio, c-mh-v8-energy-heuristic,
+    c-mh-v8-perf-islands, c-mh-v8-dram-vs-cpu-power]
+  dram_power_states: [c-mh-v8-mem-usage-hints]

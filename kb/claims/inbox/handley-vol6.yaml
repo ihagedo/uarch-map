@@ -311,6 +311,9 @@ new_params:
   slc.dsids: {block: slc, name: SLC data set IDs (physical), unit: IDs}
 mechanism_claims:
   slc_sticky_quota: [c-mh-v6-dsid-tag, c-mh-v6-dsid-drop, c-mh-v6-slc-drop-unit, c-mh-v6-slc-physical-dsids,
-    c-mh-v6-dsid-quota, c-mh-v6-dsid-clients, c-mh-v6-cpu-dsid, c-mh-v6-dsid-page-tables, c-mh-v6-dsid-fallback,
-    c-mh-v6-drop-victim, c-mh-v6-dsid-set, c-mh-v6-deprioritize]
+    c-mh-v6-dsid-quota, c-mh-v6-dsid-clients, c-mh-v6-cpu-dsid, c-mh-v6-dsid-page-tables,
+    c-mh-v6-dsid-fallback, c-mh-v6-drop-victim, c-mh-v6-dsid-set, c-mh-v6-deprioritize,
+    c-mh-v6-gpu-slc-working-set]
   coherence_directory: [c-mh-v6-gpu-l2-sync]
+  coherence_duplicate_tags: [c-mh-v6-line-sharing, c-mh-v6-slc-coherent-gpu]
+  perf_controller: [c-mh-v6-boost-noc-dram]

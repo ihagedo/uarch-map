@@ -480,6 +480,14 @@
             "name": {
               "type": "string"
             },
+            "block": {
+              "type": "string",
+              "description": "the block whose behaviour this is"
+            },
+            "chip": {
+              "type": "string",
+              "description": "set when only a later chip or a post-M1 patent shows the mechanism"
+            },
             "status": {
               "enum": [
                 "measured",

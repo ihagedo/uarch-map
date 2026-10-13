@@ -284,7 +284,10 @@ def merge(core):
             problems.append(f"claim {cid} cites unknown source {c['source']}")
         if not c.get("loc"):
             problems.append(f"claim {cid} has no loc")
+    block_ids = {b["id"] for b in kb["blocks"]}
     for mid, m in kb["mechanisms"].items():
+        if m.get("block") not in block_ids:
+            problems.append(f"mechanism {mid} has no known block ({m.get('block')})")
         for cid in m["claims"]:
             if cid not in kb["claims"]:
                 problems.append(f"mechanism {mid} cites unknown claim {cid}")

@@ -707,6 +707,7 @@ new_params:
 new_mechanisms:
   banked_prf_power:
     name: Banked register file with bank power gating
+    block: int_prf
     status: speculative
     description: The register file has four banks that power down separately; waking one costs two or three cycles.
     params: [int_prf.banks, int_prf.total]
@@ -715,6 +716,13 @@ new_mechanisms:
 
 mechanism_claims:
   retire_groups: [c-mh-v1-nop-rob-slot, c-mh-v1-retire-nops-56, c-mh-v1-rob-rows, c-mh-v1-rob-row-slots, c-mh-v1-rob-failable-slot, c-mh-v1-retire-rows-per-cycle, c-mh-v1-rob-row-counter, c-mh-v1-kip-930, c-mh-v1-nop-window]
-  rename_retire_queue: [c-mh-v1-shared-pool-624, c-mh-v1-hf-common-limit, c-mh-v1-hf-walk, c-mh-v1-adds-two-hf, c-mh-v1-hf-slot-rule, c-mh-v1-mov-last-reference, c-mh-v1-regs-freed-at-retire, c-mh-v1-reg-free-rate, c-mh-v1-hf-free-rate, c-mh-v1-no-bypass-early-release, c-mh-v1-history-file]
+  rename_retire_queue: [c-mh-v1-shared-pool-624, c-mh-v1-hf-common-limit, c-mh-v1-hf-walk,
+    c-mh-v1-adds-two-hf, c-mh-v1-hf-slot-rule, c-mh-v1-mov-last-reference, c-mh-v1-regs-freed-at-retire,
+    c-mh-v1-reg-free-rate, c-mh-v1-hf-free-rate, c-mh-v1-no-bypass-early-release, c-mh-v1-history-file,
+    c-mh-v1-no-virtual-registers]
   register_security_tag: [c-mh-v1-security-tag-details, c-mh-v1-no-hw-context-switch]
   banked_prf_power: [c-mh-v1-prf-banks, c-mh-v1-free-list-scanners, c-mh-v1-bank-powerup, c-mh-v1-split-power-gating]
+  matrix_scheduler: [c-mh-v1-read-at-issue]
+  macro_op_fusion: [c-mh-v1-llvm-fusions, c-mh-v1-fusion-patent]
+  speculative_special_regs: [c-mh-v1-spr-speculative-writes]
+  uop_split_merge: [c-mh-v1-crack-merge, c-mh-v1-extr-intermediate]

@@ -134,5 +134,5 @@ claims:
     notes: A change from M1 through M3, where every taken branch type is recorded; the authors tie it to new M4 branch prediction mechanisms.
 
 mechanism_claims:
-  path_history_shift_xor: [c-ien-all-taken]
+  path_history_shift_xor: [c-ien-all-taken, c-ien-phrb-pcore, c-ien-ecore-phrt-t48, c-ien-m4-pcore-nojumps]
   bpu_isolation: [c-ien-pht-shared-pcore, c-ien-pht-shared-ecore]

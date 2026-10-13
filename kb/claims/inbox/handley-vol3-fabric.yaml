@@ -594,3 +594,20 @@ mechanism_claims:
     c-mh-v3-edge-limits, c-mh-v3-critical-client, c-mh-v3-retry-table, c-mh-v3-dram-vc-category,
     c-mh-v3-latency-tolerance, c-mh-v3-rt-amplification, c-mh-v3-bw-fabric-clock, c-mh-v3-arb-weights]
   coherence_duplicate_tags: [c-mh-v3-sideways-hold]
+  dram_qos_scheduler: [c-mh-v3-dram-bank-arb, c-mh-v3-dram-linked-lists, c-mh-v3-page-streak-cap]
+  dram_rw_turns: [c-mh-v3-turn-latency, c-mh-v3-access-efficiency]
+  dram_power_states: [c-mh-v3-write-queue-freeze]
+  mc_write_merge: [c-mh-v3-raw-merge, c-mh-v3-write-merge, c-mh-v3-rmw-last-read]
+  dram_refresh_scheduling: [c-mh-v3-refresh-window]
+  same_address_ordering: [c-mh-v3-retry-id]
+  predictive_clock_crossing: [c-mh-v3-cdc-predict]
+  noc_layout: [c-mh-v3-fabric-tiers]
+  dvfs_transition: [c-mh-v3-voltage-detect]
+  perf_controller: [c-mh-v3-clpc-knobs]
+  amx_datapath: [c-mh-v3-amx-z-layout, c-mh-v3-amx-pe-grid, c-mh-v3-amx-z-in-pe, c-mh-v3-amx-two-issue]
+  amx_op_set: [c-mh-v3-amx-types, c-mh-v3-amx-fms, c-mh-v3-amx-2x2, c-mh-v3-amx-no-2x2-fp, c-mh-v3-amx-lut,
+    c-mh-v3-amx-no-int8, c-mh-v3-amx-int16-bits, c-mh-v3-amx-strided-dot, c-mh-v3-amx-mixed-precision,
+    c-mh-v3-amx-vector-mode, c-mh-v3-amx-transcendental, c-mh-v3-amx-extract]
+  core_power_cycle: [c-mh-v3-reset-vector]
+  interrupt_routing: [c-mh-v3-irq-coalesce, c-mh-v3-cluster-irq-ctrl, c-mh-v3-ultra-irq]
+  cluster_compression_engines: [c-mh-v3-compress-policy, c-mh-v3-lz-word-size]

@@ -707,6 +707,7 @@ new_params:
 new_mechanisms:
   dtlb_piggyback:
     name: Single-ported dTLB with piggyback ports
+    block: dtlb
     status: inferred
     description: One dTLB lookup per cycle, shared with queued requests to the same page.
     params: [dtlb.l1_lookups_per_cycle]
@@ -716,6 +717,7 @@ new_mechanisms:
       2.5 cycles per three loads, and a new page on every access to about one load per cycle
   l1d_banked_piggyback:
     name: Banked L1D with piggybacked loads and buffered stores
+    block: l1d
     status: inferred
     description: Sixteen 16 B banks; loads to one element share an access and stores are buffered.
     params: [l1d.banks, l1d.bank_width, l1d.load_bw, l1d.store_bw]
@@ -725,6 +727,7 @@ new_mechanisms:
       32 B keep three per cycle; stores keep two per cycle out to 128 B steps
   l1d_way_lookup:
     name: L1D way selection without visible misprediction
+    block: l1d
     status: speculative
     description: Loads to random ways run as fast as loads to one way; no way misprediction shows.
     params: [l1d.assoc]
@@ -736,9 +739,19 @@ new_mechanisms:
 mechanism_claims:
   dtlb_piggyback: [c-mh-v2-dtlb-single-port, c-mh-v2-tlb-queues, c-mh-v2-tlb-two-pages, c-mh-v2-tlb-three-pages,
                    c-mh-v2-tlb-autoinc, c-mh-v2-tlb-4ops, c-mh-v2-tlb-no-sharing, c-mh-v2-tlb-queue-overflow]
-  l1d_banked_piggyback: [c-mh-v2-l1d-banks, c-mh-v2-l1d-bank-width, c-mh-v2-l1-entry-queues, c-mh-v2-bank-stride-sweep,
-                         c-mh-v2-piggyback, c-mh-v2-l1-lookahead-3, c-mh-v2-l1-load-paths-6, c-mh-v2-4-lines-per-cycle,
-                         c-mh-v2-l1d-byte-subarrays, c-mh-v2-concurrent-store-load, c-mh-v2-store-fire-forget,
-                         c-mh-v2-storeload-same-bank, c-mh-v2-stores-free, c-mh-v2-ld-unit-uop]
+  l1d_banked_piggyback: [c-mh-v2-l1d-banks, c-mh-v2-l1d-bank-width, c-mh-v2-l1-entry-queues,
+    c-mh-v2-bank-stride-sweep, c-mh-v2-piggyback, c-mh-v2-l1-lookahead-3, c-mh-v2-l1-load-paths-6,
+    c-mh-v2-4-lines-per-cycle, c-mh-v2-l1d-byte-subarrays, c-mh-v2-concurrent-store-load,
+    c-mh-v2-store-fire-forget, c-mh-v2-storeload-same-bank, c-mh-v2-stores-free, c-mh-v2-ld-unit-uop,
+    c-mh-v2-width-independent, c-mh-v2-subarray-guess, c-mh-v2-no-parallel-sources]
   l1d_way_lookup: [c-mh-v2-l1d-8way, c-mh-v2-l1d-hashed-lookup, c-mh-v2-way-pred-test, c-mh-v2-way-pred-hashed]
   lsq_early_release: [c-mh-v2-store-write-buffers]
+  slc_memory_side: [c-mh-v2-slc-memory-side]
+  split_access_handling: [c-mh-v2-page-cross-31, c-mh-v2-unaligned-free, c-mh-v2-misaligned-single-request,
+    c-mh-v2-line-cross-loads]
+  tlb_mixed_page_sizes: [c-mh-v2-no-large-pages]
+  ldpq_lsu_split: [c-mh-v2-ldp-x-single, c-mh-v2-ldpq-throughput, c-mh-v2-ldpq-late-crack]
+  paired_sched_queues: [c-mh-v2-load-order]
+  sq_32b_slots: [c-mh-v2-sq-slot-32b]
+  sq_partial_forwarding: [c-mh-v2-partial-forwarding]
+  hierarchical_store_queue: [c-mh-v2-sq-banks-guess]

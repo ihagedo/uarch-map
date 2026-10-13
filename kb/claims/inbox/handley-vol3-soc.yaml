@@ -489,6 +489,7 @@ new_params:
 new_mechanisms:
   coprocessor_ordering_table:
     name: Coprocessor memory-ordering table
+    block: lsu
     status: speculative
     description: CPU loads and stores to a page with outstanding AMX (or LZ) accesses wait until the L2 reports those accesses done.
     params: []
@@ -498,6 +499,7 @@ new_mechanisms:
       but not when it goes to another page
   power_estimator_throttle:
     name: Digital power estimator throttling
+    block: pcluster
     status: speculative
     description: Per-core event counts feed a power estimate and energy credits that block vector or AMX issue for a cycle or two and steer DVFS.
     params: []
@@ -507,6 +509,7 @@ new_mechanisms:
       core runs the same loop alone
   idle_clock_division:
     name: Divided clock while the core waits
+    block: pcluster
     status: speculative
     description: A core stalled on DRAM or waiting for an event receives one clock pulse in four instead of a frequency change.
     params: []
@@ -516,6 +519,7 @@ new_mechanisms:
       with no DVFS change
   simd_power_down:
     name: SIMD unit power-down with state offload
+    block: eu_fp
     status: speculative
     description: After a long stretch without SIMD work the SIMD registers move to a low-leakage store and the SIMD unit loses power.
     params: []
@@ -530,3 +534,18 @@ mechanism_claims:
     c-mh-v3-energy-credits, c-mh-v3-l2-slc-throttle, c-mh-v3-freeze-levels]
   idle_clock_division: [c-mh-v3-idle-clock-quarter, c-mh-v3-clock-dither]
   simd_power_down: [c-mh-v3-simd-power-down]
+  noc_split_paths: [c-mh-v3-l2-link-combined]
+  dram_power_states: [c-mh-v3-dram-half-clock, c-mh-v3-dram-pstate-interval]
+  l2_snoop_filter: [c-mh-v3-l2-modified-copy]
+  fabric_qos_credits: [c-mh-v3-cpu-qos-toggle, c-mh-v3-bulk-plus]
+  noc_layout: [c-mh-v3-cluster-one-requester]
+  dvfs_transition: [c-mh-v3-cpu-l2-scale-together, c-mh-v3-pll-divider-ramp]
+  perf_controller: [c-mh-v3-control-effort]
+  amx_lsu_issue: [c-mh-v3-amx-via-lsu, c-mh-v3-amx-stq-nonspec, c-mh-v3-amx-two-per-cycle,
+    c-mh-v3-amx-bundling]
+  amx_datapath: [c-mh-v3-amx-from-l2]
+  core_power_cycle: [c-mh-v3-wake-state-restore]
+  pio_network: [c-mh-v3-fast-ipi]
+  interrupt_routing: [c-mh-v3-irq-soft-hard-force, c-mh-v3-irq-rob-nack]
+  cluster_compression_engines: [c-mh-v3-wkdm-engine, c-mh-v3-lz-engine-l2]
+  cluster_l2_tlb: [c-mh-v3-cluster-l2tlb]

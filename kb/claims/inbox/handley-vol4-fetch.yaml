@@ -701,6 +701,7 @@ new_params:
 new_mechanisms:
   scan_on_fill_nfp:
     name: Scan-on-fill next-fetch predictor
+    block: btb
     status: inferred
     description: Prefetched instruction lines are scanned for branches before their first use.
     params: []
@@ -711,3 +712,13 @@ mechanism_claims:
   l1i_coupled_btb: [c-mh-v4-l1i-tier-bubble-2, c-mh-v4-icache-tier-3-cycles, c-mh-v4-btb-l1i-8192, c-mh-v4-cloudflare-l1i-jumps, c-mh-v4-predecode-every-line, c-mh-v4-m1-no-l2-fp, c-mh-v4-m2-l2-fp, c-mh-v4-m1-nfp-dm]
   decoupled_fetch: [c-mh-v4-decoupled-iq, c-mh-v4-fdip-absent, c-mh-v4-fully-decoupled-no-win, c-mh-v4-iq-guess, c-mh-v4-l2-two-lines, c-mh-v4-m2-not-fully-decoupled, c-mh-v4-iprefetch-two-tables, c-mh-v4-callgraph-details, c-mh-v4-not-decoupled]
   scan_on_fill_nfp: [c-pat-us10747539b1-scan-on-fill, c-mh-v4-sof-fallback, c-mh-v4-sof-scan-timing, c-mh-v4-sof-cloudflare, c-mh-v4-sof-zero-bubble, c-mh-v4-nfp-lookup-priority]
+  next_fetch_groups: [c-mh-v4-one-trace-per-cycle, c-mh-v4-l1i-two-banks, c-mh-v4-nfp-trace-details,
+    c-mh-v4-nfp-index-tag, c-mh-v4-nfp-overflow-groups, c-mh-v4-nfp-slices]
+  l1i_way_prediction: [c-mh-v4-pa-in-fp]
+  retire_time_training: [c-mh-v4-separate-training]
+  staged_fetch_redirect: [c-mh-v4-redirect-sources, c-mh-v4-indirect-halt, c-mh-v4-early-resteer]
+  nfp_training: [c-mh-v4-nfp-hysteresis, c-mh-v4-nfp-trained-by-predictors, c-mh-v4-loop-retrain-suppress,
+    c-mh-v4-nfp-usefulness, c-mh-v4-nfp-overflow-table]
+  iq_bypass_fixup: [c-mh-v4-nfp-longer-trace]
+  return_fetch_table: [c-mh-v4-nfp-return-table]
+  ipv_replacement: [c-mh-v4-l2-ilines]

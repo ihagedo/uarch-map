@@ -255,6 +255,7 @@ new_params:
 new_mechanisms:
   exclusive_monitor_l1:
     name: Exclusive monitor bound to L1D residency
+    block: lsu
     status: measured
     description: >-
       A load-exclusive reservation lasts only while its line stays in the L1D, so evicting the line makes the
@@ -264,6 +265,7 @@ new_mechanisms:
     detection_rule: LDXR a line, walk an 8-address L1D eviction set for it, then STXR; the store fails exactly when the line left the L1D
   l2_autolock:
     name: Inclusive L2 that spares L1-resident lines (AutoLock)
+    block: l2
     status: measured
     description: >-
       The L2 is inclusive of the L1Ds, and its replacement takes lines with no L1D copy before lines an L1D still
@@ -276,5 +278,10 @@ new_mechanisms:
 
 mechanism_claims:
   exclusive_monitor_l1: [c-s2c-stxr-l1-evict, c-s2c-erg-64, c-s2c-one-reservation, c-s2c-monitor-coherence,
-                         c-s2c-stxr-rob-head]
+    c-s2c-stxr-rob-head, c-s2c-ice-stxr-l1-evict, c-s2c-m2-stxr]
   l2_autolock: [c-s2c-l2-inclusive, c-s2c-l2-autolock, c-s2c-autolock-threshold, c-s2c-l2-cross-core-l1-hit]
+  l1d_page_offset_index: [c-s2c-l1-index]
+  l2_core_lru: [c-s2c-l2-repl-cross-8x, c-s2c-l2-repl-same-core, c-s2c-l2-repl]
+  l2_physical_index: [c-s2c-l2-index]
+  l2_cachelets: [c-s2c-l2-slices]
+  l1d_tree_plru: [c-s2c-l1-lru]

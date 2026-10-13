@@ -435,7 +435,8 @@
     }
     h += `<section class="d-section"><h3>Parameters</h3><ul class="p-list">` +
       params.map(([pid, p]) => paramHTML(pid, p)).join("") + `</ul></section>`;
-    const mechs = Object.entries(D.mechanisms).filter(([, m]) => m.params.some((pid) => D.params[pid].block === bid));
+    const mechs = Object.entries(D.mechanisms)
+      .filter(([, m]) => m.block === bid || m.params.some((pid) => D.params[pid].block === bid));
     if (mechs.length) h += `<section class="d-section"><h3>Mechanisms</h3>${mechs.map(mechHTML).join("")}</section>`;
     const outs = D.links.filter((l) => l.from === bid), ins = D.links.filter((l) => l.to === bid);
     if (outs.length || ins.length) {
@@ -501,7 +502,8 @@
   function mechHTML([mid, m]) {
     const on = state.mech === mid;
     return `<div class="mech-wrap"><button type="button" class="mech" data-mech="${mid}" aria-pressed="${on}">` +
-      `<span class="mech-h">${esc(m.name)}<span class="status-tag">${esc(m.status)}</span></span>` +
+      `<span class="mech-h">${esc(m.name)}<span class="status-tag">${esc(m.status)}</span>` +
+      (m.chip && m.chip !== "m1" ? `<span class="status-tag">${esc(m.chip.toUpperCase())}</span>` : "") + `</span>` +
       `<span class="mech-desc">${esc(m.description)}</span></button>` +
       (on && m.claims.length ? `<div class="mech-claims"><h4 class="ev-h">Claims (${m.claims.length})</h4>` +
         m.claims.map(claimHTML).join("") + `</div>` : "") + `</div>`;
@@ -570,7 +572,8 @@
     const rules = t.closest(".rules[data-mech]");
     if (rules) {
       const mid = rules.dataset.mech;
-      const owner = D.mechanisms[mid].params.map((pid) => D.params[pid].block);
+      const m = D.mechanisms[mid];
+      const owner = [m.block, ...m.params.map((pid) => D.params[pid].block)].filter(Boolean);
       if (!owner.includes(state.block)) { state.block = owner[0]; state.param = null; }
       state.mech = state.mech === mid ? null : mid;
       refresh();

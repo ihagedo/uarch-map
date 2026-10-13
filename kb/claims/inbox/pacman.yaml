@@ -376,6 +376,7 @@ new_params:
 new_mechanisms:
   itlb_victims_to_dtlb:
     name: L1 dTLB as backing store for the iTLBs
+    block: dtlb
     status: inferred
     description: Translations evicted from the user or kernel L1 iTLB move into the shared L1 dTLB; loads cannot see the iTLB itself.
     params: [itlb.org, dtlb.l1_org]
@@ -385,5 +386,7 @@ new_mechanisms:
       push the translation out of the iTLB, after which the load hits
 
 mechanism_claims:
-  itlb_victims_to_dtlb: [c-pac-itlb-evict-4, c-pac-itlb-separate, c-pac-dtlb-backs-itlb, c-pac-itlb-victim-steps,
-                         c-pac-itlb-per-el]
+  itlb_victims_to_dtlb: [c-pac-itlb-evict-4, c-pac-itlb-separate, c-pac-dtlb-backs-itlb,
+    c-pac-itlb-victim-steps, c-pac-itlb-per-el, c-pac-tlb-shared-el, c-pac-four-tlbs]
+  wrong_path_redirect: [c-pac-eager-squash]
+  spec_fault_no_access: [c-pac-data-gadget, c-pac-instr-gadget]
