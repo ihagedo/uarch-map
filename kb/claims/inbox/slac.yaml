@@ -106,6 +106,103 @@ claims:
     supports: [slc.allocation]
     notes: Restates EXAM (c-exam-l2-victim-fill); the two-step CPU priming built on it fills the whole SLC.
 
+  - id: c-slac-gpu-read-fills
+    text: >-
+      A line first read by the GPU sits in the SLC: the CPU's first access to it hits in the SLC, and later CPU
+      accesses hit in the core's own caches
+    loc: p004
+    quote: "When the CPU first accesses data previously accessed only by the GPU, the access results in an SLC hit. Subsequent CPU accesses to the same data are then consistently served by the local caches."
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: Contradicts c-mh-v3-cpu-no-slc-alloc for GPU misses, which it says never allocate in the SLC.
+
+  - id: c-slac-gpu-keeps-slc-copy
+    text: >-
+      When the GPU reads a CPU line that sits in the SLC, the SLC keeps its copy: the CPU's next access still hits in
+      the SLC
+    loc: p004
+    quote: "After the GPU accesses data originally residing in the SLC, the CPU’s first subsequent access results in an SLC hit, and later accesses yield CPU local cache hits, indicating that GPU access does not invalidate the SLC copy"
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: The authors add that the line only changes to a shared state.
+
+  - id: c-slac-gpu-snoop-l2
+    text: >-
+      After the GPU reads a line held in a CPU L2, the CPU keeps hitting in its own caches; the authors read this as
+      the GPU taking the line straight from the L2 by coherence and leaving the CPU copy shared
+    loc: p004
+    quote: "subsequent CPU accesses continue to hit in local caches, and no new copy of the line appears in the SLC ... the GPU reads the line directly from the CPU L2 cache"
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: The shared state is the authors' reading, citing Apple coherence patents. Agrees with c-mh-v6-slc-coherent-gpu.
+
+  - id: c-slac-no-slc-copy
+    text: >-
+      A GPU read of a buffer the CPU holds in its caches leaves a GPU-filled SLC buffer in place, so the GPU gets
+      CPU-held lines through coherence without allocating them in the SLC
+    loc: p014
+    quote: "This means no new SLC copy is created when the target is already present in CPU private caches; the GPU obtains the data via the coherence path, and the CPU lines remain resident."
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: >-
+      Both buffers about the SLC size. The authors call it an unusual non-inclusive behaviour on the GPU side,
+      qualifying c-exam-gpu-inclusive. Agrees with c-mh-v3-slc-io-coherence.
+
+  - id: c-slac-gpu-write-no-alloc
+    text: GPU writes do not allocate lines in the SLC
+    loc: p007
+    quote: "However, GPU write-only cannot prime the SLC. Our experiments show that the GPU write operations do not allocate cache lines into the SLC."
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: >-
+      Contradicts the mechanism for GPU writes: c-mh-v3-dma-write-slc has writes from non-CPU blocks stored in the
+      SLC. A read after a write in the same kernel did not reliably bring the line in either.
+
+  - id: c-slac-gpu-write-invalidates
+    text: >-
+      A GPU write removes stale copies of a line from the CPU caches and the SLC, so a following GPU read brings the
+      line into the SLC; the authors' GPU-side priming relies on this
+    loc: p007
+    quote: "the first kernel writes to all SLC_ES memory blocks to invalidate any stale CPU private-cache copies or SLC copies, and the second kernel reads the same SLC_ES addresses to load these memory blocks into the SLC cache lines"
+    derivation: inferred
+    supports: []
+    notes: The design reason for the write pass; the priming it enables gives a clean SLC state.
+
+  - id: c-slac-background-evictions
+    text: >-
+      With no victim running, background work such as display updates still evicts a stable 1 to 4 lines per SLC set
+      between priming and probing
+    loc: p008
+    quote: "even in the absence of a victim workload, a small number of cache lines (typically 1 to 4 per set) are evicted by persistent background activities such as display-related work, and these evictions are stable across runs"
+    method: other
+    derivation: measured
+    value: 2.5
+    range: [1, 4]
+    unit: lines per set
+    hedge: "typically"
+    supports: []
+
+  - id: c-slac-l2-index
+    text: >-
+      Citing earlier work, the paper says the L2 takes most set-index bits straight from physical address bits 7 to 13
+      and 16 to 19 and hashes the other two from higher bits
+    loc: p006
+    quote: "The L2 cache derives most of its set index bits directly from physical address bits 7–13 and 16–19, while the remaining two index bits are generated through hashing over higher physical address bits"
+    method: secondhand
+    derivation: reported
+    supports: []
+    notes: Cites S2C (c-s2c-l2-index).
+
 new_params:
   slc.sets: {block: slc, name: SLC sets, unit: sets}
   slc.assoc: {block: slc, name: SLC associativity, unit: ways}
@@ -127,4 +224,7 @@ new_mechanisms:
 
 mechanism_claims:
   slc_line_states: [c-slac-index-low-bits]
-  slc_victim_fill: [c-slac-cpu-fill-via-l2]
+  slc_victim_fill: [c-slac-cpu-fill-via-l2, c-slac-gpu-read-fills, c-slac-gpu-keeps-slc-copy]
+  coherence_duplicate_tags: [c-slac-gpu-snoop-l2, c-slac-gpu-write-invalidates]
+  slc_memory_side: [c-slac-no-slc-copy, c-slac-gpu-write-no-alloc]
+  l2_physical_index: [c-slac-l2-index]
