@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 155, claims 1953, sources 58, mechanisms 176
+blocks 40, links 37, params 156, claims 1966, sources 58, mechanisms 176
 
 ## By status
 
 - derived: 14
 - documented: 4
-- inferred: 21
-- measured: 109
+- inferred: 20
+- measured: 111
 - open: 4
 - reported: 3
 
@@ -17,8 +17,8 @@ blocks 40, links 37, params 155, claims 1953, sources 58, mechanisms 176
 - conjecture: 4
 - corroborated: 33
 - derived: 14
-- inferred: 24
-- single: 64
+- inferred: 23
+- single: 66
 
 ## Holes (4)
 
@@ -27,12 +27,12 @@ blocks 40, links 37, params 155, claims 1953, sources 58, mechanisms 176
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (24)
+## Open disputes (25)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - fetch.width: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.  [c-dj-width, c-jia-fetch-16]
 - l1i.size: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).  [c-jia-l1i-192, c-xnu-fs-l1i-256]
-- btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
+- itlb.entries: Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).  [c-pac-itlb-128, c-jia-itlb-192]
 - rename.mov_imm_limit: Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming (c-dj-mov-imm)  [c-dj-mov-imm, c-ox-mov-imm-8]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
@@ -51,6 +51,7 @@ blocks 40, links 37, params 155, claims 1953, sources 58, mechanisms 176
 - dtlb.l2_org: Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).  [c-mh-v2-tlb2-org, c-pac-l2tlb-23x2048]
 - slc.replacement: Lines placed by GPU reads. Disagrees with EXAM's pseudo-random finding (c-exam-repl-random) and with the patent reading c-mh-v3-slc-replacement.  [c-exam-repl-random, c-slac-repl-lru]
 - l1i.assoc: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).  [c-mh-v8-l1i-12way, c-ilk-l1i-ways]
+- l1i.assoc: Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.  [c-mh-v8-l1i-12way, c-jia-l1i-6way]
 - l1i.assoc: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).  [c-mh-v8-l1i-12way, c-pac-l1i-ways]
 - l1i.assoc: The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.  [c-mh-v8-l1i-12way, c-xnu-fs-l1i-6way]
 

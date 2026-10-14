@@ -590,6 +590,7 @@
         "c-mh-v1-frontend-8",
         "c-mh-v4-decode-32b",
         "c-mh-v4-decode-8",
+        "c-jia-guide-uops",
         "c-dj-width"
       ],
       "disputes": [],
@@ -667,9 +668,20 @@
     },
     "itlb.entries": {
       "claims": [
+        "c-jia-itlb-192",
         "c-pac-itlb-128"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-pac-itlb-128",
+            "c-jia-itlb-192"
+          ],
+          "note": "Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "itlb",
       "name": "iTLB entries",
       "unit": "entries",
@@ -723,25 +735,16 @@
       "claims": [
         "c-mh-v4-nfp-2way",
         "c-mh-v4-nfp-two-tags",
-        "c-mh-v4-m1-nfp-dm"
+        "c-mh-v4-m1-nfp-dm",
+        "c-jia-btb-2way"
       ],
-      "disputes": [
-        {
-          "claims": [
-            "c-mh-v4-nfp-2way",
-            "c-mh-v4-m1-nfp-dm"
-          ],
-          "note": "2 vs 1 at equal rank",
-          "resolution": null,
-          "resolved_by": null
-        }
-      ],
+      "disputes": [],
       "block": "btb",
       "name": "BTB associativity",
       "unit": "ways",
       "value": 2,
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "measured",
+      "confidence": "single"
     },
     "dirpred.kind": {
       "claims": [
@@ -2799,6 +2802,7 @@
       "claims": [
         "c-mh-v8-l1i-12way",
         "c-ilk-l1i-ways",
+        "c-jia-l1i-6way",
         "c-pac-l1i-ways",
         "c-xnu-fs-l1i-6way"
       ],
@@ -2809,6 +2813,15 @@
             "c-ilk-l1i-ways"
           ],
           "note": "M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).",
+          "resolution": null,
+          "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-mh-v8-l1i-12way",
+            "c-jia-l1i-6way"
+          ],
+          "note": "Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.",
           "resolution": null,
           "resolved_by": null
         },
@@ -2862,6 +2875,17 @@
       "value": 68.25,
       "status": "derived",
       "confidence": "derived"
+    },
+    "btb.l0_org": {
+      "claims": [
+        "c-jia-btb-index"
+      ],
+      "disputes": [],
+      "block": "btb",
+      "name": "Zero-bubble BTB organisation",
+      "value": "512 sets, 2-way, indexed by PC bits 10:2",
+      "status": "measured",
+      "confidence": "single"
     },
     "rename.fusion_read_limit": {
       "claims": [
@@ -23714,6 +23738,186 @@
       "chip": "m1",
       "entered": "jia-m1"
     },
+    "c-jia-btb-miss-late": {
+      "text": "Past the BTB's capacity the predictor no longer knows which instructions are branches, and a branch is found only after fetch or even decode, which costs the extra cycles",
+      "loc": "p001",
+      "quote": "\u8d85\u51fa BTB \u5bb9\u91cf\u4ee5\u540e\uff0c\u5206\u652f\u9884\u6d4b\u65f6\uff0c\u65e0\u6cd5\u4ece BTB \u4e2d\u5f97\u5230\u54ea\u4e9b\u6307\u4ee4\u662f\u5206\u652f\u6307\u4ee4\u7684\u4fe1\u606f\uff0c\u53ea\u80fd\u7b49\u5230\u53d6\u6307\u751a\u81f3\u8bd1\u7801\u540e\u624d\u80fd\u540e\u77e5\u540e\u89c9\u5730\u53d1\u73b0\u8fd9\u662f\u4e00\u6761\u5206\u652f\u6307\u4ee4",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-btb-8b": {
+      "text": "With a branch every 8 bytes the one-cycle limit falls to 512 branches and the three-cycle plateau ends at 24576, showing a set-associative BTB whose index loses sets when low PC bits are always zero",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 CPI=1 \u7684\u62d0\u70b9\u524d\u79fb\u5230 512 \u4e2a\u5206\u652f\uff0c\u540c\u65f6 CPI=3 \u7684\u5e73\u53f0\u7684\u62d0\u70b9\u4e5f\u524d\u79fb\u5230\u4e86 24576\u3002\u62d0\u70b9\u7684\u524d\u79fb\uff0c\u610f\u5473\u7740 BTB \u91c7\u7528\u4e86\u7ec4\u76f8\u8fde\u7684\u7ed3\u6784",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 512,
+      "unit": "branches",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-btb-index": {
+      "text": "Spacing branches 2048 B or more apart leaves room for only two one-cycle branches, so the zero-bubble BTB has 512 sets of 2 ways indexed by PC bits 10:2",
+      "loc": "p001",
+      "quote": "\u6700\u7ec8 CPI=1 \u7684\u62d0\u70b9\u5b9a\u683c\u5728 2 \u6761\u5206\u652f\uff0c\u6b64\u65f6\u5206\u652f\u7684\u95f4\u8ddd\u5927\u4e8e\u6216\u7b49\u4e8e 2048B ... \u53ef\u4ee5\u8ba4\u4e3a Firestorm \u7684 BTB \u662f 512 Set 2 Way \u7684\u7ed3\u6784\uff0cIndex \u662f PC[10:2]",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": "512 sets, 2-way, indexed by PC bits 10:2",
+      "supports": [
+        "btb.l0_org"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-btb-2way": {
+      "text": "The first-level BTB is 2-way set associative",
+      "loc": "p001",
+      "quote": "\u6839\u636e\u8fd9\u4e2a\u4fe1\u606f\uff0c\u53ef\u4ee5\u8ba4\u4e3a Firestorm \u7684 BTB \u662f 512 Set 2 Way \u7684\u7ed3\u6784",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "ways",
+      "supports": [
+        "btb.assoc"
+      ],
+      "notes": "Against the direct-mapped guess of c-mh-v4-m1-nfp-dm.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l1i-6way": {
+      "text": "Branches 32 KB or more apart allow only six on the three-cycle plateau, which Chen reads as a 192 KB L1I of 512 sets and 6 ways indexed by PC bits 14:6",
+      "loc": "p001",
+      "quote": "CPI=3 \u7684\u62d0\u70b9\u5b9a\u683c\u5728 6 \u6761\u5206\u652f\uff0c\u6b64\u65f6\u5206\u652f\u7684\u95f4\u8ddd\u5927\u4e8e\u6216\u7b49\u4e8e 32KB ... \u540c\u65f6\u4e5f\u4fa7\u9762\u4f50\u8bc1\u4e86 192KB L1 ICache \u662f 512 Set 6 Way\uff0cIndex \u662f PC[14:6]",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "hedge": "\u4fa7\u9762\u4f50\u8bc1",
+      "supports": [],
+      "contradicts": [
+        "l1i.assoc"
+      ],
+      "notes": "Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-btb-1024": {
+      "text": "On Icestorm with a branch every 4 bytes the cost steps from 1 to 3 at 1024 branches with no second step; at 8 bytes the steps fall at 512 and 16384, the L1I capacity",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 1024 \u7684\u62d0\u70b9\uff0c1024 \u4e4b\u524d\u662f 1 IPC\uff0c\u4e4b\u540e\u589e\u52a0\u5230 3 IPC\u3002\u6bd4\u8f83\u5947\u602a\u7684\u662f\uff0c\u6ca1\u6709\u770b\u5230\u7b2c\u4e8c\u4e2a\u62d0\u70b9 ... \u7b2c\u4e00\u4e2a\u62d0\u70b9\u524d\u79fb\u5230 512\uff0c\u7b2c\u4e8c\u4e2a\u62d0\u70b9\u51fa\u73b0\u5728 16384",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 1024,
+      "unit": "branches",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "The source writes IPC here for what the Firestorm runs call CPI.",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-btb-16b": {
+      "text": "With branches 16 bytes apart Icestorm's first step falls to 256, then a new two-cycle plateau lasts to 2048 and a third step comes at 8192, the L1I capacity",
+      "loc": "p001",
+      "quote": "\u7b2c\u4e00\u4e2a\u62d0\u70b9\u524d\u79fb\u5230 256\uff0c\u7136\u540e\u51fa\u73b0\u4e86\u4e00\u4e2a 2 CPI \u7684\u65b0\u5e73\u53f0\uff0c2 CPI \u7684\u5e73\u53f0\u7684\u62d0\u70b9\u51fa\u73b0\u5728 2048\uff0c\u7b2c\u4e09\u4e2a\u62d0\u70b9\u51fa\u73b0\u5728 8192\uff0c\u5bf9\u5e94 L1 ICache \u5bb9\u91cf",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 256,
+      "unit": "branches",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-btb-guess": {
+      "text": "Icestorm's irregular BTB results suggest either one BTB with a hashed index or two BTB levels organized to work over different ranges rather than simply in series",
+      "loc": "p001",
+      "quote": "\u53ef\u80fd\u53ea\u6709\u4e00\u7ea7 BTB\uff0c\u4f46\u5b83\u7684 Index \u51fd\u6570\u8fdb\u884c\u4e86\u4e00\u4e9b Hash \u800c\u975e\u76f4\u63a5\u53d6 PC \u67d0\u51e0\u4f4d ... \u53ef\u80fd\u6709\u4e24\u7ea7 BTB\uff0c\u5b83\u4eec\u5e76\u975e\u7b80\u5355\u5730\u7ea7\u8054\uff0c\u800c\u662f\u901a\u8fc7\u4e0d\u540c\u7684\u7ec4\u7ec7\u65b9\u5f0f\uff0c\u5728\u4e0d\u540c\u7684\u533a\u95f4\u5185\u53d1\u6325\u4f5c\u7528",
+      "derivation": "inferred",
+      "hedge": "\u53ef\u80fd",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-iprefetch": {
+      "text": "Icestorm never exceeds three cycles per branch at 4-byte spacing, perhaps because the test is too small or because an instruction prefetcher brings code in once the footprint passes the 128 KB L1I",
+      "loc": "p001",
+      "quote": "\u6d4b\u8bd5\u89c4\u6a21\u4e0d\u591f\u5927\uff0c\u628a\u5206\u652f\u6570\u91cf\u7ee7\u7eed\u589e\u5927\uff0c\u624d\u80fd\u51fa\u73b0 CPI>3 \u7684\u60c5\u51b5 ... \u6307\u4ee4\u9884\u53d6\u5668\u5728\u5de5\u4f5c\uff0c\u5f53 footprint \u5927\u4e8e 128KB L1 ICache \u65f6\uff0c\u80fd\u63d0\u524d\u628a\u6307\u4ee4\u53d6\u8fdb\u6765",
+      "derivation": "inferred",
+      "hedge": "\u7ed9\u51fa\u4e00\u4e9b\u731c\u6d4b",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-itlb": {
+      "text": "Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 192-entry L1 iTLB, 3 MiB of 16 KiB pages",
+      "loc": "p001",
+      "quote": "P-Core \u7684 L1 ITLB \u914d\u7f6e\u90fd\u662f\u4e00\u6837\u7684\uff1a 192 entries \uff0c\u8003\u8651\u5230\u6bcf\u4e2a\u9875\u662f 16 KiB\uff0c\u5bf9\u5e94 3 MiB \u7684\u5185\u5b58",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 192,
+      "unit": "entries",
+      "supports": [],
+      "notes": "From Apple's optimization guide. Disagrees with itlb.entries (128).",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-itlb-192": {
+      "text": "With branches on separate pages, cost rises from 1 to 3 cycles from BTB conflict misses, then from 3 to 13 cycles at 192 pages, matching a 192-entry L1 iTLB",
+      "loc": "p001",
+      "quote": "\u4ece 1 Cycle \u5230 3 Cycle \u7684\u589e\u52a0\u662f\u7531\u4e8e L1 BTB \u7684\u51b2\u7a81\u7f3a\u5931\uff0c\u4e4b\u540e\u5728 192 \u4e2a\u9875\u65f6\u4ece 3 Cycle \u5feb\u901f\u589e\u52a0\u5230 13 Cycle\uff0c\u5219\u5bf9\u5e94\u4e86 192 \u9879\u7684 L1 ITLB \u5bb9\u91cf",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 192,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "itlb.entries"
+      ],
+      "notes": "Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-itlb-128": {
+      "text": "Icestorm shows one step, from 1 to 8 cycles per branch at 128 pages, so its L1 iTLB holds 128 entries",
+      "loc": "p001",
+      "quote": "\u53ea\u6709\u4e00\u4e2a\u62d0\u70b9\uff0c\u5728 128 \u4e2a\u9875\u65f6\uff0c\u6027\u80fd\u4ece 1 Cycle \u4e0b\u964d\u5230 8 Cycle\uff0c\u610f\u5473\u7740 L1 ITLB \u5bb9\u91cf\u662f 128 \u9879",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-uops": {
+      "text": "Apple's optimization guide gives the M1 P-core a maximum sustained rate of 8 uops per cycle and the E-core 4",
+      "loc": "p001",
+      "quote": "M1 Family \u7684 Sustained uops Per Cycle \u6700\u5927\u503c\uff0cP-Core \u662f 8\uff0cE-Core \u662f 4",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [
+        "decode.width"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -30131,7 +30335,9 @@
         "c-mh-v4-nfp-overflow-groups",
         "c-mh-v4-nfp-slices",
         "c-mh-v4-fetch-one-group",
-        "c-mh-v4-nfp-contents"
+        "c-mh-v4-nfp-contents",
+        "c-jia-btb-8b",
+        "c-jia-btb-index"
       ],
       "name": "Next-fetch-predictor fetch groups",
       "block": "fetch",
@@ -30143,7 +30349,8 @@
         "c-kpep-fetch-restart",
         "c-mh-v4-redirect-sources",
         "c-mh-v4-indirect-halt",
-        "c-mh-v4-early-resteer"
+        "c-mh-v4-early-resteer",
+        "c-jia-btb-miss-late"
       ],
       "name": "Staged fetch redirects",
       "block": "fetch",

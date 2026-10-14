@@ -154,6 +154,163 @@ claims:
     supports: []
     notes: Same tier as c-ox-btb-miss-bubble and c-mh-v4-btb-l0.
 
+  - id: c-jia-btb-miss-late
+    text: >-
+      Past the BTB's capacity the predictor no longer knows which instructions are branches, and a branch is found only
+      after fetch or even decode, which costs the extra cycles
+    loc: p001
+    quote: "超出 BTB 容量以后，分支预测时，无法从 BTB 中得到哪些指令是分支指令的信息，只能等到取指甚至译码后才能后知后觉地发现这是一条分支指令"
+    derivation: inferred
+    supports: []
+
+  - id: c-jia-btb-8b
+    text: >-
+      With a branch every 8 bytes the one-cycle limit falls to 512 branches and the three-cycle plateau ends at 24576,
+      showing a set-associative BTB whose index loses sets when low PC bits are always zero
+    loc: p001
+    quote: "可以看到 CPI=1 的拐点前移到 512 个分支，同时 CPI=3 的平台的拐点也前移到了 24576。拐点的前移，意味着 BTB 采用了组相连的结构"
+    method: branch-sweep
+    derivation: measured
+    value: 512
+    unit: branches
+    supports: []
+
+  - id: c-jia-btb-index
+    text: >-
+      Spacing branches 2048 B or more apart leaves room for only two one-cycle branches, so the zero-bubble BTB has 512
+      sets of 2 ways indexed by PC bits 10:2
+    loc: p001
+    quote: "最终 CPI=1 的拐点定格在 2 条分支，此时分支的间距大于或等于 2048B ... 可以认为 Firestorm 的 BTB 是 512 Set 2 Way 的结构，Index 是 PC[10:2]"
+    method: branch-sweep
+    derivation: measured
+    value: "512 sets, 2-way, indexed by PC bits 10:2"
+    supports: [btb.l0_org]
+
+  - id: c-jia-btb-2way
+    text: The first-level BTB is 2-way set associative
+    loc: p001
+    quote: "根据这个信息，可以认为 Firestorm 的 BTB 是 512 Set 2 Way 的结构"
+    method: branch-sweep
+    derivation: measured
+    value: 2
+    unit: ways
+    supports: [btb.assoc]
+    notes: Against the direct-mapped guess of c-mh-v4-m1-nfp-dm.
+
+  - id: c-jia-l1i-6way
+    text: >-
+      Branches 32 KB or more apart allow only six on the three-cycle plateau, which Chen reads as a 192 KB L1I of 512
+      sets and 6 ways indexed by PC bits 14:6
+    loc: p001
+    quote: "CPI=3 的拐点定格在 6 条分支，此时分支的间距大于或等于 32KB ... 同时也侧面佐证了 192KB L1 ICache 是 512 Set 6 Way，Index 是 PC[14:6]"
+    method: branch-sweep
+    derivation: measured
+    value: 6
+    unit: ways
+    hedge: "侧面佐证"
+    supports: []
+    contradicts: [l1i.assoc]
+    notes: Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.
+
+  - id: c-jia-ice-btb-1024
+    text: >-
+      On Icestorm with a branch every 4 bytes the cost steps from 1 to 3 at 1024 branches with no second step; at 8
+      bytes the steps fall at 512 and 16384, the L1I capacity
+    loc: p001
+    quote: "可以看到 1024 的拐点，1024 之前是 1 IPC，之后增加到 3 IPC。比较奇怪的是，没有看到第二个拐点 ... 第一个拐点前移到 512，第二个拐点出现在 16384"
+    method: branch-sweep
+    derivation: measured
+    value: 1024
+    unit: branches
+    supports: []
+    chip: icestorm
+    notes: The source writes IPC here for what the Firestorm runs call CPI.
+
+  - id: c-jia-ice-btb-16b
+    text: >-
+      With branches 16 bytes apart Icestorm's first step falls to 256, then a new two-cycle plateau lasts to 2048 and a
+      third step comes at 8192, the L1I capacity
+    loc: p001
+    quote: "第一个拐点前移到 256，然后出现了一个 2 CPI 的新平台，2 CPI 的平台的拐点出现在 2048，第三个拐点出现在 8192，对应 L1 ICache 容量"
+    method: branch-sweep
+    derivation: measured
+    value: 256
+    unit: branches
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-ice-btb-guess
+    text: >-
+      Icestorm's irregular BTB results suggest either one BTB with a hashed index or two BTB levels organized to work
+      over different ranges rather than simply in series
+    loc: p001
+    quote: "可能只有一级 BTB，但它的 Index 函数进行了一些 Hash 而非直接取 PC 某几位 ... 可能有两级 BTB，它们并非简单地级联，而是通过不同的组织方式，在不同的区间内发挥作用"
+    derivation: inferred
+    hedge: "可能"
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-ice-iprefetch
+    text: >-
+      Icestorm never exceeds three cycles per branch at 4-byte spacing, perhaps because the test is too small or because
+      an instruction prefetcher brings code in once the footprint passes the 128 KB L1I
+    loc: p001
+    quote: "测试规模不够大，把分支数量继续增大，才能出现 CPI>3 的情况 ... 指令预取器在工作，当 footprint 大于 128KB L1 ICache 时，能提前把指令取进来"
+    derivation: inferred
+    hedge: "给出一些猜测"
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-guide-itlb
+    text: Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 192-entry L1 iTLB, 3 MiB of 16 KiB pages
+    loc: p001
+    quote: "P-Core 的 L1 ITLB 配置都是一样的： 192 entries ，考虑到每个页是 16 KiB，对应 3 MiB 的内存"
+    method: secondhand
+    derivation: reported
+    value: 192
+    unit: entries
+    supports: []
+    notes: From Apple's optimization guide. Disagrees with itlb.entries (128).
+
+  - id: c-jia-itlb-192
+    text: >-
+      With branches on separate pages, cost rises from 1 to 3 cycles from BTB conflict misses, then from 3 to 13 cycles
+      at 192 pages, matching a 192-entry L1 iTLB
+    loc: p001
+    quote: "从 1 Cycle 到 3 Cycle 的增加是由于 L1 BTB 的冲突缺失，之后在 192 个页时从 3 Cycle 快速增加到 13 Cycle，则对应了 192 项的 L1 ITLB 容量"
+    method: branch-sweep
+    derivation: measured
+    value: 192
+    unit: entries
+    supports: []
+    contradicts: [itlb.entries]
+    notes: Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).
+
+  - id: c-jia-ice-itlb-128
+    text: Icestorm shows one step, from 1 to 8 cycles per branch at 128 pages, so its L1 iTLB holds 128 entries
+    loc: p001
+    quote: "只有一个拐点，在 128 个页时，性能从 1 Cycle 下降到 8 Cycle，意味着 L1 ITLB 容量是 128 项"
+    method: branch-sweep
+    derivation: measured
+    value: 128
+    unit: entries
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-guide-uops
+    text: Apple's optimization guide gives the M1 P-core a maximum sustained rate of 8 uops per cycle and the E-core 4
+    loc: p001
+    quote: "M1 Family 的 Sustained uops Per Cycle 最大值，P-Core 是 8，E-Core 是 4"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: instr/cycle
+    supports: [decode.width]
+    notes: From Apple's optimization guide.
+
+new_params:
+  btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
+
 new_mechanisms:
   fetch_page_split:
     name: Fetch split at page boundaries
@@ -171,3 +328,5 @@ new_mechanisms:
 
 mechanism_claims:
   l1i_coupled_btb: [c-jia-btb-1024, c-jia-btb-l1i-plateau]
+  staged_fetch_redirect: [c-jia-btb-miss-late]
+  next_fetch_groups: [c-jia-btb-8b, c-jia-btb-index]
