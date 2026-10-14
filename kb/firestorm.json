@@ -4906,6 +4906,142 @@
       "chip": "m1",
       "entered": "apple-libplatform"
     },
+    "c-pat-us10628164b1-commit-candidate": {
+      "source": "us10628164b1",
+      "text": "The load-store unit keeps a commit-candidate pointer to the oldest store in the store queue that may not yet write the data cache",
+      "loc": "p015",
+      "quote": "the given store instruction is an oldest store instruction not currently permitted to commit to an external data cache",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. A store is held back while it sits on the speculative path of a branch, an unresolved system instruction or an exception being handled.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10628164b1-map-pointer": {
+      "source": "us10628164b1",
+      "text": "The mapping unit sends the load-store unit a pointer to the oldest instruction among branches not yet dispatched and system instructions not yet resolved",
+      "loc": "p015",
+      "quote": "the first instruction is an oldest instruction of non-dispatched branches and unresolved system instructions",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. The patent describes such a pointer; the HID1 bit DIS_BR_DISP_SYS_RSLVD_PTR that m1n1 names may disable it.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10628164b1-exec-pointer": {
+      "source": "us10628164b1",
+      "text": "The execution unit sends the load-store unit a pointer to the oldest unresolved issued branch directly, not through the mapping unit, which shortens the decision that a store is no longer speculative",
+      "loc": "p009",
+      "quote": "Since the execution unit sends the second pointer to the load store unit, rather than send it to the mapping unit located multiple prior pipeline stages away",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10628164b1-commit-rule": {
+      "source": "us10628164b1",
+      "text": "Once the commit-candidate store is older than both pointers it is no longer speculative and may write the data cache, and the pointer moves on to the next younger store in the store queue",
+      "loc": "p015",
+      "quote": "in response to determining the given store instruction is the oldest instruction, update the commit candidate pointer to identify an oldest store instruction that is younger than the given store instruction",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. The gate is speculation, judged from older branches, system instructions and exceptions.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10628164b1-group-numbers": {
+      "source": "us10628164b1",
+      "text": "The pointers are group numbers that travel with each instruction down the pipeline and rise in program order, so comparing two of them gives relative age",
+      "loc": "p011",
+      "quote": "is a group number or group identifier sent with information corresponding to a respective instruction throughout the processor pipeline ... pointers are assigned as group numbers in an ascending order to instructions in program order",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-two-banks": {
+      "source": "us10133571b1",
+      "text": "The load queue and the store queue are each split into two banks that software still sees as one queue, each bank with its own pointer logic",
+      "loc": "p011",
+      "quote": "LSU 18 includes a load queue ... different banks, and a store queue, also having two separate banks",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 2,
+      "unit": "banks",
+      "supports": [],
+      "notes": "Priority 2016. Banking is said to allow larger queues with less impact on timing.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-one-per-bank": {
+      "source": "us10133571b1",
+      "text": "The banks exchange pointer information, and each bank may put out one entry a cycle for retirement",
+      "loc": "p001",
+      "quote": "Based on the pointer information that is exchanged, each bank may output (e.g., for retirement) one entry per cycle.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 1,
+      "unit": "entries/cycle per bank",
+      "supports": [],
+      "notes": "Priority 2016.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-lq-interleave": {
+      "source": "us10133571b1",
+      "text": "Load-queue entries alternate between the banks, even entries in bank 0 and odd entries in bank 1",
+      "loc": "p012",
+      "quote": "with even numbered entries being stored in Bank 0 and odd numbered entries being stored in Bank 1",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-lq-eligibility": {
+      "source": "us10133571b1",
+      "text": "Each load-queue bank keeps a retirement-eligibility pointer, and a bank retires an entry only when it is older than the eligibility pointers of both banks",
+      "loc": "p015",
+      "quote": "entries that are older than entries indicated by both of the first and second eligibility pointers",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016. Each bank also keeps a dequeue pointer to its next entry to leave.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-same-address": {
+      "source": "us10133571b1",
+      "text": "The bank pointer logic makes two loads to the same address leave the load queue in order",
+      "loc": "p012",
+      "quote": "if two different loads have the same address, the pointer logic units 220 and 221 may ensure that these instructions are retired/dequeued in order",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-resolve-pointer": {
+      "source": "us10133571b1",
+      "text": "Each bank's resolve pointer marks its oldest entry still lacking an address translation, and the load queue starts TLB or page-table accesses from those pointers",
+      "loc": "p012",
+      "quote": "Load Queue may initiate accesses to a translation lookaside buffer (TLB) or page table based on the position of the resolved pointers",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
       "text": "Each mapping update writes a history-file entry naming the replaced physical register, marked as the last reference when no other mapping points to it; at retirement only last references go back to the free list",
@@ -30734,6 +30870,24 @@
       "year": 2025,
       "url": "https://arxiv.org/abs/2512.21473"
     },
+    "us10133571b1": {
+      "type": "patent",
+      "title": "Load-store unit with banked queue",
+      "author": "Apple",
+      "year": 2016,
+      "assignee": "Apple",
+      "number": "US10133571B1",
+      "url": "https://patents.google.com/patent/US10133571B1/en"
+    },
+    "us10628164b1": {
+      "type": "patent",
+      "title": "Branch resolve pointer optimization",
+      "author": "Apple",
+      "year": 2018,
+      "assignee": "Apple",
+      "number": "US10628164B1",
+      "url": "https://patents.google.com/patent/US10628164B1/en"
+    },
     "apple-libplatform": {
       "type": "repo",
       "title": "libplatform: sys_icache_invalidate for arm64",
@@ -32572,8 +32726,30 @@
       "sim_switch": null,
       "detection_rule": "Aggregate DRAM read bandwidth with two to four cores streaming is no higher than with one core, and may be lower."
     },
+    "banked_lsq": {
+      "claims": [
+        "c-pat-us10133571b1-two-banks",
+        "c-pat-us10133571b1-one-per-bank",
+        "c-pat-us10133571b1-lq-interleave",
+        "c-pat-us10133571b1-lq-eligibility",
+        "c-pat-us10133571b1-same-address",
+        "c-pat-us10133571b1-resolve-pointer"
+      ],
+      "name": "Two-bank load and store queues",
+      "block": "lsu",
+      "status": "speculative",
+      "description": "The load queue interleaves its entries over two banks, and the store queue fills one bank with a contiguous run of stores while the other drains in order; each bank retires one entry a cycle under pointers the banks exchange.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "Draining the load or store queue would top out at one entry per bank per cycle, two in all, however many entries are ready to leave."
+    },
     "lsq_early_release": {
       "claims": [
+        "c-pat-us10628164b1-commit-candidate",
+        "c-pat-us10628164b1-map-pointer",
+        "c-pat-us10628164b1-exec-pointer",
+        "c-pat-us10628164b1-commit-rule",
+        "c-pat-us10628164b1-group-numbers",
         "c-mh-v1-early-load-release",
         "c-pat-us9535695b2-early-load-completion",
         "c-mh-v1-store-early-release",

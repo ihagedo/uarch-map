@@ -319,6 +319,22 @@ sources:
     author: Deng, Chencheng
     year: 2025
     url: https://arxiv.org/abs/2512.21473
+  us10133571b1:
+    type: patent
+    title: Load-store unit with banked queue
+    author: Apple
+    year: 2016
+    assignee: Apple
+    number: US10133571B1
+    url: https://patents.google.com/patent/US10133571B1/en
+  us10628164b1:
+    type: patent
+    title: Branch resolve pointer optimization
+    author: Apple
+    year: 2018
+    assignee: Apple
+    number: US10628164B1
+    url: https://patents.google.com/patent/US10628164B1/en
   apple-libplatform:
     type: repo
     title: "libplatform: sys_icache_invalidate for arm64"
