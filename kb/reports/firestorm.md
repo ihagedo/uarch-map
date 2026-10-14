@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
+blocks 40, links 37, params 150, claims 1761, sources 44, mechanisms 169
 
 ## By status
 
@@ -12,9 +12,9 @@ blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
 
 ## By confidence
 
-- confirmed: 15
+- confirmed: 14
 - conjecture: 4
-- corroborated: 31
+- corroborated: 32
 - derived: 13
 - inferred: 30
 - single: 57
@@ -26,7 +26,7 @@ blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (18)
+## Open disputes (20)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - l1i.size: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).  [c-7cpu-l1i, c-xnu-fs-l1i-256]
@@ -37,6 +37,7 @@ blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
 - eu_int.count: measured on the A14  [c-ox-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-stores, c-at-sq]
+- l1d.size: A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).  [c-7cpu-l1d-size, c-xnu-fs-l1d-160]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]
 - dtlb.l1_org: Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).  [c-mh-v2-dtlb-5way, c-pac-dtlb-12x256]
 - l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
@@ -46,6 +47,7 @@ blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
 - dtlb.l2_org: Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).  [c-mh-v2-tlb2-org, c-pac-l2tlb-23x2048]
 - l1i.assoc: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).  [c-mh-v8-l1i-12way, c-ilk-l1i-ways]
 - l1i.assoc: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).  [c-mh-v8-l1i-12way, c-pac-l1i-ways]
+- l1i.assoc: The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.  [c-mh-v8-l1i-12way, c-xnu-fs-l1i-6way]
 
 ## Problems (0)
 

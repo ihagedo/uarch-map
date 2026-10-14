@@ -323,6 +323,123 @@ claims:
     supports: []
     contradicts: [l1i.size]
     notes: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).
+  - id: c-xnu-fs-l1i-6way
+    text: Apple's kernel header gives the Firestorm and Icestorm instruction caches 6 ways
+    loc: p004
+    quote: "I-Cache, 256KB for Firestorm, 128KB for Icestorm, 6-way."
+    derivation: documented
+    value: 6
+    unit: ways
+    supports: []
+    contradicts: [l1i.assoc]
+    notes: The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.
+  - id: c-xnu-fs-l1d-160
+    text: Apple's kernel header gives Firestorm a 160 KB data cache
+    loc: p004
+    quote: "D-Cache, 160KB for Firestorm, 8-way. 64KB for Icestorm, 6-way."
+    derivation: documented
+    value: 160
+    unit: KiB
+    supports: []
+    contradicts: [l1d.size]
+    notes: A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).
+  - id: c-xnu-fs-l1d-8way
+    text: Apple's kernel header gives the Firestorm data cache 8 ways
+    loc: p004
+    quote: "D-Cache, 160KB for Firestorm, 8-way. 64KB for Icestorm, 6-way."
+    derivation: documented
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+  - id: c-xnu-fs-line-64
+    text: XNU uses a 64 B line for both the Firestorm instruction and data caches
+    loc: p004
+    quote: "I-Cache, 256KB for Firestorm ... #define MMU_I_CLINE 6 /* cache line size as 1<<MMU_I_CLINE (64) */ /* D-Cache, 160KB for Firestorm ... #define MMU_CLINE 6 /* cache line size is 1<<MMU_CLINE (64) */"
+    derivation: documented
+    value: 64
+    unit: B
+    supports: [l1i.line, l1d.line]
+  - id: c-xnu-is-l1i
+    text: Apple's kernel header gives Icestorm a 128 KB, 6-way instruction cache
+    loc: p004
+    quote: "I-Cache, 256KB for Firestorm, 128KB for Icestorm, 6-way."
+    derivation: documented
+    value: 128
+    unit: KiB
+    chip: icestorm
+    supports: []
+  - id: c-xnu-is-l1d
+    text: Apple's kernel header gives Icestorm a 64 KB, 6-way data cache
+    loc: p004
+    quote: "D-Cache, 160KB for Firestorm, 8-way. 64KB for Icestorm, 6-way."
+    derivation: documented
+    value: 64
+    unit: KiB
+    chip: icestorm
+    supports: []
+  - id: c-xnu-a13-l1i
+    text: Apple's kernel header gives Lightning a 192 KB, 6-way instruction cache
+    loc: p004
+    quote: "I-Cache, 192KB for Lightning, 96KB for Thunder, 6-way."
+    derivation: documented
+    value: 192
+    unit: KiB
+    chip: a13
+    supports: []
+    notes: Earlier core (A13). Thunder, its E-core, gets 96 KB.
+  - id: c-xnu-a13-l1d
+    text: Apple's kernel header gives Lightning a 128 KB, 8-way data cache
+    loc: p004
+    quote: "D-Cache, 128KB for Lightning, 8-way. 48KB for Thunder, 6-way."
+    derivation: documented
+    value: 128
+    unit: KiB
+    chip: a13
+    supports: []
+    notes: Earlier core (A13). Thunder gets 48 KB, 6-way.
+  - id: c-xnu-m2-l1i
+    text: Apple's kernel header gives Avalanche a 192 KB, 6-way instruction cache
+    loc: p004
+    quote: "I-Cache, 192KB for Avalanche, 128KB for Blizzard, 6-way."
+    derivation: documented
+    value: 192
+    unit: KiB
+    chip: m2
+    supports: []
+    notes: Avalanche is the M2 P-core; Blizzard, its E-core, gets 128 KB.
+  - id: c-xnu-m2-l1d
+    text: Apple's kernel header gives Avalanche a 128 KB, 8-way data cache
+    loc: p004
+    quote: "D-Cache, 128KB for Avalanche, 8-way. 64KB for Blizzard, 8-way."
+    derivation: documented
+    value: 128
+    unit: KiB
+    chip: m2
+    supports: []
+    notes: Blizzard gets 64 KB, 8-way.
+  - id: c-xnu-eret-no-sls
+    text: On Apple cores an SB or ISB after ERET is technically unnecessary to stop straight-line speculation past the exception return
+    loc: p004
+    quote: 'It prevents "straight-line speculation" (an Arm term) past the ERET. ... sb // Technically unnecessary on Apple micro-architectures, may restrict mis-speculation on other architectures'
+    derivation: documented
+    supports: []
+    notes: Generic code for all Apple cores. Read as the cores not running on past an ERET.
+  - id: c-xnu-six-nops
+    text: When SB is unavailable XNU follows ERET with an ISB and six NOPs, which its comment says pad out and terminate the instruction decode group
+    loc: p004
+    quote: "isb // ISB technically unnecessary on Apple micro-architectures, may restrict mis-speculation on other architectures nop // Sequence of six NOPs to pad out and terminate instruction decode group"
+    derivation: documented
+    value: 6
+    unit: instructions
+    supports: []
+    notes: Generic fallback for Apple cores built without SB; cores with SB skip it. The comment does not say which core's decode group the NOPs are sized for.
+  - id: c-xnu-wfi-power-down
+    text: Before its final WFI on sleep or shutdown, a core's CPU_OVRD power-down field is set to force-down, so the WFI powers the core off
+    loc: p002
+    quote: 'Set "OK to power down" (<rdar://problem/12390433>) mrs x9, CPU_OVRD orr x9, x9, #(ARM64_REG_CYC_OVRD_ok2pwrdn_force_down)'
+    derivation: documented
+    supports: []
+    notes: Generic code for all Apple cores; builds defining NO_CPU_OVRD skip it.
 
 new_mechanisms:
   store_merge_buffer:
@@ -359,7 +476,7 @@ new_mechanisms:
       WFI either only clock-gates a core or lets it power down, chosen in CPU_OVRD; cluster deep sleep sets ACC_OVRD fields for
       the L2 flush, SRM and CPM power-down and link train-down, and branch predictor state can be kept across cluster sleep.
     params: []
-    claims: [c-xnu-a11-acc-link-fsm]
+    claims: [c-xnu-wfi-power-down, c-xnu-a11-acc-link-fsm]
     sim_switch: null
     detection_rule: >-
       Wake-up delay after idle falls into distinct levels (clock-gated, core powered down, cluster in deep sleep), and branch
@@ -399,3 +516,4 @@ mechanism_claims:
   simd_power_down: [c-xnu-a13-nex-pg]
   load_replay_shadow: [c-xnu-a13-leq-credits]
   l2_half_lines: [c-xnu-a13-sibling-merge]
+  speculation_barriers: [c-xnu-eret-no-sls]
