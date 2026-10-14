@@ -534,6 +534,7 @@
     "pcluster.clock_max": {
       "claims": [
         "c-7cpu-clock",
+        "c-at-mini-clock",
         "c-aug-clock",
         "c-cc-clk-m1-max-clock",
         "c-prt-clock"
@@ -544,7 +545,7 @@
       "unit": "GHz",
       "value": 3.2,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "fetch.width": {
       "claims": [
@@ -1834,10 +1835,21 @@
     "slc.size": {
       "claims": [
         "c-7cpu-slc-size",
+        "c-at-mini-slc-16",
         "c-mh-v2-slc-size",
         "c-slac-size"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-7cpu-slc-size",
+            "c-at-mini-slc-16"
+          ],
+          "note": "The same author gives the M1's SLC as 8 MB in the M1 Max review (c-at-max-m1-slc-8).",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "slc",
       "name": "SLC capacity",
       "unit": "MiB",
@@ -2407,10 +2419,21 @@
     },
     "l2.core_capacity": {
       "claims": [
+        "c-at-mini-l2-partition",
         "c-mh-v2-l2-transitions",
         "c-mh-v2-l2-cachelets"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v2-l2-transitions",
+            "c-at-mini-l2-partition"
+          ],
+          "note": "7.5 vs 8 at equal rank",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l2",
       "name": "L2 capacity seen by one core",
       "unit": "MiB",
@@ -2458,11 +2481,22 @@
     "memctrl.dram_load_bw": {
       "claims": [
         "c-7cpu-ram-read-bw",
+        "c-at-mini-dram-read-bw",
         "c-mh-v2-slc-dram-load-64",
         "c-mh-v2-one-thread-saturates",
         "c-mh-v2-bw-summary-dram"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v2-slc-dram-load-64",
+            "c-at-mini-dram-read-bw"
+          ],
+          "note": "64 vs 58 at equal rank",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "memctrl",
       "name": "DRAM load bandwidth (one core)",
       "unit": "GB/s",
@@ -2798,16 +2832,16 @@
     },
     "memctrl.peak_bw": {
       "claims": [
+        "c-at-mini-peak-bw",
         "c-mh-v8-m1-bw-66"
       ],
       "disputes": [],
       "block": "memctrl",
       "name": "Peak DRAM bandwidth (chip)",
       "unit": "GB/s",
-      "value": 66,
-      "approx": true,
-      "status": "reported",
-      "confidence": "inferred"
+      "value": 68.25,
+      "status": "derived",
+      "confidence": "derived"
     },
     "rename.fusion_read_limit": {
       "claims": [
@@ -3949,6 +3983,213 @@
       "notes": "value is the four-thread figure; the page does not say which cores ran the threads",
       "chip": "m1",
       "entered": "anandtech-7cpu"
+    },
+    "c-at-mini-clock": {
+      "text": "A Firestorm core runs at 3.2 GHz in single-threaded work, and while thermal headroom lasts all four keep that clock under all-core load",
+      "loc": "p001",
+      "quote": "We can confirm that in single-threaded workloads, Apple\u2019s Firestorm cores now clock in at 3.2GHz ... As long as there's thermal headroom, this clock also applies to all-core loads",
+      "derivation": "measured",
+      "value": 3.2,
+      "unit": "GHz",
+      "supports": [
+        "pcluster.clock_max"
+      ],
+      "notes": "Mac mini.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-ice-clock": {
+      "text": "The four Icestorm cores run at 2064 MHz, up from 1823 MHz on the A14",
+      "loc": "p001",
+      "quote": "4x 3.2GHz performance cores also seeing 4x Thunder efficiency cores at 2064MHz, also quite a lot higher than 1823MHz on the A14",
+      "derivation": "measured",
+      "value": 2064,
+      "unit": "MHz",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "The article writes Thunder for the Icestorm cores. Agrees with c-7cpu-ice-clock.",
+      "source": "anandtech-m1-mini",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-st-power": {
+      "text": "Single-threaded work such as compiling with GCC adds about 6.3 W of active power on a Firestorm core, and DRAM-heavy single-threaded work up to 10.5 W",
+      "loc": "p001",
+      "quote": "During average single-threaded workloads on the 3.2GHz Firestorm cores, such as GCC code compilation, we\u2019re seeing device power go up to 10.5W with active power at around 6.3W.",
+      "derivation": "measured",
+      "value": 6.3,
+      "unit": "W",
+      "approx": true,
+      "supports": [],
+      "notes": "Wall power of the Mac mini minus its 4.2 W idle, so DRAM and conversion losses are included. The DRAM-heavy figure is active power too.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-mt-power": {
+      "text": "With all cores loaded, active power is about 18 W in memory-heavy work, about 22 W on average and peaks near 27 W in compute-heavy work",
+      "loc": "p001",
+      "quote": "In memory-heavy workloads where the CPU utilisation isn\u2019t as high, we\u2019re seeing 18W active power, going up to around 22W in average workloads, and peaking around 27W in compute heavy workloads.",
+      "derivation": "measured",
+      "value": 27,
+      "range": [
+        18,
+        27
+      ],
+      "unit": "W",
+      "approx": true,
+      "supports": [],
+      "notes": "Wall power minus idle; the author's best guess for a comparable TDP is 20 to 24 W.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-dram-bus": {
+      "text": "The M1 runs LPDDR4X-4266 memory over a 128-bit bus of eight 16-bit channels, where the A14 has a 64-bit bus",
+      "loc": "p001",
+      "quote": "it\u2019s running on a 128-bit memory bus rather than the mobile 64-bit bus. Across 8x 16-bit memory channels and at LPDDR4X-4266-class memory",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "channels",
+      "supports": [],
+      "notes": "Specification figure; how it was obtained is not stated. Agrees with c-at-m1-dram-bus.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-peak-bw": {
+      "text": "The eight channels give the M1 a peak DRAM bandwidth of 68.25 GB/s",
+      "loc": "p001",
+      "quote": "this means the M1 hits a peak of 68.25GB/s memory bandwidth",
+      "derivation": "derived",
+      "value": 68.25,
+      "unit": "GB/s",
+      "supports": [
+        "memctrl.peak_bw"
+      ],
+      "notes": "Computed from the bus width and data rate, not measured. Agrees with c-mh-v8-m1-bw-66.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-dram-latency": {
+      "text": "Full random loads at a 128 MB test depth take 96 ns on the M1, against 102 ns on the A14",
+      "loc": "p001",
+      "quote": "measuring 96ns at 128MB full random test depth, compared to 102ns on the A14",
+      "derivation": "measured",
+      "value": 96,
+      "unit": "ns",
+      "supports": [],
+      "notes": "Whole load latency at that depth; c-7cpu-dram-latency counts 91 ns on top of the L2 latency, so memctrl.dram_latency is left unsupported.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-l2-partition": {
+      "text": "One core cannot use all of the 12 MB L2: its latency starts to rise past about 8 MB, which the author reads as Apple still limiting how much of the L2 a single core may use",
+      "loc": "p001",
+      "quote": "it seems that Apple continues to do some partitioning as to how much as single core can use as we\u2019re still seeing some latency uptick after 8MB",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "MiB",
+      "approx": true,
+      "hedge": "it seems that",
+      "supports": [
+        "l2.core_capacity"
+      ],
+      "notes": "Agrees in kind with c-mh-v2-l2-transitions (7.5 MiB).",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-slc-16": {
+      "text": "The author assumes, without certainty, that the M1's SLC, shared by all blocks on the chip, is a 16 MB cache like the A14's, because the latency results behave much like the A14's",
+      "loc": "p001",
+      "quote": "We\u2019re not exactly certain, but the test results do behave a lot like on the A14 and thus we assume this is a similar 16MB chunk of cache on the SoC",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "MiB",
+      "hedge": "We\u2019re not exactly certain ... we assume",
+      "supports": [],
+      "contradicts": [
+        "slc.size"
+      ],
+      "notes": "The same author gives the M1's SLC as 8 MB in the M1 Max review (c-at-max-m1-slc-8).",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-dram-read-bw": {
+      "text": "One Firestorm core reads from DRAM at up to about 58 GB/s",
+      "loc": "p001",
+      "quote": "A single Firestorm achieves memory reads up to around 58GB/s",
+      "derivation": "measured",
+      "value": 58,
+      "unit": "GB/s",
+      "approx": true,
+      "supports": [
+        "memctrl.dram_load_bw"
+      ],
+      "notes": "Below the 64 GB/s of c-7cpu-ram-read-bw and c-mh-v2-slc-dram-load-64.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-dram-write-bw": {
+      "text": "One Firestorm core writes to DRAM at 33 to 36 GB/s",
+      "loc": "p001",
+      "quote": "A single Firestorm achieves memory reads up to around 58GB/s, with memory writes coming in at 33-36GB/s.",
+      "derivation": "measured",
+      "value": 34.5,
+      "range": [
+        33,
+        36
+      ],
+      "unit": "GB/s",
+      "supports": [],
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-dram-copy-bw": {
+      "text": "One Firestorm core copies memory at 60 to 62 GB/s, depending on whether scalar or vector instructions are used",
+      "loc": "p001",
+      "quote": "Most importantly, memory copies land in at 60 to 62GB/s depending if you\u2019re using scalar or vector instructions.",
+      "derivation": "measured",
+      "value": 61,
+      "range": [
+        60,
+        62
+      ],
+      "unit": "GB/s",
+      "supports": [],
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-one-core-saturates": {
+      "text": "A single Firestorm core can almost saturate the M1's memory controllers",
+      "loc": "p001",
+      "quote": "The fact that a single Firestorm core can almost saturate the memory controllers is astounding and something we\u2019ve never seen in a design before.",
+      "derivation": "measured",
+      "value": true,
+      "supports": [],
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
+    },
+    "c-at-mini-congestion": {
+      "text": "Several cores using DRAM at once get no more aggregate bandwidth than one core, and congestion lowers it",
+      "loc": "p001",
+      "quote": "having multiple cores access things at the same time don\u2019t actually increase the system bandwidth, but actually due to congestion lower the effective achieved aggregate bandwidth",
+      "derivation": "measured",
+      "value": true,
+      "supports": [],
+      "notes": "Agrees with c-mh-v2-one-thread-saturates.",
+      "source": "anandtech-m1-mini",
+      "chip": "m1",
+      "entered": "anandtech-m1-mini"
     },
     "c-ajit-icache-not-coherent": {
       "text": "On Apple silicon the instruction caches are not coherent with the data caches",
@@ -27361,6 +27602,13 @@
       "url": "https://github.com/corsix/amx/issues/6",
       "notes": "Claims come from Cawley's own posts; the threads also hold posts by other users"
     },
+    "anandtech-m1-mini": {
+      "type": "article",
+      "title": "The 2020 Mac mini unleashed: putting Apple silicon M1 to the test",
+      "author": "Frumusanu, Andrei",
+      "year": 2020,
+      "url": "https://www.anandtech.com/show/16252/mac-mini-apple-m1-tested"
+    },
     "lemire-m1-mlp": {
       "type": "web",
       "title": "Memory access on the Apple M1 processor",
@@ -29135,6 +29383,21 @@
       "sim_switch": null,
       "detection_rule": "full-line streaming stores show no read-for-ownership traffic, so streaming write bandwidth beats partial-line writes"
     },
+    "one_core_dram_saturation": {
+      "claims": [
+        "c-at-mini-one-core-saturates",
+        "c-at-mini-congestion"
+      ],
+      "name": "One core saturates DRAM",
+      "block": "memctrl",
+      "status": "measured",
+      "description": "A single Firestorm core draws nearly all of the M1's DRAM bandwidth, so more cores add none and congestion lowers the total.",
+      "params": [
+        "memctrl.dram_load_bw"
+      ],
+      "sim_switch": null,
+      "detection_rule": "Aggregate DRAM read bandwidth with two to four cores streaming is no higher than with one core, and may be lower."
+    },
     "lsq_early_release": {
       "claims": [
         "c-mh-v1-early-load-release",
@@ -29502,6 +29765,7 @@
     },
     "l2_cachelets": {
       "claims": [
+        "c-at-mini-l2-partition",
         "c-mh-v2-l2-inner-bw",
         "c-mh-v2-l2-cachelets",
         "c-mh-v2-l2-transitions",

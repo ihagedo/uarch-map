@@ -247,6 +247,12 @@ sources:
     year: 2023
     url: https://github.com/corsix/amx/issues/6
     notes: Claims come from Cawley's own posts; the threads also hold posts by other users
+  anandtech-m1-mini:
+    type: article
+    title: "The 2020 Mac mini unleashed: putting Apple silicon M1 to the test"
+    author: Frumusanu, Andrei
+    year: 2020
+    url: https://www.anandtech.com/show/16252/mac-mini-apple-m1-tested
   lemire-m1-mlp:
     type: web
     title: Memory access on the Apple M1 processor
