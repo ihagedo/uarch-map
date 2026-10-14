@@ -299,6 +299,12 @@ sources:
     author: Lemire, Daniel
     year: 2025
     url: https://lemire.me/blog/2025/07/09/memory-level-parallelism-apple-m2-vs-apple-m4/
+  haley-fpcr:
+    type: web
+    title: "RFR: 8295159: DSO created with -ffast-math breaks Java floating-point arithmetic"
+    author: Haley, Andrew
+    year: 2022
+    url: https://mail.openjdk.org/pipermail/build-dev/2022-October/036098.html
   ccs26-slac:
     type: paper
     title: "SLAC: Access-Driven CPU-to-GPU Side-channel Attacks via System-Level Cache on Apple Silicon"

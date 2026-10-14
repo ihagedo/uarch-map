@@ -1,0 +1,40 @@
+# haley-fpcr.yaml
+# Andrew Haley, 2022
+# What an FPCR write costs on the M1, from an OpenJDK mailing-list post.
+session: haley-fpcr
+source: haley-fpcr
+
+claims:
+  - id: c-haley-fpcr-drain
+    text: A write to the FPCR is costly on the M1, apparently because it waits for every instruction in flight to retire
+    loc: p001
+    quote: "Apple M1 takes a big hit when writing the FPCR: It seems to me to wait for all instructions in progress to retire."
+    derivation: inferred
+    hedge: "It seems to me"
+    supports: []
+    notes: No test or cycle count is given. Contradicts the mechanism speculative_special_regs for the FPCR.
+  - id: c-haley-fpcr-not-renamed
+    text: The FPCR is probably not renamed on the M1
+    loc: p001
+    quote: "Of course they could rename the FPCR like anything else, but I guess they don't."
+    derivation: inferred
+    hedge: "I guess they don't"
+    supports: []
+    notes: Contradicts the mechanism speculative_special_regs, which has special-register writes go to speculative storage instead of serializing.
+  - id: c-haley-rob-600
+    text: Haley puts the M1 reorder buffer at 600 entries
+    loc: p001
+    quote: "Given that there are 600 entries in the M1 reorder buffer (!) that's a lot."
+    method: secondhand
+    derivation: reported
+    value: 600
+    unit: entries
+    supports: []
+    notes: Given as background without a source or a measurement.
+
+new_params: {}
+
+new_mechanisms: {}
+
+mechanism_claims:
+  speculative_special_regs: [c-haley-fpcr-drain, c-haley-fpcr-not-renamed]
