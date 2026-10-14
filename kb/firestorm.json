@@ -606,6 +606,7 @@
     "fetch.taken_per_cycle": {
       "claims": [
         "c-ox-btb-zero-bubble",
+        "c-jia-taken-1",
         "c-dj-taken"
       ],
       "disputes": [],
@@ -615,7 +616,7 @@
       "sim_key": "taken_per_cycle",
       "value": 1,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "l1i.size": {
       "claims": [
@@ -1146,6 +1147,7 @@
       "claims": [
         "c-mh-v1-sched-ls-48",
         "c-mh-v1-sched-ls-split-48",
+        "c-jia-sched-ls-48",
         "c-dj-lsq-sched-48"
       ],
       "disputes": [],
@@ -1164,6 +1166,7 @@
         "c-mh-v1-add-throughput",
         "c-mh-v1-int-rate-6",
         "c-jia-guide-int-units",
+        "c-jia-addi-6",
         "c-dj-int-units"
       ],
       "disputes": [
@@ -1203,6 +1206,7 @@
         "c-at-fp-pipes",
         "c-ox-fp-units",
         "c-mh-v1-fabs-throughput",
+        "c-jia-guide-fp-units",
         "c-dj-fp-units"
       ],
       "disputes": [],
@@ -1914,7 +1918,8 @@
         "c-at-loads-per-cycle",
         "c-mh-v2-l1-load-paths",
         "c-mh-v2-loads-per-cycle",
-        "c-jia-ldst-mix"
+        "c-jia-ldst-mix",
+        "c-jia-guide-lsu"
       ],
       "disputes": [],
       "block": "lsu",
@@ -2234,9 +2239,20 @@
     "sched_ls.queues": {
       "claims": [
         "c-mh-v1-sched-ls-4x12",
-        "c-mh-v1-sched-ls-split-queues"
+        "c-mh-v1-sched-ls-split-queues",
+        "c-jia-sched-ls-unified"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v1-sched-ls-4x12",
+            "c-jia-sched-ls-unified"
+          ],
+          "note": "Against the four 12-entry queues of c-mh-v1-sched-ls-split-queues.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "sched_ls",
       "name": "Load-store scheduler queue count",
       "unit": "queues",
@@ -24505,6 +24521,190 @@
       "chip": "m1",
       "entered": "jia-m1"
     },
+    "c-jia-guide-fp-units": {
+      "text": "Apple's optimization guide lists four FP/SIMD units for the M1 P-core; one adds FDIV, FCMP and SHA, two add moves to GPRs and FCSEL, and all four multiply",
+      "loc": "p001",
+      "quote": "GENERAL, MOVE2GPR, FCMPf, FCSELf, FDIV, MUL, SHA ... GENERAL, MOVE2GPR, FCSELf, MUL ... GENERAL, MUL",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 4,
+      "unit": "units",
+      "supports": [
+        "eu_fp.count"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-lsu": {
+      "text": "Apple's optimization guide gives the P-core a burst of 3 load uops, 2 store-address uops and 2 store-data uops per cycle, and a sustained 4 uops of which 2 write the cache",
+      "loc": "p001",
+      "quote": "Burst: 3 load uops, 2 store uops (address part), and 2 store uops (data part) ... Sustained: 4 uops, 2 write into the cache",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3,
+      "unit": "loads/cycle",
+      "supports": [
+        "lsu.loads_per_cycle"
+      ],
+      "notes": "From Apple's optimization guide. Chen's own tests did not separate the store address and data parts.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-addi-6": {
+      "text": "ADD with an immediate runs at 6 per cycle, so six ALUs; ADD, UBFM and SBFM sometimes measure 4.6 to 4.7 and sometimes 6, which Chen suspects is a low-power mode",
+      "loc": "p001",
+      "quote": "\u4ece addi \u7684\u6307\u4ee4\u6765\u770b\uff0c\u6709 6 \u4e2a ALU\uff0c\u80fd\u591f\u6267\u884c\u57fa\u672c\u7684\u6574\u6570\u6307\u4ee4\uff08add/ubfm/sbfm \u7684\u541e\u5410\u6709\u65f6\u5019\u6d4b\u51fa\u6765 4.6-4.7\uff0c\u6709\u65f6\u5019\u6d4b\u51fa\u6765 6\uff0c\u6000\u7591\u662f\u8fdb\u5165\u4e86\u4ec0\u4e48\u4f4e\u529f\u8017\u6a21\u5f0f\uff09",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "units",
+      "hedge": "\u6000\u7591",
+      "supports": [
+        "eu_int.count"
+      ],
+      "notes": "The register_security_tag mechanism describes a similar slowdown to about 4-wide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-int-roles": {
+      "text": "Mixed-throughput tests give the six integer units as two with ALU, CSEL, branch and MRS NZCV, one with ALU, CSEL and FP-to-integer moves, one with ALU and those moves, one with ALU, MUL, MADD and CRC, and one with ALU and MUL",
+      "loc": "p001",
+      "quote": "\u5c0f\u7ed3\uff1aFirestorm \u7684\u6267\u884c\u5355\u5143\u5982\u4e0b ... alu + csel + branch + mrs nzcv ... alu + csel + fmov f2i ... alu + fmov f2i ... alu + mul + madd + crc ... alu + mul",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": "2x alu+csel+branch+mrs nzcv; alu+csel+fmov f2i; alu+fmov f2i; alu+mul+madd+crc; alu+mul",
+      "supports": [],
+      "notes": "Matches Johnson's unit roles (c-dj-int-roles) for the instructions tested.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fp-roles": {
+      "text": "All four FP/SIMD units run basic FP/SIMD and AES; one also runs FDIV, FRECPE, FRECPX, FRSQRTE and FSQRT, and two run FP-to-integer moves and conversions",
+      "loc": "p001",
+      "quote": "basic fp/asimd ops + aes + fdiv + frecpe + frecpx + frsqrte + fsqrt + fmov f2i + cvtf2i ... basic fp/asimd ops + aes + fmov f2i + cvtf2i",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": "4x basic fp/simd+aes; 1 adds fdiv, frecpe, frecpx, frsqrte, fsqrt; 2 add fmov f2i, fcvtzs",
+      "supports": [],
+      "notes": "Chen's per-unit list, set beside c-dj-fp-roles rather than against it.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-f2i-both": {
+      "text": "An FP-to-integer move occupies both an FP unit and an integer unit, reading the FP register file on the FP side and writing the integer register file on the integer side",
+      "loc": "p001",
+      "quote": "fmov f2i \u540c\u65f6\u5360\u7528\u4e86\u6d6e\u70b9\u6267\u884c\u5355\u5143\u548c\u6574\u6570\u6267\u884c\u5355\u5143\uff0c\u8fd9\u4e3b\u8981\u662f\u4e3a\u4e86\u590d\u7528\u5bc4\u5b58\u5668\u5806\u8bfb\u5199\u53e3",
+      "method": "throughput",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-i2f-lsu": {
+      "text": "An integer-to-FP move uses neither FP nor integer units, so Chen places it in the load/store units, which already write FP registers",
+      "loc": "p001",
+      "quote": "fmov i2f \u65e2\u4e0d\u5728\u6d6e\u70b9\uff0c\u4e5f\u4e0d\u5728\u6574\u6570\uff0c\u90a3\u53ea\u80fd\u5728\u8bbf\u5b58\u4e86",
+      "method": "throughput",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fdiv-fsqrt": {
+      "text": "Mixing FDIV and FSQRT drops to one pair every three cycles, guessed to be two pipelines in one unit competing for a register file write port",
+      "loc": "p001",
+      "quote": "fp fdiv \u548c fp fsqrt \u6df7\u5408\u65f6\uff0c\u541e\u5410\u4e0b\u964d\u5230 0.33 \u4e00\u4e2a\u4e0d\u592a\u6574\u7684\u6570\u5b57\uff0c\u731c\u6d4b\u662f\u56e0\u4e3a\u5b83\u4eec\u5c5e\u4e8e\u540c\u4e00\u4e2a\u6267\u884c\u5355\u5143\u5185\u7684\u4e0d\u540c\u6d41\u6c34\u7ebf\uff0c\u62a2\u5360\u5bc4\u5b58\u5668\u5806\u5199\u53e3",
+      "method": "throughput",
+      "derivation": "inferred",
+      "value": 0.33,
+      "unit": "pairs/cycle",
+      "hedge": "\u731c\u6d4b",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-taken-1": {
+      "text": "Branches run at 2 per cycle when not taken but only one taken branch completes per cycle",
+      "loc": "p001",
+      "quote": "\u867d\u7136 Br \u7684\u541e\u5410\u53ef\u4ee5\u8fbe\u5230 2\uff0c\u4f46\u662f\u6bcf\u5468\u671f\u53ea\u80fd\u6709\u4e00\u4e2a taken branch",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "branches/cycle",
+      "supports": [
+        "fetch.taken_per_cycle"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-nop-8": {
+      "text": "NOPs are eliminated and never enter an ALU, so they fill the full 8-wide rate",
+      "loc": "p001",
+      "quote": "NOP \u88ab eliminate \u4e86\uff0c\u4e0d\u7528\u8fdb ALU\uff0c\u53ef\u4ee5\u6253\u6ee1 8 \u7684\u53d1\u5c04\u5bbd\u5ea6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-units": {
+      "text": "Icestorm has three integer units (two with branch, one with MADD, MUL and CRC), two load units of which one also stores, and two FP/SIMD units of which one adds divide, square root and FP-to-integer moves",
+      "loc": "p001",
+      "quote": "\u5c0f\u7ed3\uff1aIcestorm \u7684\u6267\u884c\u5355\u5143\u5982\u4e0b ... alu + csel + mrs nzcv + madd + mul + crc ... load + store ... basic fp/asimd ops + aes + fdiv + frecpe + frecpx + frsqrte + fsqrt + fmov f2i",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": "3 integer, 2 load/store, 2 FP/SIMD",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sched-ls-48": {
+      "text": "Behind a long-latency op, 58 dependent loads or stores fit before rename stalls, 48 loads (43 stores) of them in the schedulable part, so the load/store scheduler holds 48",
+      "loc": "p001",
+      "quote": "\u6307\u4ee4 | \u53ef\u8c03\u5ea6 + \u4e0d\u53ef\u8c03\u5ea6 | \u53ef\u8c03\u5ea6 ld | 58 | 48 st | 58 | 43",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 48,
+      "unit": "entries",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sched-ls-unified": {
+      "text": "Loads and stores reach the same total but differ by 5 in the schedulable part, which Chen tentatively reads as one unified load/store scheduler with one non-scheduling queue",
+      "loc": "p001",
+      "quote": "load \u548c store \u603b\u6570\u4e00\u6837\u4f46 Scheduler \u5dee\u4e86 5\uff0c\u4e0d\u786e\u5b9a\u662f\u6d4b\u8bd5\u8bef\u5dee\u8fd8\u662f\u4ec0\u4e48\u95ee\u9898\uff0c\u6682\u4e14\u8003\u8651\u4e3a\u4e00\u4e2a\u7edf\u4e00\u7684 Scheduler \u548c\u540c\u4e00\u4e2a Non Scheduling Queue",
+      "method": "wong-probe",
+      "derivation": "inferred",
+      "value": 1,
+      "unit": "queues",
+      "hedge": "\u6682\u4e14\u8003\u8651\u4e3a",
+      "supports": [],
+      "contradicts": [
+        "sched_ls.queues"
+      ],
+      "notes": "Against the four 12-entry queues of c-mh-v1-sched-ls-split-queues.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -30991,6 +31191,7 @@
         "c-mh-v1-crack-merge",
         "c-mh-v1-extr-intermediate",
         "c-mh-v1-microcode-dispatch",
+        "c-jia-nop-8",
         "c-dj-fewer-issues",
         "c-dj-shift-extend-issues",
         "c-dj-nop-b-no-issue"
@@ -31189,6 +31390,8 @@
         "c-ox-xfer-latency",
         "c-mh-v8-scvtf-fake-load",
         "c-mh-v8-xfer-path",
+        "c-jia-f2i-both",
+        "c-jia-i2f-lsu",
         "c-dj-index-shift-penalty",
         "c-dj-madd-acc-latency",
         "c-dj-int-simd-roundtrip"
@@ -33006,6 +33209,20 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "In AMD's utag test, address pairs whose 8-bit XOR folds of bits 47:14 match show the alias slowdown and other pairs do not."
+    },
+    "store_address_data_uops": {
+      "claims": [
+        "c-jia-guide-lsu"
+      ],
+      "name": "Store address and store data uops",
+      "block": "lsu",
+      "status": "inferred",
+      "description": "A store issues as a store-address uop and a store-data uop; Apple's guide gives the P-core up to two of each per cycle beside three load uops.",
+      "params": [
+        "lsu.stores_per_cycle"
+      ],
+      "sim_switch": null,
+      "detection_rule": "A store whose data waits on a long-latency op still issues its address, so a younger load to another address is not held behind it."
     },
     "lsu_forward_progress": {
       "claims": [

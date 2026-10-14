@@ -744,6 +744,162 @@ claims:
     supports: [eu_int.count]
     notes: From Apple's optimization guide.
 
+  - id: c-jia-guide-fp-units
+    text: >-
+      Apple's optimization guide lists four FP/SIMD units for the M1 P-core; one adds FDIV, FCMP and SHA, two add moves
+      to GPRs and FCSEL, and all four multiply
+    loc: p001
+    quote: "GENERAL, MOVE2GPR, FCMPf, FCSELf, FDIV, MUL, SHA ... GENERAL, MOVE2GPR, FCSELf, MUL ... GENERAL, MUL"
+    method: secondhand
+    derivation: reported
+    value: 4
+    unit: units
+    supports: [eu_fp.count]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-guide-lsu
+    text: >-
+      Apple's optimization guide gives the P-core a burst of 3 load uops, 2 store-address uops and 2 store-data uops per
+      cycle, and a sustained 4 uops of which 2 write the cache
+    loc: p001
+    quote: "Burst: 3 load uops, 2 store uops (address part), and 2 store uops (data part) ... Sustained: 4 uops, 2 write into the cache"
+    method: secondhand
+    derivation: reported
+    value: 3
+    unit: loads/cycle
+    supports: [lsu.loads_per_cycle]
+    notes: From Apple's optimization guide. Chen's own tests did not separate the store address and data parts.
+
+  - id: c-jia-addi-6
+    text: >-
+      ADD with an immediate runs at 6 per cycle, so six ALUs; ADD, UBFM and SBFM sometimes measure 4.6 to 4.7 and
+      sometimes 6, which Chen suspects is a low-power mode
+    loc: p001
+    quote: "从 addi 的指令来看，有 6 个 ALU，能够执行基本的整数指令（add/ubfm/sbfm 的吞吐有时候测出来 4.6-4.7，有时候测出来 6，怀疑是进入了什么低功耗模式）"
+    method: throughput
+    derivation: measured
+    value: 6
+    unit: units
+    hedge: "怀疑"
+    supports: [eu_int.count]
+    notes: The register_security_tag mechanism describes a similar slowdown to about 4-wide.
+
+  - id: c-jia-int-roles
+    text: >-
+      Mixed-throughput tests give the six integer units as two with ALU, CSEL, branch and MRS NZCV, one with ALU, CSEL
+      and FP-to-integer moves, one with ALU and those moves, one with ALU, MUL, MADD and CRC, and one with ALU and MUL
+    loc: p001
+    quote: "小结：Firestorm 的执行单元如下 ... alu + csel + branch + mrs nzcv ... alu + csel + fmov f2i ... alu + fmov f2i ... alu + mul + madd + crc ... alu + mul"
+    method: throughput
+    derivation: measured
+    value: "2x alu+csel+branch+mrs nzcv; alu+csel+fmov f2i; alu+fmov f2i; alu+mul+madd+crc; alu+mul"
+    supports: []
+    notes: Matches Johnson's unit roles (c-dj-int-roles) for the instructions tested.
+
+  - id: c-jia-fp-roles
+    text: >-
+      All four FP/SIMD units run basic FP/SIMD and AES; one also runs FDIV, FRECPE, FRECPX, FRSQRTE and FSQRT, and two
+      run FP-to-integer moves and conversions
+    loc: p001
+    quote: "basic fp/asimd ops + aes + fdiv + frecpe + frecpx + frsqrte + fsqrt + fmov f2i + cvtf2i ... basic fp/asimd ops + aes + fmov f2i + cvtf2i"
+    method: throughput
+    derivation: measured
+    value: "4x basic fp/simd+aes; 1 adds fdiv, frecpe, frecpx, frsqrte, fsqrt; 2 add fmov f2i, fcvtzs"
+    supports: []
+    notes: Chen's per-unit list, set beside c-dj-fp-roles rather than against it.
+
+  - id: c-jia-f2i-both
+    text: >-
+      An FP-to-integer move occupies both an FP unit and an integer unit, reading the FP register file on the FP side and
+      writing the integer register file on the integer side
+    loc: p001
+    quote: "fmov f2i 同时占用了浮点执行单元和整数执行单元，这主要是为了复用寄存器堆读写口"
+    method: throughput
+    derivation: inferred
+    supports: []
+
+  - id: c-jia-i2f-lsu
+    text: >-
+      An integer-to-FP move uses neither FP nor integer units, so Chen places it in the load/store units, which already
+      write FP registers
+    loc: p001
+    quote: "fmov i2f 既不在浮点，也不在整数，那只能在访存了"
+    method: throughput
+    derivation: inferred
+    supports: []
+
+  - id: c-jia-fdiv-fsqrt
+    text: >-
+      Mixing FDIV and FSQRT drops to one pair every three cycles, guessed to be two pipelines in one unit competing for a
+      register file write port
+    loc: p001
+    quote: "fp fdiv 和 fp fsqrt 混合时，吞吐下降到 0.33 一个不太整的数字，猜测是因为它们属于同一个执行单元内的不同流水线，抢占寄存器堆写口"
+    method: throughput
+    derivation: inferred
+    value: 0.33
+    unit: pairs/cycle
+    hedge: "猜测"
+    supports: []
+
+  - id: c-jia-taken-1
+    text: Branches run at 2 per cycle when not taken but only one taken branch completes per cycle
+    loc: p001
+    quote: "虽然 Br 的吞吐可以达到 2，但是每周期只能有一个 taken branch"
+    method: throughput
+    derivation: measured
+    value: 1
+    unit: branches/cycle
+    supports: [fetch.taken_per_cycle]
+
+  - id: c-jia-nop-8
+    text: NOPs are eliminated and never enter an ALU, so they fill the full 8-wide rate
+    loc: p001
+    quote: "NOP 被 eliminate 了，不用进 ALU，可以打满 8 的发射宽度"
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    supports: []
+
+  - id: c-jia-ice-units
+    text: >-
+      Icestorm has three integer units (two with branch, one with MADD, MUL and CRC), two load units of which one also
+      stores, and two FP/SIMD units of which one adds divide, square root and FP-to-integer moves
+    loc: p001
+    quote: "小结：Icestorm 的执行单元如下 ... alu + csel + mrs nzcv + madd + mul + crc ... load + store ... basic fp/asimd ops + aes + fdiv + frecpe + frecpx + frsqrte + fsqrt + fmov f2i"
+    method: throughput
+    derivation: measured
+    value: "3 integer, 2 load/store, 2 FP/SIMD"
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-sched-ls-48
+    text: >-
+      Behind a long-latency op, 58 dependent loads or stores fit before rename stalls, 48 loads (43 stores) of them in
+      the schedulable part, so the load/store scheduler holds 48
+    loc: p001
+    quote: "指令 | 可调度 + 不可调度 | 可调度 ld | 58 | 48 st | 58 | 43"
+    method: wong-probe
+    derivation: measured
+    value: 48
+    unit: entries
+    supports: [sched_ls.entries]
+
+  - id: c-jia-sched-ls-unified
+    text: >-
+      Loads and stores reach the same total but differ by 5 in the schedulable part, which Chen tentatively reads as one
+      unified load/store scheduler with one non-scheduling queue
+    loc: p001
+    quote: "load 和 store 总数一样但 Scheduler 差了 5，不确定是测试误差还是什么问题，暂且考虑为一个统一的 Scheduler 和同一个 Non Scheduling Queue"
+    method: wong-probe
+    derivation: inferred
+    value: 1
+    unit: queues
+    hedge: "暂且考虑为"
+    supports: []
+    contradicts: [sched_ls.queues]
+    notes: Against the four 12-entry queues of c-mh-v1-sched-ls-split-queues.
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
   fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}
@@ -776,6 +932,19 @@ new_mechanisms:
     detection_rule: >-
       In AMD's utag test, address pairs whose 8-bit XOR folds of bits 47:14 match show the alias slowdown and other
       pairs do not.
+  store_address_data_uops:
+    name: Store address and store data uops
+    block: lsu
+    status: inferred
+    description: >-
+      A store issues as a store-address uop and a store-data uop; Apple's guide gives the P-core up to two of each per
+      cycle beside three load uops.
+    params: [lsu.stores_per_cycle]
+    claims: [c-jia-guide-lsu]
+    sim_switch: null
+    detection_rule: >-
+      A store whose data waits on a long-latency op still issues its address, so a younger load to another address is
+      not held behind it.
 
 mechanism_claims:
   l1i_coupled_btb: [c-jia-btb-1024, c-jia-btb-l1i-plateau]
@@ -785,3 +954,5 @@ mechanism_claims:
   store_load_dep_predictor: [c-jia-mdp-70]
   sq_partial_forwarding: [c-jia-stlf-overlap, c-jia-stlf-multi]
   lsu_load_to_load_bypass: [c-jia-guide-ptr-chase, c-jia-ptr-chase-3, c-jia-load-use-4]
+  exec_forwarding: [c-jia-f2i-both, c-jia-i2f-lsu]
+  uop_split_merge: [c-jia-nop-8]
