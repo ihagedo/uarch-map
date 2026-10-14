@@ -1,0 +1,122 @@
+# m1n1.yaml
+# Asahi Linux, 2025
+# What the m1n1 bootloader sets on M1 Firestorm cores and clusters, the bit names it defines, and how it turns on the SLC.
+session: m1n1
+source: m1n1
+
+claims:
+  - id: c-m1n1-stnt-threshold
+    text: An Apple erratum title quoted by m1n1 names an STNT widget with a contiguous-store counter, whose threshold m1n1 sets to 3 on every M1 Firestorm
+    loc: p001
+    quote: "// \"Post-silicon tuning of STNT widget contiguous counter threshold\" reg_mask(SYS_IMP_APL_HID4, HID4_CNF_CNTR_THRESH_MASK, HID4_CNF_CNTR_THRESH(3));"
+    derivation: documented
+    supports: []
+    notes: STNT is read as store non-temporal. m1n1's M2 and M3 setups leave this field alone.
+  - id: c-m1n1-sibling-merge-off
+    text: An Apple erratum title quoted by m1n1 says a sibling merge in the LLC can let an uncached load break Arm ordering rules, so m1n1 sets HID5 DISABLE_FILL_2C_MERGE on every M1 Firestorm
+    loc: p001
+    quote: "// \"Sibling Merge in LLC can cause UC load to violate ARM Memory Ordering Rules.\" reg_set(SYS_IMP_APL_HID5, HID5_DISABLE_FILL_2C_MERGE);"
+    derivation: documented
+    supports: []
+    notes: LLC read as the cluster L2, since cluster registers name an LLC flush and an LLC throttle; sibling perhaps the other 64 B half of a 128 B L2 line. The M2 and M3 setups leave the merge on.
+  - id: c-m1n1-ldnt-off
+    text: m1n1 sets HID11 DISABLE_LD_NT_WIDGET in its common setup for every M1 Firestorm, keeping the load non-temporal widget off
+    loc: p001
+    quote: "static void init_common_firestorm(void) ... reg_set(SYS_IMP_APL_HID11, HID11_DISABLE_LD_NT_WIDGET);"
+    derivation: documented
+    supports: []
+    notes: The M2 setup sets the same bit. The register doc reads LDNT as load non-temporal, with a question mark (c-asahi-ldnt).
+  - id: c-m1n1-nex-temp
+    text: An Apple erratum title quoted by m1n1 says NEX power gating gave wrong temperature-sensor readings, worked around with dummy cycles, and m1n1 sets the HID13 pre-cycles field to 4 on every M1 Firestorm
+    loc: p001
+    quote: "// \"configure dummy cycles to work around incorrect temp sensor readings on // NEX power gating\" reg_mask(SYS_IMP_APL_HID13, HID13_PRE_CYCLES_MASK, HID13_PRE_CYCLES(4));"
+    derivation: documented
+    supports: []
+    notes: NEX is read as the NEON/FP execution unit; HID7 names a NEX fast FMUL.
+  - id: c-m1n1-rf-bank-livelock
+    text: m1n1 sets HID16 MPX_PICK_45, MP_CYCLONE_7 and two spare bits on every M1 Firestorm, perhaps for an erratum on the forward-progress widget for register-file bank and multipass conflicts, which implies a banked register file
+    loc: p001
+    quote: "// Maybe: \"RF bank and Multipass conflict forward progress widget does not // handle 3+ cycle livelock\""
+    derivation: inferred
+    hedge: "Maybe"
+    supports: []
+    notes: m1n1's own comment doubts that the title belongs to these bits. Fits the four banks of c-mh-v1-prf-banks; says nothing of bank power gating.
+  - id: c-m1n1-cache-fusion-off
+    text: An Apple erratum title quoted by m1n1 says I-cache fusion of cross-beat AES or PMULL pairs is not disabled for an unconditional branch's recoded instruction, and m1n1 sets HID0 FETCH_WIDTH_DISABLE and CACHE_FUSION_DISABLE on every M1 Firestorm
+    loc: p001
+    quote: "// \"Cross-beat Crypto(AES/PMUL) ICache fusion is not disabled for branch // unconditional \"recoded instruction.\" reg_set(SYS_IMP_APL_HID0, HID0_FETCH_WIDTH_DISABLE | HID0_CACHE_FUSION_DISABLE);"
+    derivation: documented
+    supports: []
+    notes: AES and PMULL pairs are measured to fuse on the M1 (c-dj-fusion-crypto); this turns off a fusion made in the I-cache. What Fetch Width Disable does is not stated.
+  - id: c-m1n1-force-nonspec
+    text: On every M1 Firestorm m1n1 forces non-speculative execution while single-stepping and when the speculative flush pointer is invalid while MP is valid, with the force-non-speculative timer select set to 3
+    loc: p001
+    quote: "reg_set(SYS_IMP_APL_HID7, HID7_FORCE_NONSPEC_IF_STEPPING | HID7_FORCE_NONSPEC_IF_SPEC_FLUSH_POINTER_INVALID_AND_MP_VALID); reg_mask(SYS_IMP_APL_HID7, HID7_FORCE_NONSPEC_TARGET_TIMER_SEL_MASK, HID7_FORCE_NONSPEC_TARGET_TIMER_SEL(3));"
+    derivation: documented
+    supports: []
+    notes: MP is not expanded in the source. The M2 setup sets the flush-pointer bit and timer only on revision 0.
+  - id: c-m1n1-hvc-spec
+    text: m1n1 sets HID18 HVC_SPECULATION_DISABLE on every M1 Firestorm, so the core can speculate past an HVC unless this bit is set
+    loc: p001
+    quote: "reg_set(SYS_IMP_APL_HID9, HID9_TSO_SERIALIZE_VLD_MICROOPS | HID9_FIX_BUG_51667805); reg_set(SYS_IMP_APL_HID18, HID18_HVC_SPECULATION_DISABLE);"
+    derivation: documented
+    supports: []
+  - id: c-m1n1-tso-vld
+    text: m1n1 sets HID9 TSO_SERIALIZE_VLD_MICROOPS on every M1 Firestorm, read as serializing the micro-ops of vector loads in TSO mode
+    loc: p001
+    quote: "static void init_m1_firestorm(void) ... reg_set(SYS_IMP_APL_HID9, HID9_TSO_SERIALIZE_VLD_MICROOPS | HID9_FIX_BUG_51667805);"
+    derivation: inferred
+    supports: []
+    notes: Fits c-tso-m1-simd, where M1 loads over 16 B run over 10x slower in TSO mode. The M2 setup leaves this bit clear (c-m1n1-m2-tso).
+  - id: c-m1n1-pcie-throttle-off
+    text: m1n1 clears HID3 DEV_PCIE_THROTTLE_ENABLE on every M1 Firestorm, leaving the core's PCIe device-access throttle off
+    loc: p001
+    quote: "// Disable SMC trapping to EL2 reg_clr(SYS_IMP_APL_HID1, HID1_TRAP_SMC); reg_clr(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE | HID3_DISABLE_ARBITER_FIX_BIF_CRD);"
+    derivation: documented
+    supports: []
+    notes: The M2 and M3 setups turn this throttle on instead (c-m1n1-m2-pcie-throttle).
+  - id: c-m1n1-credits
+    text: On every M1 Firestorm m1n1 clears the bit that disables an arbiter fix for BIF credits, and on the T8103 it sets the HID6 upstream credit-token init field for C2 to 0
+    loc: p001
+    quote: "reg_clr(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE | HID3_DISABLE_ARBITER_FIX_BIF_CRD); ... reg_mask(SYS_IMP_APL_HID6, HID6_UP_CRD_TKN_INIT_C2_MASK, HID6_UP_CRD_TKN_INIT_C2(0));"
+    derivation: documented
+    supports: []
+    notes: BIF read as the bus interface between core and fabric; C2 is not expanded.
+  - id: c-m1n1-lfsr-stalls
+    text: m1n1 turns on LFSR-driven random stalls at load pipe 2 issue and at store-queue replay on the T8103 and M1 Pro from revision 0x10 and on every M1 Max
+    loc: p001
+    quote: "if (rev >= 0x10) { reg_set(SYS_IMP_APL_HID4, HID4_ENABLE_LFSR_STALL_LOAD_PIPE2_ISSUE | HID4_ENABLE_LFSR_STALL_STQ_REPLAY);"
+    derivation: documented
+    supports: []
+    notes: Random stalls are read as a livelock breaker. The M3 setup keeps the load pipe 2 stall (c-m1n1-m3-lfsr).
+
+new_mechanisms:
+  lsu_forward_progress:
+    name: Load-store forward-progress widgets
+    block: lsu
+    status: inferred
+    description: Counters watch for victimized lock lines and repeated replays of the oldest load or store and step in by stalling issue, and LFSR-driven random stalls at issue, replay, retire and drain points break up livelocks.
+    params: []
+    claims: [c-m1n1-lfsr-stalls]
+    sim_switch: null
+    detection_rule: A probe that keeps the oldest load replaying, or makes two cores fight over one locked line, would see bursts of extra stall cycles and timing noise rather than a hang.
+  forced_nonspec_mode:
+    name: Forced non-speculative execution
+    block: retire
+    status: inferred
+    description: Control bits stop the core from speculating past HVC or guarded-mode calls, while single-stepping, or when the speculative flush pointer is invalid while an MP condition holds, for a time set by a timer select.
+    params: []
+    claims: [c-m1n1-force-nonspec, c-m1n1-hvc-spec]
+    sim_switch: null
+    detection_rule: A load placed after an HVC that never returns to it would leave a cache footprint only while HVC speculation is on.
+
+mechanism_claims:
+  streaming_store_nt: [c-m1n1-stnt-threshold]
+  l2_half_lines: [c-m1n1-sibling-merge-off]
+  nt_load_handling: [c-m1n1-ldnt-off]
+  simd_power_down: [c-m1n1-nex-temp]
+  banked_prf_power: [c-m1n1-rf-bank-livelock]
+  macro_op_fusion: [c-m1n1-cache-fusion-off]
+  tso_mode: [c-m1n1-tso-vld]
+  pio_network: [c-m1n1-pcie-throttle-off]
+  fabric_qos_credits: [c-m1n1-credits]
