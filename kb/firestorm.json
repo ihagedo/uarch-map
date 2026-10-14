@@ -25641,6 +25641,149 @@
       "source": "xnu",
       "entered": "xnu"
     },
+    "c-xnu-a11-fill-bypass": {
+      "text": "Skye's E-cluster L2 can bypass fill data from either of two pipes straight to an E-core, and XNU turns the bypass off on early silicon",
+      "loc": "p003",
+      "quote": "Disable downstream fill bypass logic ... L2E fill bypass collision from both pipes to ecore",
+      "derivation": "documented",
+      "chip": "a11",
+      "supports": [],
+      "notes": "Earlier core (A11 E-cluster), revisions before B0 only.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a11-nfp-ret-fwd": {
+      "text": "Skye E-cores forward return addresses to the next fetch predictor (NFP), and XNU turns this off on early silicon",
+      "loc": "p003",
+      "quote": "Disable forwarding of return addresses to the NFP ... orr x12, x12, ARM64_REG_EHID0_nfpRetFwdDisb",
+      "derivation": "documented",
+      "chip": "a11",
+      "supports": [],
+      "notes": "Earlier core (A11 E-core), revisions before B0 only, after a bug where fetch took an illegal VA exception.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a11-clkdiv-gating": {
+      "text": "Skye cores have clock-divider gating, which XNU turns off on early silicon because of a cluster power-down bug",
+      "loc": "p003",
+      "quote": "Disable clock divider gating ... orr x12, x12, ARM64_REG_HID6_DisClkDivGating",
+      "derivation": "documented",
+      "chip": "a11",
+      "supports": [],
+      "notes": "Earlier core (A11), revisions before B0. The name only; how the divider gates the clock is not stated.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a11-acc-link-fsm": {
+      "text": "Powering down a Skye cluster (ACC) runs a link state machine that goes from going-down to cancel, and an upstream drain request can arrive during that switch",
+      "loc": "p003",
+      "quote": "ACC power down issue when link FSM switches from GO_DN to CANCEL and at the same time upStreamDrain request is set.",
+      "derivation": "documented",
+      "chip": "a11",
+      "supports": [],
+      "notes": "Earlier core (A11). Shows a cluster power-down handshake with the fabric link that can be cancelled.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a11-clock-dither": {
+      "text": "Skye clusters dither their clock, and XNU turns dithering off on early silicon after LLC PIO errors",
+      "loc": "p003",
+      "quote": "Disable clock dithering ... [Tunable] Skye A0: Linux: LLC PIO Errors",
+      "derivation": "documented",
+      "chip": "a11",
+      "supports": [],
+      "notes": "Earlier core (A11), set in ACC_OVRD and the E-block override. Confirms clock dithering on an earlier core (c-mh-v3-clock-dither).",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-br-kill-limit": {
+      "text": "Vortex P-cores have a branch kill limit, which XNU enables to stop data corruption from incorrect branch predictor resolution",
+      "loc": "p003",
+      "quote": "rdar://problem/36716477: data corruption due to incorrect branch predictor resolution ... orr x12, x12, ARM64_REG_HID1_enaBrKillLimit",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 Vortex), all Aruba parts and Cyprus B0 or later. What the limit counts is not stated.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-iex-clock-gating": {
+      "text": "Vortex clock-gates its integer execution (IEX) logic, and XNU forces all IEX level-3 clocks on after segfaults caused by the gating",
+      "loc": "p003",
+      "quote": "rdar://problem/34435356: segfaults due to IEX clock-gating ... orr x12, x12, ARM64_REG_HID1_rccForceAllIexL3ClksOn",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 P-core). IEX read as the integer execution units.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-prefetch-pipe-gating": {
+      "text": "Tempest E-cores clock-gate the prefetcher training pipe with an extended power-saving mode, and XNU reverts it to the default gating",
+      "loc": "p003",
+      "quote": "Disable the extension of prefetcher training pipe clock gating, revert to default gating ... orr x12, x12, ARM64_REG_EHID10_rccDisPwrSavePrfClkOff",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 E-core). The A13 block does the same on its E-cores.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-bif-skid": {
+      "text": "The A12X bus interface (BIF) has a fill buffer with a skid buffer behind it, and XNU enables stall logic so the skid buffer cannot overflow",
+      "loc": "p003",
+      "quote": "Enable BIF fill buffer stall logic to prevent skid buffer overflow (Aruba A1 only) ... orr x12, x12, ARM64_REG_HID5_EnableDnFIFORdStall",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier chip (A12X Aruba, board T8027), A1 silicon only. The bit names a downstream FIFO read stall.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-ordered-ld": {
+      "text": "XNU makes A12 cores hold ordered loads in the LSU until all older loads have completed, because the AF2 fabric's ordering rules allow Arm device-ordering violations",
+      "loc": "p003",
+      "quote": "Prevent ordered loads from being dispatched from LSU until all prior loads have completed. ... AF2 ordering rules allow ARM device ordering violations",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier cores (A12 P and E cores, HID4 ForceNsOrdLdReqNoOlderLd); the A13 block sets it on both core types too. Without the bit, ordered loads leave the LSU earlier and rely on the fabric for order.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-poison-barrier": {
+      "text": "On Vortex an older load barrier is meant to redirect a younger load that crosses a poisoned cache line, and it failed to",
+      "loc": "p003",
+      "quote": "[Cyprus Tunable] Poisoned cache line crossing younger load is not redirected by older load-barrier",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 P-core). Shows poisoned lines and barrier-driven redirects of younger loads in shipped silicon.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-color-opt": {
+      "text": "Vortex and Tempest have a color optimization (HID3 and EHID3 ColorOpt) that XNU turns off to fix the poisoned-load redirect errata",
+      "loc": "p003",
+      "quote": "Poisoned cache line crossing younger load is not redirected by older load-barrier ... orr x12, x12, ARM64_REG_HID3_DisColorOpt",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier cores (A12). The E-core sets EHID3 DisColorOpt for the load-acquire erratum. A color optimization tied to barriers fits color-tagged ordering.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a12-poison-acquire": {
+      "text": "On Tempest E-cores an older load-acquire is meant to redirect a poisoned younger load, and it failed to",
+      "loc": "p003",
+      "quote": "rdar://problem/36595004: Poisoned younger load is not redirected by older load-acquire",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 E-core). Load-acquire as well as load barriers redirects poisoned younger loads.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
     "c-zhou-ibtb": {
       "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
       "loc": "#ibtb-size",
@@ -26902,7 +27045,8 @@
         "c-mh-v4-nfp-return-table",
         "c-mh-v8-return-fetch-stack",
         "c-mh-v8-return-trace-not-stored",
-        "c-mh-v8-return-params"
+        "c-mh-v8-return-params",
+        "c-xnu-a11-nfp-ret-fwd"
       ],
       "name": "Return fetch table",
       "block": "ras",
@@ -27163,7 +27307,8 @@
     "issue_age_flush": {
       "claims": [
         "c-mh-v8-age-tracking",
-        "c-mh-v8-mispredict-flush"
+        "c-mh-v8-mispredict-flush",
+        "c-xnu-a12-br-kill-limit"
       ],
       "name": "Age bits for mispredict flush",
       "block": "sched_int",
@@ -28257,7 +28402,9 @@
       "claims": [
         "c-mh-v3-barrier-colors",
         "c-mh-v3-barrier-l1-l2",
-        "c-xnu-a11-wkdm-colors"
+        "c-xnu-a11-wkdm-colors",
+        "c-xnu-a12-color-opt",
+        "c-xnu-a12-ordered-ld"
       ],
       "name": "Color-tagged barriers at the L1-L2 boundary",
       "block": "lsu",
@@ -28275,7 +28422,9 @@
         "c-mh-v3-load-poison",
         "c-mh-v3-wfe-poison",
         "c-mh-v3-lsq-cam-filter",
-        "c-tso-ll-squash-rule"
+        "c-tso-ll-squash-rule",
+        "c-xnu-a12-poison-barrier",
+        "c-xnu-a12-poison-acquire"
       ],
       "name": "Load poison bits for load-load ordering",
       "block": "lq",
@@ -28674,7 +28823,9 @@
       "claims": [
         "c-mh-v2-clock-variation",
         "c-mh-v3-idle-clock-quarter",
-        "c-mh-v3-clock-dither"
+        "c-mh-v3-clock-dither",
+        "c-xnu-a11-clkdiv-gating",
+        "c-xnu-a11-clock-dither"
       ],
       "name": "Divided clock while the core waits",
       "block": "power",
@@ -28755,7 +28906,8 @@
     "fill_forwarding": {
       "claims": [
         "c-mh-v3-no-cwf-split",
-        "c-mh-v8-fill-forward"
+        "c-mh-v8-fill-forward",
+        "c-xnu-a11-fill-bypass"
       ],
       "name": "Fill forwarding to waiting loads",
       "block": "l1d",
@@ -29086,6 +29238,32 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "LDXR/STXR loops on one line while another core floods it with snoops would show stretches of no progress ended by a sudden recovery when the starvation mode starts."
+    },
+    "cluster_sleep_states": {
+      "claims": [
+        "c-xnu-a11-acc-link-fsm"
+      ],
+      "name": "Core and cluster sleep states",
+      "block": "power",
+      "status": "inferred",
+      "description": "WFI either only clock-gates a core or lets it power down, chosen in CPU_OVRD; cluster deep sleep sets ACC_OVRD fields for the L2 flush, SRM and CPM power-down and link train-down, and branch predictor state can be kept across cluster sleep.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "Wake-up delay after idle falls into distinct levels (clock-gated, core powered down, cluster in deep sleep), and branch mispredicts right after a cluster wake show whether predictor state survived."
+    },
+    "exec_clock_gating": {
+      "claims": [
+        "c-xnu-a12-iex-clock-gating",
+        "c-xnu-a12-prefetch-pipe-gating"
+      ],
+      "name": "Clock gating of idle execution pipes",
+      "block": "eu_int",
+      "chip": "a12",
+      "status": "inferred",
+      "description": "Integer execution (IEX) clocks and the prefetcher training pipe are clock-gated when idle, with tunables that force the clocks on or limit the gating.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "The first integer ops after a long stretch of non-integer work issue a cycle or more late, a delay that a steady integer loop never shows."
     }
   },
   "questions": {
