@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 158, claims 1992, sources 58, mechanisms 176
+blocks 40, links 37, params 158, claims 2004, sources 58, mechanisms 177
 
 ## By status
 
@@ -13,9 +13,9 @@ blocks 40, links 37, params 158, claims 1992, sources 58, mechanisms 176
 
 ## By confidence
 
-- confirmed: 18
+- confirmed: 19
 - conjecture: 3
-- corroborated: 34
+- corroborated: 33
 - derived: 14
 - inferred: 22
 - single: 67
@@ -26,7 +26,7 @@ blocks 40, links 37, params 158, claims 1992, sources 58, mechanisms 176
 - iq.depth (iq): Fetch-to-decode queue depth
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (25)
+## Open disputes (26)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - fetch.width: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.  [c-dj-width, c-jia-fetch-16]
@@ -44,6 +44,7 @@ blocks 40, links 37, params 158, claims 1992, sources 58, mechanisms 176
 - l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-mh-v2-l2-latency-17, c-mh-v1-l2-latency-aside]
 - sched_int.total_entries: Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.  [c-cc-oryon-m1-int-sched-134, c-mh-v1-sched-johnson-2x]
+- lsu.store_load_latency: Latency per forwarded store and load in his test; c-mh-v1-store-load-pair-6 gives 6.  [c-mh-v1-store-load-pair-6, c-jia-stlf-latency]
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - l2.core_capacity: 7.5 vs 8 at equal rank  [c-mh-v2-l2-transitions, c-at-mini-l2-partition]
 - memctrl.dram_load_bw: 64 vs 58 at equal rank  [c-mh-v2-slc-dram-load-64, c-at-mini-dram-read-bw]

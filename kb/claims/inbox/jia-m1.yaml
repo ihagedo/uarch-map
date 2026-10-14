@@ -600,6 +600,150 @@ claims:
     supports: []
     chip: icestorm
 
+  - id: c-jia-mdp-70
+    text: >-
+      Repeating a store and a load to one address, the address-dependent pattern slows past 70 loads, while the
+      data-dependent pattern has no clear threshold but starts a small rise at 84
+    loc: p001
+    quote: "数据依赖没有明显的阈值，但从 84 开始出现了一个小的增长，且斜率不为零；地址依赖的阈值是 70"
+    method: other
+    derivation: measured
+    value: 70
+    unit: loads
+    supports: []
+    notes: Handley reads a similar knee as a predictor of about 74 entries (c-mh-v1-lsdp-74-chained).
+
+  - id: c-jia-ice-mdp-13
+    text: On Icestorm both the data-dependent and the address-dependent patterns slow past 13 loads
+    loc: p001
+    quote: "数据依赖和地址依赖的阈值都是 13"
+    method: other
+    derivation: measured
+    value: 13
+    unit: loads
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-stlf-overlap
+    text: >-
+      Every overlapping store and load of 8 to 64 bits forwards whatever the offset, even when the load or store
+      crosses a 64 B line, at the cost of one more cycle
+    loc: p001
+    quote: "所有 Store 和 Load Overlap 的情况，无论地址偏移，都能成功转发。甚至在 Load 或 Store 跨越 64B 缓存行边界时，也可以成功转发，代价是多一个周期"
+    method: other
+    derivation: measured
+    supports: []
+
+  - id: c-jia-stlf-multi
+    text: >-
+      A load that needs data from two, four or eight stores forwards at any offset unless the data crosses a line,
+      taking 1 to 4 cycles more than forwarding from one store
+    loc: p001
+    quote: "一个 Load 需要转发两个、四个甚至八个 Store 的数据时，如果数据跨越缓存行，则不能转发，但其他情况下，无论地址偏移，都可以转发，只是比从单个 Store 转发需要多耗费 1-4 个周期"
+    method: other
+    derivation: measured
+    supports: []
+
+  - id: c-jia-stlf-latency
+    text: A successful forward takes 7.5 cycles, and a failed forward across a line takes 28 cycles or more
+    loc: p001
+    quote: "成功转发时 7.5 cycle，跨缓存行且转发失败时 28+ cycle"
+    method: other
+    derivation: measured
+    value: 7.5
+    unit: cycles
+    supports: []
+    contradicts: [lsu.store_load_latency]
+    notes: Latency per forwarded store and load in his test; c-mh-v1-store-load-pair-6 gives 6.
+
+  - id: c-jia-ice-stlf
+    text: On Icestorm any overlap between a load and earlier stores costs 10 cycles, however many stores overlap and whether or not a line is crossed
+    loc: p001
+    quote: "在 Icestorm 上，如果 Load 和 Store 访问范围出现重叠，则需要 10 Cycle，无论是和几个 Store 重叠，也无论是否跨缓存行"
+    method: other
+    derivation: measured
+    value: 10
+    unit: cycles
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-guide-ptr-chase
+    text: >-
+      Apple's optimization guide describes fast pointer chasing with 3-cycle latency when a load's base register is the
+      previous load's destination
+    loc: p001
+    quote: "Apple 实现了 fast pointer chasing with a 3-cycle latency，要求后一个 load 的 base register 和前一个 load 的 destination register 相同"
+    method: secondhand
+    derivation: reported
+    value: 3
+    unit: cycles
+    supports: [l1d.latency]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-ptr-chase-3
+    text: >-
+      A load feeding the next load's base runs at 3 cycles with no offset, an immediate offset, a register offset, or
+      from the first register of an LDP; an access crossing an 8 B boundary takes 4
+    loc: p001
+    quote: "实测 Firestorm 的 Load to use latency 针对 pointer chasing 场景做了优化，在下列的场景下可以达到 3 cycle ... ldp x0, x1, [x0] ：load pair 的第一个目的寄存器转发到基地址，无偏移 如果访存跨越了 8B 边界，则退化到 4 cycle"
+    method: pointer-chase
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: []
+
+  - id: c-jia-load-use-4
+    text: >-
+      Load-to-use latency is 4 cycles when the result feeds an ALU, the index register of the next load, or when it is
+      the second register of an LDP feeding the next base
+    loc: p001
+    quote: "在下列场景下 Load to use latency 则是 4 cycle ... load 的目的寄存器作为 alu 的源寄存器 ... ldp x1, x0, [x0] ：load pair 的第二个目的寄存器转发到基地址，无偏移"
+    method: pointer-chase
+    derivation: measured
+    value: 4
+    unit: cycles
+    supports: [l1d.latency_alu]
+
+  - id: c-jia-ice-ptr-chase
+    text: >-
+      Icestorm has the same 3-cycle pointer-chase cases and 4-cycle cases as Firestorm; crossing an 8, 16 or 32 B
+      boundary still takes 3 cycles and crossing a 64 B boundary takes 7
+    loc: p001
+    quote: "实测 Icestorm 的 Load to use latency 针对 pointer chasing 场景做了优化 ... 如果访存跨越了 8B/16B/32B 边界，依然是 3 cycle；跨越了 64B 边界则退化到 7 cycle"
+    method: pointer-chase
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-utag
+    text: >-
+      AMD's utag test shows the same effects on the M1, read as a virtual-address utag way predictor whose 8-bit tag
+      XOR-folds VA bits 47:14, identical on Firestorm and Icestorm
+    loc: p001
+    quote: "猜想它也用了类似的基于虚拟地址的 UTag/Way Predictor 方案，并测出来它的 UTag 也有 8 bit，Firestorm 和 Icestorm 都是相同的 ... 一共有 8 bit，由 VA[47:14] 折叠而来"
+    method: other
+    derivation: measured
+    value: 8
+    unit: bits
+    hedge: "猜想"
+    supports: []
+    notes: The eight folds run from VA bits 14, 22, 30, 38 and 46 to VA bits 21, 29, 37 and 45.
+
+  - id: c-jia-guide-int-units
+    text: >-
+      Apple's optimization guide lists six integer units for the M1 P-core: ALU/f with BRc/i, ALU/f with BRc, ALU/f,
+      ALU with MUL, MAC and MISC, ALU with MUL and DIV, and ALU
+    loc: p001
+    quote: "M1 Family 的 P-Core 包括如下计算单元 ... ALU/f, BRc/i ... ALU/f, BRc ... ALU, MUL, MAC, MISC ... ALU, MUL, DIV"
+    method: secondhand
+    derivation: reported
+    value: 6
+    unit: units
+    supports: [eu_int.count]
+    notes: From Apple's optimization guide.
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
   fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}
@@ -619,9 +763,25 @@ new_mechanisms:
     detection_rule: >-
       A loop whose first instruction sits in the last 4 bytes of a page costs one cycle more per iteration than the same
       loop placed within one page.
+  l1d_utag_way_predictor:
+    name: Virtual-address utag way predictor
+    block: l1d
+    status: measured
+    description: >-
+      The L1D picks its way through an 8-bit micro-tag folded by XOR from virtual address bits 47:14, as in AMD's
+      linear-address utag scheme, on both core types.
+    params: []
+    claims: [c-jia-utag]
+    sim_switch: null
+    detection_rule: >-
+      In AMD's utag test, address pairs whose 8-bit XOR folds of bits 47:14 match show the alias slowdown and other
+      pairs do not.
 
 mechanism_claims:
   l1i_coupled_btb: [c-jia-btb-1024, c-jia-btb-l1i-plateau]
   staged_fetch_redirect: [c-jia-btb-miss-late]
   next_fetch_groups: [c-jia-btb-8b, c-jia-btb-index]
   path_history_shift_xor: [c-jia-ice-phr]
+  store_load_dep_predictor: [c-jia-mdp-70]
+  sq_partial_forwarding: [c-jia-stlf-overlap, c-jia-stlf-multi]
+  lsu_load_to_load_bypass: [c-jia-guide-ptr-chase, c-jia-ptr-chase-3, c-jia-load-use-4]
