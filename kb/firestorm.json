@@ -2873,6 +2873,18 @@
       "status": "measured",
       "confidence": "corroborated"
     },
+    "slc.planes": {
+      "claims": [
+        "c-m1n1-slc-planes"
+      ],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC planes",
+      "unit": "planes",
+      "value": 4,
+      "status": "documented",
+      "confidence": "single"
+    },
     "itlb.org": {
       "claims": [
         "c-pac-itlb-4x32"
@@ -2940,6 +2952,7 @@
     },
     "slc.assoc": {
       "claims": [
+        "c-m1n1-slc-ways",
         "c-slac-ways"
       ],
       "disputes": [],
@@ -2948,7 +2961,7 @@
       "unit": "ways",
       "value": 16,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "confirmed"
     }
   },
   "claims": {
@@ -24790,6 +24803,142 @@
       "source": "m1n1",
       "entered": "m1n1"
     },
+    "c-m1n1-slc-planes": {
+      "text": "The M1 (T8103) memory cache controller holds the system level cache in 4 planes, each with its own register block",
+      "loc": "p005",
+      "quote": "#define T8103_PLANES 4 #define T8103_PLANE_STRIDE 0x40000",
+      "derivation": "documented",
+      "value": 4,
+      "unit": "planes",
+      "supports": [
+        "slc.planes"
+      ],
+      "notes": "Matches the four SLC slices read from a patent figure in c-mh-v3-slc-four-slices; how an address picks its plane is not stated.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-slc-ways": {
+      "text": "Each T8103 SLC plane has 16 data ways and 16 tag ways, which m1n1 enables plane by plane and polls the status register to confirm",
+      "loc": "p005",
+      "quote": "#define T8103_CACHE_WAYS 16 #define T8103_CACHE_STATUS_MASK (T8103_CACHE_STATUS_DATA_COUNT | T8103_CACHE_STATUS_TAG_COUNT) ... for (int plane = 0; plane < mcc_regs[mcc].plane_count; plane++) { plane_write32(mcc, plane, PLANE_CACHE_ENABLE, mcc_regs[mcc].cache_enable_val);",
+      "derivation": "documented",
+      "value": 16,
+      "unit": "ways",
+      "supports": [
+        "slc.assoc"
+      ],
+      "notes": "Ways per plane; the source gives no capacity or line size.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-slc-pro-max": {
+      "text": "On the M1 Pro and Max each of several MCC instances holds 4 SLC planes of 12 ways and 4 DCS channels",
+      "loc": "p005",
+      "quote": "#define T6000_PLANES 4 #define T6000_PLANE_OFFSET 0 ... #define T6000_DCS_COUNT 4 ... #define T6000_CACHE_WAYS 12",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "M1 Pro and Max (T6000), a chip-level fact that gives no M1 value.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-slc-in-mcc": {
+      "text": "m1n1's module that initializes the MCC memory controller is what turns on the system level cache, so the SLC is part of the memory cache controller",
+      "loc": "p007",
+      "quote": "mcc: New module to initialize the MCC memory controller. This turns on the system level cache.",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The same plane registers also hold the TrustZone carveout ranges.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-dmp-disable": {
+      "text": "m1n1's GoFetch mitigation turns off the DMP system-wide by setting HID11 bit 30 (HID11_DISABLE_DMP) on every core of the M1 and M2 families, A14 included",
+      "loc": "p006",
+      "quote": "gofetch: Mitigate the GoFetch vulnerability (disable the DMP systemwide) ... Affected CPUs: M1 and M2 series (M3 and later are unaffected) ... reg_set(SYS_IMP_APL_HID11, HID11_DISABLE_DMP); ... static u32 cpus_gofetch[] = { ... MIDR_PART_T8101_FIRESTORM,",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "Contradicts c-gf-no-disable and c-aug-not-disableable, which judge that the M1 DMP cannot be turned off; agrees with c-slap-m1-hid11-dmp. The source shows no test of the effect.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-dmp-m3-dit": {
+      "text": "On the M3 and later, DIT turns the DMP off, so m1n1 counts them as unaffected and leaves the fix to software that sets DIT around crypto code",
+      "loc": "p006",
+      "quote": "M3 and later CPUs implement DIT to disable the DMP ... on those CPUs is for software to enable the DIT feature around crypto code.",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m3",
+      "notes": "Agrees with c-gf-dit-m3.",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-tso": {
+      "text": "m1n1's M2 Avalanche setup sets TSO_ALLOW_DC_ZVA_WC and the LD NT widget disable but not TSO_SERIALIZE_VLD_MICROOPS, which it sets on the M1",
+      "loc": "p008",
+      "quote": "reg_set(SYS_IMP_APL_HID11, HID11_DISABLE_LD_NT_WIDGET); reg_set(SYS_IMP_APL_HID9, HID9_TSO_ALLOW_DC_ZVA_WC | HID9_AVL_UNK17);",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-merge-on": {
+      "text": "m1n1's M2 Avalanche setup never sets the fill 2C merge disable it sets on the M1; its only HID5 write, on the M2 Pro and Max, changes two unknown bits",
+      "loc": "p008",
+      "quote": "reg_set(SYS_IMP_APL_HID16, HID16_AVL_UNK12); reg_mask(SYS_IMP_APL_HID5, HID5_BLZ_UNK_19_18_MASK, HID5_BLZ_UNK18);",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "notes": "The M3 setup does not set it either, so the LLC sibling merge is left on after the M1.",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-zcl": {
+      "text": "m1n1's M2 Avalanche setup sets the ZCL register-file mispredict threshold to 1 and restart threshold to 3, fields its M1 setup leaves alone",
+      "loc": "p008",
+      "quote": "reg_mask(SYS_IMP_APL_HID1, HID1_ZCL_RF_MISPREDICT_THRESHOLD_MASK, HID1_ZCL_RF_MISPREDICT_THRESHOLD(1)); reg_mask(SYS_IMP_APL_HID1, HID1_ZCL_RF_RESTART_THRESHOLD_MASK, HID1_ZCL_RF_RESTART_THRESHOLD(3));",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-guarded-spec": {
+      "text": "m1n1's M2 Avalanche setups turn off speculation past GEXIT and GENTER, Apple's guarded-mode exit and entry, which its M1 setup leaves on",
+      "loc": "p008",
+      "quote": "reg_set(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE); reg_set(SYS_IMP_APL_HID18, HID18_GEXIT_EL_SPECULATION_DISABLE | HID18_GENTER_SPECULATION_DISABLE);",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "notes": "The M3 setup sets the same two bits.",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-pcie-throttle": {
+      "text": "m1n1's M2 Avalanche setups turn the PCIe device throttle on with a limit of 60 (M2) or 62 (M2 Pro and Max), where its M1 setup clears the enable",
+      "loc": "p008",
+      "quote": "reg_mask(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_LIMIT_MASK, HID3_DEV_PCIE_THROTTLE_LIMIT(60)); reg_set(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE);",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m3-lfsr": {
+      "text": "m1n1's M3 Everest setup keeps the LFSR stall at load pipe 2 issue from the M1 and adds the GEXIT and GENTER speculation disables",
+      "loc": "p009",
+      "quote": "reg_set(SYS_IMP_APL_HID18, HID18_GEXIT_EL_SPECULATION_DISABLE | HID18_GENTER_SPECULATION_DISABLE); ... reg_set(SYS_IMP_APL_HID4, HID4_ENABLE_LFSR_STALL_LOAD_PIPE2_ISSUE);",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m3",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
     "c-kc-m2-btb-2k": {
       "text": "The M2 P-core BTB holds about 2K entries; mispredictions stay near zero up to about 2K indirect branches and rise sharply beyond",
       "loc": "p009",
@@ -28880,6 +29029,7 @@
         "c-mh-v3-dma-write-slc",
         "c-mh-v3-uncacheable-caching",
         "c-mh-v3-slc-behind-mc",
+        "c-m1n1-slc-in-mcc",
         "c-slac-no-slc-copy",
         "c-slac-gpu-write-no-alloc"
       ],
@@ -28893,7 +29043,9 @@
         "c-mh-v2-m1max-slc-split",
         "c-mh-v2-slc-even-odd",
         "c-mh-v3-slc-four-slices",
-        "c-mh-v3-slc-slice-hash"
+        "c-mh-v3-slc-slice-hash",
+        "c-m1n1-slc-planes",
+        "c-m1n1-slc-pro-max"
       ],
       "name": "SLC slices",
       "block": "slc",
@@ -29034,6 +29186,7 @@
         "c-gf-other-half-l2",
         "c-ilk-l2-half-line",
         "c-m1n1-sibling-merge-off",
+        "c-m1n1-m2-merge-on",
         "c-xnu-a13-sibling-merge"
       ],
       "name": "Two L1 lines per L2 line",
@@ -30332,7 +30485,8 @@
         "c-mh-v1-zcl-5-vs-7",
         "c-mh-v1-zcl-no-simd",
         "c-mh-v1-zcl-stack",
-        "c-m1n1-zcl"
+        "c-m1n1-zcl",
+        "c-m1n1-m2-zcl"
       ],
       "name": "Zero-cycle loads (register-file memory renaming)",
       "block": "lsu",
@@ -30711,6 +30865,8 @@
         "c-at-pointer-prefetch",
         "c-mh-v8-prefetch-kinds",
         "c-mh-v8-cdp-lsu",
+        "c-m1n1-dmp-disable",
+        "c-m1n1-dmp-m3-dit",
         "c-slap-m1-hid11-dmp",
         "c-slap-dmp-vs-lap"
       ],
@@ -31114,7 +31270,8 @@
         "c-mh-v3-device-bypass",
         "c-mh-v3-fast-ipi",
         "c-mh-v8-nsm-gateway",
-        "c-m1n1-pcie-throttle-off"
+        "c-m1n1-pcie-throttle-off",
+        "c-m1n1-m2-pcie-throttle"
       ],
       "name": "Separate PIO network",
       "block": "fabric",
@@ -31428,7 +31585,8 @@
     "lsu_forward_progress": {
       "claims": [
         "c-m1n1-lfsr-stalls",
-        "c-m1n1-antilivelock"
+        "c-m1n1-antilivelock",
+        "c-m1n1-m3-lfsr"
       ],
       "name": "Load-store forward-progress widgets",
       "block": "lsu",
@@ -31441,7 +31599,8 @@
     "forced_nonspec_mode": {
       "claims": [
         "c-m1n1-force-nonspec",
-        "c-m1n1-hvc-spec"
+        "c-m1n1-hvc-spec",
+        "c-m1n1-m2-guarded-spec"
       ],
       "name": "Forced non-speculative execution",
       "block": "retire",
@@ -31574,6 +31733,7 @@
     "tso_mode": {
       "claims": [
         "c-m1n1-tso-vld",
+        "c-m1n1-m2-tso",
         "c-tso-entso-bit",
         "c-tso-rosetta",
         "c-tso-m1-prior-specfp",

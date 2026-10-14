@@ -272,6 +272,100 @@ claims:
     derivation: documented
     supports: []
     chip: m2
+  - id: c-m1n1-slc-planes
+    text: The M1 (T8103) memory cache controller holds the system level cache in 4 planes, each with its own register block
+    loc: p005
+    quote: "#define T8103_PLANES 4 #define T8103_PLANE_STRIDE 0x40000"
+    derivation: documented
+    value: 4
+    unit: planes
+    supports: [slc.planes]
+    notes: Matches the four SLC slices read from a patent figure in c-mh-v3-slc-four-slices; how an address picks its plane is not stated.
+  - id: c-m1n1-slc-ways
+    text: Each T8103 SLC plane has 16 data ways and 16 tag ways, which m1n1 enables plane by plane and polls the status register to confirm
+    loc: p005
+    quote: "#define T8103_CACHE_WAYS 16 #define T8103_CACHE_STATUS_MASK (T8103_CACHE_STATUS_DATA_COUNT | T8103_CACHE_STATUS_TAG_COUNT) ... for (int plane = 0; plane < mcc_regs[mcc].plane_count; plane++) { plane_write32(mcc, plane, PLANE_CACHE_ENABLE, mcc_regs[mcc].cache_enable_val);"
+    derivation: documented
+    value: 16
+    unit: ways
+    supports: [slc.assoc]
+    notes: Ways per plane; the source gives no capacity or line size.
+  - id: c-m1n1-slc-pro-max
+    text: On the M1 Pro and Max each of several MCC instances holds 4 SLC planes of 12 ways and 4 DCS channels
+    loc: p005
+    quote: "#define T6000_PLANES 4 #define T6000_PLANE_OFFSET 0 ... #define T6000_DCS_COUNT 4 ... #define T6000_CACHE_WAYS 12"
+    derivation: documented
+    supports: []
+    notes: M1 Pro and Max (T6000), a chip-level fact that gives no M1 value.
+  - id: c-m1n1-slc-in-mcc
+    text: m1n1's module that initializes the MCC memory controller is what turns on the system level cache, so the SLC is part of the memory cache controller
+    loc: p007
+    quote: "mcc: New module to initialize the MCC memory controller. This turns on the system level cache."
+    derivation: documented
+    supports: []
+    notes: The same plane registers also hold the TrustZone carveout ranges.
+  - id: c-m1n1-dmp-disable
+    text: m1n1's GoFetch mitigation turns off the DMP system-wide by setting HID11 bit 30 (HID11_DISABLE_DMP) on every core of the M1 and M2 families, A14 included
+    loc: p006
+    quote: "gofetch: Mitigate the GoFetch vulnerability (disable the DMP systemwide) ... Affected CPUs: M1 and M2 series (M3 and later are unaffected) ... reg_set(SYS_IMP_APL_HID11, HID11_DISABLE_DMP); ... static u32 cpus_gofetch[] = { ... MIDR_PART_T8101_FIRESTORM,"
+    derivation: documented
+    supports: []
+    notes: Contradicts c-gf-no-disable and c-aug-not-disableable, which judge that the M1 DMP cannot be turned off; agrees with c-slap-m1-hid11-dmp. The source shows no test of the effect.
+  - id: c-m1n1-dmp-m3-dit
+    text: On the M3 and later, DIT turns the DMP off, so m1n1 counts them as unaffected and leaves the fix to software that sets DIT around crypto code
+    loc: p006
+    quote: "M3 and later CPUs implement DIT to disable the DMP ... on those CPUs is for software to enable the DIT feature around crypto code."
+    derivation: documented
+    supports: []
+    chip: m3
+    notes: Agrees with c-gf-dit-m3.
+  - id: c-m1n1-m2-tso
+    text: m1n1's M2 Avalanche setup sets TSO_ALLOW_DC_ZVA_WC and the LD NT widget disable but not TSO_SERIALIZE_VLD_MICROOPS, which it sets on the M1
+    loc: p008
+    quote: "reg_set(SYS_IMP_APL_HID11, HID11_DISABLE_LD_NT_WIDGET); reg_set(SYS_IMP_APL_HID9, HID9_TSO_ALLOW_DC_ZVA_WC | HID9_AVL_UNK17);"
+    derivation: documented
+    supports: []
+    chip: m2
+  - id: c-m1n1-m2-merge-on
+    text: m1n1's M2 Avalanche setup never sets the fill 2C merge disable it sets on the M1; its only HID5 write, on the M2 Pro and Max, changes two unknown bits
+    loc: p008
+    quote: "reg_set(SYS_IMP_APL_HID16, HID16_AVL_UNK12); reg_mask(SYS_IMP_APL_HID5, HID5_BLZ_UNK_19_18_MASK, HID5_BLZ_UNK18);"
+    derivation: documented
+    supports: []
+    chip: m2
+    notes: The M3 setup does not set it either, so the LLC sibling merge is left on after the M1.
+  - id: c-m1n1-m2-zcl
+    text: m1n1's M2 Avalanche setup sets the ZCL register-file mispredict threshold to 1 and restart threshold to 3, fields its M1 setup leaves alone
+    loc: p008
+    quote: "reg_mask(SYS_IMP_APL_HID1, HID1_ZCL_RF_MISPREDICT_THRESHOLD_MASK, HID1_ZCL_RF_MISPREDICT_THRESHOLD(1)); reg_mask(SYS_IMP_APL_HID1, HID1_ZCL_RF_RESTART_THRESHOLD_MASK, HID1_ZCL_RF_RESTART_THRESHOLD(3));"
+    derivation: documented
+    supports: []
+    chip: m2
+  - id: c-m1n1-m2-guarded-spec
+    text: m1n1's M2 Avalanche setups turn off speculation past GEXIT and GENTER, Apple's guarded-mode exit and entry, which its M1 setup leaves on
+    loc: p008
+    quote: "reg_set(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE); reg_set(SYS_IMP_APL_HID18, HID18_GEXIT_EL_SPECULATION_DISABLE | HID18_GENTER_SPECULATION_DISABLE);"
+    derivation: documented
+    supports: []
+    chip: m2
+    notes: The M3 setup sets the same two bits.
+  - id: c-m1n1-m2-pcie-throttle
+    text: m1n1's M2 Avalanche setups turn the PCIe device throttle on with a limit of 60 (M2) or 62 (M2 Pro and Max), where its M1 setup clears the enable
+    loc: p008
+    quote: "reg_mask(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_LIMIT_MASK, HID3_DEV_PCIE_THROTTLE_LIMIT(60)); reg_set(SYS_IMP_APL_HID3, HID3_DEV_PCIE_THROTTLE_ENABLE);"
+    derivation: documented
+    supports: []
+    chip: m2
+  - id: c-m1n1-m3-lfsr
+    text: m1n1's M3 Everest setup keeps the LFSR stall at load pipe 2 issue from the M1 and adds the GEXIT and GENTER speculation disables
+    loc: p009
+    quote: "reg_set(SYS_IMP_APL_HID18, HID18_GEXIT_EL_SPECULATION_DISABLE | HID18_GENTER_SPECULATION_DISABLE); ... reg_set(SYS_IMP_APL_HID4, HID4_ENABLE_LFSR_STALL_LOAD_PIPE2_ISSUE);"
+    derivation: documented
+    supports: []
+    chip: m3
+
+new_params:
+  slc.planes: {block: slc, name: SLC planes, unit: planes}
 
 new_mechanisms:
   lsu_forward_progress:
@@ -280,7 +374,7 @@ new_mechanisms:
     status: inferred
     description: Counters watch for victimized lock lines and repeated replays of the oldest load or store and step in by stalling issue, and LFSR-driven random stalls at issue, replay, retire and drain points break up livelocks.
     params: []
-    claims: [c-m1n1-lfsr-stalls, c-m1n1-antilivelock]
+    claims: [c-m1n1-lfsr-stalls, c-m1n1-antilivelock, c-m1n1-m3-lfsr]
     sim_switch: null
     detection_rule: A probe that keeps the oldest load replaying, or makes two cores fight over one locked line, would see bursts of extra stall cycles and timing noise rather than a hang.
   forced_nonspec_mode:
@@ -289,19 +383,19 @@ new_mechanisms:
     status: inferred
     description: Control bits stop the core from speculating past HVC or guarded-mode calls, while single-stepping, or when the speculative flush pointer is invalid while an MP condition holds, for a time set by a timer select.
     params: []
-    claims: [c-m1n1-force-nonspec, c-m1n1-hvc-spec]
+    claims: [c-m1n1-force-nonspec, c-m1n1-hvc-spec, c-m1n1-m2-guarded-spec]
     sim_switch: null
     detection_rule: A load placed after an HVC that never returns to it would leave a cache footprint only while HVC speculation is on.
 
 mechanism_claims:
   streaming_store_nt: [c-m1n1-stnt-threshold]
-  l2_half_lines: [c-m1n1-sibling-merge-off]
+  l2_half_lines: [c-m1n1-sibling-merge-off, c-m1n1-m2-merge-on]
   nt_load_handling: [c-m1n1-ldnt-off]
   simd_power_down: [c-m1n1-nex-temp, c-m1n1-nex-gating]
   banked_prf_power: [c-m1n1-rf-bank-livelock]
   macro_op_fusion: [c-m1n1-cache-fusion-off]
-  tso_mode: [c-m1n1-tso-vld]
-  pio_network: [c-m1n1-pcie-throttle-off]
+  tso_mode: [c-m1n1-tso-vld, c-m1n1-m2-tso]
+  pio_network: [c-m1n1-pcie-throttle-off, c-m1n1-m2-pcie-throttle]
   fabric_qos_credits: [c-m1n1-credits]
   issue_age_flush: [c-m1n1-br-kill-limit]
   amx_shared_contexts: [c-m1n1-amx-ctx]
@@ -314,10 +408,13 @@ mechanism_claims:
   rename_retire_queue: [c-m1n1-chkpt]
   retire_groups: [c-m1n1-retire-groups]
   lsq_early_release: [c-m1n1-rtr-ahead]
-  zero_cycle_loads: [c-m1n1-zcl]
+  zero_cycle_loads: [c-m1n1-zcl, c-m1n1-m2-zcl]
   move_elimination: [c-m1n1-zcm]
   store_load_dep_predictor: [c-m1n1-lsp]
   load_poison_bits: [c-m1n1-ld-ordering]
   power_estimator_throttle: [c-m1n1-nrg-acc, c-m1n1-throttle, c-m1n1-m2-no-llc-thrtl]
   fill_buffer_pool: [c-m1n1-blz-dmd-merge]
   dvfs_transition: [c-m1n1-cluster-pstate]
+  slc_slices: [c-m1n1-slc-planes, c-m1n1-slc-pro-max]
+  slc_memory_side: [c-m1n1-slc-in-mcc]
+  content_directed_prefetch: [c-m1n1-dmp-disable, c-m1n1-dmp-m3-dit]

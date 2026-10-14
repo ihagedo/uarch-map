@@ -1,11 +1,11 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 153, claims 1900, sources 54, mechanisms 174
+blocks 40, links 37, params 154, claims 1912, sources 54, mechanisms 174
 
 ## By status
 
 - derived: 14
-- documented: 2
+- documented: 3
 - inferred: 21
 - measured: 109
 - open: 4
@@ -13,7 +13,7 @@ blocks 40, links 37, params 153, claims 1900, sources 54, mechanisms 174
 
 ## By confidence
 
-- confirmed: 15
+- confirmed: 16
 - conjecture: 4
 - corroborated: 32
 - derived: 14
