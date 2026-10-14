@@ -61,6 +61,69 @@ claims:
     derivation: inferred
     supports: []
     notes: The doc gives names and bit ranges only; CPU data set IDs are read from patents in c-mh-v6-cpu-dsid.
+  - id: c-asahi-bp-retention
+    text: Branch-predictor state can be kept across cluster sleep separately for the direction predictor (BDP) and the target predictor (BTP)
+    loc: p001
+    quote: "Branch predictor state retention across ACC sleep * [3:2] BP Sleep (2=BDP, 3=BTP)"
+    derivation: inferred
+    supports: []
+    notes: BDP and BTP are not expanded in the doc.
+  - id: c-asahi-fast-ipi
+    text: Fast IPIs skip the AIC through request registers, local within a cluster or global with a target cluster, in immediate, retract, deferred and nowake types, with a deferred countdown in REFCLK ticks
+    loc: p001
+    quote: "These are used for \"fast\" IPIs not using AIC ... * [20:16] Target cluster * [29:28] RR Type (0=immediate, 1=retract, 2=deferred, 3=nowake) ... * [15:0] Deferred IPI countdown value (in REFCLK ticks)"
+    derivation: documented
+    supports: []
+    notes: Matches the four IPI kinds read from a patent in c-mh-v3-fast-ipi.
+  - id: c-asahi-siq-refuse
+    text: A core that writes 3 to its SIQ_CFG register stops AICv2 from sending it IRQs, while FIQs, which come from the core complex itself, still arrive
+    loc: p001
+    quote: "If a core writes 0x3 to it's copy of the register, AICv2 will not send IRQs to that core. FIQs unaffected, as those are part of the core complexes themselves."
+    derivation: documented
+    supports: []
+    notes: AICv2 serves the M1 Pro and Max and later chips; the M1 has SIQ_CFG too (c-m1n1-features-m1).
+  - id: c-asahi-ic-ivau-asid
+    text: ACTLR_EL1 bit 12 enables ASID matching for IC IVAU, so I-cache invalidation by address can be limited to one address space
+    loc: p001
+    quote: "* [6] Enable PRSV * [12] IC IVAU Enable ASID"
+    derivation: inferred
+    supports: []
+  - id: c-asahi-tso-bit
+    text: ACTLR_EL1 bit 1 turns on TSO ordering
+    loc: p001
+    quote: "[#actlr-el1-arm-standard-not-standard] ACTLR_EL1 (ARM standard-not-standard) * [1] Enable TSO"
+    derivation: documented
+    supports: []
+    notes: Agrees with c-tso-entso-bit. The doc also lists a TSO enable in HID9 and a TSO flag in AIDR_EL1.
+  - id: c-asahi-fill-bubble
+    text: The HID11 bit names include a fill C1 bubble optimization, so a fill normally avoids a bubble it would otherwise cause
+    loc: p001
+    quote: "* [1] Disable X64 NT Lnch Optimization * [7] Disable Fill C1 Bub(ble?) Optimization"
+    derivation: inferred
+    hedge: "Bub(ble?)"
+    supports: []
+    notes: C1 is not expanded; m1n1's header names the same bit DISABLE_FILL_C1_BUB_OPT.
+  - id: c-asahi-smp-start
+    text: A core is started through the power manager, with its start address written to RVBAR in its own implementation registers and its bit then set in the cluster's start register, after which it begins at RVBAR
+    loc: p002
+    quote: "* Write start address to RVBAR at `cpu-impl-reg + 0x00` ... * Set (1 << core) in `pmgr[(offset + 0x8) + 4*cluster]` (that's core from 0-3, cluster 0-1) * This starts up the core itself."
+    derivation: documented
+    supports: []
+    notes: The start bits sit in the power manager, as c-mh-v3-reset-vector expects for the reset address, but RVBAR itself sits in each core's implementation-register block.
+  - id: c-asahi-alive-aic
+    text: A system-wide core-alive mask in the power manager is not needed for a core to start, but without its bit AIC interrupts do not work
+    loc: p002
+    quote: "This seems to be some kind of system-wide \"core alive\" signal. It is not required for the core to spin up, but without it AIC interrupts won't work"
+    derivation: inferred
+    hedge: "This seems to be some kind of"
+    supports: []
+  - id: c-asahi-wkdm
+    text: The cores have Apple instructions, wkdmc and wkdmd, that compress and decompress a whole memory page with WKdm, given source and destination addresses in registers
+    loc: p003
+    quote: "00200800 | rD << 5 | rS wkdmc, compress memory page ... 00200c00 | rD << 5 | rS wkdmd, uncompress memory page"
+    derivation: documented
+    supports: []
+    notes: Status comes back in the source register. Where the compression engine sits is not stated; c-mh-v3-wkdm-engine reads a patent that puts it at the cluster.
 
 mechanism_claims:
   mmu_walk_cache: [c-asahi-mtlb-prefetch]
@@ -71,3 +134,11 @@ mechanism_claims:
   paired_sched_queues: [c-asahi-xpick]
   simd_power_down: [c-asahi-nex-sleep]
   slc_sticky_quota: [c-asahi-datasetid]
+  core_power_cycle: [c-asahi-smp-start]
+  cluster_sleep_states: [c-asahi-bp-retention]
+  fast_ipi: [c-asahi-fast-ipi]
+  interrupt_routing: [c-asahi-siq-refuse, c-asahi-alive-aic]
+  l1i_maintenance_only: [c-asahi-ic-ivau-asid]
+  tso_mode: [c-asahi-tso-bit]
+  fill_bank_conflicts: [c-asahi-fill-bubble]
+  cluster_compression_engines: [c-asahi-wkdm]
