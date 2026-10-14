@@ -551,6 +551,7 @@
       "claims": [
         "c-ox-fetch-8",
         "c-mh-v4-fetch-16",
+        "c-jia-fetch-16",
         "c-dj-width"
       ],
       "disputes": [
@@ -560,6 +561,15 @@
             "c-mh-v4-fetch-16"
           ],
           "note": "Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.",
+          "resolution": null,
+          "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-dj-width",
+            "c-jia-fetch-16"
+          ],
+          "note": "Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.",
           "resolution": null,
           "resolved_by": null
         }
@@ -614,13 +624,16 @@
         "c-cc-gcc-l1i-192",
         "c-mh-v4-l1i-192",
         "c-ilk-l1i-size",
+        "c-jia-sysctl-l1i",
+        "c-jia-guide-l1i-size",
+        "c-jia-l1i-192",
         "c-pac-l1i-size",
         "c-xnu-fs-l1i-256"
       ],
       "disputes": [
         {
           "claims": [
-            "c-7cpu-l1i",
+            "c-jia-l1i-192",
             "c-xnu-fs-l1i-256"
           ],
           "note": "A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).",
@@ -640,6 +653,7 @@
       "claims": [
         "c-alp-icache-line-64",
         "c-ilk-l1i-line",
+        "c-jia-guide-l1i-line",
         "c-pac-l1i-line",
         "c-xnu-fs-line-64"
       ],
@@ -666,7 +680,8 @@
     "btb.l0_entries": {
       "claims": [
         "c-ox-btb-1024",
-        "c-mh-v4-btb-l0"
+        "c-mh-v4-btb-l0",
+        "c-jia-btb-1024"
       ],
       "disputes": [],
       "block": "btb",
@@ -675,7 +690,7 @@
       "sim_key": "btb_l0",
       "value": 1024,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "btb.l1_entries": {
       "claims": [
@@ -23514,6 +23529,191 @@
       "chip": "m1",
       "entered": "ileakage"
     },
+    "c-jia-fetch-page-split": {
+      "text": "Firestorm splits a fetch that crosses a page boundary into two cycles, so a loop placed across two pages pays one extra cycle per iteration",
+      "loc": "p001",
+      "quote": "\u628a\u5faa\u73af\u653e\u5728\u4e24\u4e2a\u9875\u7684\u8fb9\u754c\u4e0a\uff0c\u53d1\u73b0 Firestorm \u5fae\u67b6\u6784\u9047\u5230\u8de8\u9875\u7684\u53d6\u6307\u65f6\u786e\u5b9e\u4f1a\u62c6\u6210\u4e24\u4e2a\u5468\u671f\u6765\u8fdb\u884c",
+      "method": "throughput",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Chen notes that one-cycle cross-page fetch would need two iTLB lookups or paired page entries.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fetch-16": {
+      "text": "With the loop's first instruction in the last 4 bytes of one page and the rest on the next, time per iteration rises by a cycle every 16 instructions, so Firestorm fetches 16 instructions per cycle",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u6bcf 16 \u6761\u6307\u4ee4\u4f1a\u591a\u4e00\u4e2a\u5468\u671f\uff0c\u56e0\u6b64 Firestorm \u7684\u524d\u7aef\u53d6\u6307\u5bbd\u5ea6\u786e\u5b9e\u662f 16 \u6761\u6307\u4ee4",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "instr/cycle",
+      "supports": [],
+      "contradicts": [
+        "fetch.width"
+      ],
+      "notes": "Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fetch-line": {
+      "text": "Sixteen instructions per cycle is one 64 B cache line, though the back end limits the observed rate to 8 per cycle",
+      "loc": "p001",
+      "quote": "\u867d\u7136 Fetch \u53ef\u4ee5\u6bcf\u5468\u671f 16 \u6761\u6307\u4ee4\uff0c\u4e5f\u5c31\u662f\u4e00\u6761 64B \u7684\u7f13\u5b58\u884c\uff0c\u7531\u4e8e\u540e\u7aef\u7684\u9650\u5236\uff0c\u53ea\u80fd\u89c2\u5bdf\u5230 8 \u7684 IPC",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-fetch-8": {
+      "text": "The same cross-page test adds a cycle every 8 instructions on Icestorm, so Icestorm fetches 8 instructions per cycle",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u6bcf 8 \u6761\u6307\u4ee4\u4f1a\u591a\u4e00\u4e2a\u5468\u671f\uff0c\u610f\u5473\u7740 Icestorm \u7684\u524d\u7aef\u53d6\u6307\u5bbd\u5ea6\u4e3a 8 \u6761\u6307\u4ee4",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sysctl-l1i": {
+      "text": "macOS reports a 192 KB L1I for the performance cores and 128 KB for the efficiency cores",
+      "loc": "p001",
+      "quote": "\u901a\u8fc7 sysctl \u53ef\u4ee5\u770b\u5230\uff0cFirestorm \u5177\u6709 192KB L1 ICache\uff0cIcestorm \u5177\u6709 128KB L1 ICache ... hw.perflevel0.l1icachesize: 196608",
+      "method": "other",
+      "derivation": "documented",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "notes": "macOS sysctl values as read by Chen.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l1i-size": {
+      "text": "Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 192 KiB L1I",
+      "loc": "p001",
+      "quote": "\u6839\u636e Apple Silicon CPU Optimization Guide\uff0c\u4ece M1 Family \u5230 M4 Family\uff0cA14 Bionic \u5230 A18 Family\uff0cP-Core \u7684 L1 ICache \u7684\u914d\u7f6e\u90fd\u662f 192KiB",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l1i-ways": {
+      "text": "Apple's optimization guide gives the P-core L1I as 6-way set associative",
+      "loc": "p001",
+      "quote": "P-Core \u7684 L1 ICache \u7684\u914d\u7f6e\u90fd\u662f 192KiB , 6-way, 64B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 6,
+      "unit": "ways",
+      "supports": [],
+      "notes": "From Apple's optimization guide. Disagrees with l1i.assoc (12); agrees with c-ilk-l1i-ways and c-pac-l1i-ways.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l1i-line": {
+      "text": "Apple's optimization guide gives the P-core L1I 64 B lines",
+      "loc": "p001",
+      "quote": "P-Core \u7684 L1 ICache \u7684\u914d\u7f6e\u90fd\u662f 192KiB , 6-way, 64B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1i.line"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-ice-l1i": {
+      "text": "Apple's optimization guide gives the E-core L1I as 128 KiB with 64 B lines, 8-way on the M1 and A14 and 4-way from the M2 and A15 on",
+      "loc": "p001",
+      "quote": "E-Core \u7684 L1 ICache \u90fd\u662f 128KiB , 64B lines\uff0c\u5176\u4e2d M1 Family \u548c A14 Bionic \u662f 8-way\uff0c\u5176\u4f59\u5904\u7406\u5668\uff08M2 Family \u548c A15 Bionic \u5f00\u59cb\uff09\u662f 4-way",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "ways",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l1i-192": {
+      "text": "A loop of NOPs ending in a branch runs at 8 instructions per cycle up to a 192 KB footprint and drops quickly to 2.22 beyond it, matching a 192 KB L1I",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 footprint \u5728 192 KB \u4e4b\u524d\u65f6\u53ef\u4ee5\u8fbe\u5230 8 IPC\uff0c\u4e4b\u540e\u5219\u5feb\u901f\u964d\u5230 2.22 IPC\uff0c\u8fd9\u91cc\u7684 192 KB \u5c31\u5bf9\u5e94\u4e86 Firestorm \u7684 L1 ICache \u7684\u5bb9\u91cf",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 192,
+      "unit": "KiB",
+      "supports": [
+        "l1i.size"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-l1i-128": {
+      "text": "On Icestorm the same loop runs at 4 per cycle up to 128 KB and drops to 2.10 beyond, matching a 128 KB L1I",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 footprint \u5728 128 KB \u4e4b\u524d\u65f6\u53ef\u4ee5\u8fbe\u5230 4 IPC\uff0c\u4e4b\u540e\u5219\u5feb\u901f\u964d\u5230 2.10 IPC\uff0c\u8fd9\u91cc\u7684 128 KB \u5c31\u5bf9\u5e94\u4e86 Icestorm \u7684 L1 ICache \u7684\u5bb9\u91cf",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-btb-1024": {
+      "text": "With an unconditional branch every 4 bytes, Firestorm takes one cycle per branch up to 1024 branches, then three cycles per branch up to 49152 branches",
+      "loc": "p001",
+      "quote": "\u53ef\u89c1\u5728 1024 \u4e2a\u5206\u652f\u4e4b\u5185\u53ef\u4ee5\u8fbe\u5230 1 \u7684 CPI\uff0c\u8d85\u8fc7 1024 \u4e2a\u5206\u652f\uff0c\u51fa\u73b0\u4e86 3 CPI \u7684\u5e73\u53f0\uff0c\u4e00\u76f4\u5ef6\u7eed\u5230 49152 \u4e2a\u5206\u652f",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 1024,
+      "unit": "entries",
+      "supports": [
+        "btb.l0_entries"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-btb-l1i-plateau": {
+      "text": "The three-cycle plateau ends at 49152 branches, which is where 4-byte branches fill the 192 KB L1I, so branches missing the BTB still cost three cycles while their code stays in the L1I",
+      "loc": "p001",
+      "quote": "\u7b2c\u4e8c\u4e2a\u62d0\u70b9 49152\uff0c\u5bf9\u5e94\u7684\u662f\u6307\u4ee4 footprint \u8d85\u51fa L1 ICache \u7684\u60c5\u51b5\uff1aL1 ICache \u662f 192KB\uff0c\u6309\u7167\u6bcf 4 \u5b57\u8282\u4e00\u4e2a B \u6307\u4ee4\u8ba1\u7b97\uff0c\u6700\u591a\u53ef\u4ee5\u5b58\u653e 49152 \u6761 B \u6307\u4ee4",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles/branch",
+      "supports": [],
+      "notes": "Same tier as c-ox-btb-miss-bubble and c-mh-v4-btb-l0.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -28828,6 +29028,14 @@
       "year": 2024,
       "url": "https://github.com/apple-oss-distributions/libplatform/blob/libplatform-316.100.10/src/cachecontrol/arm64/cache.s"
     },
+    "jia-m1": {
+      "type": "article",
+      "title": "Apple M1 (Firestorm and Icestorm) microarchitecture measurements",
+      "author": "Chen, Jiajie",
+      "group": "Chen, Jiajie",
+      "year": 2024,
+      "url": "https://jia.je/hardware/2024/12/26/apple-m1/"
+    },
     "asahi-boot-log": {
       "type": "web",
       "title": "Ubuntu Asahi boot log on an M1 MacBook Pro",
@@ -30732,6 +30940,8 @@
         "c-mh-v4-m1-nfp-dm",
         "c-mh-v8-nfp-hysteresis",
         "c-mh-v8-pred-stages",
+        "c-jia-btb-1024",
+        "c-jia-btb-l1i-plateau",
         "c-kc-m2-btb-third-run",
         "c-kc-m2-btb-two-level",
         "c-kc-m2-btb-prefetch"
@@ -31968,6 +32178,21 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "in a contended set, prefetched lines never used are evicted before demand lines of the same age, and page-table or instruction lines outlast both"
+    },
+    "fetch_page_split": {
+      "claims": [
+        "c-jia-fetch-page-split",
+        "c-jia-fetch-line"
+      ],
+      "name": "Fetch split at page boundaries",
+      "block": "fetch",
+      "status": "measured",
+      "description": "A fetch that crosses a page boundary takes two cycles, one per page; within a page fetch delivers up to 16 instructions, one 64 B line, per cycle.",
+      "params": [
+        "fetch.width"
+      ],
+      "sim_switch": null,
+      "detection_rule": "A loop whose first instruction sits in the last 4 bytes of a page costs one cycle more per iteration than the same loop placed within one page."
     },
     "lsu_forward_progress": {
       "claims": [

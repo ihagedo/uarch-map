@@ -318,6 +318,13 @@ sources:
     author: Apple
     year: 2024
     url: https://github.com/apple-oss-distributions/libplatform/blob/libplatform-316.100.10/src/cachecontrol/arm64/cache.s
+  jia-m1:
+    type: article
+    title: "Apple M1 (Firestorm and Icestorm) microarchitecture measurements"
+    author: Chen, Jiajie
+    group: Chen, Jiajie
+    year: 2024
+    url: https://jia.je/hardware/2024/12/26/apple-m1/
   asahi-boot-log:
     type: web
     title: Ubuntu Asahi boot log on an M1 MacBook Pro
