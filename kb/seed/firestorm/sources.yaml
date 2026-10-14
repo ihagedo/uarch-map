@@ -343,6 +343,14 @@ sources:
     assignee: Apple
     number: US10628164B1
     url: https://patents.google.com/patent/US10628164B1/en
+  us10776125b2:
+    type: patent
+    title: Coprocessor memory ordering table
+    author: Apple
+    year: 2018
+    assignee: Apple
+    number: US10776125B2
+    url: https://patents.google.com/patent/US10776125B2/en
   apple-libplatform:
     type: repo
     title: "libplatform: sys_icache_invalidate for arm64"

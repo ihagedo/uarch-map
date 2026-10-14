@@ -5174,6 +5174,152 @@
       "chip": "m1",
       "entered": "apple-patents-core"
     },
+    "c-pat-us10452434b1-age-matrix": {
+      "source": "us10452434b1",
+      "text": "The buffers may be non-shifting, with an age matrix giving relative age and entries allocated at random",
+      "loc": "p017",
+      "quote": "is a non-shifting structure with an age matrix ... Entries in the buffers 510 and 540 may be randomly allocated.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. A shifting buffer is the alternative embodiment.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-latency-wakeup": {
+      "source": "us10452434b1",
+      "text": "An issuing op wakes its dependents with its execution latency, so they can issue just in time to catch its result on the bypass",
+      "loc": "p016",
+      "quote": "Each issued op that writes a register wakes up its true dependent ops ... The execution latency information is used for just-in-time issue for the younger data dependent ops.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-region-table": {
+      "source": "us10776125b2",
+      "text": "The CPU's load-store unit keeps a memory ordering table of regions with coprocessor loads or stores issued but not complete, and CPU loads and stores to those regions wait until they complete",
+      "loc": "p001",
+      "quote": "track at least one memory region within which there are outstanding coprocessor load/store memory operations ... The CPU processor may delay CPU load/store operations until the outstanding coprocessor load/store operations are complete.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. The source of c-mh-v3-amx-ordering-table.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-16k-region": {
+      "source": "us10776125b2",
+      "text": "A region is large, such as one 16 KiB page, so the table matches on the page address and may flag accesses that do not overlap, which is rare enough to accept",
+      "loc": "p017",
+      "quote": "if a page size of 16 kilobytes is used, the least significant 14 bits of the address",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": 16,
+      "unit": "KiB",
+      "supports": [],
+      "notes": "Priority 2018. Other embodiments use a cache line, part of a page or several pages.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-count": {
+      "source": "us10776125b2",
+      "text": "Each table entry holds a region address and a count of outstanding coprocessor operations, raised as each issues from the store queue and lowered as each completes; the entry is freed at zero",
+      "loc": "p017",
+      "quote": "a count that may be incremented for each outstanding operation and decremented for each completed operation. When the count is reduced to zero, the region may be deallocated",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-l2-ack": {
+      "source": "us10776125b2",
+      "text": "The table entry number travels with the coprocessor operation as a completion ID, and the L2 returns it once it has completed the access",
+      "loc": "p017",
+      "quote": "The L2 cache 14 may complete the coprocessor load/store operation ... and may return the completion ID with",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. Agrees with c-mh-v3-amx-l2-id-release.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-load-replay": {
+      "source": "us10776125b2",
+      "text": "A CPU load that hits a table region cancels its forwarding, waits in the load queue tagged with the entry number, and runs again when that entry is freed",
+      "loc": "p017",
+      "quote": "The LDQ 44 may permit the load to be reexecuted once the deallocation ID matching the load's ID is received.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-store-head": {
+      "source": "us10776125b2",
+      "text": "A CPU store checks the table only when it is the oldest in the store queue, and a hit holds it there until the region's entry is freed",
+      "loc": "p018",
+      "quote": "Since the CPU store operation is performed when it is oldest in the STQ 42 in this embodiment, there is one case: the CPU store operation hits the memory ordering table 40.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-cop-stall": {
+      "source": "us10776125b2",
+      "text": "A coprocessor load or store at the head of the store queue waits while an older CPU load to its region is in the load queue, while a non-cacheable store or store miss is in the core interface, or while a region count nears its maximum or the table is full",
+      "loc": "p019",
+      "quote": "if there is a non-cacheable store in the CIF 34 (or a store miss in the CIF 34), or if there is a region count in the memory ordering table 40 that is reaching its maximum",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. It also waits until older branches and exception-causing instructions resolve.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-flush-younger": {
+      "source": "us10776125b2",
+      "text": "A coprocessor load or store searches the load queue by region, and younger CPU loads to that region that already forwarded data are flushed",
+      "loc": "p019",
+      "quote": "The CAM of the LDQ 44 may detect any younger CPU load operations to the same memory region that have forwarded data, causing the younger CPU load operations to be flushed",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-agu-translate": {
+      "source": "us10776125b2",
+      "text": "Coprocessor loads and stores get their addresses generated and translated in the CPU's AGU and TLB, so the CPU knows them before sending the operations on",
+      "loc": "p014",
+      "quote": "allowing the addresses accessed by the coprocessor load/store operations to be known prior to issuance of the coprocessor load/store",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-via-stq": {
+      "source": "us10776125b2",
+      "text": "Coprocessor operations pass through the store queue like stores and leave it for the coprocessor only when no longer speculative",
+      "loc": "p016",
+      "quote": "Since coprocessor operations are passed through the STQ 42, they may be non-speculative when issued from the STQ 42",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. They go to the coprocessor through the core interface (CIF).",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
       "text": "Each mapping update writes a history-file entry naming the replaced physical register, marked as the last reference when no other mapping points to it; at retirement only last references go back to the free list",
@@ -31029,6 +31175,15 @@
       "number": "US10628164B1",
       "url": "https://patents.google.com/patent/US10628164B1/en"
     },
+    "us10776125b2": {
+      "type": "patent",
+      "title": "Coprocessor memory ordering table",
+      "author": "Apple",
+      "year": 2018,
+      "assignee": "Apple",
+      "number": "US10776125B2",
+      "url": "https://patents.google.com/patent/US10776125B2/en"
+    },
     "apple-libplatform": {
       "type": "repo",
       "title": "libplatform: sys_icache_invalidate for arm64",
@@ -31417,6 +31572,8 @@
     "amx_lsu_issue": {
       "claims": [
         "c-kpep-coproc-store-unit",
+        "c-pat-us10776125b2-agu-translate",
+        "c-pat-us10776125b2-via-stq",
         "c-cx-instr-only",
         "c-cx-store-ports",
         "c-deng-tlb",
@@ -32373,6 +32530,8 @@
     },
     "matrix_scheduler": {
       "claims": [
+        "c-pat-us10452434b1-age-matrix",
+        "c-pat-us10452434b1-latency-wakeup",
         "c-mh-v1-read-at-issue",
         "c-mh-v1-age-matrix",
         "c-mh-v1-matrix-scheduler"
@@ -33968,6 +34127,14 @@
     },
     "coprocessor_ordering_table": {
       "claims": [
+        "c-pat-us10776125b2-region-table",
+        "c-pat-us10776125b2-16k-region",
+        "c-pat-us10776125b2-count",
+        "c-pat-us10776125b2-l2-ack",
+        "c-pat-us10776125b2-load-replay",
+        "c-pat-us10776125b2-store-head",
+        "c-pat-us10776125b2-cop-stall",
+        "c-pat-us10776125b2-flush-younger",
         "c-deng-ordering",
         "c-dj-amx-mix-slow",
         "c-dj-amx-str-ldx",
