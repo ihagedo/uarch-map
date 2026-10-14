@@ -247,6 +247,13 @@ sources:
     year: 2023
     url: https://github.com/corsix/amx/issues/6
     notes: Claims come from Cawley's own posts; the threads also hold posts by other users
+  ccs26-slac:
+    type: paper
+    title: "SLAC: Access-Driven CPU-to-GPU Side-channel Attacks via System-Level Cache on Apple Silicon"
+    author: Xu, Tianhong
+    group: Fei, Yunsi
+    year: 2026
+    url: https://arxiv.org/abs/2608.09075
   arxiv-2512-21473:
     type: paper
     title: Demystifying ARM SME to Optimize General Matrix Multiplications

@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 151, claims 1797, sources 47, mechanisms 170
+blocks 40, links 37, params 153, claims 1805, sources 48, mechanisms 171
 
 ## By status
 
 - derived: 13
 - documented: 1
-- inferred: 26
-- measured: 103
+- inferred: 25
+- measured: 106
 - open: 4
 - reported: 4
 
@@ -17,8 +17,8 @@ blocks 40, links 37, params 151, claims 1797, sources 47, mechanisms 170
 - conjecture: 4
 - corroborated: 32
 - derived: 13
-- inferred: 30
-- single: 58
+- inferred: 29
+- single: 61
 
 ## Holes (4)
 
@@ -27,7 +27,7 @@ blocks 40, links 37, params 151, claims 1797, sources 47, mechanisms 170
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (20)
+## Open disputes (21)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - l1i.size: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).  [c-7cpu-l1i, c-xnu-fs-l1i-256]
@@ -46,6 +46,7 @@ blocks 40, links 37, params 151, claims 1797, sources 47, mechanisms 170
 - sched_int.total_entries: Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.  [c-cc-oryon-m1-int-sched-134, c-mh-v1-sched-johnson-2x]
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - dtlb.l2_org: Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).  [c-mh-v2-tlb2-org, c-pac-l2tlb-23x2048]
+- slc.replacement: Lines placed by GPU reads. Disagrees with EXAM's pseudo-random finding (c-exam-repl-random) and with the patent reading c-mh-v3-slc-replacement.  [c-mh-v3-slc-replacement, c-slac-repl-lru]
 - l1i.assoc: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).  [c-mh-v8-l1i-12way, c-ilk-l1i-ways]
 - l1i.assoc: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).  [c-mh-v8-l1i-12way, c-pac-l1i-ways]
 - l1i.assoc: The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.  [c-mh-v8-l1i-12way, c-xnu-fs-l1i-6way]

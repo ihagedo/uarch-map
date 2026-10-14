@@ -1834,7 +1834,8 @@
     "slc.size": {
       "claims": [
         "c-7cpu-slc-size",
-        "c-mh-v2-slc-size"
+        "c-mh-v2-slc-size",
+        "c-slac-size"
       ],
       "disputes": [],
       "block": "slc",
@@ -2626,7 +2627,8 @@
       "claims": [
         "c-mh-v3-l2-line-128",
         "c-mh-v3-line-change",
-        "c-mh-v8-line-128"
+        "c-mh-v8-line-128",
+        "c-slac-line-128"
       ],
       "disputes": [],
       "block": "slc",
@@ -2639,21 +2641,33 @@
     "slc.allocation": {
       "claims": [
         "c-mh-v3-victim-fill",
-        "c-mh-v8-slc-victim"
+        "c-mh-v8-slc-victim",
+        "c-slac-cpu-fill-via-l2"
       ],
       "disputes": [],
       "block": "slc",
       "name": "SLC allocation policy",
       "mechanism": "slc_victim_fill",
       "value": "L2 victims",
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "measured",
+      "confidence": "single"
     },
     "slc.replacement": {
       "claims": [
-        "c-mh-v3-slc-replacement"
+        "c-mh-v3-slc-replacement",
+        "c-slac-repl-lru"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v3-slc-replacement",
+            "c-slac-repl-lru"
+          ],
+          "note": "Lines placed by GPU reads. Disagrees with EXAM's pseudo-random finding (c-exam-repl-random) and with the patent reading c-mh-v3-slc-replacement.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "slc",
       "name": "SLC replacement policy",
       "mechanism": "slc_sticky_quota",
@@ -2866,6 +2880,30 @@
       "name": "Exclusive reservation granule",
       "unit": "B",
       "value": 64,
+      "status": "measured",
+      "confidence": "single"
+    },
+    "slc.sets": {
+      "claims": [
+        "c-slac-sets"
+      ],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC sets",
+      "unit": "sets",
+      "value": 4096,
+      "status": "measured",
+      "confidence": "single"
+    },
+    "slc.assoc": {
+      "claims": [
+        "c-slac-ways"
+      ],
+      "disputes": [],
+      "block": "slc",
+      "name": "SLC associativity",
+      "unit": "ways",
+      "value": 16,
       "status": "measured",
       "confidence": "single"
     }
@@ -24818,6 +24856,125 @@
       "chip": "m1",
       "entered": "s2c"
     },
+    "c-slac-sets": {
+      "text": "Grouping lines by which GPU-filled SLC lines they evict, over a region 1.2 times the SLC size, gives 4,096 groups, so the M1 SLC has 4,096 sets and a 12-bit set index",
+      "loc": "p005",
+      "quote": "We set |Btest | to 1.2\u00d7 the SLC size in our experiments. The clustering yields 4,096 clusters, indicating 4,096 SLC sets and therefore a 12bit set index.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 4096,
+      "unit": "sets",
+      "supports": [
+        "slc.sets"
+      ],
+      "notes": "8 GB M1. Each test line's eviction profile is read by timing CPU loads of a GPU-filled buffer.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-ways": {
+      "text": "The M1 SLC is 16-way set associative, so filling it takes 65,536 line-sized blocks",
+      "loc": "p006",
+      "quote": "With the Apple M1 SLC set associativity of 16 and 4,096 cache sets, SLC_ES contains 4,096 \u00d7 16 = 65,536 memory addresses in total",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "ways",
+      "supports": [
+        "slc.assoc"
+      ],
+      "notes": "Used throughout priming and probing, where 16 lines fill a set and evict all primed lines; no separate way-count test is described.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-size": {
+      "text": "The paper's M1 diagram shows an 8 MB SLC shared by both CPU clusters and the GPU",
+      "loc": "p003",
+      "quote": "8MB System Level Cache 8GB Unified Memory ... The SLC is shared across the two clusters and the GPU",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "MiB",
+      "supports": [
+        "slc.size"
+      ],
+      "notes": "Background figure without a source; the paper's own tests give 4,096 sets of 16 ways (c-slac-sets, c-slac-ways).",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-line-128": {
+      "text": "The index recovery takes the SLC line as 128 B and treats physical address bits 0 to 6 as the line offset",
+      "loc": "p005",
+      "quote": "With 128-byte cache lines, the lowest 7 bits are offset bits, leaving 26 candidate bits contributing to the 12-bit SLC set index.",
+      "derivation": "inferred",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "slc.line"
+      ],
+      "notes": "Assumed, not tested.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-index-hash": {
+      "text": "Every one of the 12 SLC set-index bits is an XOR of several physical address bits between bit 7 and bit 32, and the hash spreads addresses nearly evenly over the sets",
+      "loc": "p004",
+      "quote": "Section 3.3 shows that all 12 SLC set-index bits are computed by hash functions over multiple address bits",
+      "method": "other",
+      "derivation": "measured",
+      "value": "12 bits, each an XOR of several PA bits from 7 to 32",
+      "supports": [],
+      "notes": "One functionally equivalent set of 12 functions is recovered (Figure 4) from the physical addresses of each group, on an 8 GB M1 whose physical addresses use 33 bits.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-index-low-bits": {
+      "text": "Each of the lower six SLC index functions takes one address bit from bits 7 to 12, so the 128 B lines of an aligned power-of-two block map to a contiguous run of distinct sets",
+      "loc": "p011",
+      "quote": "Figure 4 shows that on Apple M1, for the lower 6 SLC set index bits, each is directly obtained from one address bit (within 7\u201312).",
+      "method": "other",
+      "derivation": "measured",
+      "value": "index bits 0-5 each take one of PA bits 7-12",
+      "supports": [],
+      "notes": "Contradicts the mechanism's 512 B line: neighbouring 128 B lines fall in different sets, not under one tag (c-mh-v8-slc-line-512). Also disagrees with c-exam-index-above-13.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-repl-lru": {
+      "text": "GPU kernels that touch twice a set's ways in controlled orders, probed from the CPU, show SLC eviction follows access order: lines accessed earlier are replaced first, as under LRU",
+      "loc": "p005",
+      "quote": "Across configurations, eviction is consistently access-order-dependent: lines accessed earlier are replaced before those accessed more recently, which is consistent with an LRU replacement policy",
+      "method": "other",
+      "derivation": "measured",
+      "value": "LRU",
+      "supports": [],
+      "contradicts": [
+        "slc.replacement"
+      ],
+      "notes": "Lines placed by GPU reads. Disagrees with EXAM's pseudo-random finding (c-exam-repl-random) and with the patent reading c-mh-v3-slc-replacement.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
+    "c-slac-cpu-fill-via-l2": {
+      "text": "A CPU load always fills the L2, and a line enters the SLC only when a full L2 set evicts it, so priming the SLC from the CPU takes a second set of lines that pushes the first out of the L2",
+      "loc": "p006",
+      "quote": "the SLC acts as a backup buffer: when the CPU loads data from memory, it always goes to the L2 cache. Only when an L2 cache set is full, an older cache line is evicted to the SLC",
+      "method": "other",
+      "derivation": "measured",
+      "value": "L2 victims",
+      "supports": [
+        "slc.allocation"
+      ],
+      "notes": "Restates EXAM (c-exam-l2-victim-fill); the two-step CPU priming built on it fills the whole SLC.",
+      "source": "ccs26-slac",
+      "chip": "m1",
+      "entered": "slac"
+    },
     "c-slap-m1-no-lap": {
       "text": "On the M1, a chain of dependent loads runs no faster when its addresses stride than when they are random, so the M1 has no load address prediction",
       "loc": "p002",
@@ -26850,6 +27007,14 @@
       "url": "https://github.com/corsix/amx/issues/6",
       "notes": "Claims come from Cawley's own posts; the threads also hold posts by other users"
     },
+    "ccs26-slac": {
+      "type": "paper",
+      "title": "SLAC: Access-Driven CPU-to-GPU Side-channel Attacks via System-Level Cache on Apple Silicon",
+      "author": "Xu, Tianhong",
+      "group": "Fei, Yunsi",
+      "year": 2026,
+      "url": "https://arxiv.org/abs/2608.09075"
+    },
     "arxiv-2512-21473": {
       "type": "paper",
       "title": "Demystifying ARM SME to Optimize General Matrix Multiplications",
@@ -27387,7 +27552,8 @@
         "c-mh-v8-slc-states",
         "c-mh-v8-slc-line-512",
         "c-mh-v8-slc-partial-valid",
-        "c-mh-v8-64b-dirty"
+        "c-mh-v8-64b-dirty",
+        "c-slac-index-low-bits"
       ],
       "name": "SLC line states and sectors",
       "block": "slc",
@@ -29395,7 +29561,8 @@
         "c-mh-v3-victim-request",
         "c-mh-v3-cpu-no-slc-alloc",
         "c-mh-v3-slc-device-alloc",
-        "c-mh-v8-slc-victim"
+        "c-mh-v8-slc-victim",
+        "c-slac-cpu-fill-via-l2"
       ],
       "name": "SLC filled by L2 victims",
       "block": "slc",
@@ -29952,6 +30119,21 @@
       "sim_switch": null,
       "detection_rule": "an L2 eviction set walked on another core evicts a line from this core's L1D only when the set's own lines all stay in L1D, split over the two L1D sets of one 128 B L2 line"
     },
+    "slc_hashed_index": {
+      "claims": [
+        "c-slac-sets",
+        "c-slac-index-hash"
+      ],
+      "name": "Hashed SLC set index",
+      "block": "slc",
+      "status": "measured",
+      "description": "The SLC picks one of 4,096 sets with 12 index bits, each an XOR of several physical address bits from bit 7 up, so addresses spread nearly evenly over the sets.",
+      "params": [
+        "slc.sets"
+      ],
+      "sim_switch": null,
+      "detection_rule": "SLC eviction sets fall into 4,096 congruence classes, and a buffer strided by up to 8 KiB still reaches about 90% of the SLC."
+    },
     "load_address_prediction": {
       "claims": [
         "c-mh-v8-m2-lap",
@@ -30120,7 +30302,7 @@
         "slc_address_ranges",
         "slc_memory_side"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "slc.partition": {
       "block": "slc",
