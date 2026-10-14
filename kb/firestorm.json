@@ -808,7 +808,8 @@
     "ras.depth": {
       "claims": [
         "c-cc-oryon-m1-ras-50",
-        "c-jia-ras-50"
+        "c-jia-ras-50",
+        "c-jc-ras-sweep"
       ],
       "disputes": [],
       "block": "ras",
@@ -1093,6 +1094,7 @@
       "claims": [
         "c-mh-v1-dispatch-ls",
         "c-mh-v1-dispatch-ls-probe",
+        "c-jc-dispatch-ls-10",
         "c-dj-lsq-dispatch-10"
       ],
       "disputes": [],
@@ -1102,13 +1104,14 @@
       "sim_key": "dispatch_ls",
       "value": 10,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "sched_int.entries_per_queue": {
       "claims": [
         "c-mh-v1-sched-int-13",
         "c-mh-v1-sched-br-13",
-        "c-jia-sched-int-units"
+        "c-jia-sched-int-units",
+        "c-jc-mul-sched-28"
       ],
       "disputes": [
         {
@@ -1117,6 +1120,15 @@
             "c-jia-sched-int-units"
           ],
           "note": "Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.",
+          "resolution": null,
+          "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-mh-v1-sched-int-13",
+            "c-jc-mul-sched-28"
+          ],
+          "note": "Against the 13 per multiply queue of c-mh-v1-sched-int-13.",
           "resolution": null,
           "resolved_by": null
         }
@@ -1145,7 +1157,8 @@
     "sched_fp.entries_per_queue": {
       "claims": [
         "c-mh-v1-sched-18",
-        "c-jia-sched-fp-36"
+        "c-jia-sched-fp-36",
+        "c-jc-fp-sched-36"
       ],
       "disputes": [
         {
@@ -1154,6 +1167,15 @@
             "c-jia-sched-fp-36"
           ],
           "note": "Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.",
+          "resolution": null,
+          "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-mh-v1-sched-18",
+            "c-jc-fp-sched-36"
+          ],
+          "note": "Same data as c-jia-sched-fp-36, here with one 12-entry FP queue rather than two of 6.",
           "resolution": null,
           "resolved_by": null
         }
@@ -1171,6 +1193,7 @@
         "c-mh-v1-sched-ls-48",
         "c-mh-v1-sched-ls-split-48",
         "c-jia-sched-ls-48",
+        "c-jc-sched-ls-48",
         "c-dj-lsq-sched-48"
       ],
       "disputes": [],
@@ -1350,6 +1373,7 @@
         "c-mh-v1-history-file",
         "c-mh-v1-hf-630",
         "c-mh-v1-hf-movreg-620",
+        "c-jc-rename-620",
         "c-dj-rename-retire"
       ],
       "disputes": [],
@@ -1408,6 +1432,7 @@
       "claims": [
         "c-at-lq",
         "c-mh-v1-lq-130",
+        "c-jc-lq-130",
         "c-dj-loads",
         "c-dj-lsq-lq-130",
         "c-tso-lq-130"
@@ -1435,6 +1460,7 @@
       "claims": [
         "c-at-sq",
         "c-mh-v1-sq-late-alloc-60",
+        "c-jc-store-118",
         "c-dj-stores",
         "c-dj-lsq-sq-60",
         "c-tso-sq-60"
@@ -1479,6 +1505,7 @@
         "c-ox-ls-units",
         "c-mh-v1-ls-units-3l-2s",
         "c-mh-v2-ls-pipes",
+        "c-jc-ls-pipes",
         "c-dj-ls-units"
       ],
       "disputes": [],
@@ -2122,7 +2149,8 @@
       "claims": [
         "c-cc-oryon-m1-int-sched-134",
         "c-mh-v1-sched-johnson-2x",
-        "c-jia-sched-int-134"
+        "c-jia-sched-int-134",
+        "c-jc-int-sched-133"
       ],
       "disputes": [
         {
@@ -25140,6 +25168,191 @@
       "source": "jia-m1",
       "entered": "jia-m1"
     },
+    "c-jc-ras-sweep": {
+      "text": "In Chen's call-depth sweep the minimum time per call level stays near 1.1 up to a depth of 50 and jumps to about 5.6 at 51, staying near 5 out to 64",
+      "loc": "p003",
+      "quote": "48,1.08,4.71,34.50 49,1.10,5.24,76.29 50,1.12,5.01,50.88 51,5.57,9.63,65.25 52,5.48,10.23,95.85",
+      "derivation": "measured",
+      "value": 50,
+      "unit": "entries",
+      "supports": [
+        "ras.depth"
+      ],
+      "notes": "Columns are depth, min, avg and max; the unit of time is not given. The diagram labels this a 50-entry RAS.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-lq-130": {
+      "text": "The load sweep shows a step at 130 loads, taken as a 130-entry load queue",
+      "loc": "p001",
+      "quote": "load: spike at 130(pattern 4) and 188(pattern5, 188=130+48(scheduler)+10(dispatch queue)) 130-entry Load Queue",
+      "derivation": "measured",
+      "value": 130,
+      "unit": "entries",
+      "supports": [
+        "lq.entries"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-load-188": {
+      "text": "A second load pattern steps at 188, which Chen splits into 130 load queue entries, 48 scheduler entries and 10 dispatch queue entries",
+      "loc": "p001",
+      "quote": "188(pattern5, 188=130+48(scheduler)+10(dispatch queue))",
+      "derivation": "derived",
+      "value": 188,
+      "unit": "loads",
+      "supports": [],
+      "notes": "Same split as c-dj-lsq-branch-loads-188.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-store-107": {
+      "text": "Two store patterns step at 107, which Chen reads as 60 store queue entries plus 48 scheduler entries less one",
+      "loc": "p001",
+      "quote": "store: spike at 107(pattern 2 & 6, 107=60+48(scheduler)-1)",
+      "derivation": "derived",
+      "value": 107,
+      "unit": "stores",
+      "supports": [],
+      "notes": "Same count as c-dj-lsq-store-107.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-store-118": {
+      "text": "A third store pattern steps at 118, which is 60 store queue entries plus 48 scheduler and 10 dispatch queue entries; the 60 is computed as 118 minus 48 minus 10",
+      "loc": "p001",
+      "quote": "118(pattern 7, 60+48(scheduler)+10(dispatch queue)) ... 60 was computed by 118 - 48(scheduler) - 10(dispatch queue) 60-entry Store Queue",
+      "derivation": "derived",
+      "value": 60,
+      "unit": "entries",
+      "supports": [
+        "sq.entries"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-lsu-steps": {
+      "text": "In the raw store sweep, pattern 7 holds near 114 up to 118 stores and jumps to about 185 at 119; the load pattern 5 jumps between 188 and 189 in the same way",
+      "loc": "p002",
+      "quote": "7,116,113.30,115.34,122.40 7,117,113.30,114.76,122.20 7,118,113.60,113.79,114.40 7,119,184.50,187.01,198.30 7,120,184.50,187.68,198.40",
+      "derivation": "measured",
+      "value": 118,
+      "unit": "stores",
+      "supports": [],
+      "notes": "Columns are pattern, size, min, avg and max; the unit of time is not given.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-sched-ls-48": {
+      "text": "The load/store probe fits 58 ops, 48 of them in the schedulable part, so the memory scheduler holds 48",
+      "loc": "p001",
+      "quote": "Source: jiegec, 58(10+48) sched size for load & store ... Source: jiegec, 48 sched size for load & store",
+      "derivation": "measured",
+      "value": 48,
+      "unit": "entries",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-dispatch-ls-10": {
+      "text": "The other 10 of the 58 load/store entries are the memory dispatch queue",
+      "loc": "p001",
+      "quote": "Source: jiegec, 58(10+48) sched size for load & store ... 10-entry Memory Dispatch Queue",
+      "derivation": "derived",
+      "value": 10,
+      "unit": "entries",
+      "supports": [
+        "dispatch.ls_entries"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-int-sched-133": {
+      "text": "The ALU probe fits 158 ops, 133 of them schedulable, which Chen matches to two 12-entry dispatch queues and schedulers of 24, 26, 16, 12, 28 and 28 entries",
+      "loc": "p001",
+      "quote": "Source: jiegec, 158(=12+12+24+26+16+12+28+28) sched size for alu ... Source: jiegec, 133(~=134=24+26+16+12+28+28) sched w/o nsq size for alu",
+      "derivation": "measured",
+      "value": 133,
+      "unit": "entries",
+      "supports": [
+        "sched_int.total_entries"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-mul-sched-28": {
+      "text": "The integer multiply probe fits 68 ops, 56 of them schedulable, matching two 28-entry schedulers behind one 12-entry dispatch queue",
+      "loc": "p001",
+      "quote": "Source: jiegec, 68(12+28+28) sched size for imul ... Source: jiegec, 56(28+28) sched w/o nsq size for imul",
+      "derivation": "derived",
+      "value": 28,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "sched_int.entries_per_queue"
+      ],
+      "notes": "Against the 13 per multiply queue of c-mh-v1-sched-int-13.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-fp-sched-36": {
+      "text": "The FP probe fits 156 ops, 143 of them schedulable, matching one 12-entry FP dispatch queue ahead of four 36-entry schedulers",
+      "loc": "p001",
+      "quote": "Source: jiegec, 156(=12+36+36+36+36) sched size for fp ... Source: jiegec, 143(~=144=36+36+36+36) sched w/o nsq size for fp dispatch4: 12-entry FP Dispatch Queue",
+      "derivation": "derived",
+      "value": 36,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "sched_fp.entries_per_queue"
+      ],
+      "notes": "Same data as c-jia-sched-fp-36, here with one 12-entry FP queue rather than two of 6.",
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-rename-620": {
+      "text": "Chen measures about 620 for the rename history, against Johnson's 623",
+      "loc": "p001",
+      "quote": "Source: jiegec, ~620 rename: ~623-entry Rename History",
+      "derivation": "measured",
+      "value": 620,
+      "unit": "entries",
+      "approx": true,
+      "supports": [
+        "retire.rename_queue"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
+    "c-jc-ls-pipes": {
+      "text": "Firestorm has two load pipes, one store pipe and one load/store pipe",
+      "loc": "p001",
+      "quote": "Source: jiegec 2 Load Pipe 1 Store Pipe 1 Load/Store Pipe",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "units",
+      "supports": [
+        "lsu.ls_units"
+      ],
+      "source": "jiegec-firestorm",
+      "chip": "m1",
+      "entered": "jiegec-firestorm"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -30396,6 +30609,14 @@
       "url": "https://github.com/corsix/amx/issues/6",
       "notes": "Claims come from Cawley's own posts; the threads also hold posts by other users"
     },
+    "jiegec-firestorm": {
+      "type": "repo",
+      "title": "Firestorm diagram and load/store queue measurements",
+      "author": "Chen, Jiajie",
+      "group": "Chen, Jiajie",
+      "year": 2024,
+      "url": "https://github.com/jiegec/cpu/blob/master/docs/firestorm.d2"
+    },
     "anandtech-m1-mini": {
       "type": "article",
       "title": "The 2020 Mac mini unleashed: putting Apple silicon M1 to the test",
@@ -31475,7 +31696,8 @@
     },
     "ras_overflow_clear": {
       "claims": [
-        "c-cc-oryon-m1-ras-overflow"
+        "c-cc-oryon-m1-ras-overflow",
+        "c-jc-ras-sweep"
       ],
       "name": "Return stack cleared on overflow",
       "block": "ras",
@@ -32151,6 +32373,10 @@
         "c-mh-v1-sq-late-alloc-60",
         "c-mh-v1-lsq-order-tags",
         "c-mh-v8-virtual-alloc",
+        "c-jc-load-188",
+        "c-jc-store-107",
+        "c-jc-store-118",
+        "c-jc-lsu-steps",
         "c-dj-lsq-alloc-issue",
         "c-dj-lsq-store-107",
         "c-dj-lsq-branch-loads-188",
@@ -32582,6 +32808,7 @@
         "c-jia-fp-nsq",
         "c-jia-int-nsq-24",
         "c-jia-int-nsq-two",
+        "c-jc-dispatch-ls-10",
         "c-dj-pipeline-flow",
         "c-dj-lsq-dispatch-stall"
       ],

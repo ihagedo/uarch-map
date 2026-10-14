@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 158, claims 2043, sources 58, mechanisms 178
+blocks 40, links 37, params 158, claims 2056, sources 59, mechanisms 178
 
 ## By status
 
@@ -15,10 +15,10 @@ blocks 40, links 37, params 158, claims 2043, sources 58, mechanisms 178
 
 - confirmed: 21
 - conjecture: 3
-- corroborated: 34
+- corroborated: 35
 - derived: 14
 - inferred: 21
-- single: 65
+- single: 64
 
 ## Holes (3)
 
@@ -26,7 +26,7 @@ blocks 40, links 37, params 158, claims 2043, sources 58, mechanisms 178
 - iq.depth (iq): Fetch-to-decode queue depth
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (30)
+## Open disputes (32)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - fetch.width: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.  [c-dj-width, c-jia-fetch-16]
@@ -36,7 +36,9 @@ blocks 40, links 37, params 158, claims 2043, sources 58, mechanisms 178
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]
 - fp_prf.total: measured on the A14  [c-dj-fp-prf, c-at-fp-prf]
 - sched_int.entries_per_queue: Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.  [c-mh-v1-sched-int-13, c-jia-sched-int-units]
+- sched_int.entries_per_queue: Against the 13 per multiply queue of c-mh-v1-sched-int-13.  [c-mh-v1-sched-int-13, c-jc-mul-sched-28]
 - sched_fp.entries_per_queue: Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.  [c-mh-v1-sched-18, c-jia-sched-fp-36]
+- sched_fp.entries_per_queue: Same data as c-jia-sched-fp-36, here with one 12-entry FP queue rather than two of 6.  [c-mh-v1-sched-18, c-jc-fp-sched-36]
 - eu_int.count: measured on the A14  [c-ox-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-stores, c-at-sq]

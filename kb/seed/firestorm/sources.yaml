@@ -268,6 +268,13 @@ sources:
     year: 2023
     url: https://github.com/corsix/amx/issues/6
     notes: Claims come from Cawley's own posts; the threads also hold posts by other users
+  jiegec-firestorm:
+    type: repo
+    title: "Firestorm diagram and load/store queue measurements"
+    author: Chen, Jiajie
+    group: Chen, Jiajie
+    year: 2024
+    url: https://github.com/jiegec/cpu/blob/master/docs/firestorm.d2
   anandtech-m1-mini:
     type: article
     title: "The 2020 Mac mini unleashed: putting Apple silicon M1 to the test"
