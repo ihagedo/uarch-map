@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 153, claims 1853, sources 53, mechanisms 172
+blocks 40, links 37, params 153, claims 1862, sources 53, mechanisms 172
 
 ## By status
 
@@ -15,10 +15,10 @@ blocks 40, links 37, params 153, claims 1853, sources 53, mechanisms 172
 
 - confirmed: 15
 - conjecture: 4
-- corroborated: 31
+- corroborated: 32
 - derived: 14
 - inferred: 25
-- single: 64
+- single: 63
 
 ## Holes (4)
 
@@ -27,7 +27,7 @@ blocks 40, links 37, params 153, claims 1853, sources 53, mechanisms 172
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (24)
+## Open disputes (23)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - l1i.size: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).  [c-7cpu-l1i, c-xnu-fs-l1i-256]
@@ -43,7 +43,6 @@ blocks 40, links 37, params 153, claims 1853, sources 53, mechanisms 172
 - dtlb.l1_org: Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).  [c-mh-v2-dtlb-5way, c-pac-dtlb-12x256]
 - l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-mh-v2-l2-latency-17, c-mh-v1-l2-latency-aside]
-- slc.size: The same author gives the M1's SLC as 8 MB in the M1 Max review (c-at-max-m1-slc-8).  [c-7cpu-slc-size, c-at-mini-slc-16]
 - sched_int.total_entries: Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.  [c-cc-oryon-m1-int-sched-134, c-mh-v1-sched-johnson-2x]
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - l2.core_capacity: 7.5 vs 8 at equal rank  [c-mh-v2-l2-transitions, c-at-mini-l2-partition]

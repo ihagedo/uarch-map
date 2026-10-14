@@ -106,3 +106,123 @@ claims:
     chip: m1pro
     notes: Reasoned partly from SRAM die area.
 
+  - id: c-at-max-slc-48
+    text: >-
+      The M1 Max has 48 MB of SLC, which the author calls the memory controller caches, meant to amplify bandwidth for
+      the chip's blocks and cut off-chip DRAM traffic and energy
+    loc: p001
+    quote: "The memory controller caches are at 48MB in this chip, allowing for theoretically amplified memory bandwidth for various SoC blocks as well as reducing off-chip DRAM traffic"
+    derivation: measured
+    value: 48
+    unit: MiB
+    supports: []
+    chip: m1max
+    notes: Agrees with c-cc-gcc-m1max-slc-48.
+
+  - id: c-at-max-m1-slc-8
+    text: The M1's SLC is 8 MB, against 48 MB on the M1 Max
+    loc: p002
+    quote: "Where things are quite different is when we enter the system cache, instead of 8MB, on the M1 Max it’s now 48MB large"
+    derivation: measured
+    value: 8
+    unit: MiB
+    supports: [slc.size]
+    notes: From latency tests set against the M1's. Replaces the 16 MB assumed in the Mac mini review (c-at-mini-slc-16).
+
+  - id: c-at-max-slc-slower
+    text: >-
+      The M1 Max's SLC is slower than the M1's; its latency depends on the access pattern, and even a linear chain shows
+      data travelling farther than on the M1 and the A-series chips
+    loc: p002
+    quote: "it’s also evidently slower than the M1 SLC – the exact figures here depend on access pattern, but even the linear chain access shows that data has to travel a longer distance than the M1"
+    method: pointer-chase
+    derivation: measured
+    supports: []
+    chip: m1max
+
+  - id: c-at-max-dram-latency
+    text: >-
+      At a 128 MB test depth DRAM latency on the M1 Max is roughly 15 ns higher than on the M1, which the author puts
+      down to the larger SLC, a more complex fabric or worse LPDDR5 timings
+    loc: p002
+    quote: "At a 128MB comparable test depth, the new chip is roughly 15ns slower. The larger SLCs, more complex chip fabric, as well as possible worse timings on the part of the new LPDDR5 memory all could add"
+    derivation: measured
+    value: 15
+    unit: ns
+    approx: true
+    hedge: "all could add"
+    supports: []
+    chip: m1max
+
+  - id: c-at-max-m1-dram-bound
+    text: One M1 core fully saturates the M1's memory bandwidth, and the bottleneck is the DRAM itself
+    loc: p002
+    quote: "we had already noted that the M1 chip was able to fully saturate its memory bandwidth with a single core and that the bottleneck had been on the DRAM itself"
+    derivation: measured
+    value: true
+    supports: []
+    notes: Restates the author's Mac mini result (c-at-mini-one-core-saturates).
+
+  - id: c-at-max-one-core-102
+    text: >-
+      One thread on the M1 Max moves up to 102 GB/s; the limit there seems to be what one core, or rather the CPU
+      cluster, can do
+    loc: p002
+    quote: "it’s able to stress the memory fabric to up to 102GB/s ... On the M1 Max, it seems that we’re hitting the limit of what a core can do"
+    derivation: measured
+    value: 102
+    unit: GB/s
+    hedge: "it seems that"
+    supports: []
+    chip: m1max
+    notes: The core and L2 are the M1's. The test reads, modifies and writes back lines, half reads and half writes.
+
+  - id: c-at-max-evict-limit
+    text: >-
+      Bandwidth drops once the footprint passes the 12 MB L2, which the author reads as the core being limited when it
+      evicts lines out to the rest of the memory system
+    loc: p002
+    quote: "the reduction in BW at the 12MB figure signals that the core is somehow limited in bandwidth when evicting cache lines back to the upper memory system"
+    derivation: inferred
+    hedge: "somehow"
+    supports: []
+    chip: m1max
+    notes: Read-modify-write test with a 1:1 read and write ratio.
+
+  - id: c-at-max-fabric-224
+    text: >-
+      With threads spread over both P clusters, DRAM bandwidth stops at 224 GB/s at four threads, and more P-core
+      threads add nothing, which the author calls the limit of the chip's fabric for the CPUs
+    loc: p002
+    quote: "a fourth thread lands us at 224GB/s and this appears to be the limit on the SoC fabric that the CPUs are able to achieve"
+    derivation: measured
+    value: 224
+    unit: GB/s
+    hedge: "appears to be"
+    supports: []
+    chip: m1max
+    notes: Two threads, one per cluster, reach 186 GB/s and three reach 204 GB/s.
+
+  - id: c-at-max-ecores-243
+    text: Adding the E cores, in their own cluster, lifts CPU DRAM bandwidth to at most 243 GB/s, far below the chip's 409 GB/s
+    loc: p002
+    quote: "It’s only when the E-cores, which are in their own cluster, are added in, when the bandwidth is able to jump up again, to a maximum of 243GB/s."
+    derivation: measured
+    value: 243
+    unit: GB/s
+    supports: []
+    chip: m1max
+    notes: The jump comes only with another cluster, which fits a limit per cluster.
+
+new_params: {}
+new_mechanisms: {}
+mechanism_claims:
+  one_core_dram_saturation: [c-at-max-m1-dram-bound]
+  noc_layout: [c-at-max-fabric-224, c-at-max-ecores-243]
+  slc_memory_side: [c-at-max-slc-48]
+
+resolutions:
+  - param: slc.size
+    claims: [c-7cpu-slc-size, c-at-mini-slc-16]
+    resolution: The same author measures 8 MB for the M1 here; the 16 MB was assumed from the A14
+    resolved_by: c-at-max-m1-slc-8
