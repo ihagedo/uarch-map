@@ -242,6 +242,13 @@ sources:
     group: Asahi Linux
     year: 2025
     url: https://github.com/AsahiLinux/m1n1
+  linux-apple:
+    type: repo
+    title: "Linux Apple SoC support: M1 power domains, interrupt controller, PMU"
+    author: Asahi Linux
+    group: Asahi Linux
+    year: 2025
+    url: https://github.com/torvalds/linux/tree/master/arch/arm64/boot/dts/apple
   dougall-amx:
     type: web
     title: AMX instruction notes (IDA plugin)

@@ -2873,6 +2873,18 @@
       "status": "measured",
       "confidence": "corroborated"
     },
+    "memctrl.channels": {
+      "claims": [
+        "c-lx-dcs-eight"
+      ],
+      "disputes": [],
+      "block": "memctrl",
+      "name": "DRAM channels",
+      "unit": "channels",
+      "value": 8,
+      "status": "documented",
+      "confidence": "single"
+    },
     "slc.planes": {
       "claims": [
         "c-m1n1-slc-planes"
@@ -24571,6 +24583,98 @@
       "notes": "The M4 uses LPDDR5X memory, the M2 LPDDR5. The test stops at 28 lanes.",
       "entered": "lemire"
     },
+    "c-lx-dcs-eight": {
+      "text": "The M1's power-domain tree has eight DCS domains, each an LPDDR4 interface, beside a single MCC memory-controller domain",
+      "loc": "p001",
+      "quote": "label = \"mcc\"; apple,always-on; /* Memory controller */ ... label = \"dcs7\"; apple,always-on; /* LPDDR4 interface */",
+      "derivation": "documented",
+      "value": 8,
+      "unit": "channels",
+      "supports": [
+        "memctrl.channels"
+      ],
+      "notes": "Domains dcs0 to dcs7, all kept on by Linux. Matches eight 16-bit channels in c-7cpu-memory; how addresses spread over them is not stated.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-fabric-critical": {
+      "text": "Two fabric blocks of the M1, IMX and SMX, are kept on as critical blocks in its power-domain tree, with APCIe hanging off IMX",
+      "loc": "p001",
+      "quote": "label = \"imx\"; apple,always-on; /* Apple fabric, critical block */ ... label = \"smx\"; apple,always-on; /* Apple fabric, critical block */ ... power-domains = <&ps_imx>, <&ps_pcie_ref>;",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The source does not say which traffic each block carries.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-fabric-powerdown": {
+      "text": "Two other fabric blocks of the M1 can power down, RMX for display and image clients and MMX for media clients",
+      "loc": "p001",
+      "quote": "label = \"rmx\"; /* Apple Fabric, display/image stuff: this can power down */ ... label = \"mmx\"; /* Apple Fabric, media stuff: this can power down */",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "In the tree the ISP and display front ends hang off RMX, and the video encoder, decoder and JPEG blocks off MMX.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-aic-v1": {
+      "text": "The M1's AIC (version 1) gives each hardware IRQ one mask bit and a per-IRQ target, delivers through one event/ack register per CPU with lower IRQ numbers first, and masks an IRQ when its event is read",
+      "loc": "p002",
+      "quote": "- Single mask bit per IRQ * - Per-IRQ affinity setting * - Automatic masking on event delivery (auto-ack) ... - Automatic prioritization (single event/ack register per CPU, lower IRQs = * higher priority)",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The driver binds the T8103 to AIC version 1 and sets one target CPU per IRQ; it shows no cluster-by-cluster offering.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-fiq": {
+      "text": "On the M1, FIQs come from fast IPIs, the four Arm timers and the per-core and per-cluster performance counters rather than through the AIC",
+      "loc": "p002",
+      "quote": "- Fast IPIs (not yet used) * - The 4 timers (CNTP, CNTV for each of HV and guest) * - Per-core PMCs (not yet supported) * - Per-cluster uncore PMCs (not yet supported)",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "No register gives the FIQ source, so the driver checks each source in turn.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-local-ipi": {
+      "text": "From the M1 on, a fast IPI to a core in the sender's cluster goes through the local request register, and one to another cluster through the global register with a cluster field",
+      "loc": "p002",
+      "quote": "/* True if SYS_IMP_APL_IPI_RR_LOCAL_EL1 exists for local fast IPIs (M1+) */ ... if (static_branch_likely(&use_local_fast_ipi) && MPIDR_CLUSTER(my_mpidr) == cluster) { write_sysreg_s(FIELD_PREP(IPI_RR_CPU, idx), SYS_IMP_APL_IPI_RR_LOCAL_EL1);",
+      "derivation": "documented",
+      "supports": [],
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-aic2": {
+      "text": "AIC version 2 sets each IRQ's target through a target field and a delay-group index, and adds global prefer-P-CPU, cluster-priority, timeout and delay-group registers",
+      "loc": "p002",
+      "quote": "#define AIC2_CONFIG_PREFER_PCPU BIT(28) #define AIC2_TIMEOUT 0x0028 #define AIC2_CLUSTER_PRIO 0x0030 #define AIC2_DELAY_GROUPS 0x0100 ... #define AIC2_IRQ_CFG_TARGET GENMASK(3, 0) #define AIC2_IRQ_CFG_DELAY_IDX GENMASK(7, 5)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Not the M1's controller; AICv2 serves the M1 Pro and Max and later. Delay groups and cluster priority fit the cluster rounds of c-mh-v3-irq-soft-hard-force.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
+    "c-lx-pmu-counters": {
+      "text": "The M1 core PMU has 10 counters, the first two wired to cycles and instructions, and an experimentally built table limits some events to counters 5 to 7, to 7 alone or to every other counter",
+      "loc": "p003",
+      "quote": "#define M1_PMU_NR_COUNTERS 10 ... Not all counters can count all events. Counters #0 and #1 are wired to * count cycles and instructions respectively ... Note that this table * has been created experimentally",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Retired-instruction class events (branches, loads, stores, mispredicts) sit on counters 5 to 7 or on 7 alone; the driver applies the same limits to P and E cores.",
+      "source": "linux-apple",
+      "chip": "m1",
+      "entered": "linux-apple"
+    },
     "c-m1n1-stnt-threshold": {
       "text": "An Apple erratum title quoted by m1n1 names an STNT widget with a contiguous-store counter, whose threshold m1n1 sets to 3 on every M1 Firestorm",
       "loc": "p001",
@@ -28597,6 +28701,14 @@
       "year": 2025,
       "url": "https://github.com/AsahiLinux/m1n1"
     },
+    "linux-apple": {
+      "type": "repo",
+      "title": "Linux Apple SoC support: M1 power domains, interrupt controller, PMU",
+      "author": "Asahi Linux",
+      "group": "Asahi Linux",
+      "year": 2025,
+      "url": "https://github.com/torvalds/linux/tree/master/arch/arm64/boot/dts/apple"
+    },
     "dougall-amx": {
       "type": "web",
       "title": "AMX instruction notes (IDA plugin)",
@@ -28895,7 +29007,8 @@
         "c-mh-v3-two-pipelines",
         "c-mh-v3-eight-pipelines",
         "c-mh-v8-mc-hash-bits",
-        "c-mh-v8-mc-shutdown"
+        "c-mh-v8-mc-shutdown",
+        "c-lx-dcs-eight"
       ],
       "name": "Hashed address interleave",
       "block": "fabric",
@@ -28908,7 +29021,9 @@
         "c-at-max-ecores-243",
         "c-mh-v3-fabric-tiers",
         "c-mh-v3-2012-xbars",
-        "c-mh-v3-cluster-one-requester"
+        "c-mh-v3-cluster-one-requester",
+        "c-lx-fabric-critical",
+        "c-lx-fabric-powerdown"
       ],
       "name": "Layered fabric, one port per cluster",
       "block": "fabric",
@@ -29161,6 +29276,9 @@
         "c-mh-v3-fabric-interrupts",
         "c-mh-v3-irq-soft-hard-force",
         "c-mh-v3-irq-rob-nack",
+        "c-lx-aic-v1",
+        "c-lx-fiq",
+        "c-lx-aic2",
         "c-xnu-irq-mask-wfi"
       ],
       "name": "Power-aware interrupt routing",
@@ -32035,7 +32153,8 @@
         "c-xnu-fast-ipi-types",
         "c-xnu-ipi-deferred-timer",
         "c-xnu-ipicr-two-copies",
-        "c-asahi-fast-ipi"
+        "c-asahi-fast-ipi",
+        "c-lx-local-ipi"
       ],
       "name": "Fast IPIs through system registers",
       "block": "power",
