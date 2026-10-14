@@ -319,6 +319,12 @@ sources:
     author: Deng, Chencheng
     year: 2025
     url: https://arxiv.org/abs/2512.21473
+  dac24-power:
+    type: paper
+    title: Uncovering Software-Based Power Side-Channel Attacks on Apple M1/M2 Systems
+    author: Chawla, Nikhil
+    year: 2024
+    url: https://arxiv.org/abs/2306.16391
   us10133571b1:
     type: patent
     title: Load-store unit with banked queue

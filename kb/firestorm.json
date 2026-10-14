@@ -8310,6 +8310,149 @@
       "chip": "m1",
       "entered": "corsix-amx"
     },
+    "c-dac-smc-meters": {
+      "text": "The System Management Controller, a coprocessor for power and thermal management, exposes temperature, voltage and power readings to software",
+      "loc": "p002",
+      "quote": "The System Management Controller (SMC) is a co-processor responsible for power and thermal management ... The SMC exposes various sensor data including temperature, voltage and power meters",
+      "method": "secondhand",
+      "derivation": "reported",
+      "supports": [],
+      "notes": "Background with a citation. User-mode software reads the values as four-letter keys through IOKit.",
+      "source": "dac24-power",
+      "chip": "m1",
+      "entered": "dac24-power"
+    },
+    "c-dac-m1-keys": {
+      "text": "On the M1, six SMC power keys change with load (PDTR, PHPC, PHPS, PMVR, PPMR and PSTR), found by comparing idle and all-core stress readings",
+      "loc": "p002",
+      "quote": "Mac Mini M1 PDTR, PHPC, PHPS PMVR, PPMR PSTR",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "Mac Mini M1 under macOS 12.5. The M2 shows PDTR, PHPC, PHPS, PMVC and PSTR. Apple does not document the keys.",
+      "source": "dac24-power",
+      "chip": "m1",
+      "entered": "dac24-power"
+    },
+    "c-dac-update-1s": {
+      "text": "The SMC key values refresh about once a second",
+      "loc": "p003",
+      "quote": "We observed that the SMC key values are updated approximately every one second.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "s",
+      "approx": true,
+      "supports": [],
+      "notes": "Stated for the method run on both test machines, a Mac Mini M1 and a MacBook Air M2.",
+      "source": "dac24-power",
+      "chip": "m1",
+      "entered": "dac24-power"
+    },
+    "c-dac-m1-phpc-data": {
+      "text": "On the M1 the PHPC power reading depends on the data being processed, even when the cycle count is fixed",
+      "loc": "p003",
+      "quote": "we conducted TVLA on the collected traces of the PHPC key values collected on the Apple M1 platform, affirming a similar data-dependency pattern for the PHPC key",
+      "method": "other",
+      "derivation": "measured",
+      "supports": [],
+      "notes": "AES on three P-cores with fixed plaintexts, compared by Welch's t-test. On the M2, PDTR, PMVC and PSTR also depend on data and PHPS does not.",
+      "source": "dac24-power",
+      "chip": "m1",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-ioreport-model": {
+      "text": "The IOReport Energy Model channel for the P-cores shows no data dependence, and the authors suspect it is estimated from core utilization rather than measured",
+      "loc": "p005",
+      "quote": "we suspect \"Energy Model\" group reports estimated energy model calculated based on core utilization instead of actual sensor reading",
+      "method": "other",
+      "derivation": "inferred",
+      "hedge": "we suspect",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2. The channel reports energy in mJ, coarser than the SMC keys.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-thermal-first": {
+      "text": "With the default power limit, loading the M2's cores with work and stress code reaches the thermal limit before any power-limit throttling",
+      "loc": "p005",
+      "quote": "with such settings we observed the system's thermal limit was consistently reached before any power-based throttling",
+      "method": "other",
+      "derivation": "measured",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2 under macOS 13.0.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-lpm-clock": {
+      "text": "In low-power mode the M2 P-cores run steadily at 1.968 GHz while total CPU power stays under 4 W",
+      "loc": "p005",
+      "quote": "the P-cores maintained a consistent frequency of 1.968 GHz when the total CPU power consumption remained under 4W",
+      "method": "other",
+      "derivation": "measured",
+      "value": 1.968,
+      "unit": "GHz",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2 with pmset lowpowermode set to 1, AES threads added core by core.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-lpm-cap": {
+      "text": "Low-power mode caps M2 CPU power at 4 W, and the P-cores throttle once the cap is reached, with temperature low enough to rule out thermal throttling",
+      "loc": "p005",
+      "quote": "we observed a power cap at 4W, coinciding with the onset of frequency throttling in the P-cores. Given that the CPU temperature remained low during this throttling, we ruled out thermal factors",
+      "method": "other",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "W",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2. AES on all four P-cores drew only 2.8 W, so FMUL stress on the E-cores was added to reach the cap.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-lpm-ecores": {
+      "text": "At the low-power-mode cap the M2 E-cores do not throttle and stay at 2.424 GHz",
+      "loc": "p005",
+      "quote": "Interestingly, the efficiency cores (Ecores) did not exhibit throttling and continued to operate at a stable frequency of 2.424 GHz.",
+      "method": "other",
+      "derivation": "measured",
+      "value": 2.424,
+      "unit": "GHz",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-throttle-no-data": {
+      "text": "Under low-power-mode throttling, AES run time on the M2 P-cores, and so the throttled clock, does not depend on the data",
+      "loc": "p006",
+      "quote": "The absence of true positives suggests that the timing (and throttled frequency) is not data-dependent.",
+      "method": "other",
+      "derivation": "measured",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2, Welch's t-test on execution times for three fixed plaintexts.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
+    "c-dac-m2-phps-throttle": {
+      "text": "The PHPS reading, which shows no data dependence, peaks at 4 W during throttling, so low-power-mode throttling may act on PHPS rather than on actual power",
+      "loc": "p006",
+      "quote": "the \"PHPS\" SMC key value also peaked at 4W during throttling ... we infer that lowpowermode's frequency throttling may rely on \"PHPS\" rather than actual power use",
+      "method": "other",
+      "derivation": "inferred",
+      "hedge": "may rely on",
+      "chip": "m2",
+      "supports": [],
+      "notes": "MacBook Air M2.",
+      "source": "dac24-power",
+      "entered": "dac24-power"
+    },
     "c-deng-l2-only": {
       "text": "The SME unit shares only the L2 with the CPU cores and does not use their L1 caches",
       "loc": "p005",
@@ -31440,6 +31583,13 @@
       "year": 2025,
       "url": "https://arxiv.org/abs/2512.21473"
     },
+    "dac24-power": {
+      "type": "paper",
+      "title": "Uncovering Software-Based Power Side-Channel Attacks on Apple M1/M2 Systems",
+      "author": "Chawla, Nikhil",
+      "year": 2024,
+      "url": "https://arxiv.org/abs/2306.16391"
+    },
     "us10133571b1": {
       "type": "patent",
       "title": "Load-store unit with banked queue",
@@ -33547,6 +33697,22 @@
       "sim_switch": null,
       "detection_rule": "taken-branch latency steps with code footprint (branch spacing) more than with branch count"
     },
+    "power_telemetry": {
+      "claims": [
+        "c-dac-smc-meters",
+        "c-dac-m1-keys",
+        "c-dac-update-1s",
+        "c-dac-m1-phpc-data",
+        "c-dac-m2-ioreport-model"
+      ],
+      "name": "Power readings exposed to software",
+      "block": "power",
+      "status": "measured",
+      "description": "The SMC reports power readings as keys that refresh about once a second and that user-mode software can read; some follow the data being processed, while the OS energy counters look like estimates from core utilization.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "Reading the SMC power keys while a fixed-cycle loop runs on all-zero and all-one operands would show the data-dependent keys moving with the data."
+    },
     "amx_z_dependency_window": {
       "claims": [
         "c-dj-amx-latency",
@@ -34506,6 +34672,12 @@
     },
     "power_estimator_throttle": {
       "claims": [
+        "c-dac-m2-thermal-first",
+        "c-dac-m2-lpm-clock",
+        "c-dac-m2-lpm-cap",
+        "c-dac-m2-lpm-ecores",
+        "c-dac-m2-throttle-no-data",
+        "c-dac-m2-phps-throttle",
         "c-mh-v3-fill-source-telemetry",
         "c-mh-v3-apsc-dpe",
         "c-mh-v3-dpe-throttle",
