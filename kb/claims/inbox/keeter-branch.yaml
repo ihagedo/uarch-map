@@ -1,0 +1,74 @@
+# keeter-branch.yaml
+# Matt Keeter, 2023
+# Returns predicted from the return stack on an M1 Max: mismatched call and return pairs, and BR X30 as the way around.
+session: keeter-branch
+source: keeter-branch
+
+claims:
+  - id: c-keeter-ret-mismatch
+    text: >-
+      A loop entered once by BL and left by a RET on every iteration, so the returns never match calls, runs about four
+      times slower than the same work with a matched BL and RET per iteration
+    loc: p001
+    quote: 'The "optimized" code with one jump per loop is about 4x slower than the original version with two jumps per loop!'
+    derivation: measured
+    value: 4
+    unit: ratio
+    approx: true
+    supports: []
+    notes: Measured on an M1 Max over a 1024-element array, 969 ns against 3.85 us. Every RET in the loop goes to the same address.
+
+  - id: c-keeter-ret-mispredict
+    text: >-
+      With mismatched calls and returns the return-mispredict counter reads about 929 million over 1 billion
+      iterations against 92 with matched pairs, so about 93% of returns are mispredicted
+    loc: p001
+    quote: "BRANCH_RET_INDIR_MISPRED_NONSPECIFIC | 92 | 928,644,975 ... with mismatched bl / ret pairs, the return branch predictor fails about 93% of the time"
+    method: counter
+    derivation: measured
+    value: 93
+    unit: '%'
+    approx: true
+    supports: []
+    notes: Measured on an M1 Max, summing a 1 billion element array.
+
+  - id: c-keeter-br-x30
+    text: >-
+      Replacing each RET with BR X30, which does not mark a return, removes the slowdown: 913 ns against 969 ns for
+      matched pairs
+    loc: p001
+    quote: "Dan made the great suggestion of replacing ret with br x30 to test this theory. Sure enough, this fixes the performance regression ... One bl , many br x30 | 913 ns"
+    derivation: measured
+    value: 913
+    unit: ns
+    supports: []
+    notes: Measured on an M1 Max. Keeter puts the small gain over matched pairs down to one branch per iteration instead of two.
+
+  - id: c-keeter-ras-model
+    text: >-
+      Keeter reads the result as a return stack pushed by every BL and popped by every RET, which predicts a RET to the
+      most recent BL and fails when many RETs share one call
+    loc: p001
+    quote: "the branch predictor probably keeps an internal stack of function return addresses, which is pushed to whenever a bl is executed"
+    derivation: inferred
+    hedge: "probably"
+    supports: []
+    notes: Every RET in the loop goes to the same address, yet most are mispredicted (c-keeter-ret-mispredict).
+
+  - id: c-keeter-restart-counters
+    text: >-
+      With mismatched returns FETCH_RESTART rises from about 61 thousand to 988 million, MAP_DISPATCH_BUBBLE from 1.2 to
+      7.4 billion and MAP_REWIND from 6.4 million to 2.8 billion over 1 billion iterations
+    loc: p001
+    quote: "FETCH_RESTART | 61,121 | 987,765,276 MAP_DISPATCH_BUBBLE | 1,155,632 | 7,350,085,139 MAP_REWIND | 6,412,734 | 2,789,499,545"
+    method: counter
+    derivation: measured
+    supports: []
+    notes: Measured on an M1 Max. Keeter guesses these are downstream effects of the mispredicted returns.
+
+new_params: {}
+
+new_mechanisms: {}
+
+mechanism_claims:
+  return_fetch_table: [c-keeter-ret-mismatch, c-keeter-ret-mispredict, c-keeter-br-x30, c-keeter-ras-model]

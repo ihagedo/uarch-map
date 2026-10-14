@@ -332,6 +332,12 @@ sources:
     group: Chen, Jiajie
     year: 2024
     url: https://jia.je/hardware/2024/12/26/apple-m1/
+  keeter-branch:
+    type: web
+    title: Do Not Taunt Happy Fun Branch Predictor
+    author: Keeter, Matt
+    year: 2023
+    url: https://www.mattkeeter.com/blog/2023-01-25-branch/
   asahi-boot-log:
     type: web
     title: Ubuntu Asahi boot log on an M1 MacBook Pro
