@@ -327,6 +327,14 @@ sources:
     assignee: Apple
     number: US10133571B1
     url: https://patents.google.com/patent/US10133571B1/en
+  us10452434b1:
+    type: patent
+    title: Hierarchical reservation station
+    author: Apple
+    year: 2017
+    assignee: Apple
+    number: US10452434B1
+    url: https://patents.google.com/patent/US10452434B1/en
   us10628164b1:
     type: patent
     title: Branch resolve pointer optimization

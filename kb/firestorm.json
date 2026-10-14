@@ -5042,6 +5042,138 @@
       "chip": "m1",
       "entered": "apple-patents-core"
     },
+    "c-pat-us10133571b1-sq-contiguous": {
+      "source": "us10133571b1",
+      "text": "Store-queue banks are not interleaved; each holds a contiguous run of stores, and one bank's run leaves in order and completely before the other bank's run starts",
+      "loc": "p012",
+      "quote": "the group of store instructions in one of the banks are dequeued fully before proceeding to retire any of the store instructions in the other bank",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016. Bank 0 holds entries 0 to n/2-1 and bank 1 entries n/2 to n-1.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-sq-refill": {
+      "source": "us10133571b1",
+      "text": "While one store-queue bank drains, the other fills with new stores, and retiring stores in contiguous runs keeps memory updates in program order",
+      "loc": "p012",
+      "quote": "while store instructions are being dequeued from one of the banks, the other bank may concurrently be filled with store instructions",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10133571b1-issued-entries": {
+      "source": "us10133571b1",
+      "text": "The load and store queues receive loads and stores as the fetch, decode, map and issue unit issues them, and hold them once executed",
+      "loc": "p011",
+      "quote": "coupled to receive load and store instructions, respectively, issued by FDMI unit 12",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2016. Fits allocation at issue, but the text does not say whether entries are reserved earlier.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-two-buffers": {
+      "source": "us10452434b1",
+      "text": "A reservation station holds ops in a primary and a secondary buffer, and every op in the primary buffer outranks every op in the secondary one",
+      "loc": "p013",
+      "quote": "include at least a primary buffer and a secondary buffer, each for storing ops. In various embodiments, each op stored in the primary buffer has a higher priority than any op stored in the secondary buffer",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. Priority comes from program-order age, an assigned level, a thread or a process. The HID16 bit EnRs4Sec (Enable RS4 Sec) may name such a secondary buffer.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-separate-pick": {
+      "source": "us10452434b1",
+      "text": "Each buffer has its own pick and readiness logic working without the other buffer's contents, so the station can grow without lengthening the cycle",
+      "loc": "p014",
+      "quote": "Separate control logic selects ops for issue among N ops stored in the primary buffer based on priority. This control logic performs this selection independent of the data stored in the secondary buffer.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-fill-width": {
+      "source": "us10452434b1",
+      "text": "Ready ops picked in the primary buffer issue first, and ready ops picked in the secondary buffer fill the issue slots left, so a secondary op can issue ahead of unpicked primary ops",
+      "loc": "p017",
+      "quote": "issue width is 4, the first number of ops selected in the primary buffer is 3 ... all 3 of the selected ops in the primary buffer are issued and 1 of the 2 ops in the secondary buffer is issued",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. The numbers are the patent's example.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-staging": {
+      "source": "us10452434b1",
+      "text": "When the secondary buffer sits farther away, its picks pass a pipeline stage before the primary buffer's issue select takes them, a cycle late",
+      "loc": "p015",
+      "quote": "A single stage boundary delays by one clock cycle selection for issue",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. With the buffers close together there may be no stage.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-transfer": {
+      "source": "us10452434b1",
+      "text": "The highest-priority ops of the secondary buffer move up to the primary buffer as room frees, ready or not",
+      "loc": "p013",
+      "quote": "the number of ops to transfer includes ops with a highest priority among the ops stored in the secondary buffer, although the source operands may not yet be ready",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. The example moves three ops a cycle and issues up to three.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-cancel": {
+      "source": "us10452434b1",
+      "text": "An op that issues from the secondary buffer while it is being moved has its move cancelled, so it does not issue twice",
+      "loc": "p013",
+      "quote": "the control logic cancels, or invalidates, the transfer of a given op from the secondary buffer to the primary buffer in response to determining that the given op has issued",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-dispatch-credit": {
+      "source": "us10452434b1",
+      "text": "Each reservation station tells the dispatch unit how many ops to send, as free entries or credits, and the dispatch unit need not know the station has two buffers",
+      "loc": "p013",
+      "quote": "The dispatch unit receives the indication with the value, but the dispatch unit may not be aware of separate buffers",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. The count may cover only entries freed in the last cycle.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10452434b1-dispatch-types": {
+      "source": "us10452434b1",
+      "text": "Dispatch buffers take ops by type (integer, load/store, floating point), and one dispatch buffer may feed two reservation stations",
+      "loc": "p012",
+      "quote": "each dispatch buffer 120 may be coupled to two separate reservation stations 122 ... instruction operations may be captured by the dispatch buffers 120A-120N based on the type of instruction operation",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2017. Each reservation station feeds one execution unit in the main embodiment.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
       "text": "Each mapping update writes a history-file entry naming the replaced physical register, marked as the last reference when no other mapping points to it; at retirement only last references go back to the free list",
@@ -30879,6 +31011,15 @@
       "number": "US10133571B1",
       "url": "https://patents.google.com/patent/US10133571B1/en"
     },
+    "us10452434b1": {
+      "type": "patent",
+      "title": "Hierarchical reservation station",
+      "author": "Apple",
+      "year": 2017,
+      "assignee": "Apple",
+      "number": "US10452434B1",
+      "url": "https://patents.google.com/patent/US10452434B1/en"
+    },
     "us10628164b1": {
       "type": "patent",
       "title": "Branch resolve pointer optimization",
@@ -32590,6 +32731,7 @@
     },
     "lsq_at_issue": {
       "claims": [
+        "c-pat-us10133571b1-issued-entries",
         "c-mh-v1-virtual-lsq",
         "c-pat-us20200394039a1-two-load-queues",
         "c-mh-v1-lsq-patent-reading",
@@ -32733,7 +32875,9 @@
         "c-pat-us10133571b1-lq-interleave",
         "c-pat-us10133571b1-lq-eligibility",
         "c-pat-us10133571b1-same-address",
-        "c-pat-us10133571b1-resolve-pointer"
+        "c-pat-us10133571b1-resolve-pointer",
+        "c-pat-us10133571b1-sq-contiguous",
+        "c-pat-us10133571b1-sq-refill"
       ],
       "name": "Two-bank load and store queues",
       "block": "lsu",
@@ -32742,6 +32886,23 @@
       "params": [],
       "sim_switch": null,
       "detection_rule": "Draining the load or store queue would top out at one entry per bank per cycle, two in all, however many entries are ready to leave."
+    },
+    "hierarchical_reservation_station": {
+      "claims": [
+        "c-pat-us10452434b1-two-buffers",
+        "c-pat-us10452434b1-separate-pick",
+        "c-pat-us10452434b1-fill-width",
+        "c-pat-us10452434b1-staging",
+        "c-pat-us10452434b1-transfer",
+        "c-pat-us10452434b1-cancel"
+      ],
+      "name": "Two-level reservation station",
+      "block": "sched_int",
+      "status": "speculative",
+      "description": "A scheduler queue holds its highest-priority ops in a primary buffer and the rest in a secondary buffer, each picked by its own logic; secondary picks fill issue slots the primary leaves empty, and the oldest secondary ops move up as room frees.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "With the front of a queue full of stalled old ops, a young independent op further back would still issue, but perhaps a cycle later than an op near the front."
     },
     "lsq_early_release": {
       "claims": [
@@ -33045,6 +33206,8 @@
     "dispatch_buffers": {
       "claims": [
         "c-kpep-dispatch-backpressure",
+        "c-pat-us10452434b1-dispatch-credit",
+        "c-pat-us10452434b1-dispatch-types",
         "c-cc-oryon-m1-fp-sched",
         "c-mh-v1-ls-dispatch-unordered",
         "c-mh-v1-dispatch-unordered",
