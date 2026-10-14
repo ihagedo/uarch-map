@@ -254,6 +254,13 @@ sources:
     group: Fei, Yunsi
     year: 2026
     url: https://arxiv.org/abs/2608.09075
+  asiaccs25-exam:
+    type: paper
+    title: "EXAM: Exploiting Exclusive System-Level Cache in Apple M-Series SoCs for Enhanced Cache Occupancy Attacks"
+    author: Xu, Tianhong
+    group: Fei, Yunsi
+    year: 2025
+    url: https://arxiv.org/abs/2504.13385
   arxiv-2512-21473:
     type: paper
     title: Demystifying ARM SME to Optimize General Matrix Multiplications

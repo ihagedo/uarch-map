@@ -1,0 +1,176 @@
+# exam.yaml
+# Tianhong Xu, Aidong Adam Ding and Yunsi Fei, 2025
+# M1 SLC hit time, line size, CPU exclusion and GPU inclusion, set index and replacement.
+session: exam
+source: asiaccs25-exam
+
+claims:
+  - id: c-exam-l2-victim-fill
+    text: >-
+      A line pushed out of the L2 by an L2 eviction set reloads much faster than a line not recently touched, so L2
+      victims spill into the SLC
+    loc: p003
+    quote: "We observe that the access time of the data just evicted from the L2 cache is significantly shorter than that of data not recently loaded into the cache hierarchy"
+    method: other
+    derivation: measured
+    value: L2 victims
+    supports: [slc.allocation]
+    notes: MacBook Air M1. Tests the authors' guess that the SLC backs the L2 by taking its evictions.
+
+  - id: c-exam-cpu-load-local
+    text: A CPU load puts the line in the core's L1 and L2, not in the SLC, so a CPU buffer cannot fill the SLC directly
+    loc: p002
+    quote: "When accessing a buffer element, the data, which is newer and warmer, is always loaded to the CPU’s local caches (L1 and L2), not necessarily to the SLC."
+    derivation: measured
+    value: true
+    supports: []
+    notes: Summary of the inclusion tests in the appendix.
+
+  - id: c-exam-slc-hit-ticks
+    text: >-
+      On an M1 MacBook Air, reloading a line just evicted from the L2 takes about 220 ticks of a counting-thread timer,
+      which the authors take as the SLC hit time
+    loc: p003
+    quote: "the access time for the newly evicted data is approximately 220 ticks ... We infer that the 220 ticks correspond to an SLC hit time."
+    method: other
+    derivation: measured
+    value: 220
+    unit: ticks
+    approx: true
+    supports: []
+    notes: >-
+      Ticks of a user-level counting thread the paper gives a 3 GHz resolution, not core cycles, so slc.latency is not
+      supported. Thresholds of 160 and 300 ticks split local hits, SLC hits and misses.
+
+  - id: c-exam-dram-ticks
+    text: On the same timer a line not recently loaded, which comes from DRAM, takes about 430 ticks
+    loc: p003
+    quote: "whereas the access time for much older data is around 430 ticks, as shown in Figure 2"
+    method: other
+    derivation: measured
+    value: 430
+    unit: ticks
+    approx: true
+    supports: []
+    notes: Same timer as c-exam-slc-hit-ticks.
+
+  - id: c-exam-gpu-then-cpu
+    text: >-
+      Data first read by the GPU and then by the CPU comes back at the SLC hit time, so GPU reads place lines in an
+      SLC the CPU shares
+    loc: p003
+    quote: "when data is first accessed by the GPU and then accessed by the CPU, the CPU’s access time also aligns with the SLC hit time. This suggests that the SLC is shared between the CPU and GPU."
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: Agrees with c-slac-gpu-read-fills.
+
+  - id: c-exam-line-128
+    text: The SLC line is 128 B, the same as the L2's
+    loc: p004
+    quote: "Our first observation is that system-level cache line size is 128 bytes, the same as L2 caches."
+    derivation: measured
+    value: 128
+    unit: B
+    supports: [slc.line]
+    notes: >-
+      No test is described. Gives the 128 B unit that probes see; c-mh-v8-slc-line-512 guesses 512 B lines of four
+      128 B sectors.
+
+  - id: c-exam-cpu-exclusive
+    text: >-
+      The SLC is exclusive of the CPU caches: a line the CPU takes back from the SLC leaves it at once, so reloading a
+      CPU buffer forwards or backwards leaves the same number of a GPU-filled buffer's lines in the SLC
+    loc: p014
+    quote: "indicate that the difference between the two access patterns is minimal. This observation aligns with the behavior of an exclusive cache."
+    method: other
+    derivation: measured
+    value: exclusive of the CPU caches
+    supports: [slc.inclusion]
+    notes: >-
+      Against c-mh-v3-slc-neither-incl-excl. A non-inclusive SLC, which keeps a backup copy, would have shown a gap
+      between the two orders.
+
+  - id: c-exam-gpu-inclusive
+    text: >-
+      When the GPU reads a buffer, SLC hits grow linearly with buffer size up to the SLC's capacity, which the authors
+      read as the SLC being inclusive of the GPU's caches
+    loc: p013
+    quote: "the number of SLC hits increases linearly with the buffer size until the buffer size reaches the SLC size. This behavior strongly suggests that the GPU cache is inclusive"
+    method: other
+    derivation: measured
+    value: inclusive of the GPU caches
+    hedge: "strongly suggests"
+    supports: []
+    notes: SLAC finds a GPU read of a line a CPU holds creates no SLC copy (c-slac-no-slc-copy).
+
+  - id: c-exam-index-above-13
+    text: >-
+      A buffer strided by up to 8 KiB still fills about 90% of the SLC, and the share it can fill halves only from a
+      16 KiB stride on, which the authors read as the set index using address bit 13 and up but not bits 0 to 12
+    loc: p014
+    quote: "not affected by the stride size when it’s less than or equal to 8192 bytes ... the SLC only employs the 14th bit and above for set indexing"
+    method: stride-sweep
+    derivation: measured
+    value: "PA bit 13 and above"
+    supports: []
+    notes: Disagrees with SLAC's recovered functions, which use bits 7 to 12 (c-slac-index-low-bits).
+
+  - id: c-exam-l2-low-index
+    text: >-
+      The share of the L2 a strided buffer can use falls in proportion to the stride, because the L2 takes its set
+      index from low address bits that a fixed stride holds constant
+    loc: p014
+    quote: "For the L2 cache, the utilization is inversely proportional to the stride size due to the fixed stride causing some of the lowest bits in the address to remain constant."
+    method: stride-sweep
+    derivation: measured
+    supports: []
+    notes: Agrees with c-s2c-l2-index.
+
+  - id: c-exam-repl-random
+    text: >-
+      Two equal buffers loaded in turn and probed in reverse order keep nearly the same SLC hits each at every size, so
+      SLC replacement looks independent of access order, that is pseudo-random
+    loc: p015
+    quote: "the SLC cache hits for both buffers remain nearly identical across all buffer sizes, suggesting that the SLC replacement policy is independent of the access order, indicating a pseudorandom replacement policy"
+    method: other
+    derivation: measured
+    value: pseudo-random
+    hedge: "suggesting"
+    supports: [slc.replacement]
+    notes: Disagrees with SLAC's LRU order (c-slac-repl-lru). Fits the random step of c-mh-v3-slc-replacement.
+
+  - id: c-exam-slc-fill-90
+    text: One buffer reaches only about 90% of the SLC, which the authors put down to its pseudo-random replacement
+    loc: p015
+    quote: "the cache line replacement is not purely based on access recency but likely involves a form of randomization or pseudo-random selection. This is why, as shown in Figure 21b, the SLC utilization only reaches about 90%."
+    method: other
+    derivation: measured
+    value: 90
+    unit: "%"
+    approx: true
+    hedge: "likely"
+    supports: []
+
+  - id: c-exam-l2-lru
+    text: >-
+      With two equal buffers on one core, hits on the first buffer drop as their combined size nears the L2's capacity
+      while hits on the second keep rising, so the L2 evicts the earlier buffer first, as LRU does
+    loc: p014
+    quote: "For the L2 cache, which follows an LRU (Least Recently Used) replacement policy under single-core conditions, we observe that when the combined size of the two buffers approaches the L2 capacity, the cache hits for buffer 1 decrease significantly"
+    method: other
+    derivation: measured
+    value: LRU
+    supports: []
+    notes: One core. Agrees with l2.replacement for one core's lines (c-s2c-l2-repl-same-core).
+
+new_params: {}
+new_mechanisms: {}
+mechanism_claims:
+  slc_victim_fill: [c-exam-l2-victim-fill, c-exam-cpu-load-local, c-exam-cpu-exclusive, c-exam-gpu-then-cpu,
+                    c-exam-gpu-inclusive]
+  slc_line_states: [c-exam-line-128]
+  slc_hashed_index: [c-exam-index-above-13]
+  l2_physical_index: [c-exam-l2-low-index]
+  l2_core_lru: [c-exam-l2-lru]
