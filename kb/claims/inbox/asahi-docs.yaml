@@ -1,0 +1,73 @@
+# asahi-docs.yaml
+# Asahi Linux, 2025
+# Apple CPU register bit names, core start-up and the page-compression instructions, from the Asahi hardware docs.
+session: asahi-docs
+source: asahi-docs
+
+claims:
+  - id: c-asahi-mtlb-prefetch
+    text: The HID2 bit names include a disable for MMU MTLB prefetch and a force-purge of the MTB, so some Apple cores prefetch translations into a main TLB
+    loc: p001
+    quote: "[#sys-apl-hid2-el1] SYS_APL_HID2_EL1 * [13] Disable MMU MTLB Prefetch * [17] Force Purge MTB"
+    derivation: inferred
+    supports: []
+    notes: Sits against c-mh-v2-no-pte-prefetch, which sees no serious TLB prefetching on the M1; the bit may belong to another generation. MTLB and MTB are not expanded.
+  - id: c-asahi-full-line-write
+    text: The HID5 bit names include a full-line write feature that can be disabled, beside the fill 2C merge disable
+    loc: p001
+    quote: "* [54] Enable Dn FIFO Read Stall * [57] Disable Full Line Write * [61] Disable Fill 2C Merge"
+    derivation: documented
+    supports: []
+    notes: Fits c-mh-v3-full-line-write-l2, where a new 64 B line written quickly goes whole to the L2 without allocating in the L1.
+  - id: c-asahi-hwp
+    text: The bit names include separate disables for the load and the store hardware prefetcher (HID5), an HWP GUPS disable (HID10) and a prefetcher disable in ACTLR_EL1 bit 3
+    loc: p001
+    quote: "* [44] Disable HWP Load * [45] Disable HWP Store ... [#sys-apl-hid10-el1] SYS_APL_HID10_EL1 * [0] Disable Hwp Gups ... * [3] Disable HWP"
+    derivation: documented
+    supports: []
+    notes: GUPS is not expanded. SLAP finds the HID10 and ACTLR prefetch bits leave the M2 address predictor running (c-slap-m2-hid-bits).
+  - id: c-asahi-stnt-unaligned
+    text: The bit names include an STNT widget disable (HID4) and a disable of the STNT widget for unaligned stores (HID9), which the doc reads as store non-temporal with a question mark
+    loc: p001
+    quote: "* [1] Disable STNT Widget ... * [52] Disable STNT (Store Non-Temporal?) Widget For Unaligned"
+    derivation: inferred
+    hedge: "Store Non-Temporal?"
+    supports: []
+  - id: c-asahi-ldnt
+    text: The HID11 bit names include a disable for an LDNT widget, which the doc reads as load non-temporal with a question mark
+    loc: p001
+    quote: "* [23] Disable Fast Drain Optimization * [59] Disable LDNT (Load Non-Temporal?) Widget"
+    derivation: inferred
+    hedge: "Load Non-Temporal?"
+    supports: []
+  - id: c-asahi-xpick
+    text: The HID16 and HID7 bit names show cross-picking between reservation stations 4 and 5 (xPick RS 45, MPx Pick 45), a secondary for RS4 and a cross pick 2, read as paired scheduler queues that issue for each other
+    loc: p001
+    quote: "* [7] Disable Cross Pick 2 ... * [57] Enable RS4 Sec * [59] SpareBit3 * [60] Disable xPick RS 45 * [61] Enable MPx Pick 45"
+    derivation: inferred
+    supports: []
+    notes: m1n1 sets MPx Pick 45 on every M1 Firestorm (c-m1n1-rf-bank-livelock). RS read as reservation station; Sec and MPx are not expanded.
+  - id: c-asahi-nex-sleep
+    text: The HID14 bit names include a NEX sleep timeout and a NEX power-gating enable, so the NEX unit powers down after an idle timeout
+    loc: p001
+    quote: "[#sys-apl-hid14-el1] SYS_APL_HID14_EL1 * [?:0] Nex Sleep Timeout Cyclone * [32] Nex Power Gating Enable"
+    derivation: inferred
+    supports: []
+    notes: NEX read as the NEON/FP execution unit.
+  - id: c-asahi-datasetid
+    text: HID8 holds four DataSetID fields of four bits each, read as the data set IDs the core attaches to its requests for SLC allocation
+    loc: p001
+    quote: "* [7:4] DataSetID0 * [11:8] DataSetID1 * [35] Wke Force Strict Order * [59:56] DataSetID2 * [63:60] DataSetID3"
+    derivation: inferred
+    supports: []
+    notes: The doc gives names and bit ranges only; CPU data set IDs are read from patents in c-mh-v6-cpu-dsid.
+
+mechanism_claims:
+  mmu_walk_cache: [c-asahi-mtlb-prefetch]
+  l1d_write_allocate: [c-asahi-full-line-write]
+  lsu_virtual_prefetch: [c-asahi-hwp]
+  streaming_store_nt: [c-asahi-stnt-unaligned]
+  nt_load_handling: [c-asahi-ldnt]
+  paired_sched_queues: [c-asahi-xpick]
+  simd_power_down: [c-asahi-nex-sleep]
+  slc_sticky_quota: [c-asahi-datasetid]
