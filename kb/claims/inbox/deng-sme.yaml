@@ -79,10 +79,75 @@ claims:
     hedge: "suggests"
     supports: []
     chip: m4
+  - id: c-deng-contention
+    text: Threads that use the same SME unit at once contend for it, capping peak throughput
+    loc: p004
+    quote: "Contention occurs when multiple threads access the same SME unit simultaneously, capping the peak throughput."
+    method: throughput
+    derivation: measured
+    supports: []
+    chip: m4
+  - id: c-deng-ld-group
+    text: SME load bandwidth depends on how many 64-byte Z registers one load fills, from 375 GB/s for one to 900 GB/s for four
+    loc: p004
+    quote: "bandwidth is determined by the number of Z registers loaded per operation. Loading a single Z register (64 bytes) achieves 375 GB/s"
+    method: throughput
+    derivation: measured
+    value: 900
+    unit: GB/s
+    supports: []
+    chip: m4
+    notes: Two registers per load give 625 GB/s.
+  - id: c-deng-ld-pressure
+    text: Under bus pressure, one- and two-register loads fall to 230 and 460 GB/s
+    loc: p004
+    quote: "As bus pressure increases, the bandwidth for loading one and two Z registers per group gradually decreases to 230 GB/s and 460 GB/s, respectively."
+    method: throughput
+    derivation: measured
+    value: 230
+    unit: GB/s
+    supports: []
+    chip: m4
+  - id: c-deng-8mb
+    text: SME load bandwidth falls to about 230 GB/s once the data passes 8 MB and to 145 GB/s past 16 MB
+    loc: p004
+    quote: "When the total loaded data exceeds 8 MB, bandwidth drops precipitously to approximately 230 GB/s, with a further decline to 145 GB/s beyond 16 MB."
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: MB
+    supports: []
+    chip: m4
+    notes: The M4 Pro P-cluster L2 is 16 MB.
+  - id: c-deng-store-bw
+    text: SME write-back bandwidth tops out at 230 GB/s whatever the number of registers per store
+    loc: p004
+    quote: "In contrast, write-back bandwidth to memory peaks at 230 GB/s and is unaffected by multi-vector stores."
+    method: throughput
+    derivation: measured
+    value: 230
+    unit: GB/s
+    supports: []
+    chip: m4
+  - id: c-deng-ldst-parallel
+    text: SME outer products run independently of its load and store channels, so loads and stores overlap with computation
+    loc: p006
+    quote: "Since the computation instructions are independent from the load/store channels, we overlap the load and store operations of the packing stage with the FMOPA instructions"
+    derivation: inferred
+    supports: []
+    chip: m4
+  - id: c-deng-l2-latency
+    text: SME loads come from the shared L2 with real latency, so an outer product issued right after the load it depends on stalls the pipeline
+    loc: p007
+    quote: "data from the shared L2 cache, issuing dependent FMOPA instructions immediately after corresponding load operations reduces pipeline efficiency."
+    derivation: inferred
+    supports: []
+    chip: m4
 
 mechanism_claims:
-  amx_datapath: [c-deng-l2-only, c-deng-int8-2x, c-deng-fp64-quarter]
+  amx_datapath: [c-deng-l2-only, c-deng-int8-2x, c-deng-fp64-quarter, c-deng-ld-group, c-deng-ld-pressure,
+                 c-deng-8mb, c-deng-store-bw, c-deng-ldst-parallel, c-deng-l2-latency]
   amx_lsu_issue: [c-deng-tlb]
   coprocessor_ordering_table: [c-deng-ordering]
-  amx_shared_contexts: [c-deng-two-threads, c-deng-units]
+  amx_shared_contexts: [c-deng-two-threads, c-deng-units, c-deng-contention]
   amx_z_dependency_window: [c-deng-four-tiles]
