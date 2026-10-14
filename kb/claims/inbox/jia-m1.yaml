@@ -900,6 +900,159 @@ claims:
     contradicts: [sched_ls.queues]
     notes: Against the four 12-entry queues of c-mh-v1-sched-ls-split-queues.
 
+  - id: c-jia-sched-fp-36
+    text: >-
+      Schedulable FP, FP-to-integer move and FJCVTZS counts are 144, 72 and 36, in the 4:2:1 ratio of their throughput,
+      so each of the four FP units has its own 36-entry scheduler
+    loc: p001
+    quote: "可调度部分 fp 是 144，fmov f2i 是 72，fjcvtzs 是 36，有明显的 4:2:1 的关系 ... 因此四个执行单元前面各有一个独立的 36 entry 的 Scheduler"
+    method: wong-probe
+    derivation: derived
+    value: 36
+    unit: entries
+    supports: []
+    contradicts: [sched_fp.entries_per_queue]
+    notes: Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.
+
+  - id: c-jia-fp-nsq
+    text: >-
+      The FP probes find 12 non-schedulable entries ahead of the FP schedulers, guessed to be two 6-entry
+      non-scheduling queues each serving two schedulers
+    loc: p001
+    quote: "不可调度部分，156-144=12，84-72=12，42-36=6，猜测有两个 Non Scheduling Queue，每个 Non Scheduling Queue 6 entry，分别对应两个 Scheduler"
+    method: wong-probe
+    derivation: derived
+    value: 12
+    unit: entries
+    hedge: "猜测"
+    supports: [dispatch.fp_entries]
+    notes: The guess of two queues sits against the single FP dispatch buffer of c-mh-v1-dispatch-fp-single.
+
+  - id: c-jia-sched-int-134
+    text: The integer schedulers hold 134 schedulable ALU entries in all
+    loc: p001
+    quote: "可调度部分 alu 一共是 134，其中 csel 是 64，crc/idiv/bfm 都是 28，mrs nzcv 是 50"
+    method: wong-probe
+    derivation: measured
+    value: 134
+    unit: entries
+    supports: [sched_int.total_entries]
+    notes: Same figure as c-cc-oryon-m1-int-sched-134.
+
+  - id: c-jia-int-nsq-24
+    text: The ALU probe finds 158 minus 134, 24 non-schedulable entries ahead of the integer schedulers
+    loc: p001
+    quote: "alu 不可调度部分是 158-134=24"
+    method: wong-probe
+    derivation: derived
+    value: 24
+    unit: entries
+    supports: [dispatch.int_entries]
+
+  - id: c-jia-int-nsq-two
+    text: >-
+      The first three integer units share one 12-entry non-scheduling queue and the other three share the other 12
+      entries
+    loc: p001
+    quote: "说明前三个执行单元共享一个 12 entry 的 Non Scheduling Queue；剩下三个执行单元共享剩下的 12 entry 的 Non Scheduling Queue"
+    method: wong-probe
+    derivation: derived
+    value: 2
+    unit: buffers
+    supports: [dispatch.int_buffers]
+
+  - id: c-jia-sched-int-units
+    text: >-
+      Splitting the counts by unit gives 28 scheduler entries for the MUL, MADD and CRC unit and 14 for the ALU, CSEL
+      and FP-move unit, with 50 shared by the two branch units and 42 by the other two
+    loc: p001
+    quote: "alu + csel + fmov f2i: 14 entries alu + fmov f2i: y entries alu + mul + madd + crc: 28 entries alu + mul: 42-y entries"
+    method: wong-probe
+    derivation: derived
+    value: 28
+    unit: entries
+    supports: []
+    contradicts: [sched_int.entries_per_queue]
+    notes: Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.
+
+  - id: c-jia-ice-sched
+    text: >-
+      On Icestorm 24 loads or stores fit with 10 schedulable loads (4 stores), and the three integer units share one
+      8-entry non-scheduling queue ahead of 28 schedulable ALU entries
+    loc: p001
+    quote: "ld | 24 | 10 st | 24 | 4 alu | 36 | 28 ... 应该是 3 个整数执行单元共享一个 8 entry 的 Non Scheduling Queue"
+    method: wong-probe
+    derivation: measured
+    value: 8
+    unit: entries
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-nop-window
+    text: >-
+      Behind 21 to 26 chained FSQRTs (13 cycles each) the NOP filler stops growing near 2277, the total entries of all
+      ROB groups
+    loc: p001
+    quote: "可以看到 N 最大在 2277 附近就不能再增加了，说明遇到了 ROB 的瓶颈，预计 ROB 的所有 group 的 entry 个数加起来大概是 2277 左右"
+    method: wong-probe
+    filler: nop
+    derivation: measured
+    value: 2277
+    unit: instructions
+    approx: true
+    supports: [retire.nop_window]
+
+  - id: c-jia-rob-ldst-325
+    text: >-
+      With loads or stores as filler at most 325 are in flight, whatever the load/store queue sizes, read as one load or
+      store per ROB group
+    loc: p001
+    quote: "如果把填充的指令改成 load/store，inflight 的 load 和 store 最多都是 325 个，并且这和 load/store queue 大小无关"
+    method: wong-probe
+    filler: load/store
+    derivation: measured
+    value: 325
+    unit: instructions
+    supports: []
+
+  - id: c-jia-rob-side-effects
+    text: >-
+      ROB groups limit the type and number of instructions in them so that instructions with side effects, which need
+      special handling at retire, sit only at the start of a group
+    loc: p001
+    quote: "对于有副作用的指令，retire 时是需要特殊处理的，因此一个合理的设计就是，让这些指令只能放在 group 的开头"
+    derivation: inferred
+    supports: []
+
+  - id: c-jia-rob-groups
+    text: 2277 over 325 is close to 7, so the ROB has about 330 groups of up to 7 uops each
+    loc: p001
+    quote: "结论：Firestorm 的 ROB 有大约 330 个 group，每个 group 最多保存 7 个 uop"
+    method: wong-probe
+    derivation: derived
+    value: 330
+    unit: groups
+    approx: true
+    supports: [retire.groups]
+
+  - id: c-jia-rob-group-7
+    text: Each ROB group holds at most 7 uops
+    loc: p001
+    quote: "每个 group 最多保存 7 个 uop"
+    method: wong-probe
+    derivation: derived
+    value: 7
+    unit: uops
+    supports: [retire.group_max_uops]
+
+  - id: c-jia-chase-prefetch
+    text: Pointer-chase latency on Firestorm fluctuates a lot, apparently because the prefetcher is tuned for pointer chasing
+    loc: p001
+    quote: "发现 Firestorm 上 pointer chasing 的延迟波动比较大，目测是 prefetcher 做了针对性的优化"
+    derivation: inferred
+    hedge: "目测"
+    supports: []
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
   fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}
@@ -956,3 +1109,6 @@ mechanism_claims:
   lsu_load_to_load_bypass: [c-jia-guide-ptr-chase, c-jia-ptr-chase-3, c-jia-load-use-4]
   exec_forwarding: [c-jia-f2i-both, c-jia-i2f-lsu]
   uop_split_merge: [c-jia-nop-8]
+  dispatch_buffers: [c-jia-fp-nsq, c-jia-int-nsq-24, c-jia-int-nsq-two]
+  retire_groups: [c-jia-rob-ldst-325, c-jia-rob-side-effects]
+  content_directed_prefetch: [c-jia-chase-prefetch]

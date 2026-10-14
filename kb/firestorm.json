@@ -1064,7 +1064,8 @@
     "dispatch.int_entries": {
       "claims": [
         "c-mh-v1-dispatch-int",
-        "c-mh-v1-dispatch-int-dj"
+        "c-mh-v1-dispatch-int-dj",
+        "c-jia-int-nsq-24"
       ],
       "disputes": [],
       "block": "dispatch",
@@ -1074,7 +1075,7 @@
       "value": 24,
       "approx": true,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dispatch.mul_entries": {
       "claims": [
@@ -1106,9 +1107,20 @@
     "sched_int.entries_per_queue": {
       "claims": [
         "c-mh-v1-sched-int-13",
-        "c-mh-v1-sched-br-13"
+        "c-mh-v1-sched-br-13",
+        "c-jia-sched-int-units"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v1-sched-int-13",
+            "c-jia-sched-int-units"
+          ],
+          "note": "Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "sched_int",
       "name": "Integer scheduler queue size",
       "unit": "entries",
@@ -1132,9 +1144,20 @@
     },
     "sched_fp.entries_per_queue": {
       "claims": [
-        "c-mh-v1-sched-18"
+        "c-mh-v1-sched-18",
+        "c-jia-sched-fp-36"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v1-sched-18",
+            "c-jia-sched-fp-36"
+          ],
+          "note": "Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "sched_fp",
       "name": "FP scheduler queue size",
       "unit": "entries",
@@ -1246,6 +1269,7 @@
     "retire.groups": {
       "claims": [
         "c-mh-v1-rob-rows",
+        "c-jia-rob-groups",
         "c-dj-retire-groups"
       ],
       "disputes": [],
@@ -1262,6 +1286,7 @@
     "retire.group_max_uops": {
       "claims": [
         "c-mh-v1-rob-row-slots",
+        "c-jia-rob-group-7",
         "c-dj-group-size"
       ],
       "disputes": [],
@@ -1292,16 +1317,17 @@
       "claims": [
         "c-mh-v1-nop-window",
         "c-mh-v1-mov-self-nop",
+        "c-jia-nop-window",
         "c-dj-nop-window"
       ],
       "disputes": [],
       "block": "retire",
       "name": "NOP window",
       "unit": "instructions",
-      "value": 2228,
+      "value": 2277,
       "approx": true,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "retire.issuing_window": {
       "claims": [
@@ -2091,12 +2117,13 @@
     "sched_int.total_entries": {
       "claims": [
         "c-cc-oryon-m1-int-sched-134",
-        "c-mh-v1-sched-johnson-2x"
+        "c-mh-v1-sched-johnson-2x",
+        "c-jia-sched-int-134"
       ],
       "disputes": [
         {
           "claims": [
-            "c-cc-oryon-m1-int-sched-134",
+            "c-jia-sched-int-134",
             "c-mh-v1-sched-johnson-2x"
           ],
           "note": "Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.",
@@ -2108,8 +2135,8 @@
       "name": "Integer scheduler entries (total)",
       "unit": "entries",
       "value": 134,
-      "status": "reported",
-      "confidence": "inferred"
+      "status": "measured",
+      "confidence": "single"
     },
     "l1d.latency_simd": {
       "claims": [
@@ -2329,7 +2356,8 @@
     "dispatch.fp_entries": {
       "claims": [
         "c-mh-v1-dispatch-fp-12",
-        "c-mh-v1-dispatch-fp-14"
+        "c-mh-v1-dispatch-fp-14",
+        "c-jia-fp-nsq"
       ],
       "disputes": [
         {
@@ -2348,11 +2376,12 @@
       "value": 12,
       "approx": true,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dispatch.int_buffers": {
       "claims": [
-        "c-mh-v1-dispatch-int-two"
+        "c-mh-v1-dispatch-int-two",
+        "c-jia-int-nsq-two"
       ],
       "disputes": [],
       "block": "dispatch",
@@ -2360,7 +2389,7 @@
       "unit": "buffers",
       "value": 2,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dispatch.accept_width": {
       "claims": [
@@ -24705,6 +24734,199 @@
       "chip": "m1",
       "entered": "jia-m1"
     },
+    "c-jia-sched-fp-36": {
+      "text": "Schedulable FP, FP-to-integer move and FJCVTZS counts are 144, 72 and 36, in the 4:2:1 ratio of their throughput, so each of the four FP units has its own 36-entry scheduler",
+      "loc": "p001",
+      "quote": "\u53ef\u8c03\u5ea6\u90e8\u5206 fp \u662f 144\uff0cfmov f2i \u662f 72\uff0cfjcvtzs \u662f 36\uff0c\u6709\u660e\u663e\u7684 4:2:1 \u7684\u5173\u7cfb ... \u56e0\u6b64\u56db\u4e2a\u6267\u884c\u5355\u5143\u524d\u9762\u5404\u6709\u4e00\u4e2a\u72ec\u7acb\u7684 36 entry \u7684 Scheduler",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 36,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "sched_fp.entries_per_queue"
+      ],
+      "notes": "Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fp-nsq": {
+      "text": "The FP probes find 12 non-schedulable entries ahead of the FP schedulers, guessed to be two 6-entry non-scheduling queues each serving two schedulers",
+      "loc": "p001",
+      "quote": "\u4e0d\u53ef\u8c03\u5ea6\u90e8\u5206\uff0c156-144=12\uff0c84-72=12\uff0c42-36=6\uff0c\u731c\u6d4b\u6709\u4e24\u4e2a Non Scheduling Queue\uff0c\u6bcf\u4e2a Non Scheduling Queue 6 entry\uff0c\u5206\u522b\u5bf9\u5e94\u4e24\u4e2a Scheduler",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 12,
+      "unit": "entries",
+      "hedge": "\u731c\u6d4b",
+      "supports": [
+        "dispatch.fp_entries"
+      ],
+      "notes": "The guess of two queues sits against the single FP dispatch buffer of c-mh-v1-dispatch-fp-single.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sched-int-134": {
+      "text": "The integer schedulers hold 134 schedulable ALU entries in all",
+      "loc": "p001",
+      "quote": "\u53ef\u8c03\u5ea6\u90e8\u5206 alu \u4e00\u5171\u662f 134\uff0c\u5176\u4e2d csel \u662f 64\uff0ccrc/idiv/bfm \u90fd\u662f 28\uff0cmrs nzcv \u662f 50",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 134,
+      "unit": "entries",
+      "supports": [
+        "sched_int.total_entries"
+      ],
+      "notes": "Same figure as c-cc-oryon-m1-int-sched-134.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-int-nsq-24": {
+      "text": "The ALU probe finds 158 minus 134, 24 non-schedulable entries ahead of the integer schedulers",
+      "loc": "p001",
+      "quote": "alu \u4e0d\u53ef\u8c03\u5ea6\u90e8\u5206\u662f 158-134=24",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 24,
+      "unit": "entries",
+      "supports": [
+        "dispatch.int_entries"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-int-nsq-two": {
+      "text": "The first three integer units share one 12-entry non-scheduling queue and the other three share the other 12 entries",
+      "loc": "p001",
+      "quote": "\u8bf4\u660e\u524d\u4e09\u4e2a\u6267\u884c\u5355\u5143\u5171\u4eab\u4e00\u4e2a 12 entry \u7684 Non Scheduling Queue\uff1b\u5269\u4e0b\u4e09\u4e2a\u6267\u884c\u5355\u5143\u5171\u4eab\u5269\u4e0b\u7684 12 entry \u7684 Non Scheduling Queue",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 2,
+      "unit": "buffers",
+      "supports": [
+        "dispatch.int_buffers"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sched-int-units": {
+      "text": "Splitting the counts by unit gives 28 scheduler entries for the MUL, MADD and CRC unit and 14 for the ALU, CSEL and FP-move unit, with 50 shared by the two branch units and 42 by the other two",
+      "loc": "p001",
+      "quote": "alu + csel + fmov f2i: 14 entries alu + fmov f2i: y entries alu + mul + madd + crc: 28 entries alu + mul: 42-y entries",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 28,
+      "unit": "entries",
+      "supports": [],
+      "contradicts": [
+        "sched_int.entries_per_queue"
+      ],
+      "notes": "Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-sched": {
+      "text": "On Icestorm 24 loads or stores fit with 10 schedulable loads (4 stores), and the three integer units share one 8-entry non-scheduling queue ahead of 28 schedulable ALU entries",
+      "loc": "p001",
+      "quote": "ld | 24 | 10 st | 24 | 4 alu | 36 | 28 ... \u5e94\u8be5\u662f 3 \u4e2a\u6574\u6570\u6267\u884c\u5355\u5143\u5171\u4eab\u4e00\u4e2a 8 entry \u7684 Non Scheduling Queue",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-nop-window": {
+      "text": "Behind 21 to 26 chained FSQRTs (13 cycles each) the NOP filler stops growing near 2277, the total entries of all ROB groups",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 N \u6700\u5927\u5728 2277 \u9644\u8fd1\u5c31\u4e0d\u80fd\u518d\u589e\u52a0\u4e86\uff0c\u8bf4\u660e\u9047\u5230\u4e86 ROB \u7684\u74f6\u9888\uff0c\u9884\u8ba1 ROB \u7684\u6240\u6709 group \u7684 entry \u4e2a\u6570\u52a0\u8d77\u6765\u5927\u6982\u662f 2277 \u5de6\u53f3",
+      "method": "wong-probe",
+      "filler": "nop",
+      "derivation": "measured",
+      "value": 2277,
+      "unit": "instructions",
+      "approx": true,
+      "supports": [
+        "retire.nop_window"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-rob-ldst-325": {
+      "text": "With loads or stores as filler at most 325 are in flight, whatever the load/store queue sizes, read as one load or store per ROB group",
+      "loc": "p001",
+      "quote": "\u5982\u679c\u628a\u586b\u5145\u7684\u6307\u4ee4\u6539\u6210 load/store\uff0cinflight \u7684 load \u548c store \u6700\u591a\u90fd\u662f 325 \u4e2a\uff0c\u5e76\u4e14\u8fd9\u548c load/store queue \u5927\u5c0f\u65e0\u5173",
+      "method": "wong-probe",
+      "filler": "load/store",
+      "derivation": "measured",
+      "value": 325,
+      "unit": "instructions",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-rob-side-effects": {
+      "text": "ROB groups limit the type and number of instructions in them so that instructions with side effects, which need special handling at retire, sit only at the start of a group",
+      "loc": "p001",
+      "quote": "\u5bf9\u4e8e\u6709\u526f\u4f5c\u7528\u7684\u6307\u4ee4\uff0cretire \u65f6\u662f\u9700\u8981\u7279\u6b8a\u5904\u7406\u7684\uff0c\u56e0\u6b64\u4e00\u4e2a\u5408\u7406\u7684\u8bbe\u8ba1\u5c31\u662f\uff0c\u8ba9\u8fd9\u4e9b\u6307\u4ee4\u53ea\u80fd\u653e\u5728 group \u7684\u5f00\u5934",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-rob-groups": {
+      "text": "2277 over 325 is close to 7, so the ROB has about 330 groups of up to 7 uops each",
+      "loc": "p001",
+      "quote": "\u7ed3\u8bba\uff1aFirestorm \u7684 ROB \u6709\u5927\u7ea6 330 \u4e2a group\uff0c\u6bcf\u4e2a group \u6700\u591a\u4fdd\u5b58 7 \u4e2a uop",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 330,
+      "unit": "groups",
+      "approx": true,
+      "supports": [
+        "retire.groups"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-rob-group-7": {
+      "text": "Each ROB group holds at most 7 uops",
+      "loc": "p001",
+      "quote": "\u6bcf\u4e2a group \u6700\u591a\u4fdd\u5b58 7 \u4e2a uop",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 7,
+      "unit": "uops",
+      "supports": [
+        "retire.group_max_uops"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-chase-prefetch": {
+      "text": "Pointer-chase latency on Firestorm fluctuates a lot, apparently because the prefetcher is tuned for pointer chasing",
+      "loc": "p001",
+      "quote": "\u53d1\u73b0 Firestorm \u4e0a pointer chasing \u7684\u5ef6\u8fdf\u6ce2\u52a8\u6bd4\u8f83\u5927\uff0c\u76ee\u6d4b\u662f prefetcher \u505a\u4e86\u9488\u5bf9\u6027\u7684\u4f18\u5316",
+      "derivation": "inferred",
+      "hedge": "\u76ee\u6d4b",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -31633,6 +31855,8 @@
         "c-mh-v1-rob-row-counter",
         "c-mh-v1-kip-930",
         "c-mh-v1-nop-window",
+        "c-jia-rob-ldst-325",
+        "c-jia-rob-side-effects",
         "c-dj-rob-model",
         "c-dj-group-boundaries",
         "c-dj-retire-groups",
@@ -32141,6 +32365,9 @@
         "c-mh-v1-dispatch-accept-8",
         "c-mh-v1-queue-inflow-1",
         "c-mh-v1-dispatch-fp-single",
+        "c-jia-fp-nsq",
+        "c-jia-int-nsq-24",
+        "c-jia-int-nsq-two",
         "c-dj-pipeline-flow",
         "c-dj-lsq-dispatch-stall"
       ],
@@ -32464,6 +32691,7 @@
         "c-at-pointer-prefetch",
         "c-mh-v8-prefetch-kinds",
         "c-mh-v8-cdp-lsu",
+        "c-jia-chase-prefetch",
         "c-m1n1-dmp-disable",
         "c-m1n1-dmp-m3-dit",
         "c-slap-m1-hid11-dmp",
