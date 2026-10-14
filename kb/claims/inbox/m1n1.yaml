@@ -89,6 +89,97 @@ claims:
     derivation: documented
     supports: []
     notes: Random stalls are read as a livelock breaker. The M3 setup keeps the load pipe 2 stall (c-m1n1-m3-lfsr).
+  - id: c-m1n1-br-kill-limit
+    text: m1n1 turns on an MDSB stall-pipeline ECO and a branch kill limit on the T8103 at revision 0x11 and on the M1 Pro and Max from revision 0x10
+    loc: p001
+    quote: "if (rev == 0x11) reg_set(SYS_IMP_APL_HID1, HID1_ENABLE_MDSB_STALL_PIPELINE_ECO | HID1_ENABLE_BR_KILL_LIMIT);"
+    derivation: documented
+    supports: []
+    notes: A branch kill is read as a mispredict flush; what the limit caps is not stated, nor what MDSB means.
+  - id: c-m1n1-pref-replay
+    text: m1n1 sets HID18 PREF_REPLAY_DISABLE, read as turning off prefetch replay, on the T8103 from revision 0x11 and on the M1 Pro and Max from revision 0x10
+    loc: p001
+    quote: "if (rev >= 0x11) reg_set(SYS_IMP_APL_HID18, HID18_PREF_REPLAY_DISABLE);"
+    derivation: documented
+    supports: []
+    notes: The Asahi register doc calls HID18 bit 49 SpareBit17, so what the bit does is unclear.
+  - id: c-m1n1-same-page-power
+    text: m1n1 turns on a same-page power optimization (HID0 SAME_PG_POWER_OPTIMIZATION) on every M1 Firestorm
+    loc: p001
+    quote: "static void init_common_firestorm(void) { reg_set(SYS_IMP_APL_HID0, HID0_SAME_PG_POWER_OPTIMIZATION);"
+    derivation: documented
+    supports: []
+    notes: HID0 otherwise holds front-end bits (loop buffer, I-cache prefetch, fetch width), so this may save fetch power within a page; the source does not say.
+  - id: c-m1n1-nex-gating
+    text: m1n1 turns on NEX power gating, with the HID13 reset-cycle field set to 12, on P-cores only, for the M1 and the other chips it marks as having NEX power gating
+    loc: p002
+    quote: "/* Enable NEX powergating, the reset cycles might be overridden by chickens */ if (!is_ecore()) { reg_mask(SYS_IMP_APL_HID13, HID13_RESET_CYCLES_MASK, HID13_RESET_CYCLES(12)); reg_set(SYS_IMP_APL_HID14, HID14_ENABLE_NEX_POWER_GATING);"
+    derivation: documented
+    supports: []
+  - id: c-m1n1-amx-ctx
+    text: Each core writes its own core number within its cluster into AMX_CTX_EL1 at boot, which suggests one AMX context per core
+    loc: p002
+    quote: "// XXX is this really AMX? int core = mrs(MPIDR_EL1) & 0xff; msr(SYS_IMP_APL_AMX_CTX_EL1, core);"
+    derivation: inferred
+    hedge: "XXX is this really AMX?"
+    supports: []
+    notes: The write runs on E and P cores alike because both share one feature set, so it says nothing about an E-cluster AMX unit.
+  - id: c-m1n1-wfi-retention
+    text: On the M1 m1n1 sets the CYC_OVRD WFI mode to 2 (up) and turns on WFI state retention, so a core waiting in WFI keeps its state
+    loc: p002
+    quote: "/* Unmask external IRQs, set WFI mode to up (2), enable WFI retention */"
+    derivation: documented
+    supports: []
+    notes: The register doc lists WFI mode 2 as force up and 3 as force down, so WFI can also power a core down.
+  - id: c-m1n1-bp-retention
+    text: m1n1 turns on branch-prediction state retention across cluster (ACC) sleep on the M1, setting the ACC_CFG BP sleep field to 3
+    loc: p002
+    quote: "// Enable branch prediction state retention across ACC sleep if (cpu_features->acc_cfg) { reg_mask(SYS_IMP_APL_ACC_CFG, ACC_CFG_BP_SLEEP_MASK, ACC_CFG_BP_SLEEP(3));"
+    derivation: documented
+    supports: []
+  - id: c-m1n1-dc-mva-off
+    text: m1n1 sets DISABLE_DC_MVA and DISABLE_DC_SW_L2_OPS on every core from the A7 to the M3, the M1 included, turning off data-cache maintenance by address and set/way operations on the L2
+    loc: p002
+    quote: "/* This is performed unconditionally on all cores (necessary?) */ if (is_ecore()) reg_set(SYS_IMP_APL_EHID4, EHID4_DISABLE_DC_MVA | EHID4_DISABLE_DC_SW_L2_OPS); else reg_set(SYS_IMP_APL_HID4, HID4_DISABLE_DC_MVA | HID4_DISABLE_DC_SW_L2_OPS);"
+    derivation: inferred
+    hedge: "necessary?"
+    supports: []
+    notes: With DC by-address operations off, the clean step the mechanism names cannot come from DC instructions; only I-cache invalidation stays with software.
+  - id: c-m1n1-features-m1
+    text: m1n1 marks the M1 as having SPRR, along with fast IPIs, SIQ_CFG and AMX
+    loc: p002
+    quote: "const struct midr_part_features features_m1 = { ... .fast_ipi = true, .mmu_sprr = true, .siq_cfg = true, .amx = true, };"
+    derivation: documented
+    supports: []
+    notes: SPRR is read as the indexed page permissions of c-mh-v3-sprr-index; the source gives no SPRR details.
+  - id: c-m1n1-sysreg-spec
+    text: The HID1 bit names include separate disables for speculative MSR and MRS of DAIF and of other system registers, so the P-core executes these system-register accesses speculatively
+    loc: p003
+    quote: "#define HID1_DIS_MSR_SPEC_DAIF BIT(49) #define HID1_DIS_MRS_SPEC_DAIF BIT(50) #define HID1_DIS_MSR_SPEC_NON_DAIF BIT(51) #define HID1_DIS_MRS_SPEC_NON_DAIF BIT(52)"
+    derivation: documented
+    supports: []
+    notes: Header names cover all Apple cores; which ones the M1 uses is not stated. Fits the speculative special-register writes of c-mh-v1-spr-speculative-writes.
+  - id: c-m1n1-chkpt
+    text: The HID1 bit names include a checkpoint disable (DISABLE_CHKPT) and a clock override for the checkpoint logic, so the P-core keeps checkpoints
+    loc: p003
+    quote: "#define HID1_RCC_FORCE_CHKPT_L3_CLKS_ON BIT(29) #define HID1_DISABLE_CHKPT BIT(30)"
+    derivation: documented
+    supports: []
+    notes: Checkpoints for faster recovery were guessed in c-mh-v4-checkpoints; what is checkpointed is not stated.
+  - id: c-m1n1-retire-groups
+    text: The HID1 bit names show retire groups that normally run past instruction and microcode ends, and retirement of several groups and several indirect branches at once, each with a disable
+    loc: p003
+    quote: "#define HID1_DIS_MULT_RETIRE BIT(11) #define HID1_DIS_MULT_INDIR_BR_RETIRE BIT(12) ... #define HID1_FORCE_GRP_BNDRY_ON_INST_END BIT(33) #define HID1_FORCE_GRP_BNDRY_ON_UCODE_END BIT(34)"
+    derivation: inferred
+    supports: []
+    notes: Forcing a group boundary at each instruction end implies groups hold several instructions, as measured in c-dj-retire-groups.
+  - id: c-m1n1-rtr-ahead
+    text: The bit names show a branch-dispatch and system-resolved pointer, and let loads become ready to retire ahead of older stores and stores ahead of older loads
+    loc: p003
+    quote: "#define HID1_DIS_BR_DISP_SYS_RSLVD_PTR BIT(13) ... #define HID4_DISABLE_LD_RTR_AHEAD_OLDER_ST BIT(8) ... #define HID4_DIS_ST_RTR_AHEAD_OLDER_LD BIT(32)"
+    derivation: inferred
+    supports: []
+    notes: RTR read as ready to retire. HID21 also names a wait of the load queue's RTR on older store-release completion.
 
 new_mechanisms:
   lsu_forward_progress:
@@ -114,9 +205,18 @@ mechanism_claims:
   streaming_store_nt: [c-m1n1-stnt-threshold]
   l2_half_lines: [c-m1n1-sibling-merge-off]
   nt_load_handling: [c-m1n1-ldnt-off]
-  simd_power_down: [c-m1n1-nex-temp]
+  simd_power_down: [c-m1n1-nex-temp, c-m1n1-nex-gating]
   banked_prf_power: [c-m1n1-rf-bank-livelock]
   macro_op_fusion: [c-m1n1-cache-fusion-off]
   tso_mode: [c-m1n1-tso-vld]
   pio_network: [c-m1n1-pcie-throttle-off]
   fabric_qos_credits: [c-m1n1-credits]
+  issue_age_flush: [c-m1n1-br-kill-limit]
+  amx_shared_contexts: [c-m1n1-amx-ctx]
+  cluster_sleep_states: [c-m1n1-wfi-retention, c-m1n1-bp-retention]
+  l1i_maintenance_only: [c-m1n1-dc-mva-off]
+  indexed_page_permissions: [c-m1n1-features-m1]
+  speculative_special_regs: [c-m1n1-sysreg-spec]
+  rename_retire_queue: [c-m1n1-chkpt]
+  retire_groups: [c-m1n1-retire-groups]
+  lsq_early_release: [c-m1n1-rtr-ahead]
