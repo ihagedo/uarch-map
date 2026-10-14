@@ -1570,6 +1570,7 @@
         "c-cc-gcc-l1d-3c",
         "c-mh-v1-pointer-chase-3",
         "c-mh-v2-l1d-latency",
+        "c-jia-l1d-lat-3",
         "c-dj-l1d-latency"
       ],
       "disputes": [],
@@ -1597,16 +1598,16 @@
       "claims": [
         "c-mh-v2-ldpq-48",
         "c-mh-v2-l1-bw",
-        "c-mh-v2-l1-bw-basics"
+        "c-mh-v2-l1-bw-basics",
+        "c-jia-load-bw-48"
       ],
       "disputes": [],
       "block": "l1d",
       "name": "L1D load bandwidth",
       "unit": "B/cycle",
       "value": 48,
-      "approx": true,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dtlb.l1_entries": {
       "claims": [
@@ -1614,12 +1615,14 @@
         "c-7cpu-dtlb-l1",
         "c-mh-v1-opt-guide-dtlb",
         "c-mh-v2-dtlb-160-aside",
-        "c-mh-v2-dtlb"
+        "c-mh-v2-dtlb",
+        "c-jia-guide-dtlb",
+        "c-jia-dtlb-160"
       ],
       "disputes": [
         {
           "claims": [
-            "c-mh-v2-dtlb",
+            "c-jia-dtlb-160",
             "c-at-l1-tlb"
           ],
           "note": "measured on the A14; the article does not say data or instruction TLB",
@@ -1638,12 +1641,13 @@
     "dtlb.l1_org": {
       "claims": [
         "c-mh-v2-dtlb-5way",
+        "c-jia-dtlb-5way",
         "c-pac-dtlb-12x256"
       ],
       "disputes": [
         {
           "claims": [
-            "c-mh-v2-dtlb-5way",
+            "c-jia-dtlb-5way",
             "c-pac-dtlb-12x256"
           ],
           "note": "Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).",
@@ -1655,7 +1659,7 @@
       "name": "L1 dTLB organisation",
       "value": "5-way set associative, indexed by VA bits 14-18",
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "dtlb.l2_entries": {
       "claims": [
@@ -1907,7 +1911,8 @@
       "claims": [
         "c-at-loads-per-cycle",
         "c-mh-v2-l1-load-paths",
-        "c-mh-v2-loads-per-cycle"
+        "c-mh-v2-loads-per-cycle",
+        "c-jia-ldst-mix"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1915,13 +1920,14 @@
       "unit": "loads/cycle",
       "value": 3,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "lsu.stores_per_cycle": {
       "claims": [
         "c-at-stores-per-cycle",
         "c-mh-v2-two-stores-per-cycle",
-        "c-mh-v2-stores-per-cycle"
+        "c-mh-v2-stores-per-cycle",
+        "c-jia-stores-2"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1929,7 +1935,7 @@
       "unit": "stores/cycle",
       "value": 2,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "dtlb.l1_miss_penalty": {
       "claims": [
@@ -2369,7 +2375,8 @@
     "l1d.store_bw": {
       "claims": [
         "c-mh-v2-l1-store-32",
-        "c-mh-v2-store-bw-32"
+        "c-mh-v2-store-bw-32",
+        "c-jia-store-bw-32"
       ],
       "disputes": [],
       "block": "l1d",
@@ -2377,7 +2384,7 @@
       "unit": "B/cycle",
       "value": 32,
       "status": "measured",
-      "confidence": "single"
+      "confidence": "corroborated"
     },
     "l1d.copy_bw": {
       "claims": [
@@ -24128,6 +24135,193 @@
       ],
       "source": "jia-m1",
       "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l1d-lat-3": {
+      "text": "A pointer chase within the L1D takes 3 cycles per load",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 128KB \u51fa\u73b0\u4e86\u660e\u663e\u7684\u62d0\u70b9\uff0c\u5bf9\u5e94\u7684\u5c31\u662f 128KB \u7684 L1 DCache \u5bb9\u91cf\uff0c\u548c\u5b98\u65b9\u4fe1\u606f\u4e00\u81f4\u3002L1 DCache \u8303\u56f4\u5185\u5ef6\u8fdf\u662f 3 cycle",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-past-l1d-16": {
+      "text": "Just past the L1D the pointer chase rises to 16 cycles per load",
+      "loc": "p001",
+      "quote": "L1 DCache \u8303\u56f4\u5185\u5ef6\u8fdf\u662f 3 cycle\uff0c\u4e4b\u540e\u63d0\u5347\u5230 16 cycle",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "cycles",
+      "supports": [],
+      "notes": "The source does not name the level; l2.latency holds 17.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-l1d": {
+      "text": "On Icestorm the pointer chase steps at 64 KB, the L1D capacity, with 3 cycles per load inside it and 14 beyond",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 64KB \u51fa\u73b0\u4e86\u660e\u663e\u7684\u62d0\u70b9\uff0c\u5bf9\u5e94\u7684\u5c31\u662f 64KB \u7684 L1 DCache \u5bb9\u91cf\uff0c\u548c\u5b98\u65b9\u4fe1\u606f\u4e00\u81f4\u3002L1 DCache \u8303\u56f4\u5185\u5ef6\u8fdf\u662f 3 cycle\uff0c\u4e4b\u540e\u63d0\u5347\u5230 14 cycle",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "KiB",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-dtlb": {
+      "text": "From Apple's optimization guide, the M1 P-core L1 dTLB holds 160 entries and the E-core 128",
+      "loc": "p001",
+      "quote": "\u56e0\u6b64\uff0cM1 \u7684 P-Core L1 DTLB \u5bb9\u91cf\u662f 160\uff0cE-Core L1 DTLB \u5bb9\u91cf\u662f 128",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 160,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-a14-dtlb": {
+      "text": "Apple's optimization guide gives the A14, A15 and M2 P-cores a 256-entry L1 dTLB, against 160 on the M1",
+      "loc": "p001",
+      "quote": "\u9664\u4e86 M2 Family\u3001A14 Bionic \u548c A15 Bionic \u7684 L1 DTLB \u662f 256 entries \u4ee5\u5916\uff0c\u5176\u4f59\u7684 M1 Family\u3001M3 Family \u5230 M4 Family\uff0cA16 Bionic \u5230 A18 Family \u7684 L1 DTLB \u90fd\u662f 160 entries",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 256,
+      "unit": "entries",
+      "supports": [],
+      "chip": "a14",
+      "notes": "From Apple's optimization guide. Matches the 256 of c-at-l1-tlb.",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-dtlb-160": {
+      "text": "A pointer chase with one pointer per page slows from 160 pages and settles at 9 cycles per load by 250 pages, so the L1 dTLB holds 160 entries; the 9 cycles include an L2 TLB hit",
+      "loc": "p001",
+      "quote": "\u4ece 160 \u4e2a\u9875\u5f00\u59cb\u6027\u80fd\u4e0b\u964d\uff0c\u5230 250 \u4e2a\u9875\u65f6\u6027\u80fd\u7a33\u5b9a\u5728 9 CPI\uff0c\u8ba4\u4e3a Firestorm \u7684 L1 DTLB \u6709 160 \u9879",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 160,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-dtlb-5way": {
+      "text": "Spreading pointers 2, 4, 8, 16 and 32 pages apart moves the step to 80, 40, 20, 10 and 5 pages, and 64 pages apart stays at 5, so the L1 dTLB is 5-way with 32 sets indexed by VA bits 18:14",
+      "loc": "p001",
+      "quote": "\u6bcf 32 \u4e2a\u9875\u4e00\u4e2a\u6307\u9488\uff0c\u62d0\u70b9\u53d8\u6210 5\uff1b\u6bcf 64 \u4e2a\u9875\u4e00\u4e2a\u6307\u9488\uff0c\u62d0\u70b9\u4f9d\u7136\u662f 5\u3002\u8bf4\u660e Firestorm \u7684 L1 DTLB \u662f 5 \u8def\u7ec4\u76f8\u8fde\uff0c32 \u4e2a Set\uff0cIndex \u662f VA[18:14]",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": "5-way set associative, indexed by VA bits 14-18",
+      "supports": [
+        "dtlb.l1_org"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-dtlb": {
+      "text": "Icestorm's L1 dTLB holds 128 entries, 4-way with 32 sets indexed by VA bits 18:14; past it loads settle at 10 cycles",
+      "loc": "p001",
+      "quote": "\u4ece 128 \u4e2a\u9875\u5f00\u59cb\u6027\u80fd\u4e0b\u964d\uff0c\u5230 160 \u4e2a\u9875\u65f6\u6027\u80fd\u7a33\u5b9a\u5728 10 CPI\uff0c\u8ba4\u4e3a Icestorm \u7684 L1 DTLB \u6709 128 \u9879 ... \u8bf4\u660e Icestorm \u7684 L1 DTLB \u662f 4 \u8def\u7ec4\u76f8\u8fde\uff0c32 \u4e2a Set\uff0cIndex \u662f VA[18:14]",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ldst-mix": {
+      "text": "Per cycle Firestorm completes 3 loads with 1 store, 2 loads with 2 stores, 1 load with 2 stores, or 2 stores (128-bit accesses)",
+      "loc": "p001",
+      "quote": "\u5b9e\u6d4b Firestorm \u6bcf\u4e2a\u5468\u671f\u53ef\u4ee5\u5b8c\u6210 ... 3x 128b Load + 1x 128b Store ... 2x 128b Load + 2x 128b Store ... 1x 128b Load + 2x 128b Store",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "supports": [
+        "lsu.loads_per_cycle"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-stores-2": {
+      "text": "At most 3 loads or 2 stores execute per cycle",
+      "loc": "p001",
+      "quote": "\u8bbf\u5b58\u65b9\u9762\uff0c\u6bcf\u5468\u671f\u6700\u591a 3 Load \u6216\u8005 2 Store",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "stores/cycle",
+      "supports": [
+        "lsu.stores_per_cycle"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-load-bw-48": {
+      "text": "Widening each access from 128 to 256 bits halves the instruction rate and leaves bandwidth unchanged, so peak read bandwidth is 48 B per cycle",
+      "loc": "p001",
+      "quote": "\u5982\u679c\u628a\u6bcf\u6761\u6307\u4ee4\u7684\u8bbf\u5b58\u4f4d\u5bbd\u4ece 128b \u6539\u6210 256b\uff0c\u8bfb\u5199\u5e26\u5bbd\u4e0d\u53d8\uff0c\u6307\u4ee4\u541e\u5410\u51cf\u534a\u3002\u4e5f\u5c31\u662f\u8bf4\u6700\u5927\u7684\u8bfb\u5e26\u5bbd\u662f 48B/cyc",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 48,
+      "unit": "B/cycle",
+      "supports": [
+        "l1d.load_bw"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-store-bw-32": {
+      "text": "Peak write bandwidth is 32 B per cycle, and peak read and peak write cannot be reached together",
+      "loc": "p001",
+      "quote": "\u6700\u5927\u7684\u5199\u5e26\u5bbd\u662f 32B/cyc\uff0c\u4e8c\u8005\u4e0d\u80fd\u540c\u65f6\u8fbe\u5230",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 32,
+      "unit": "B/cycle",
+      "supports": [
+        "l1d.store_bw"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-ldst": {
+      "text": "Per cycle Icestorm completes 2 loads, 1 load with 1 store, or 1 store, for at most 32 B per cycle read and 16 B per cycle written",
+      "loc": "p001",
+      "quote": "\u5b9e\u6d4b Icestorm \u6bcf\u4e2a\u5468\u671f\u53ef\u4ee5\u5b8c\u6210 ... \u4e5f\u5c31\u662f\u8bf4\u6700\u5927\u7684\u8bfb\u5e26\u5bbd\u662f 32B/cyc\uff0c\u6700\u5927\u7684\u5199\u5e26\u5bbd\u662f 16B/cyc",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "loads/cycle",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
       "entered": "jia-m1"
     },
     "c-dj-width": {

@@ -452,6 +452,154 @@ claims:
     unit: KiB
     supports: [l1d.size]
 
+  - id: c-jia-l1d-lat-3
+    text: A pointer chase within the L1D takes 3 cycles per load
+    loc: p001
+    quote: "可以看到 128KB 出现了明显的拐点，对应的就是 128KB 的 L1 DCache 容量，和官方信息一致。L1 DCache 范围内延迟是 3 cycle"
+    method: pointer-chase
+    derivation: measured
+    value: 3
+    unit: cycles
+    supports: [l1d.latency]
+
+  - id: c-jia-past-l1d-16
+    text: Just past the L1D the pointer chase rises to 16 cycles per load
+    loc: p001
+    quote: "L1 DCache 范围内延迟是 3 cycle，之后提升到 16 cycle"
+    method: pointer-chase
+    derivation: measured
+    value: 16
+    unit: cycles
+    supports: []
+    notes: The source does not name the level; l2.latency holds 17.
+
+  - id: c-jia-ice-l1d
+    text: On Icestorm the pointer chase steps at 64 KB, the L1D capacity, with 3 cycles per load inside it and 14 beyond
+    loc: p001
+    quote: "可以看到 64KB 出现了明显的拐点，对应的就是 64KB 的 L1 DCache 容量，和官方信息一致。L1 DCache 范围内延迟是 3 cycle，之后提升到 14 cycle"
+    method: pointer-chase
+    derivation: measured
+    value: 64
+    unit: KiB
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-guide-dtlb
+    text: From Apple's optimization guide, the M1 P-core L1 dTLB holds 160 entries and the E-core 128
+    loc: p001
+    quote: "因此，M1 的 P-Core L1 DTLB 容量是 160，E-Core L1 DTLB 容量是 128"
+    method: secondhand
+    derivation: reported
+    value: 160
+    unit: entries
+    supports: [dtlb.l1_entries]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-guide-a14-dtlb
+    text: Apple's optimization guide gives the A14, A15 and M2 P-cores a 256-entry L1 dTLB, against 160 on the M1
+    loc: p001
+    quote: "除了 M2 Family、A14 Bionic 和 A15 Bionic 的 L1 DTLB 是 256 entries 以外，其余的 M1 Family、M3 Family 到 M4 Family，A16 Bionic 到 A18 Family 的 L1 DTLB 都是 160 entries"
+    method: secondhand
+    derivation: reported
+    value: 256
+    unit: entries
+    supports: []
+    chip: a14
+    notes: From Apple's optimization guide. Matches the 256 of c-at-l1-tlb.
+
+  - id: c-jia-dtlb-160
+    text: >-
+      A pointer chase with one pointer per page slows from 160 pages and settles at 9 cycles per load by 250 pages, so
+      the L1 dTLB holds 160 entries; the 9 cycles include an L2 TLB hit
+    loc: p001
+    quote: "从 160 个页开始性能下降，到 250 个页时性能稳定在 9 CPI，认为 Firestorm 的 L1 DTLB 有 160 项"
+    method: pointer-chase
+    derivation: measured
+    value: 160
+    unit: entries
+    supports: [dtlb.l1_entries]
+
+  - id: c-jia-dtlb-5way
+    text: >-
+      Spreading pointers 2, 4, 8, 16 and 32 pages apart moves the step to 80, 40, 20, 10 and 5 pages, and 64 pages apart
+      stays at 5, so the L1 dTLB is 5-way with 32 sets indexed by VA bits 18:14
+    loc: p001
+    quote: "每 32 个页一个指针，拐点变成 5；每 64 个页一个指针，拐点依然是 5。说明 Firestorm 的 L1 DTLB 是 5 路组相连，32 个 Set，Index 是 VA[18:14]"
+    method: pointer-chase
+    derivation: measured
+    value: "5-way set associative, indexed by VA bits 14-18"
+    supports: [dtlb.l1_org]
+
+  - id: c-jia-ice-dtlb
+    text: >-
+      Icestorm's L1 dTLB holds 128 entries, 4-way with 32 sets indexed by VA bits 18:14; past it loads settle at 10
+      cycles
+    loc: p001
+    quote: "从 128 个页开始性能下降，到 160 个页时性能稳定在 10 CPI，认为 Icestorm 的 L1 DTLB 有 128 项 ... 说明 Icestorm 的 L1 DTLB 是 4 路组相连，32 个 Set，Index 是 VA[18:14]"
+    method: pointer-chase
+    derivation: measured
+    value: 128
+    unit: entries
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-ldst-mix
+    text: >-
+      Per cycle Firestorm completes 3 loads with 1 store, 2 loads with 2 stores, 1 load with 2 stores, or 2 stores
+      (128-bit accesses)
+    loc: p001
+    quote: "实测 Firestorm 每个周期可以完成 ... 3x 128b Load + 1x 128b Store ... 2x 128b Load + 2x 128b Store ... 1x 128b Load + 2x 128b Store"
+    method: throughput
+    derivation: measured
+    value: 3
+    unit: loads/cycle
+    supports: [lsu.loads_per_cycle]
+
+  - id: c-jia-stores-2
+    text: At most 3 loads or 2 stores execute per cycle
+    loc: p001
+    quote: "访存方面，每周期最多 3 Load 或者 2 Store"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: stores/cycle
+    supports: [lsu.stores_per_cycle]
+
+  - id: c-jia-load-bw-48
+    text: >-
+      Widening each access from 128 to 256 bits halves the instruction rate and leaves bandwidth unchanged, so peak read
+      bandwidth is 48 B per cycle
+    loc: p001
+    quote: "如果把每条指令的访存位宽从 128b 改成 256b，读写带宽不变，指令吞吐减半。也就是说最大的读带宽是 48B/cyc"
+    method: throughput
+    derivation: measured
+    value: 48
+    unit: B/cycle
+    supports: [l1d.load_bw]
+
+  - id: c-jia-store-bw-32
+    text: Peak write bandwidth is 32 B per cycle, and peak read and peak write cannot be reached together
+    loc: p001
+    quote: "最大的写带宽是 32B/cyc，二者不能同时达到"
+    method: throughput
+    derivation: measured
+    value: 32
+    unit: B/cycle
+    supports: [l1d.store_bw]
+
+  - id: c-jia-ice-ldst
+    text: >-
+      Per cycle Icestorm completes 2 loads, 1 load with 1 store, or 1 store, for at most 32 B per cycle read and 16 B
+      per cycle written
+    loc: p001
+    quote: "实测 Icestorm 每个周期可以完成 ... 也就是说最大的读带宽是 32B/cyc，最大的写带宽是 16B/cyc"
+    method: throughput
+    derivation: measured
+    value: 2
+    unit: loads/cycle
+    supports: []
+    chip: icestorm
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
   fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}

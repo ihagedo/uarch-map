@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 158, claims 1979, sources 58, mechanisms 176
+blocks 40, links 37, params 158, claims 1992, sources 58, mechanisms 176
 
 ## By status
 
@@ -13,12 +13,12 @@ blocks 40, links 37, params 158, claims 1979, sources 58, mechanisms 176
 
 ## By confidence
 
-- confirmed: 16
+- confirmed: 18
 - conjecture: 3
-- corroborated: 33
+- corroborated: 34
 - derived: 14
 - inferred: 22
-- single: 70
+- single: 67
 
 ## Holes (3)
 
@@ -39,8 +39,8 @@ blocks 40, links 37, params 158, claims 1979, sources 58, mechanisms 176
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-stores, c-at-sq]
 - l1d.size: A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).  [c-jia-l1d-128, c-xnu-fs-l1d-160]
-- dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]
-- dtlb.l1_org: Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).  [c-mh-v2-dtlb-5way, c-pac-dtlb-12x256]
+- dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-jia-dtlb-160, c-at-l1-tlb]
+- dtlb.l1_org: Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).  [c-jia-dtlb-5way, c-pac-dtlb-12x256]
 - l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
 - l2.latency: Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.  [c-mh-v2-l2-latency-17, c-mh-v1-l2-latency-aside]
 - sched_int.total_entries: Disagrees with Johnson's diagram. On Handley's reading, an integer total summed from the diagram's queue sizes (134, c-cc-oryon-m1-int-sched-134) counts each paired queue about twice; he gives no total of his own.  [c-cc-oryon-m1-int-sched-134, c-mh-v1-sched-johnson-2x]
