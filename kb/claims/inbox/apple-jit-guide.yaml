@@ -1,0 +1,39 @@
+# apple-jit-guide.yaml
+# Apple, 2020
+# Apple's rules for running freshly written code on Apple silicon: I-cache invalidation and per-thread write or execute access.
+session: apple-jit-guide
+source: apple-jit-guide
+
+claims:
+  - id: c-ajit-icache-not-coherent
+    text: On Apple silicon the instruction caches are not coherent with the data caches
+    loc: p001
+    quote: "On Apple silicon, the instruction caches aren’t coherent with data caches, and unexpected results might occur if you execute instructions without invalidating the caches."
+    derivation: documented
+    value: false
+    supports: []
+    notes: Stated for Apple silicon Macs in general, the M1 among them. Rules out the alternative that the L1I snoops stores.
+  - id: c-ajit-invalidate-before-exec
+    text: Software must invalidate the instruction cache over newly written code, with sys_icache_invalidate, before it runs that code
+    loc: p001
+    quote: "Always call sys_icache_invalidate(_:_:) before you execute the machine instructions on a recently updated memory page."
+    derivation: documented
+    supports: []
+    notes: The guide asks for no data-cache clean, only the invalidate, which matches XNU's empty data-side clean (c-xnu-dcache-fully-coherent).
+  - id: c-ajit-per-thread-wx
+    text: >-
+      On Apple silicon a JIT region is writable and not executable for the current thread only while it writes, then executable
+      and not writable, and this write-or-execute protection is on for every app
+    loc: p001
+    quote: "Makes the memory region writable, and not executable, for the current thread only. ... Makes the memory region executable, and not writable, for the current thread."
+    derivation: documented
+    supports: []
+    notes: The guide adds that Apple silicon enables this protection for all apps. It gives no mechanism; per-thread permissions on one mapping fit an indexed permission table.
+
+new_params: {}
+
+new_mechanisms: {}
+
+mechanism_claims:
+  l1i_maintenance_only: [c-ajit-icache-not-coherent, c-ajit-invalidate-before-exec]
+  indexed_page_permissions: [c-ajit-per-thread-wx]

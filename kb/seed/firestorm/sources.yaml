@@ -222,6 +222,12 @@ sources:
     year: 2025
     url: https://github.com/jiegec/apple-pmu/blob/master/cpu_100000c_2_1b588bb3.md
     notes: Apple's /usr/share/kpep text as dumped by Jiajie Chen and by the darwin-kperf generator
+  apple-jit-guide:
+    type: vendor-doc
+    title: Porting just-in-time compilers to Apple silicon
+    author: Apple
+    year: 2020
+    url: https://developer.apple.com/documentation/apple-silicon/porting-just-in-time-compilers-to-apple-silicon
   dougall-amx:
     type: web
     title: AMX instruction notes (IDA plugin)

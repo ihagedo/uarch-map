@@ -3907,6 +3907,40 @@
       "chip": "m1",
       "entered": "anandtech-7cpu"
     },
+    "c-ajit-icache-not-coherent": {
+      "text": "On Apple silicon the instruction caches are not coherent with the data caches",
+      "loc": "p001",
+      "quote": "On Apple silicon, the instruction caches aren\u2019t coherent with data caches, and unexpected results might occur if you execute instructions without invalidating the caches.",
+      "derivation": "documented",
+      "value": false,
+      "supports": [],
+      "notes": "Stated for Apple silicon Macs in general, the M1 among them. Rules out the alternative that the L1I snoops stores.",
+      "source": "apple-jit-guide",
+      "chip": "m1",
+      "entered": "apple-jit-guide"
+    },
+    "c-ajit-invalidate-before-exec": {
+      "text": "Software must invalidate the instruction cache over newly written code, with sys_icache_invalidate, before it runs that code",
+      "loc": "p001",
+      "quote": "Always call sys_icache_invalidate(_:_:) before you execute the machine instructions on a recently updated memory page.",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The guide asks for no data-cache clean, only the invalidate, which matches XNU's empty data-side clean (c-xnu-dcache-fully-coherent).",
+      "source": "apple-jit-guide",
+      "chip": "m1",
+      "entered": "apple-jit-guide"
+    },
+    "c-ajit-per-thread-wx": {
+      "text": "On Apple silicon a JIT region is writable and not executable for the current thread only while it writes, then executable and not writable, and this write-or-execute protection is on for every app",
+      "loc": "p001",
+      "quote": "Makes the memory region writable, and not executable, for the current thread only. ... Makes the memory region executable, and not writable, for the current thread.",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The guide adds that Apple silicon enables this protection for all apps. It gives no mechanism; per-thread permissions on one mapping fit an indexed permission table.",
+      "source": "apple-jit-guide",
+      "chip": "m1",
+      "entered": "apple-jit-guide"
+    },
     "c-kpep-l1d-writeback": {
       "text": "The L1D is write-back, writing dirty lines back toward the shared L2",
       "loc": "p001",
@@ -26737,6 +26771,13 @@
       "url": "https://github.com/jiegec/apple-pmu/blob/master/cpu_100000c_2_1b588bb3.md",
       "notes": "Apple's /usr/share/kpep text as dumped by Jiajie Chen and by the darwin-kperf generator"
     },
+    "apple-jit-guide": {
+      "type": "vendor-doc",
+      "title": "Porting just-in-time compilers to Apple silicon",
+      "author": "Apple",
+      "year": 2020,
+      "url": "https://developer.apple.com/documentation/apple-silicon/porting-just-in-time-compilers-to-apple-silicon"
+    },
     "dougall-amx": {
       "type": "web",
       "title": "AMX instruction notes (IDA plugin)",
@@ -26885,6 +26926,8 @@
     },
     "l1i_maintenance_only": {
       "claims": [
+        "c-ajit-icache-not-coherent",
+        "c-ajit-invalidate-before-exec",
         "c-xnu-dcache-fully-coherent",
         "c-xnu-icache-invalidate"
       ],
@@ -28202,6 +28245,7 @@
     },
     "indexed_page_permissions": {
       "claims": [
+        "c-ajit-per-thread-wx",
         "c-mh-v3-sprr-index"
       ],
       "name": "Indexed page permissions",
