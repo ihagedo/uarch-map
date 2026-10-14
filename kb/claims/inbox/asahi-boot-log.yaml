@@ -1,0 +1,63 @@
+# asahi-boot-log.yaml
+# TheForgTN, 2024
+# What Linux reads from the M1's cache type register at boot: I-cache indexing and instruction/data coherence.
+session: asahi-boot-log
+source: asahi-boot-log
+
+claims:
+  - id: c-boot-vipt-icache
+    text: Linux detects a virtually indexed, physically tagged instruction cache on each of the M1's eight CPUs, both core types
+    loc: p001
+    quote: "Detected VIPT I-cache on CPU0 ... Detected VIPT I-cache on CPU4 ... Detected VIPT I-cache on CPU7"
+    method: other
+    derivation: measured
+    value: VIPT
+    supports: []
+    chip: m1
+    notes: Linux cpufeature messages from CTR_EL0. Booted on a 13-inch M1 MacBook Pro.
+
+  - id: c-boot-idc
+    text: >-
+      The cache type register reports that no data-cache clean to the point of unification is needed for
+      instruction-to-data coherence
+    loc: p001
+    quote: "CPU features: detected: Data cache clean to the PoU not required for I/D coherence"
+    method: other
+    derivation: measured
+    value: true
+    supports: []
+    notes: >-
+      Linux cpufeature messages from CTR_EL0 (IDC). Contradicts the mechanism's clean step: no clean to the L2 is
+      needed before invalidating.
+
+  - id: c-boot-no-dic
+    text: >-
+      The detected-feature list has no line saying instruction cache invalidation is not required, so the M1 does not
+      report the DIC bit and code changes still need I-cache invalidation
+    loc: p001
+    quote: "CPU features: detected: Generic authentication (IMP DEF algorithm) ... CPU features: detected: RCpc load-acquire (LDAPR)"
+    method: other
+    derivation: measured
+    value: false
+    supports: []
+    notes: >-
+      Linux cpufeature messages from CTR_EL0. Linux prints DIC as "Instruction cache invalidation not required for I/D
+      coherence", which would sit between these two lines of the alphabetical list.
+
+new_params: {}
+
+new_mechanisms:
+  l1i_vipt:
+    name: Virtually indexed, physically tagged L1I
+    block: l1i
+    status: measured
+    description: The L1I takes its set index from the virtual address and checks a physical tag, on both core types.
+    params: []
+    claims: [c-boot-vipt-icache]
+    sim_switch: null
+    detection_rule: >-
+      Code reached through two virtual mappings of one page that differ in index bits above the page offset occupies
+      two L1I sets.
+
+mechanism_claims:
+  l1i_maintenance_only: [c-boot-idc, c-boot-no-dic]

@@ -318,3 +318,9 @@ sources:
     author: Apple
     year: 2024
     url: https://github.com/apple-oss-distributions/libplatform/blob/libplatform-316.100.10/src/cachecontrol/arm64/cache.s
+  asahi-boot-log:
+    type: web
+    title: Ubuntu Asahi boot log on an M1 MacBook Pro
+    author: TheForgTN
+    year: 2024
+    url: https://github.com/UbuntuAsahi/ubuntu-asahi/issues/137#issuecomment-2415745556
