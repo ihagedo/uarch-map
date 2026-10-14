@@ -215,6 +215,13 @@ sources:
     year: 2025
     url: https://github.com/apple-oss-distributions/xnu
     notes: Errata tunables from tag xnu-6153.141.1 (2020), the rest from main
+  apple-kpep:
+    type: vendor-doc
+    title: Performance counter event descriptions for Firestorm and Icestorm (kpep)
+    author: Apple
+    year: 2025
+    url: https://github.com/jiegec/apple-pmu/blob/master/cpu_100000c_2_1b588bb3.md
+    notes: Apple's /usr/share/kpep text as dumped by Jiajie Chen and by the darwin-kperf generator
   dougall-amx:
     type: web
     title: AMX instruction notes (IDA plugin)

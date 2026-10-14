@@ -1923,6 +1923,18 @@
       "status": "measured",
       "confidence": "corroborated"
     },
+    "l1d.write_policy": {
+      "claims": [
+        "c-kpep-l1d-writeback"
+      ],
+      "disputes": [],
+      "block": "l1d",
+      "name": "L1D write policy",
+      "mechanism": "l1d_write_allocate",
+      "value": "write-back",
+      "status": "documented",
+      "confidence": "single"
+    },
     "prefetch.dmp_levels": {
       "claims": [
         "c-aug-single-level"
@@ -3894,6 +3906,97 @@
       "notes": "value is the four-thread figure; the page does not say which cores ran the threads",
       "chip": "m1",
       "entered": "anandtech-7cpu"
+    },
+    "c-kpep-l1d-writeback": {
+      "text": "The L1D is write-back, writing dirty lines back toward the shared L2",
+      "loc": "p001",
+      "quote": "L1D_CACHE_WRITEBACK (168, 0xa8): Dirty cache lines written back from the L1D Cache toward the Shared L2 Cache",
+      "derivation": "documented",
+      "value": "write-back",
+      "supports": [
+        "l1d.write_policy"
+      ],
+      "notes": "Event list for cpufamily 0x1b588bb3 (Firestorm and Icestorm). Says nothing on whether a store miss allocates.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-store-miss": {
+      "text": "Stores that miss the L1D are counted, both for all executed stores and for retired stores",
+      "loc": "p001",
+      "quote": "L1D_CACHE_MISS_ST (162, 0xa2): Stores that missed the L1 Data Cache ... L1D_CACHE_MISS_ST_NONSPEC (192, 0xc0): Retired stores that missed in the L1 Data Cache",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "A count that includes stores that never retire suggests stores look up the L1D before they retire.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-atomic-shared": {
+      "text": "An atomic or exclusive can find its cache line in a shared state, and successes and failures due to contention are counted apart",
+      "loc": "p001",
+      "quote": "For exclusives, incorrectly undercounts for exclusives when the cache line is initially found in shared state, however counts correctly for atomics.",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "A shared line state in the core's cache fits the MOESI reading (chip.coherence_protocol) without naming the protocol.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-ld-nt": {
+      "text": "Load uops carry a non-temporal hint that the core tracks when they execute",
+      "loc": "p001",
+      "quote": "LD_NT_UOP (230, 0xe6): Load uops that executed with non-temporal hint",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The full description excludes SSVE/SME loads, wording from a later macOS; the M1 has no SME.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-st-nt": {
+      "text": "Store uops carry a non-temporal hint that the core tracks when they execute",
+      "loc": "p001",
+      "quote": "ST_NT_UOP (229, 0xe5): Store uops that executed with non-temporal hint",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "Counts hinted stores; says nothing on stores turned non-temporal without a hint. The SME wording in the rest is from a later macOS.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-coproc-store-unit": {
+      "text": "Every instruction sent to the matrix coprocessor goes through the Store Unit and is mapped as a load-store uop",
+      "loc": "p001",
+      "quote": "Includes all instructions sent to the SME engine because they are processed through the Store Unit.",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "The text says SME, which the M1 lacks; it comes from a later macOS and is read here as the M1's AMX path. LD_NT_UOP and ST_NT_UOP add that coprocessor loads use the Store Unit too.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-gpr-vec-ldst": {
+      "text": "Moves from general-purpose to vector registers are mapped as load-store unit uops",
+      "loc": "p001",
+      "quote": "MAP_LDST_UOP (125, 0x7d): Mapped Load and Store Unit uops, including GPR to vector register converts.",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "Matches the integer-to-SIMD path through a load slot (c-mh-v8-scvtf-fake-load).",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
+    },
+    "c-kpep-map-rewind": {
+      "text": "After a flush and restart the Map unit stays blocked for some cycles while it rewinds",
+      "loc": "p001",
+      "quote": "MAP_REWIND (117, 0x75): Cycles while the Map Unit was blocked while rewinding due to flush and restart",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "A rewind that takes cycles fits a walk back through the rename history rather than an instant checkpoint restore; the counter gives no length.",
+      "source": "apple-kpep",
+      "chip": "m1",
+      "entered": "apple-kpep"
     },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
@@ -26528,6 +26631,14 @@
       "url": "https://github.com/apple-oss-distributions/xnu",
       "notes": "Errata tunables from tag xnu-6153.141.1 (2020), the rest from main"
     },
+    "apple-kpep": {
+      "type": "vendor-doc",
+      "title": "Performance counter event descriptions for Firestorm and Icestorm (kpep)",
+      "author": "Apple",
+      "year": 2025,
+      "url": "https://github.com/jiegec/apple-pmu/blob/master/cpu_100000c_2_1b588bb3.md",
+      "notes": "Apple's /usr/share/kpep text as dumped by Jiajie Chen and by the darwin-kperf generator"
+    },
     "dougall-amx": {
       "type": "web",
       "title": "AMX instruction notes (IDA plugin)",
@@ -26709,7 +26820,10 @@
       "detection_rule": "No timing probe tells them apart; the simulator can carry either."
     },
     "l1d_write_allocate": {
-      "claims": [],
+      "claims": [
+        "c-kpep-l1d-writeback",
+        "c-kpep-store-miss"
+      ],
       "name": "Write-allocate L1D with store-miss entries",
       "block": "l1d",
       "status": "inferred",
@@ -26896,6 +27010,7 @@
     },
     "amx_lsu_issue": {
       "claims": [
+        "c-kpep-coproc-store-unit",
         "c-cx-instr-only",
         "c-cx-store-ports",
         "c-deng-tlb",
@@ -27847,6 +27962,7 @@
     },
     "exec_forwarding": {
       "claims": [
+        "c-kpep-gpr-vec-ldst",
         "c-ox-xfer-fwd",
         "c-ox-xfer-rev",
         "c-ox-xfer-latency",
@@ -28114,6 +28230,7 @@
     "rename_retire_queue": {
       "claims": [
         "c-at-rob-630",
+        "c-kpep-map-rewind",
         "c-pat-us20210064376a1-last-reference",
         "c-mh-v1-620-history-file-patent",
         "c-mh-v1-shared-pool-624",
@@ -28242,6 +28359,7 @@
     "streaming_store_nt": {
       "claims": [
         "c-at-streaming-stores",
+        "c-kpep-st-nt",
         "c-mh-v2-nt-stores-slc",
         "c-mh-v2-full-line-to-dram",
         "c-mh-v2-store-stream-detect",
@@ -28676,6 +28794,7 @@
     },
     "nt_load_handling": {
       "claims": [
+        "c-kpep-ld-nt",
         "c-mh-v2-ldnp-l1-ignored",
         "c-mh-v2-nt-load-no-l1-prefetch",
         "c-mh-v2-nt-load-dram-10pct",
@@ -29589,6 +29708,7 @@
     },
     "exclusive_monitor_l1": {
       "claims": [
+        "c-kpep-atomic-shared",
         "c-s2c-stxr-l1-evict",
         "c-s2c-erg-64",
         "c-s2c-one-reservation",
