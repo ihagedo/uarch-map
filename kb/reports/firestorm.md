@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 150, claims 1736, sources 44, mechanisms 169
+blocks 40, links 37, params 150, claims 1748, sources 44, mechanisms 169
 
 ## By status
 
@@ -12,9 +12,9 @@ blocks 40, links 37, params 150, claims 1736, sources 44, mechanisms 169
 
 ## By confidence
 
-- confirmed: 16
+- confirmed: 15
 - conjecture: 4
-- corroborated: 30
+- corroborated: 31
 - derived: 13
 - inferred: 30
 - single: 57
@@ -26,9 +26,10 @@ blocks 40, links 37, params 150, claims 1736, sources 44, mechanisms 169
 - int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (17)
+## Open disputes (18)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
+- l1i.size: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).  [c-7cpu-l1i, c-xnu-fs-l1i-256]
 - btb.assoc: 2 vs 1 at equal rank  [c-mh-v4-nfp-2way, c-mh-v4-m1-nfp-dm]
 - rename.mov_imm_limit: Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming (c-dj-mov-imm)  [c-dj-mov-imm, c-ox-mov-imm-8]
 - int_prf.total: measured on the A14  [c-mh-v1-int-prf-add, c-at-int-prf]

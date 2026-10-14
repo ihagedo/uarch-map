@@ -216,6 +216,113 @@ claims:
     chip: a12
     supports: []
     notes: Earlier core (A12 E-core). Load-acquire as well as load barriers redirects poisoned younger loads.
+  - id: c-xnu-a12-uc-unaligned-store
+    text: Vortex launches uncacheable unaligned stores early, and XNU turns that off because it broke load-load ordering
+    loc: p003
+    quote: "disable faster launches of uncacheable unaligned stores to workaround load/load ordering violation ... orr x12, x12, ARM64_REG_HID11_DisX64NTLnchOpt"
+    derivation: documented
+    chip: a12
+    supports: []
+    notes: Earlier core (A12 P-core); the A13 P-core sets the same bit. The bit name points at stores that cross a 64 B line.
+  - id: c-xnu-a13-stnt-threshold
+    text: Lightning's LSU has a store non-temporal (STNT) widget that counts contiguous stores, and XNU sets its counter threshold to 3
+    loc: p003
+    quote: "Post-silicon tuning of STNT widget contiguous counter threshold ... orr x12, x12, 3 << ARM64_REG_HID4_CnfCntrThresh_shift"
+    derivation: documented
+    value: 3
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 Lightning, Cebu B0/B1). XNU also turns the widget off for unaligned stores (HID9 DisSTNTWidgetForUnalign).
+  - id: c-xnu-a13-stnt-disable
+    text: Lightning's store non-temporal widget downgrades stores to non-temporal, and XNU turns it off entirely on the P-cores
+    loc: p003
+    quote: "rdar://problem/51690962: Disable Store-Non-Temporal downgrade widget ... orr x12, x12, ARM64_REG_HID4_DisSTNTWidget"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). Set in the same block that tunes the widget's threshold.
+  - id: c-xnu-a13-x64-barrier
+    text: On Lightning, loads that cross a 64 B line could break barrier load ordering, fixed by a chicken bit
+    loc: p003
+    quote: "Barrier Load Ordering property is not satisfied for x64-loads ... orr x12, x12, ARM64_REG_HID9_EnableFixBug47221499"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). x64 read as crossing a 64 B boundary, as in the kpep event LDST_X64_UOP.
+  - id: c-xnu-a13-rf-bank-multipass
+    text: >-
+      Lightning's register-file banks can conflict with multipass issue, and the forward-progress widget for that conflict
+      missed livelocks of three or more cycles
+    loc: p003
+    quote: "RF bank and Multipass conflict forward progress widget does not handle 3+ cycle livelock"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). Shows a banked register file with read conflicts, not its bank count or power.
+  - id: c-xnu-a13-xpick-rs45
+    text: >-
+      Lightning's reservation stations 4 and 5 can cross-pick work for each other, and RS4 has a secondary mode; XNU enables
+      both to break the livelock
+    loc: p003
+    quote: "orr x12, x12, ARM64_REG_HID16_EnRs4Sec and x12, x12, ~ARM64_REG_HID16_DisxPickRs45 orr x12, x12, ARM64_REG_HID16_EnMPxPick45"
+    derivation: inferred
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). Read from the bit names; the same write also sets EnMPCyc7.
+  - id: c-xnu-a13-nex-pg
+    text: Lightning P-cores power-gate the NEX unit, and XNU adds 4 dummy pre-cycles because the gating upset temperature-sensor readings
+    loc: p003
+    quote: "configure dummy cycles to work around incorrect temp sensor readings on NEX power gating ... orr x12, x12, 4 << ARM64_REG_HID13_PreCyc_shift"
+    derivation: documented
+    value: 4
+    unit: cycles
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). NEX read as the FP/SIMD unit (see c-xnu-a9-fmul). Current XNU says NEX power gating is not available on E-cores.
+  - id: c-xnu-a13-leq-credits
+    text: Lightning hands out LEQ entries by credits and can throttle them, and XNU makes the throttling aggressive to work around a credit leak
+    loc: p003
+    quote: "enable aggressive LEQ throttling to work around LEQ credit leak ... orr x12, x12, ARM64_REG_HID16_leqThrottleAggr"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). LEQ read as the load execution queue.
+  - id: c-xnu-a13-amx-fusion
+    text: >-
+      Lightning fuses a direct branch with an AMX (EAS) instruction, which went wrong at a cross-beat location, and the bit XNU
+      sets to stop it is named CacheFusionDisable
+    loc: p003
+    quote: "Incorrect fusing of a direct branch with AMX/EAS instruction at cross-beat location ... orr x12, x12, ARM64_REG_HID0_CacheFusionDisable"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 P-core). The bit name hints that fusion is marked in the I-cache, and a beat is probably one fetch read of a line.
+  - id: c-xnu-a13-sibling-merge
+    text: The A13 cluster's LLC merges sibling fills, which can let an uncacheable load break Arm ordering, so XNU turns the merge off
+    loc: p003
+    quote: "[Cebu ACC Errata] Sibling Merge in LLC can cause UC load to violate ARM Memory Ordering Rules. ... orr x12, x12, ARM64_REG_HID5_DisFill2cMerge"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier chip (A13, all cores). LLC is the cluster L2 in Apple's names; sibling is probably the other 64 B half of a 128 B line, a reading.
+  - id: c-xnu-a13-uc-stlf
+    text: Thunder E-cores forward stores to loads even for uncacheable memory, and XNU stops this by forcing such stores to drain first
+    loc: p003
+    quote: "Prevent store-to-load forwarding for UC memory to avoid barrier ordering violation ... orr x12, x12, ARM64_REG_EHID10_ForceWStDrainUc"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: Earlier core (A13 E-core), only on two-cluster parts.
+  - id: c-xnu-fs-l1i-256
+    text: Apple's kernel header gives Firestorm a 256 KB instruction cache
+    loc: p004
+    quote: "I-Cache, 256KB for Firestorm, 128KB for Icestorm, 6-way."
+    derivation: documented
+    value: 256
+    unit: KiB
+    supports: []
+    contradicts: [l1i.size]
+    notes: A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).
 
 new_mechanisms:
   store_merge_buffer:
@@ -276,7 +383,7 @@ mechanism_claims:
   loop_modes: [c-xnu-a8-loop-buffer]
   lsu_virtual_prefetch: [c-xnu-a8-hwp-ld-st]
   slc_sticky_quota: [c-xnu-a8-dataset-id]
-  macro_op_fusion: [c-xnu-a10-aes-fusion]
+  macro_op_fusion: [c-xnu-a10-aes-fusion, c-xnu-a13-amx-fusion]
   dczva_l2_zero: [c-xnu-a10x-dczva-cmd]
   barrier_colors: [c-xnu-a11-wkdm-colors, c-xnu-a12-color-opt, c-xnu-a12-ordered-ld]
   cluster_compression_engines: [c-xnu-a11-wkdm-strict]
@@ -284,4 +391,11 @@ mechanism_claims:
   return_fetch_table: [c-xnu-a11-nfp-ret-fwd]
   idle_clock_division: [c-xnu-a11-clkdiv-gating, c-xnu-a11-clock-dither]
   issue_age_flush: [c-xnu-a12-br-kill-limit]
-  load_poison_bits: [c-xnu-a12-poison-barrier, c-xnu-a12-poison-acquire]
+  load_poison_bits: [c-xnu-a12-poison-barrier, c-xnu-a12-poison-acquire, c-xnu-a13-x64-barrier]
+  uncached_line_handling: [c-xnu-a12-uc-unaligned-store]
+  streaming_store_nt: [c-xnu-a13-stnt-threshold, c-xnu-a13-stnt-disable]
+  banked_prf_power: [c-xnu-a13-rf-bank-multipass]
+  paired_sched_queues: [c-xnu-a13-xpick-rs45]
+  simd_power_down: [c-xnu-a13-nex-pg]
+  load_replay_shadow: [c-xnu-a13-leq-credits]
+  l2_half_lines: [c-xnu-a13-sibling-merge]

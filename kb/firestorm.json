@@ -613,16 +613,27 @@
         "c-cc-gcc-l1i-192",
         "c-mh-v4-l1i-192",
         "c-ilk-l1i-size",
-        "c-pac-l1i-size"
+        "c-pac-l1i-size",
+        "c-xnu-fs-l1i-256"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-7cpu-l1i",
+            "c-xnu-fs-l1i-256"
+          ],
+          "note": "A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).",
+          "resolution": null,
+          "resolved_by": null
+        }
+      ],
       "block": "l1i",
       "name": "L1I capacity",
       "unit": "KiB",
       "sim_key": "l1i_kib",
       "value": 192,
       "status": "measured",
-      "confidence": "confirmed"
+      "confidence": "corroborated"
     },
     "l1i.line": {
       "claims": [
@@ -25784,6 +25795,146 @@
       "source": "xnu",
       "entered": "xnu"
     },
+    "c-xnu-a12-uc-unaligned-store": {
+      "text": "Vortex launches uncacheable unaligned stores early, and XNU turns that off because it broke load-load ordering",
+      "loc": "p003",
+      "quote": "disable faster launches of uncacheable unaligned stores to workaround load/load ordering violation ... orr x12, x12, ARM64_REG_HID11_DisX64NTLnchOpt",
+      "derivation": "documented",
+      "chip": "a12",
+      "supports": [],
+      "notes": "Earlier core (A12 P-core); the A13 P-core sets the same bit. The bit name points at stores that cross a 64 B line.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-stnt-threshold": {
+      "text": "Lightning's LSU has a store non-temporal (STNT) widget that counts contiguous stores, and XNU sets its counter threshold to 3",
+      "loc": "p003",
+      "quote": "Post-silicon tuning of STNT widget contiguous counter threshold ... orr x12, x12, 3 << ARM64_REG_HID4_CnfCntrThresh_shift",
+      "derivation": "documented",
+      "value": 3,
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 Lightning, Cebu B0/B1). XNU also turns the widget off for unaligned stores (HID9 DisSTNTWidgetForUnalign).",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-stnt-disable": {
+      "text": "Lightning's store non-temporal widget downgrades stores to non-temporal, and XNU turns it off entirely on the P-cores",
+      "loc": "p003",
+      "quote": "rdar://problem/51690962: Disable Store-Non-Temporal downgrade widget ... orr x12, x12, ARM64_REG_HID4_DisSTNTWidget",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). Set in the same block that tunes the widget's threshold.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-x64-barrier": {
+      "text": "On Lightning, loads that cross a 64 B line could break barrier load ordering, fixed by a chicken bit",
+      "loc": "p003",
+      "quote": "Barrier Load Ordering property is not satisfied for x64-loads ... orr x12, x12, ARM64_REG_HID9_EnableFixBug47221499",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). x64 read as crossing a 64 B boundary, as in the kpep event LDST_X64_UOP.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-rf-bank-multipass": {
+      "text": "Lightning's register-file banks can conflict with multipass issue, and the forward-progress widget for that conflict missed livelocks of three or more cycles",
+      "loc": "p003",
+      "quote": "RF bank and Multipass conflict forward progress widget does not handle 3+ cycle livelock",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). Shows a banked register file with read conflicts, not its bank count or power.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-xpick-rs45": {
+      "text": "Lightning's reservation stations 4 and 5 can cross-pick work for each other, and RS4 has a secondary mode; XNU enables both to break the livelock",
+      "loc": "p003",
+      "quote": "orr x12, x12, ARM64_REG_HID16_EnRs4Sec and x12, x12, ~ARM64_REG_HID16_DisxPickRs45 orr x12, x12, ARM64_REG_HID16_EnMPxPick45",
+      "derivation": "inferred",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). Read from the bit names; the same write also sets EnMPCyc7.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-nex-pg": {
+      "text": "Lightning P-cores power-gate the NEX unit, and XNU adds 4 dummy pre-cycles because the gating upset temperature-sensor readings",
+      "loc": "p003",
+      "quote": "configure dummy cycles to work around incorrect temp sensor readings on NEX power gating ... orr x12, x12, 4 << ARM64_REG_HID13_PreCyc_shift",
+      "derivation": "documented",
+      "value": 4,
+      "unit": "cycles",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). NEX read as the FP/SIMD unit (see c-xnu-a9-fmul). Current XNU says NEX power gating is not available on E-cores.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-leq-credits": {
+      "text": "Lightning hands out LEQ entries by credits and can throttle them, and XNU makes the throttling aggressive to work around a credit leak",
+      "loc": "p003",
+      "quote": "enable aggressive LEQ throttling to work around LEQ credit leak ... orr x12, x12, ARM64_REG_HID16_leqThrottleAggr",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). LEQ read as the load execution queue.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-amx-fusion": {
+      "text": "Lightning fuses a direct branch with an AMX (EAS) instruction, which went wrong at a cross-beat location, and the bit XNU sets to stop it is named CacheFusionDisable",
+      "loc": "p003",
+      "quote": "Incorrect fusing of a direct branch with AMX/EAS instruction at cross-beat location ... orr x12, x12, ARM64_REG_HID0_CacheFusionDisable",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 P-core). The bit name hints that fusion is marked in the I-cache, and a beat is probably one fetch read of a line.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-sibling-merge": {
+      "text": "The A13 cluster's LLC merges sibling fills, which can let an uncacheable load break Arm ordering, so XNU turns the merge off",
+      "loc": "p003",
+      "quote": "[Cebu ACC Errata] Sibling Merge in LLC can cause UC load to violate ARM Memory Ordering Rules. ... orr x12, x12, ARM64_REG_HID5_DisFill2cMerge",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier chip (A13, all cores). LLC is the cluster L2 in Apple's names; sibling is probably the other 64 B half of a 128 B line, a reading.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-a13-uc-stlf": {
+      "text": "Thunder E-cores forward stores to loads even for uncacheable memory, and XNU stops this by forcing such stores to drain first",
+      "loc": "p003",
+      "quote": "Prevent store-to-load forwarding for UC memory to avoid barrier ordering violation ... orr x12, x12, ARM64_REG_EHID10_ForceWStDrainUc",
+      "derivation": "documented",
+      "chip": "a13",
+      "supports": [],
+      "notes": "Earlier core (A13 E-core), only on two-cluster parts.",
+      "source": "xnu",
+      "entered": "xnu"
+    },
+    "c-xnu-fs-l1i-256": {
+      "text": "Apple's kernel header gives Firestorm a 256 KB instruction cache",
+      "loc": "p004",
+      "quote": "I-Cache, 256KB for Firestorm, 128KB for Icestorm, 6-way.",
+      "derivation": "documented",
+      "value": 256,
+      "unit": "KiB",
+      "supports": [],
+      "contradicts": [
+        "l1i.size"
+      ],
+      "notes": "A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).",
+      "source": "xnu",
+      "chip": "m1",
+      "entered": "xnu"
+    },
     "c-zhou-ibtb": {
       "text": "Firestorm's indirect BTB holds 1024 entries and Icestorm's 512; it is a tagged cache, not indexed by branch address",
       "loc": "#ibtb-size",
@@ -26750,7 +26901,8 @@
       "claims": [
         "c-aug-l1-pair-fill",
         "c-gf-other-half-l2",
-        "c-ilk-l2-half-line"
+        "c-ilk-l2-half-line",
+        "c-xnu-a13-sibling-merge"
       ],
       "name": "Two L1 lines per L2 line",
       "block": "l2",
@@ -26803,7 +26955,8 @@
       "claims": [
         "c-mh-v3-uncached-load-merge",
         "c-mh-v3-uncached-l2-ways",
-        "c-mh-v3-uncached-write-gather"
+        "c-mh-v3-uncached-write-gather",
+        "c-xnu-a12-uc-unaligned-store"
       ],
       "name": "Uncacheable line handling",
       "block": "l2",
@@ -27243,7 +27396,8 @@
         "c-dj-fusion-amx",
         "c-dj-fusion-branch-limits",
         "c-dj-no-fusion",
-        "c-xnu-a10-aes-fusion"
+        "c-xnu-a10-aes-fusion",
+        "c-xnu-a13-amx-fusion"
       ],
       "name": "Macro-op fusion",
       "block": "rename",
@@ -27338,7 +27492,8 @@
       "claims": [
         "c-mh-v1-replay-shadow-window",
         "c-mh-v1-leq-bank-per-pipe",
-        "c-mh-v1-rlb-patent"
+        "c-mh-v1-rlb-patent",
+        "c-xnu-a13-leq-credits"
       ],
       "name": "Load replay with a shadow window",
       "block": "sched_ls",
@@ -27762,7 +27917,9 @@
         "c-mh-v2-large-store-policy",
         "c-mh-v2-partial-fill",
         "c-mh-v2-copy-store-stream-bypass",
-        "c-mh-v3-full-line-write-l2"
+        "c-mh-v3-full-line-write-l2",
+        "c-xnu-a13-stnt-threshold",
+        "c-xnu-a13-stnt-disable"
       ],
       "name": "Automatic non-temporal streaming stores",
       "block": "sq",
@@ -28033,7 +28190,8 @@
         "c-mh-v1-prf-banks",
         "c-mh-v1-free-list-scanners",
         "c-mh-v1-bank-powerup",
-        "c-mh-v1-split-power-gating"
+        "c-mh-v1-split-power-gating",
+        "c-xnu-a13-rf-bank-multipass"
       ],
       "name": "Banked register file with bank power gating",
       "block": "int_prf",
@@ -28089,7 +28247,8 @@
         "c-mh-v1-sched-int-unpaired",
         "c-mh-v1-sched-fp-pairing",
         "c-mh-v1-pairing-patent",
-        "c-mh-v2-load-order"
+        "c-mh-v2-load-order",
+        "c-xnu-a13-xpick-rs45"
       ],
       "name": "Paired scheduler queues",
       "block": "sched_int",
@@ -28424,7 +28583,8 @@
         "c-mh-v3-lsq-cam-filter",
         "c-tso-ll-squash-rule",
         "c-xnu-a12-poison-barrier",
-        "c-xnu-a12-poison-acquire"
+        "c-xnu-a12-poison-acquire",
+        "c-xnu-a13-x64-barrier"
       ],
       "name": "Load poison bits for load-load ordering",
       "block": "lq",
@@ -28838,7 +28998,8 @@
     "simd_power_down": {
       "claims": [
         "c-mh-v3-simd-power-down",
-        "c-mh-v4-decode-vector-gating"
+        "c-mh-v4-decode-vector-gating",
+        "c-xnu-a13-nex-pg"
       ],
       "name": "SIMD unit power-down with state offload",
       "block": "eu_fp",
