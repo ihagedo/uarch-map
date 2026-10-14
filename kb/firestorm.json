@@ -591,6 +591,7 @@
         "c-mh-v4-decode-32b",
         "c-mh-v4-decode-8",
         "c-jia-guide-uops",
+        "c-jia-decode-8",
         "c-dj-width"
       ],
       "disputes": [],
@@ -805,7 +806,8 @@
     },
     "ras.depth": {
       "claims": [
-        "c-cc-oryon-m1-ras-50"
+        "c-cc-oryon-m1-ras-50",
+        "c-jia-ras-50"
       ],
       "disputes": [],
       "block": "ras",
@@ -813,8 +815,8 @@
       "unit": "entries",
       "sim_key": "ras_depth",
       "value": 50,
-      "status": "reported",
-      "confidence": "inferred"
+      "status": "measured",
+      "confidence": "single"
     },
     "indpred.capacity": {
       "claims": [
@@ -1006,23 +1008,16 @@
       "confidence": "corroborated"
     },
     "int_prf.headroom": {
-      "claims": [],
+      "claims": [
+        "c-jia-int-spec-362"
+      ],
       "disputes": [],
       "block": "int_prf",
       "name": "Integer rename headroom",
       "unit": "registers",
-      "status": "open",
-      "value": null,
-      "confidence": "conjecture",
-      "conjecture": {
-        "basis": [
-          "c-mh-v1-int-prf-add",
-          "c-dj-int-prf"
-        ],
-        "value": 350,
-        "approx": true,
-        "text": "About 380 physical registers less the 31 architectural ones, if nothing else holds registers."
-      }
+      "value": 362,
+      "status": "measured",
+      "confidence": "single"
     },
     "fp_prf.total": {
       "claims": [
@@ -1496,6 +1491,8 @@
         "c-cc-gcc-l1d-128",
         "c-mh-v2-l1d-size",
         "c-ilk-l1d-size",
+        "c-jia-sysctl-l1d",
+        "c-jia-l1d-128",
         "c-pac-l1d-size",
         "c-slap-l1d-128",
         "c-tso-l1d-128",
@@ -1504,7 +1501,7 @@
       "disputes": [
         {
           "claims": [
-            "c-7cpu-l1d-size",
+            "c-jia-l1d-128",
             "c-xnu-fs-l1d-160"
           ],
           "note": "A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).",
@@ -1549,6 +1546,7 @@
         "c-mh-v2-l1d-8way-tlb",
         "c-mh-v8-l1d-8way",
         "c-ilk-l1d-ways",
+        "c-jia-guide-l1d",
         "c-pac-l1d-ways",
         "c-prt-l1d-ways",
         "c-s2c-l1d-8way",
@@ -2884,6 +2882,30 @@
       "block": "btb",
       "name": "Zero-bubble BTB organisation",
       "value": "512 sets, 2-way, indexed by PC bits 10:2",
+      "status": "measured",
+      "confidence": "single"
+    },
+    "fp_prf.headroom": {
+      "claims": [
+        "c-jia-fp-spec-382"
+      ],
+      "disputes": [],
+      "block": "fp_prf",
+      "name": "FP/SIMD rename headroom",
+      "unit": "registers",
+      "value": 382,
+      "status": "measured",
+      "confidence": "single"
+    },
+    "flags_prf.headroom": {
+      "claims": [
+        "c-jia-flags-spec-123"
+      ],
+      "disputes": [],
+      "block": "flags_prf",
+      "name": "Flags rename headroom",
+      "unit": "registers",
+      "value": 123,
       "status": "measured",
       "confidence": "single"
     },
@@ -23918,6 +23940,196 @@
       "chip": "m1",
       "entered": "jia-m1"
     },
+    "c-jia-guide-uops-m4": {
+      "text": "Apple's optimization guide raises the P-core's sustained uops per cycle to 9 on the M3 and 10 on the M4",
+      "loc": "p001",
+      "quote": "M3 Family \u7684 P-Core \u63d0\u5347\u5230\u4e86 9\uff0cE-Core \u548c M2 \u6301\u5e73\uff1bM4 Family \u7684 P-Core \u8fdb\u4e00\u6b65\u63d0\u5347\u5230\u4e86 10",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 10,
+      "unit": "instr/cycle",
+      "supports": [],
+      "chip": "m4",
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-decode-8": {
+      "text": "Firestorm reaches at most 8 instructions per cycle, so decode is at least 8 wide; a wider decoder is not ruled out",
+      "loc": "p001",
+      "quote": "Firestorm \u6700\u5927\u89c2\u5bdf\u5230 8 IPC\uff0cIcestorm \u6700\u5927\u89c2\u5bdf\u5230 4 IPC\uff0c\u90a3\u4e48 Decode \u5bbd\u5ea6\u4e5f\u81f3\u5c11\u662f\u8fd9\u4e48\u591a\uff0c\u6682\u65f6\u4e5f\u4e0d\u80fd\u6392\u9664\u6709\u66f4\u5927\u7684 Decode \u5bbd\u5ea6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "approx": true,
+      "hedge": "\u81f3\u5c11",
+      "supports": [
+        "decode.width"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-decode-4": {
+      "text": "Icestorm reaches at most 4 instructions per cycle, so its decode is at least 4 wide",
+      "loc": "p001",
+      "quote": "Icestorm \u6700\u5927\u89c2\u5bdf\u5230 4 IPC\uff0c\u90a3\u4e48 Decode \u5bbd\u5ea6\u4e5f\u81f3\u5c11\u662f\u8fd9\u4e48\u591a",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "instr/cycle",
+      "approx": true,
+      "hedge": "\u81f3\u5c11",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ras-50": {
+      "text": "Average time per call jumps once the call chain is 50 deep, so Firestorm's return stack holds 50 entries",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u8c03\u7528\u94fe\u6df1\u5ea6\u4e3a 50 \u65f6\u6027\u80fd\u7a81\u7136\u53d8\u5dee\uff0c\u56e0\u6b64 Firestorm \u7684 Return Stack \u6df1\u5ea6\u4e3a 50",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 50,
+      "unit": "entries",
+      "supports": [
+        "ras.depth"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-ras-32": {
+      "text": "On Icestorm the time per call jumps at a call depth of 32, so its return stack holds 32 entries",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u8c03\u7528\u94fe\u6df1\u5ea6\u4e3a 32 \u65f6\u6027\u80fd\u7a81\u7136\u53d8\u5dee\uff0c\u56e0\u6b64 Icestorm \u7684 Return Stack \u6df1\u5ea6\u4e3a 32",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 32,
+      "unit": "entries",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-phr": {
+      "text": "Icestorm keeps a 60-bit target path history and a 16-bit branch-address path history, both updated on taken branches by shifting one bit and XORing in target bits 47:2 and branch bits 5:2",
+      "loc": "p001",
+      "quote": "\u4f7f\u7528 60 \u4f4d\u7684 Path History Register for Target(PHRT) \u4ee5\u53ca 16 \u4f4d\u7684 Path History Register for Branch(PHRB)\uff0c\u6bcf\u6b21\u6267\u884c taken branch \u65f6\u66f4\u65b0 ... PHRTnew = (PHRTold << 1) xor T[47:2]",
+      "derivation": "measured",
+      "value": "PHRT 60 bits, PHRB 16 bits",
+      "supports": [],
+      "chip": "icestorm",
+      "notes": "Same method as Chen's Firestorm paper. c-ien-ecore-phrt-t48 gives target bits 48:2.",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-int-spec-362": {
+      "text": "The integer register probe steps at 362 instructions; this counts registers free for speculation, and the register file also holds the architectural registers, at least 32",
+      "loc": "p001",
+      "quote": "32b/64b int\uff1a\u6d4b\u8bd5 speculative 32/64 \u4f4d\u6574\u6570\u5bc4\u5b58\u5668\u7684\u6570\u91cf\uff0c\u62d0\u70b9\u5728 362 ... \u6ce8\u610f\u8fd9\u91cc\u6d4b\u8bd5\u7684\u90fd\u662f\u80fd\u591f\u7528\u4e8e\u9884\u6d4b\u6267\u884c\u7684\u5bc4\u5b58\u5668\u6570\u91cf\uff0c\u5b9e\u9645\u7684\u7269\u7406\u5bc4\u5b58\u5668\u5806\u8fd8\u9700\u8981\u4fdd\u5b58\u67b6\u6784\u5bc4\u5b58\u5668",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 362,
+      "unit": "registers",
+      "supports": [
+        "int_prf.headroom"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-fp-spec-382": {
+      "text": "The FP register probe with 32-bit FP results steps at 382, the FP registers free for speculation",
+      "loc": "p001",
+      "quote": "32b fp\uff1a\u6d4b\u8bd5 speculative 32 \u4f4d\u6d6e\u70b9\u5bc4\u5b58\u5668\u7684\u6570\u91cf\uff0c\u62d0\u70b9\u5728 382",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 382,
+      "unit": "registers",
+      "supports": [
+        "fp_prf.headroom"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-flags-spec-123": {
+      "text": "The NZCV flags probe steps at 123, the flags registers free for speculation",
+      "loc": "p001",
+      "quote": "flags\uff1a\u6d4b\u8bd5 speculative NZCV \u5bc4\u5b58\u5668\u7684\u6570\u91cf\uff0c\u62d0\u70b9\u5728 123",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": 123,
+      "unit": "registers",
+      "supports": [
+        "flags_prf.headroom"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-prf": {
+      "text": "On Icestorm the speculative register probes step at 77 integer, 74 FP and 38 flags registers",
+      "loc": "p001",
+      "quote": "32b/64b int\uff1a\u6d4b\u8bd5 speculative 32/64 \u4f4d\u6574\u6570\u5bc4\u5b58\u5668\u7684\u6570\u91cf\uff0c\u62d0\u70b9\u5728 77 ... 32b fp\uff1a\u6d4b\u8bd5 speculative 32 \u4f4d\u6d6e\u70b9\u5bc4\u5b58\u5668\u7684\u6570\u91cf\uff0c\u62d0\u70b9\u5728 74 ... \u62d0\u70b9\u5728 38",
+      "method": "wong-probe",
+      "derivation": "measured",
+      "value": "int 77, fp 74, flags 38",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sysctl-l1d": {
+      "text": "macOS reports a 128 KB L1D for the performance cores and 64 KB for the efficiency cores",
+      "loc": "p001",
+      "quote": "Firestorm \u5177\u6709 128KB L1 DCache\uff0cIcestorm \u5177\u6709 64KB L1 DCache ... hw.perflevel0.l1dcachesize: 131072",
+      "method": "other",
+      "derivation": "documented",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "macOS sysctl values as read by Chen.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l1d": {
+      "text": "Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 128 KiB, 8-way L1D with 64 B lines",
+      "loc": "p001",
+      "quote": "P-Core \u7684 L1 DCache \u90fd\u662f 128KiB, 8-way, 64B lines \u7684\u914d\u7f6e",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "ways",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "From Apple's optimization guide. The E-core L1D is given as 64 KiB, 8-way, 64 B lines.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l1d-128": {
+      "text": "A pointer chase shows a clear step at a 128 KB footprint, the L1D capacity",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230 128KB \u51fa\u73b0\u4e86\u660e\u663e\u7684\u62d0\u70b9\uff0c\u5bf9\u5e94\u7684\u5c31\u662f 128KB \u7684 L1 DCache \u5bb9\u91cf",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -31094,7 +31306,8 @@
         "c-ien-all-taken",
         "c-ien-phrb-pcore",
         "c-ien-ecore-phrt-t48",
-        "c-ien-m4-pcore-nojumps"
+        "c-ien-m4-pcore-nojumps",
+        "c-jia-ice-phr"
       ],
       "name": "Path history register (shift-and-XOR)",
       "block": "dirpred",

@@ -308,8 +308,154 @@ claims:
     supports: [decode.width]
     notes: From Apple's optimization guide.
 
+  - id: c-jia-guide-uops-m4
+    text: Apple's optimization guide raises the P-core's sustained uops per cycle to 9 on the M3 and 10 on the M4
+    loc: p001
+    quote: "M3 Family 的 P-Core 提升到了 9，E-Core 和 M2 持平；M4 Family 的 P-Core 进一步提升到了 10"
+    method: secondhand
+    derivation: reported
+    value: 10
+    unit: instr/cycle
+    supports: []
+    chip: m4
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-decode-8
+    text: Firestorm reaches at most 8 instructions per cycle, so decode is at least 8 wide; a wider decoder is not ruled out
+    loc: p001
+    quote: "Firestorm 最大观察到 8 IPC，Icestorm 最大观察到 4 IPC，那么 Decode 宽度也至少是这么多，暂时也不能排除有更大的 Decode 宽度"
+    method: throughput
+    derivation: measured
+    value: 8
+    unit: instr/cycle
+    approx: true
+    hedge: "至少"
+    supports: [decode.width]
+
+  - id: c-jia-ice-decode-4
+    text: Icestorm reaches at most 4 instructions per cycle, so its decode is at least 4 wide
+    loc: p001
+    quote: "Icestorm 最大观察到 4 IPC，那么 Decode 宽度也至少是这么多"
+    method: throughput
+    derivation: measured
+    value: 4
+    unit: instr/cycle
+    approx: true
+    hedge: "至少"
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-ras-50
+    text: Average time per call jumps once the call chain is 50 deep, so Firestorm's return stack holds 50 entries
+    loc: p001
+    quote: "可以看到调用链深度为 50 时性能突然变差，因此 Firestorm 的 Return Stack 深度为 50"
+    method: branch-sweep
+    derivation: measured
+    value: 50
+    unit: entries
+    supports: [ras.depth]
+
+  - id: c-jia-ice-ras-32
+    text: On Icestorm the time per call jumps at a call depth of 32, so its return stack holds 32 entries
+    loc: p001
+    quote: "可以看到调用链深度为 32 时性能突然变差，因此 Icestorm 的 Return Stack 深度为 32"
+    method: branch-sweep
+    derivation: measured
+    value: 32
+    unit: entries
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-ice-phr
+    text: >-
+      Icestorm keeps a 60-bit target path history and a 16-bit branch-address path history, both updated on taken
+      branches by shifting one bit and XORing in target bits 47:2 and branch bits 5:2
+    loc: p001
+    quote: "使用 60 位的 Path History Register for Target(PHRT) 以及 16 位的 Path History Register for Branch(PHRB)，每次执行 taken branch 时更新 ... PHRTnew = (PHRTold << 1) xor T[47:2]"
+    derivation: measured
+    value: "PHRT 60 bits, PHRB 16 bits"
+    supports: []
+    chip: icestorm
+    notes: Same method as Chen's Firestorm paper. c-ien-ecore-phrt-t48 gives target bits 48:2.
+
+  - id: c-jia-int-spec-362
+    text: >-
+      The integer register probe steps at 362 instructions; this counts registers free for speculation, and the register
+      file also holds the architectural registers, at least 32
+    loc: p001
+    quote: "32b/64b int：测试 speculative 32/64 位整数寄存器的数量，拐点在 362 ... 注意这里测试的都是能够用于预测执行的寄存器数量，实际的物理寄存器堆还需要保存架构寄存器"
+    method: wong-probe
+    derivation: measured
+    value: 362
+    unit: registers
+    supports: [int_prf.headroom]
+
+  - id: c-jia-fp-spec-382
+    text: The FP register probe with 32-bit FP results steps at 382, the FP registers free for speculation
+    loc: p001
+    quote: "32b fp：测试 speculative 32 位浮点寄存器的数量，拐点在 382"
+    method: wong-probe
+    derivation: measured
+    value: 382
+    unit: registers
+    supports: [fp_prf.headroom]
+
+  - id: c-jia-flags-spec-123
+    text: The NZCV flags probe steps at 123, the flags registers free for speculation
+    loc: p001
+    quote: "flags：测试 speculative NZCV 寄存器的数量，拐点在 123"
+    method: wong-probe
+    derivation: measured
+    value: 123
+    unit: registers
+    supports: [flags_prf.headroom]
+
+  - id: c-jia-ice-prf
+    text: On Icestorm the speculative register probes step at 77 integer, 74 FP and 38 flags registers
+    loc: p001
+    quote: "32b/64b int：测试 speculative 32/64 位整数寄存器的数量，拐点在 77 ... 32b fp：测试 speculative 32 位浮点寄存器的数量，拐点在 74 ... 拐点在 38"
+    method: wong-probe
+    derivation: measured
+    value: "int 77, fp 74, flags 38"
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-sysctl-l1d
+    text: macOS reports a 128 KB L1D for the performance cores and 64 KB for the efficiency cores
+    loc: p001
+    quote: "Firestorm 具有 128KB L1 DCache，Icestorm 具有 64KB L1 DCache ... hw.perflevel0.l1dcachesize: 131072"
+    method: other
+    derivation: documented
+    value: 128
+    unit: KiB
+    supports: [l1d.size]
+    notes: macOS sysctl values as read by Chen.
+
+  - id: c-jia-guide-l1d
+    text: Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 128 KiB, 8-way L1D with 64 B lines
+    loc: p001
+    quote: "P-Core 的 L1 DCache 都是 128KiB, 8-way, 64B lines 的配置"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: ways
+    supports: [l1d.assoc]
+    notes: From Apple's optimization guide. The E-core L1D is given as 64 KiB, 8-way, 64 B lines.
+
+  - id: c-jia-l1d-128
+    text: A pointer chase shows a clear step at a 128 KB footprint, the L1D capacity
+    loc: p001
+    quote: "可以看到 128KB 出现了明显的拐点，对应的就是 128KB 的 L1 DCache 容量"
+    method: pointer-chase
+    derivation: measured
+    value: 128
+    unit: KiB
+    supports: [l1d.size]
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
+  fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}
+  flags_prf.headroom: {block: flags_prf, name: Flags rename headroom, unit: registers}
 
 new_mechanisms:
   fetch_page_split:
@@ -330,3 +476,4 @@ mechanism_claims:
   l1i_coupled_btb: [c-jia-btb-1024, c-jia-btb-l1i-plateau]
   staged_fetch_redirect: [c-jia-btb-miss-late]
   next_fetch_groups: [c-jia-btb-8b, c-jia-btb-index]
+  path_history_shift_xor: [c-jia-ice-phr]

@@ -16,11 +16,6 @@ conjectures:
     text: By Little's law, about 7 L1D fills must be in flight to draw 85 GB/s from the L2 at 17 cycles, and about 48
       L2 lines of 128 B beyond the L2 to draw 64 GB/s from DRAM at about 97 ns.
     basis: [c-mh-v2-l2-load-85, c-mh-v2-l2-latency-17, c-7cpu-ram-read-bw, c-7cpu-dram-latency]
-  int_prf.headroom:
-    value: 350
-    approx: true
-    text: About 380 physical registers less the 31 architectural ones, if nothing else holds registers.
-    basis: [c-mh-v1-int-prf-add, c-dj-int-prf]
 
 mechanisms:
   l1i_tree_plru:

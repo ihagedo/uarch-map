@@ -1,30 +1,29 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 156, claims 1966, sources 58, mechanisms 176
+blocks 40, links 37, params 158, claims 1979, sources 58, mechanisms 176
 
 ## By status
 
 - derived: 14
 - documented: 4
 - inferred: 20
-- measured: 111
-- open: 4
-- reported: 3
+- measured: 115
+- open: 3
+- reported: 2
 
 ## By confidence
 
 - confirmed: 16
-- conjecture: 4
+- conjecture: 3
 - corroborated: 33
 - derived: 14
-- inferred: 23
-- single: 66
+- inferred: 22
+- single: 70
 
-## Holes (4)
+## Holes (3)
 
 - ftq.depth (ftq): Fetch target queue depth
 - iq.depth (iq): Fetch-to-decode queue depth
-- int_prf.headroom (int_prf): Integer rename headroom
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
 ## Open disputes (25)
@@ -39,7 +38,7 @@ blocks 40, links 37, params 156, claims 1966, sources 58, mechanisms 176
 - eu_int.count: measured on the A14  [c-ox-int-units, c-at-int-units]
 - lq.entries: range 148-154 (midpoint given); measured on the A14, probe not described  [c-dj-lsq-lq-130, c-at-lq]
 - sq.entries: measured on the A14, probe not described  [c-dj-stores, c-at-sq]
-- l1d.size: A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).  [c-7cpu-l1d-size, c-xnu-fs-l1d-160]
+- l1d.size: A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).  [c-jia-l1d-128, c-xnu-fs-l1d-160]
 - dtlb.l1_entries: measured on the A14; the article does not say data or instruction TLB  [c-mh-v2-dtlb, c-at-l1-tlb]
 - dtlb.l1_org: Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).  [c-mh-v2-dtlb-5way, c-pac-dtlb-12x256]
 - l2.latency: 17 vs 18 at equal rank  [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
