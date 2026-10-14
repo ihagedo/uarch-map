@@ -208,6 +208,13 @@ sources:
     author: Khayet, Yossi
     year: 2026
     url: https://www.cs.tau.ac.il/~mad/publications/asplos2026-TSO.pdf
+  xnu:
+    type: repo
+    title: "XNU kernel source: Apple core registers, idle path, errata tunables, cache maintenance"
+    author: Apple
+    year: 2025
+    url: https://github.com/apple-oss-distributions/xnu
+    notes: Errata tunables from tag xnu-6153.141.1 (2020), the rest from main
   dougall-amx:
     type: web
     title: AMX instruction notes (IDA plugin)

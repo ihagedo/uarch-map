@@ -1,0 +1,145 @@
+# xnu.yaml
+# Apple, 2025
+# What Apple's XNU kernel says about its cores: A8 to A13 errata tunables, sleep and IPI controls, L1 sizes and cache maintenance.
+session: xnu
+source: xnu
+
+claims:
+  - id: c-xnu-a8-loop-buffer
+    text: Typhoon has a loop buffer, and XNU turns it off (HID0 LoopBuffDisb) to avoid an LSP bug that could wedge the core when CONTEXTIDR is written
+    loc: p003
+    quote: "Disable LSP flush with context switch to work around bug in LSP ... that can cause Typhoon to wedge when CONTEXTIDR is written. ... orr x12, x12, ARM64_REG_HID0_LoopBuffDisb"
+    derivation: documented
+    chip: a8
+    supports: []
+    notes: Earlier core (A8, Typhoon). Set in the APPLETYPHOON block of start.s at tag xnu-6153.141.1.
+  - id: c-xnu-a8-l2-starvation
+    text: Typhoon's L2 has a starvation mode that a snoop evicting an exclusive-monitor line can trigger, and XNU turns that trigger off
+    loc: p003
+    quote: "mrs x12, ARM64_REG_HID3 orr x12, x12, ARM64_REG_HID3_DisXmonSnpEvictTriggerL2StarvationMode"
+    derivation: documented
+    chip: a8
+    supports: []
+    notes: Earlier core (A8). Read from the bit name; Xmon is taken as the exclusive monitor.
+  - id: c-xnu-a8-hwp-ld-st
+    text: Typhoon has separate hardware-prefetch disable bits for loads and for stores, and XNU clears both so the prefetchers stay on
+    loc: p003
+    quote: "and x12, x12, (~ARM64_REG_HID5_DisHwpLd) and x12, x12, (~ARM64_REG_HID5_DisHwpSt)"
+    derivation: inferred
+    chip: a8
+    supports: []
+    notes: Earlier core (A8). HWP read as hardware prefetch from the bit names.
+  - id: c-xnu-a8-dataset-id
+    text: Core memory requests carry a memcache (SLC) data set ID, and XNU changes its default from 0 to 15 on Typhoon
+    loc: p003
+    quote: "Change the default memcache data set ID from 0 to 15"
+    derivation: documented
+    chip: a8
+    supports: []
+    notes: Earlier core (A8). The Twister (A9) block sets the same default in four data set ID fields of HID8.
+  - id: c-xnu-a9-fmul
+    text: Twister's NEX unit has a fast FP multiply mode, and XNU turns it off for a 4-cycle multiply latency that avoids denormal stalls
+    loc: p003
+    quote: "Use 4-cycle MUL latency to avoid denormal stalls ... orr x12, x12, #ARM64_REG_HID7_disNexFastFmul"
+    derivation: documented
+    value: 4
+    unit: cycles
+    chip: a9
+    supports: []
+    notes: Earlier core (A9). The bit name ties NEX to the FP multiplier, which is why NEX is read as the FP/SIMD unit elsewhere.
+  - id: c-xnu-a10-edb-snoop
+    text: Hurricane reserves EDB credits for snoops (HID5 CrdEdbSnpRsvd), and XNU raises the reservation to lower the risk of starvation
+    loc: p003
+    quote: "Increase Snoop reservation in EDB to reduce starvation risk ... orr x12, x12, ARM64_REG_HID5_CrdEdbSnpRsvd_VALUE"
+    derivation: documented
+    chip: a10
+    supports: []
+    notes: Earlier core (A10). EDB is probably the eviction data buffer for dirty L1 victims, a reading of the name.
+  - id: c-xnu-a10-ic-prefetch
+    text: Hurricane has an instruction-cache prefetcher with a configurable depth, which XNU sets to 1, and a mode that limits it to one branch
+    loc: p003
+    quote: "IC prefetch configuration ... orr x12, x12, (1 << ARM64_REG_HID0_ICPrefDepth_bshift) orr x12, x12, ARM64_REG_HID0_ICPrefLimitOneBrn"
+    derivation: inferred
+    value: 1
+    chip: a10
+    supports: []
+    notes: Earlier core (A10). What the depth counts (lines or branches) is not stated; read from the field names.
+  - id: c-xnu-a10-aes-fusion
+    text: Hurricane can fuse AES pairs that span two decode groups, and XNU turns that cross-group fusion off
+    loc: p003
+    quote: "disable crypto fusion across decode groups ... orr x12, x12, ARM64_REG_HID1_disAESFuseAcrossGrp"
+    derivation: documented
+    chip: a10
+    supports: []
+    notes: Earlier core (A10). Fusion that crosses a decode-group boundary is the case switched off.
+  - id: c-xnu-a10x-dczva-cmd
+    text: On the A10X (Myst) DC ZVA can go out as a command only, without data, and XNU clears the bit that would disable this
+    loc: p003
+    quote: "Clear DisDcZvaCmdOnly ... Per Myst A0/B0 tunables document ... and x12, x12, ~ARM64_REG_HID3_DisDcZvaCmdOnly"
+    derivation: inferred
+    chip: a10
+    supports: []
+    notes: Earlier core (A10X, board T8011). Command-only read from the bit name; a zeroing command without data fits zeroing at the L2.
+  - id: c-xnu-a11-wkdm-colors
+    text: On Skye the bus interface returns WKdm write acknowledgements per color, and acknowledgements for both colors can assert together
+    loc: p003
+    quote: "WKdm write ack lost when bif_wke_colorWrAck_XXaH asserts concurrently for both colors"
+    derivation: documented
+    chip: a11
+    supports: []
+    notes: Earlier core (A11, all Skye cores). Two colors on write acknowledgements is weak support for color-tagged ordering.
+  - id: c-xnu-a11-wkdm-strict
+    text: Skye has a WKdm compression engine (WKE) attached to the bus interface (BIF), and XNU forces it into strict ordering
+    loc: p003
+    quote: "SW WAR/eval: WKdm write ack lost ... orr x12, x12, #ARM64_REG_HID8_WkeForceStrictOrder"
+    derivation: documented
+    chip: a11
+    supports: []
+    notes: Earlier core (A11). WKE read as the WKdm engine from the signal name bif_wke.
+  - id: c-xnu-smb-drain
+    text: >-
+      On Skye E-cores a store can be held in an SMB, where it can be invalidated, and the SMB drains by a threshold field that XNU
+      sets to zero
+    loc: p003
+    quote: "Atomic launch eligibility is erroneously taken away when a store at SMB gets invalidated ... and x12, x12, ~(ARM64_REG_EHID11_SmbDrainThresh_mask)"
+    derivation: documented
+    chip: a11
+    supports: []
+    notes: Earlier core (A11 E-core, Mistral). SMB is read as a store merge buffer; the erratum also shows atomics have a launch eligibility tied to it.
+
+new_mechanisms:
+  store_merge_buffer:
+    name: Store merge buffer
+    block: sq
+    chip: a11
+    status: inferred
+    description: Stores wait in a store merge buffer (SMB) that drains by a programmable threshold, and a store held there can be invalidated.
+    params: []
+    claims: [c-xnu-smb-drain]
+    sim_switch: null
+    detection_rule: >-
+      A burst of stores to one small chunk of a line writes the L1D fewer times than it has stores, so it outruns the L1D store
+      rate until the drain threshold forces the buffer out.
+  snoop_starvation_guard:
+    name: Snoop starvation safeguards
+    block: l2
+    chip: a10
+    status: inferred
+    description: >-
+      The L2 has a starvation mode that snoop evictions of exclusive-monitor lines can trigger, and the core reserves
+      eviction-buffer credits for snoops so they are not starved.
+    params: []
+    claims: [c-xnu-a8-l2-starvation, c-xnu-a10-edb-snoop]
+    sim_switch: null
+    detection_rule: >-
+      LDXR/STXR loops on one line while another core floods it with snoops would show stretches of no progress ended by a
+      sudden recovery when the starvation mode starts.
+
+mechanism_claims:
+  loop_modes: [c-xnu-a8-loop-buffer]
+  lsu_virtual_prefetch: [c-xnu-a8-hwp-ld-st]
+  slc_sticky_quota: [c-xnu-a8-dataset-id]
+  macro_op_fusion: [c-xnu-a10-aes-fusion]
+  dczva_l2_zero: [c-xnu-a10x-dczva-cmd]
+  barrier_colors: [c-xnu-a11-wkdm-colors]
+  cluster_compression_engines: [c-xnu-a11-wkdm-strict]
