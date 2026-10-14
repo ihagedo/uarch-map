@@ -5320,6 +5320,139 @@
       "chip": "m1",
       "entered": "apple-patents-core"
     },
+    "c-pat-us10776125b2-stq-entries": {
+      "source": "us10776125b2",
+      "text": "CPU loads take load-queue entries, while CPU stores and all coprocessor operations, compute as well as loads and stores, take store-queue entries",
+      "loc": "p014",
+      "quote": "CPU store operations and coprocessor operations (load, store, and computation) may be assigned STQ 42 entries",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-rename-alloc": {
+      "source": "us10776125b2",
+      "text": "The register rename stage may preallocate load- and store-queue entries, so older operations that younger ones pass in the reservation station still find room",
+      "loc": "p014",
+      "quote": "The register rename stage may include allocation of LDQ 44 or STQ 42 entries.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "value": "at rename",
+      "supports": [],
+      "notes": "Priority 2018. Contradicts the mechanism lsq_at_issue; the patent assigns entries at issue only when the reservation station issues in order.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-back-snoop": {
+      "source": "us10776125b2",
+      "text": "Coprocessor loads and stores do not probe the D-cache; if the D-cache holds the line, the L2 moves the data by a back snoop",
+      "loc": "p019",
+      "quote": "for coprocessor load/store operations, the DCache 16 may not be probed ... the L2 cache 14 may be configured to manage the transfer of the data via a back snoop",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. The L2 may be inclusive of the D-cache or keep a set of D-cache tags to know which lines it holds.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-int8": {
+      "source": "us10776125b2",
+      "text": "The coprocessor supports 16-, 32- and 64-bit floating point and 8- and 16-bit integers, signed and unsigned",
+      "loc": "p015",
+      "quote": "The integer data types may include 8 bit and 16 bit precisions, and both signed and unsigned integers may be supported.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. Contradicts c-mh-v3-amx-no-int8 and the no-int8 wording of amx_op_set; agrees with c-cx-matint-int8.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us10776125b2-contexts": {
+      "source": "us10776125b2",
+      "text": "One coprocessor may serve several CPUs, keeping a separate context in its X, Y and Z memories for each",
+      "loc": "p017",
+      "quote": "the coprocessor 10 may be shared by multiple CPU processors 12. The coprocessor 10 may maintain separate contexts in the X memory 24, Y memory 26, and Z memory 28 for each CPU processor",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Priority 2018. Swapping contexts per CPU is the alternative.",
+      "chip": "m1",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-wcb-merge": {
+      "source": "us11256622b2",
+      "text": "Committed stores leave the store queue for a write-combining buffer in front of the data cache, where a store whose address matches an entry within a granule, such as the cache port width, merges its bytes into that entry",
+      "loc": "p012",
+      "quote": "The committed store ops may be issued to the write combining buffer 36 (WC buffer 36) for buffering and potential merging with previously committed store ops ... The granularity may be the size of the port on the DCache 16",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020. Granules of 16 or 32 B are the examples; each entry keeps a byte valid mask.",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-commit-at-retire": {
+      "source": "us11256622b2",
+      "text": "A store commits once it can no longer be flushed, for example when it retires, and only then goes to the write-combining buffer",
+      "loc": "p012",
+      "quote": "In an embodiment, a store may be committed when the store is retired by the processor 12.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020.",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-watermark": {
+      "source": "us11256622b2",
+      "text": "The buffer keeps up to N entries, fewer than it has, for merging; when N are valid and a store that does not merge takes another entry, one entry drains to the data cache, such as the oldest or least recently merged",
+      "loc": "p014",
+      "quote": "The control circuit 50 may drain an entry when N entries are valid in the memory 52 and another entry is allocated to a non-merging committed store op, thus exceeding the watermark.",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020. The spare entries above N absorb stores that do not merge without stalling the load-store unit.",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-nm-threshold": {
+      "source": "us11256622b2",
+      "text": "Once more than a threshold of committed stores fail to merge, the buffer writes entries to the data cache early to free room for a stream of stores",
+      "loc": "p001",
+      "quote": "write one or more of the entries to the data cache responsive to receiving more than a threshold amount of non-merging committed store operations",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020. Draining lasts a fixed time, a fixed number of entries, the whole buffer, or until a store merges again; merging continues meanwhile.",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-nm-counter": {
+      "source": "us11256622b2",
+      "text": "A non-merging counter rises with each store that opens a new entry and falls, or clears, with each store that merges",
+      "loc": "p014",
+      "quote": "configured to increment the counter based on detection of a non-merging committed store op",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020.",
+      "entered": "apple-patents-core"
+    },
+    "c-pat-us11256622b2-conflict-drain": {
+      "source": "us11256622b2",
+      "text": "The buffer also drains ahead of an expected data-cache port conflict, when the port will be busy with load-store traffic or back-to-back fills",
+      "loc": "p014",
+      "quote": "the resource may be a data cache port and the conflict may be that the port is occupied by other memory ops issued by the LSU 42, back to back cache fills",
+      "method": "patent-reading",
+      "derivation": "inferred",
+      "chip": "post-m1",
+      "supports": [],
+      "notes": "Priority 2020.",
+      "entered": "apple-patents-core"
+    },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
       "text": "Each mapping update writes a history-file entry naming the replaced physical register, marked as the last reference when no other mapping points to it; at retirement only last references go back to the free list",
@@ -31184,6 +31317,15 @@
       "number": "US10776125B2",
       "url": "https://patents.google.com/patent/US10776125B2/en"
     },
+    "us11256622b2": {
+      "type": "patent",
+      "title": "Dynamic adaptive drain for write combining buffer",
+      "author": "Apple",
+      "year": 2020,
+      "assignee": "Apple",
+      "number": "US11256622B2",
+      "url": "https://patents.google.com/patent/US11256622B2/en"
+    },
     "apple-libplatform": {
       "type": "repo",
       "title": "libplatform: sys_icache_invalidate for arm64",
@@ -31574,6 +31716,7 @@
         "c-kpep-coproc-store-unit",
         "c-pat-us10776125b2-agu-translate",
         "c-pat-us10776125b2-via-stq",
+        "c-pat-us10776125b2-stq-entries",
         "c-cx-instr-only",
         "c-cx-store-ports",
         "c-deng-tlb",
@@ -31594,6 +31737,7 @@
     },
     "amx_op_set": {
       "claims": [
+        "c-pat-us10776125b2-int8",
         "c-cx-fp-types",
         "c-cx-m2-bf16",
         "c-cx-m3-modes",
@@ -31631,6 +31775,7 @@
     },
     "amx_shared_contexts": {
       "claims": [
+        "c-pat-us10776125b2-contexts",
         "c-cx-one-to-one",
         "c-cx-per-core-rf",
         "c-cx-two-clusters",
@@ -32891,6 +33036,7 @@
     "lsq_at_issue": {
       "claims": [
         "c-pat-us10133571b1-issued-entries",
+        "c-pat-us10776125b2-rename-alloc",
         "c-mh-v1-virtual-lsq",
         "c-pat-us20200394039a1-two-load-queues",
         "c-mh-v1-lsq-patent-reading",
@@ -33778,6 +33924,7 @@
     },
     "l2_snoop_filter": {
       "claims": [
+        "c-pat-us10776125b2-back-snoop",
         "c-mh-v3-l2-dup-tags",
         "c-mh-v3-l2-snoop-filter",
         "c-mh-v3-l1-line-counters",
@@ -34670,6 +34817,12 @@
     "store_merge_buffer": {
       "claims": [
         "c-xnu-smb-drain",
+        "c-pat-us11256622b2-wcb-merge",
+        "c-pat-us11256622b2-commit-at-retire",
+        "c-pat-us11256622b2-watermark",
+        "c-pat-us11256622b2-nm-threshold",
+        "c-pat-us11256622b2-nm-counter",
+        "c-pat-us11256622b2-conflict-drain",
         "c-m1n1-smb-drain"
       ],
       "name": "Store merge buffer",
