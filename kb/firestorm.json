@@ -1472,6 +1472,7 @@
     "l1d.size": {
       "claims": [
         "c-7cpu-l1d-size",
+        "c-at-max-l1d-size",
         "c-aug-l1-sizes",
         "c-cc-oryon-m1-l1d-128",
         "c-cc-gcc-l1d-128",
@@ -1548,6 +1549,7 @@
       "claims": [
         "c-at-l1d-latency",
         "c-7cpu-l1d",
+        "c-at-max-l1d-latency",
         "c-ox-load-lat-int",
         "c-cc-gcc-l1d-3c",
         "c-mh-v1-pointer-chase-3",
@@ -1690,6 +1692,7 @@
       "claims": [
         "c-at-m1-l2-size",
         "c-7cpu-l2-size",
+        "c-at-max-l2-size",
         "c-aug-l2-size",
         "c-ilk-l2-size",
         "c-pac-l2-size",
@@ -3983,6 +3986,129 @@
       "notes": "value is the four-thread figure; the page does not say which cores ran the threads",
       "chip": "m1",
       "entered": "anandtech-7cpu"
+    },
+    "c-at-max-same-core": {
+      "text": "The M1 Pro and M1 Max use the M1's Firestorm cores, with no change the author could find",
+      "loc": "p001",
+      "quote": "We seemingly can confirm this, as we\u2019re seeing no apparent changes in the cores compared to what we\u2019ve discovered on the M1 chips.",
+      "derivation": "measured",
+      "value": true,
+      "hedge": "seemingly",
+      "supports": [],
+      "notes": "Rather than the A15's newer cores, as the author expected.",
+      "source": "anandtech-m1-max",
+      "chip": "m1",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-l1d-latency": {
+      "text": "The Firestorm L1D has a 3-cycle load-to-load latency",
+      "loc": "p002",
+      "quote": "it\u2019s still a 3.2GHz peak core with 128KB of L1D at 3 cycles load-load latencies, and a 12MB L2 cache",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "cycles",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "Measured on the M1 Max, whose core and L2 the author finds unchanged from the M1.",
+      "source": "anandtech-m1-max",
+      "chip": "m1",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-l1d-size": {
+      "text": "The Firestorm L1D holds 128 KB",
+      "loc": "p002",
+      "quote": "On the core and L2 side of things, there haven\u2019t been any changes ... it\u2019s still a 3.2GHz peak core with 128KB of L1D",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "KiB",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "Measured on the M1 Max, whose core the author finds unchanged from the M1.",
+      "source": "anandtech-m1-max",
+      "chip": "m1",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-l2-size": {
+      "text": "Each P-cluster L2 is 12 MB, unchanged from the M1",
+      "loc": "p002",
+      "quote": "On the core and L2 side of things, there haven\u2019t been any changes ... and a 12MB L2 cache.",
+      "derivation": "measured",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "notes": "Measured on the M1 Max; the author finds the L2 unchanged from the M1.",
+      "source": "anandtech-m1-max",
+      "chip": "m1",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-clock-steps": {
+      "text": "On the M1 Pro and Max a Firestorm core peaks at 3228 MHz with one core active in its cluster, 3132 MHz with two and 3036 MHz with three or four",
+      "loc": "p001",
+      "quote": "The CPU cores clock up to 3228MHz peak, however vary in frequency depending on how many cores are active within a cluster, clocking down to 3132 at 2, and 3036 MHz at 3 and 4 cores active.",
+      "derivation": "measured",
+      "value": 3228,
+      "unit": "MHz",
+      "supports": [],
+      "chip": "m1max",
+      "notes": "Also the M1 Pro.",
+      "source": "anandtech-m1-max",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-two-clusters": {
+      "text": "The eight performance cores of the M1 Pro and Max form two 4-core clusters, each with its own 12 MB L2 and its own clock, so one cluster can run four cores at 3036 MHz while the other runs one at 3.23 GHz",
+      "loc": "p001",
+      "quote": "the 8 performance cores in the M1 Pro and M1 Max are indeed consisting of two 4-core clusters, both with their own 12MB L2 caches, and each being able to clock their CPUs independently from each other",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "clusters",
+      "supports": [],
+      "chip": "m1max",
+      "notes": "Also the M1 Pro.",
+      "source": "anandtech-m1-max",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-pro-mem": {
+      "text": "The M1 Pro has 256-bit LPDDR5-6400 memory, giving 204 GB/s, against 68 GB/s on the M1",
+      "loc": "p001",
+      "quote": "the M1 Pro features 256-bit LPDDR5 memory at 6400MT/s speeds, corresponding to 204GB/s bandwidth. This is significantly higher than the M1 at 68GB/s",
+      "derivation": "derived",
+      "value": 204,
+      "unit": "GB/s",
+      "supports": [],
+      "chip": "m1pro",
+      "notes": "Computed from the bus width and data rate. Agrees with c-mh-v8-m1pro-bw.",
+      "source": "anandtech-m1-max",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-max-mem": {
+      "text": "The M1 Max has a 512-bit LPDDR5 memory system with 408 GB/s of bandwidth",
+      "loc": "p001",
+      "quote": "using a whopping 512-bit wide LPDDR5 memory subsystem ... This gives the chip a massive 408GB/s of bandwidth",
+      "derivation": "derived",
+      "value": 408,
+      "unit": "GB/s",
+      "supports": [],
+      "chip": "m1max",
+      "notes": "Agrees with c-mh-v8-m1max-bw.",
+      "source": "anandtech-m1-max",
+      "entered": "anandtech-m1-max"
+    },
+    "c-at-max-pro-slc-24": {
+      "text": "The author identifies the SLC as 24 MB on the M1 Pro and 48 MB on the M1 Max, a 50% increase in SLC per block over the M1",
+      "loc": "p001",
+      "quote": "to be falling in at 24MB for the M1 Pro, and 48MB on the M1 Max ... makes sense given the SRAM die area \u2013 representing a 50% increase over the per-block SLC on the M1",
+      "derivation": "inferred",
+      "value": 24,
+      "unit": "MiB",
+      "supports": [],
+      "chip": "m1pro",
+      "notes": "Reasoned partly from SRAM die area.",
+      "source": "anandtech-m1-max",
+      "entered": "anandtech-m1-max"
     },
     "c-at-mini-clock": {
       "text": "A Firestorm core runs at 3.2 GHz in single-threaded work, and while thermal headroom lasts all four keep that clock under all-core load",
@@ -27608,6 +27734,13 @@
       "author": "Frumusanu, Andrei",
       "year": 2020,
       "url": "https://www.anandtech.com/show/16252/mac-mini-apple-m1-tested"
+    },
+    "anandtech-m1-max": {
+      "type": "article",
+      "title": "Apple's M1 Pro, M1 Max SoCs investigated",
+      "author": "Frumusanu, Andrei",
+      "year": 2021,
+      "url": "https://www.anandtech.com/show/17024/apple-m1-max-performance-review"
     },
     "lemire-m1-mlp": {
       "type": "web",

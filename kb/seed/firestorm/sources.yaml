@@ -253,6 +253,12 @@ sources:
     author: Frumusanu, Andrei
     year: 2020
     url: https://www.anandtech.com/show/16252/mac-mini-apple-m1-tested
+  anandtech-m1-max:
+    type: article
+    title: "Apple's M1 Pro, M1 Max SoCs investigated"
+    author: Frumusanu, Andrei
+    year: 2021
+    url: https://www.anandtech.com/show/17024/apple-m1-max-performance-review
   lemire-m1-mlp:
     type: web
     title: Memory access on the Apple M1 processor
