@@ -1,0 +1,164 @@
+# apple-patents-cache.yaml
+# Apple, 2007-2013
+# Apple patents on a shared cache unit's request pipelines, arbitration and pending request buffer, and on store misses held in a memory request buffer.
+session: apple-patents-cache
+
+claims:
+  - id: c-pat-us9454486b2-two-pipes
+    source: us9454486b2
+    text: The cache unit the cores share has two memories, each behind its own pipeline logic block, joined to the cores by a core interface and to the bus by a bus interface
+    loc: p012
+    quote: "cache unit 400 includes memories 401 and 404, pipeline logic blocks 402 and 403, core interface 405, and BIU interface 406"
+    method: patent-reading
+    derivation: inferred
+    value: 2
+    unit: pipelines
+    supports: []
+    notes: Priority 2013. Each pipeline block holds tag arrays and a pending request buffer for requests that need several passes.
+  - id: c-pat-us9454486b2-banks
+    source: us9454486b2
+    text: The cache memory is banked so at least two banks can be read or written at once, and the arbiter may schedule requests to avoid bank conflicts
+    loc: p013
+    quote: "cache memory 501 may be configured to allow simultaneous access (either read or write) to at least two banks. Arbitration circuit 502 may, in other embodiments, may schedule requests to prevent bank conflicts."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013.
+  - id: c-pat-us9454486b2-core-queues
+    source: us9454486b2
+    text: The core interface keeps core request queues for requests from a core that cannot yet enter a pipeline, and an arbitration circuit grants the pipelines to the cores
+    loc: p013
+    quote: "one or more core request queues (CRQs), each of which may be configured to store requests received from a processor core"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013. The core interface also holds the prefetch and flush engines.
+  - id: c-pat-us9454486b2-arbitration
+    source: us9454486b2
+    text: >-
+      In front of the cache memory an arbiter picks among prefetch-engine requests, core demand fetches, snoops from the
+      bus and hit or replay requests from the pending request buffer, for example by weighted round-robin
+    loc: p013
+    quote: "configured to select between requests from multiple sources, including pre-fetch engine 503, a demand fetch from a processor core ... may employ a weighted round-robin, or any other suitable arbitration scheme"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013. The round-robin here is among request sources, not among cores.
+  - id: c-pat-us9454486b2-prefetch-engine
+    source: us9454486b2
+    text: On a miss the cache unit's prefetch engine requests a set number of the following lines
+    loc: p013
+    quote: "pre-fetch engine 503 may generate requests to load a predetermined number of lines into cache memory 501. The lines may be in sequence from the address that generated the miss."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013.
+  - id: c-pat-us9454486b2-prb
+    source: us9454486b2
+    text: >-
+      Misses wait in an address pending request buffer, a CAM whose status bits record the request's source, its
+      dependences and whether it is a prefetch, paired entry for entry with a data buffer that holds the line until it
+      is written into the cache
+    loc: p013
+    quote: "Data PRB 505 may include the same number of entries as address PRB 504 ... Each entry in data PRB 505 may be configured to hold a cache block that is waiting to be stored"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013.
+  - id: c-pat-us9454486b2-demand-merge
+    source: us9454486b2
+    text: >-
+      A demand fetch to a line that already has a pending prefetch takes over the prefetch's entry, now marked as a core
+      request, instead of waiting behind it; a later demand to the line is marked dependent on that entry
+    loc: p014
+    quote: "the matching pre-fetch entry may then be over-written by the received demand fetch"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013. The merge happens in the shared cache unit, not in the core's own miss buffers.
+  - id: c-pat-us9454486b2-replay-fill
+    source: us9454486b2
+    text: Returned data waits in the data buffer and the original request is replayed through the pipeline to write the line into the cache; a demand's data also goes to the core
+    loc: p014
+    quote: "With the received data stored in data PRB 505, the original request may be replayed in order to store the requested cache line into cache memory 501"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2013.
+
+  - id: c-pat-us8239638b2-store-miss-mrb
+    source: us8239638b2
+    text: >-
+      Store misses, and stores that cover only part of an ECC granule, go to the memory request buffer, where cache or
+      fill data is merged in, and a third pass writes them into the data cache
+    loc: p011
+    quote: "In pass 3, a non-ECC granular store or store miss may be written to the data cache 30."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2007; the example core implements the Power ISA. The ECC granule is 4 bytes, and two or more stores may merge into one buffer entry.
+  - id: c-pat-us8239638b2-mrb-types
+    source: us8239638b2
+    text: One memory request buffer holds fills, store merges, snoops and victim writebacks, each entry tagged with its request type
+    loc: p012
+    quote: "Each entry may include a type field identifying the type of request (e.g. fill, store merge, snoop, writeback, etc.)."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2007; the example core implements the Power ISA. The buffer sits in the core's interface unit and also holds non-memory requests such as IO.
+  - id: c-pat-us8239638b2-victim-to-fill
+    source: us8239638b2
+    text: A store that hits a victim block waiting in the memory request buffer, or a victim that hits a queued store, turns the writeback into a fill that puts the block back in the data cache
+    loc: p001
+    quote: "detect that a victim block writeback hits one or more stores in a memory request buffer (or vice versa) and may convert the victim block writeback"
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2007; the example core implements the Power ISA.
+  - id: c-pat-us8239638b2-store-merge
+    source: us8239638b2
+    text: The memory request buffer can also act as a store merge buffer for committed stores
+    loc: p009
+    quote: "In some embodiments, the MRB 40 may be used as a store merge buffer for committed stores."
+    method: patent-reading
+    derivation: inferred
+    supports: []
+    notes: Priority 2007; the example core implements the Power ISA.
+  - id: c-pat-us8239638b2-lsq-at-map
+    source: us8239638b2
+    text: The mapper assigns each load and store its load/store queue entry before issue
+    loc: p008
+    quote: "The mapper 18 may assign an LSQ entry in the LSQ 36 to load/store memory operations. Thus, each load/store memory operation may have its entry in the LSQ 36 preassigned, prior to issuance."
+    method: patent-reading
+    derivation: inferred
+    value: at rename
+    supports: []
+    notes: >-
+      Priority 2007; the example core implements the Power ISA. Contradicts the mechanism lsq_at_issue; the text also
+      allows assigning the entry at execution.
+
+new_params: {}
+
+new_mechanisms:
+  l2_request_pipelines:
+    name: L2 request pipelines with pending request buffers
+    block: l2
+    status: speculative
+    description: >-
+      The shared L2 runs requests through separate pipelines, each with its own tags, banked data array and pending
+      request buffer; an arbiter picks among prefetch, demand, snoop and replay requests, misses wait in the buffer, and
+      a demand miss takes over a pending prefetch to the same line.
+    params: []
+    claims: [c-pat-us9454486b2-two-pipes, c-pat-us9454486b2-banks, c-pat-us9454486b2-prefetch-engine, c-pat-us9454486b2-prb,
+      c-pat-us9454486b2-demand-merge, c-pat-us9454486b2-replay-fill]
+    sim_switch: null
+    detection_rule: >-
+      A demand load to a line the L2 prefetcher has just requested would finish sooner than a full miss, the more so the
+      earlier the prefetch was sent.
+
+mechanism_claims:
+  l2_core_round_robin: [c-pat-us9454486b2-core-queues, c-pat-us9454486b2-arbitration]
+  l1d_write_allocate: [c-pat-us8239638b2-store-miss-mrb, c-pat-us8239638b2-victim-to-fill]
+  fill_buffer_pool: [c-pat-us8239638b2-mrb-types]
+  store_merge_buffer: [c-pat-us8239638b2-store-merge]
+  lsq_at_issue: [c-pat-us8239638b2-lsq-at-map]

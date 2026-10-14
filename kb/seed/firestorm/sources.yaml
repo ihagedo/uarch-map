@@ -359,6 +359,22 @@ sources:
     assignee: Apple
     number: US11256622B2
     url: https://patents.google.com/patent/US11256622B2/en
+  us9454486b2:
+    type: patent
+    title: Cache pre-fetch merge in pending request buffer
+    author: Apple
+    year: 2013
+    assignee: Apple
+    number: US9454486B2
+    url: https://patents.google.com/patent/US9454486B2/en
+  us8239638b2:
+    type: patent
+    title: Store handling in a processor
+    author: Apple
+    year: 2007
+    assignee: Apple
+    number: US8239638B2
+    url: https://patents.google.com/patent/US8239638B2/en
   apple-libplatform:
     type: repo
     title: "libplatform: sys_icache_invalidate for arm64"
