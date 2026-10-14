@@ -227,3 +227,9 @@ sources:
     year: 2023
     url: https://github.com/corsix/amx/issues/6
     notes: Claims come from Cawley's own posts; the threads also hold posts by other users
+  arxiv-2512-21473:
+    type: paper
+    title: Demystifying ARM SME to Optimize General Matrix Multiplications
+    author: Deng, Chencheng
+    year: 2025
+    url: https://arxiv.org/abs/2512.21473

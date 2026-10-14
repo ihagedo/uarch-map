@@ -6332,6 +6332,104 @@
       "chip": "m1",
       "entered": "corsix-amx"
     },
+    "c-deng-l2-only": {
+      "text": "The SME unit shares only the L2 with the CPU cores and does not use their L1 caches",
+      "loc": "p005",
+      "quote": "Since SME only shares the L2 cache with CPU cores, we map blocks that traditionally reside in L2/L3 caches to the shared L2 cache, without reserving L1 cache space.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m4",
+      "notes": "Their microbenchmarks show the L2 sharing. Agrees with c-dj-amx-l2 and c-mh-v3-amx-from-l2 for the M1.",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-tlb": {
+      "text": "The core's load/store unit translates SME addresses, so the core's L1D TLB and the shared L2 TLB cover SME accesses",
+      "loc": "p005",
+      "quote": "Address translation is handled by the core load/store unit, with both the core L1D TLB and the shared L2 TLB covering SME unit accesses.",
+      "derivation": "inferred",
+      "supports": [],
+      "chip": "m4",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-ordering": {
+      "text": "The CPU core and the SME unit are ordered against each other in memory, and both touching the same memory at once causes severe pipeline stalls",
+      "loc": "p004",
+      "quote": "We further observe that a memory ordering relationship exists between the CPU core and the SME unit. Simultaneous access to the same memory by both can cause severe pipeline stalls.",
+      "derivation": "measured",
+      "supports": [],
+      "chip": "m4",
+      "notes": "They keep SME buffers off the stack and away from data the core is using. Agrees with c-dj-amx-mix-slow for the M1.",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-four-tiles": {
+      "text": "One thread reaches peak outer-product throughput only when it accumulates into all four 32-bit ZA tiles",
+      "loc": "p003",
+      "quote": "As shown in Fig. 2, utilizing four tiles ensures reaching the maximum throughput.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "tiles",
+      "supports": [],
+      "chip": "m4",
+      "notes": "Matches the four independent Z accumulators one M1 core needs (c-cx-matfp64-sat).",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-int8-2x": {
+      "text": "An 8-bit integer outer product reaches 4010 GOPS on one thread, twice the 2006 of every other non-fp64 type",
+      "loc": "p003",
+      "quote": "outer product instruction achieves 4010 GOPS with four ZA tiles in a single thread, whereas all other precisions (INT16, INT32, FP16, BF16, and FP32) peak at 2006 GOPS or GFLOPS.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4010,
+      "unit": "GOPS",
+      "supports": [],
+      "chip": "m4",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-fp64-quarter": {
+      "text": "fp64 outer products reach only 501 GFLOPS, a quarter of the fp32 rate",
+      "loc": "p003",
+      "quote": "FP64 performance is limited to 501 GFLOPS, representing only one-quarter of the throughput of other non-INT8 precisions",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 501,
+      "unit": "GFLOPS",
+      "supports": [],
+      "chip": "m4",
+      "notes": "The same fp32 to fp64 ratio c-cx-fp32-4x measures on the M1 Max.",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-two-threads": {
+      "text": "A second thread doubles outer-product throughput, while more threads raise it only a little, as threads spread over clusters",
+      "loc": "p004",
+      "quote": "As the thread count increases, the scheduler attempts to distribute threads across clusters for load balancing, and throughput peaks at 8375 GOPS.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8375,
+      "unit": "GOPS",
+      "supports": [],
+      "chip": "m4",
+      "notes": "Two threads give 8020 GOPS of 8-bit integer outer products against 4010 for one.",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
+    "c-deng-units": {
+      "text": "The M4 Pro has one SME unit per cluster, two fast ones for the P-clusters and a slower one for the E-cluster, shared by the cores of each cluster",
+      "loc": "p004",
+      "quote": "suggests that the M4 Pro contains two high-throughput SME units associated with the P-core clusters and one lower-throughput unit with the E-core cluster",
+      "derivation": "inferred",
+      "hedge": "suggests",
+      "supports": [],
+      "chip": "m4",
+      "source": "arxiv-2512-21473",
+      "entered": "deng-sme"
+    },
     "c-cq-phr-100": {
       "text": "Firestorm's path history register records the most recent 100 taken branches",
       "loc": "p005",
@@ -25600,6 +25698,13 @@
       "url": "https://github.com/corsix/amx/issues/6",
       "notes": "Claims come from Cawley's own posts; the threads also hold posts by other users"
     },
+    "arxiv-2512-21473": {
+      "type": "paper",
+      "title": "Demystifying ARM SME to Optimize General Matrix Multiplications",
+      "author": "Deng, Chencheng",
+      "year": 2025,
+      "url": "https://arxiv.org/abs/2512.21473"
+    },
     "us20210064376a1": {
       "type": "patent",
       "title": "Last physical register reference scheme",
@@ -25904,6 +26009,9 @@
         "c-cx-m2-same",
         "c-cx-m2-multi",
         "c-cx-xy-rf-bw",
+        "c-deng-l2-only",
+        "c-deng-int8-2x",
+        "c-deng-fp64-quarter",
         "c-dj-amx-l2",
         "c-dj-amx-l1-penalty",
         "c-dj-amx-ldst-bound",
@@ -25929,6 +26037,7 @@
       "claims": [
         "c-cx-instr-only",
         "c-cx-store-ports",
+        "c-deng-tlb",
         "c-dj-amx-nonspec",
         "c-dj-amx-fuse-port",
         "c-dj-amx-prefetch",
@@ -25989,6 +26098,8 @@
         "c-cx-three-dip",
         "c-cx-m2-saturate",
         "c-cx-vec-4t",
+        "c-deng-two-threads",
+        "c-deng-units",
         "c-dj-amx-p-unit",
         "c-dj-amx-e-unit",
         "c-dj-amx-four-copies",
@@ -27411,7 +27522,8 @@
         "c-cx-vecfp-sat",
         "c-cx-vec-1t",
         "c-cx-z-spread",
-        "c-cx-no-rename"
+        "c-cx-no-rename",
+        "c-deng-four-tiles"
       ],
       "name": "AMX out-of-order window without Z renaming",
       "block": "amx",
@@ -28275,6 +28387,7 @@
     },
     "coprocessor_ordering_table": {
       "claims": [
+        "c-deng-ordering",
         "c-dj-amx-mix-slow",
         "c-dj-amx-str-ldx",
         "c-dj-amx-str-ldx-alias",
