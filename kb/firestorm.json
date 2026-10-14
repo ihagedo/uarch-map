@@ -1697,7 +1697,9 @@
       "claims": [
         "c-at-l2-tlb",
         "c-7cpu-dtlb-l2",
-        "c-mh-v2-dtlb-l2-3072"
+        "c-mh-v2-dtlb-l2-3072",
+        "c-jia-guide-l2tlb",
+        "c-jia-l2tlb-3072"
       ],
       "disputes": [],
       "block": "dtlb",
@@ -1747,6 +1749,7 @@
         "c-at-max-l2-size",
         "c-aug-l2-size",
         "c-ilk-l2-size",
+        "c-jia-sysctl-l2",
         "c-pac-l2-size",
         "c-tso-l2-12mib"
       ],
@@ -1893,6 +1896,7 @@
         "c-at-max-m1-slc-8",
         "c-at-mini-slc-16",
         "c-mh-v2-slc-size",
+        "c-jia-guide-slc-size",
         "c-slac-size"
       ],
       "disputes": [
@@ -2644,9 +2648,19 @@
       "claims": [
         "c-mh-v2-tlb2-org",
         "c-mh-v2-tlb2-256x12",
+        "c-jia-l2tlb-org",
         "c-pac-l2tlb-23x2048"
       ],
       "disputes": [
+        {
+          "claims": [
+            "c-mh-v2-tlb2-org",
+            "c-jia-l2tlb-org"
+          ],
+          "note": "Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.",
+          "resolution": null,
+          "resolved_by": null
+        },
         {
           "claims": [
             "c-mh-v2-tlb2-org",
@@ -2749,6 +2763,7 @@
         "c-mh-v3-l2-line-128",
         "c-mh-v3-line-change",
         "c-mh-v8-line-128",
+        "c-jia-guide-slc-line",
         "c-slac-line-128"
       ],
       "disputes": [],
@@ -3052,6 +3067,7 @@
         "c-aug-l2-16way",
         "c-gf-l2-12way",
         "c-ilk-l2-ways",
+        "c-jia-guide-l2",
         "c-pac-l2-ways",
         "c-prt-l2-ways",
         "c-s2c-l2-12way-table",
@@ -3091,6 +3107,7 @@
     },
     "slc.assoc": {
       "claims": [
+        "c-jia-guide-slc-ways",
         "c-m1n1-slc-ways",
         "c-slac-ways"
       ],
@@ -24927,6 +24944,202 @@
       "chip": "m1",
       "entered": "jia-m1"
     },
+    "c-jia-ice-rob": {
+      "text": "Icestorm's NOP window steps at 413 instructions and its load/store window near 57, so its ROB has 59 groups of up to 7 uops",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u62d0\u70b9\u662f 413 \u6761\u6307\u4ee4\u3002\u6539\u6210\u7528 load/store \u6307\u4ee4\uff0c\u53ef\u4ee5\u6d4b\u5230\u62d0\u70b9\u5728 57 \u5de6\u53f3 ... \u7ed3\u8bba\uff1aIcestorm \u7684 ROB \u6709 59 \u4e2a group\uff0c\u6bcf\u4e2a group \u6700\u591a\u4fdd\u5b58 7 \u4e2a uop",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 59,
+      "unit": "groups",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-sysctl-l2": {
+      "text": "macOS reports a 12 MB L2 shared by the four Firestorm cores and a 4 MB L2 shared by the four Icestorm cores",
+      "loc": "p001",
+      "quote": "4 \u4e2a Firestorm \u6838\u5fc3\u5171\u4eab\u4e00\u4e2a 12MB L2 Cache\uff0c4 \u4e2a Icestorm \u6838\u5fc3\u5171\u4eab\u4e00\u4e2a 4MB L2 Cache ... hw.perflevel0.l2cachesize: 12582912 hw.perflevel0.cpusperl2: 4",
+      "method": "other",
+      "derivation": "documented",
+      "value": 12,
+      "unit": "MiB",
+      "supports": [
+        "l2.size"
+      ],
+      "notes": "macOS sysctl values as read by Chen.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l2": {
+      "text": "Apple's optimization guide gives the M1 and A14 P-cluster L2 as 12 MiB, 12-way, 128 B lines, and the E-cluster L2 as 4 MiB, 16-way, 128 B lines",
+      "loc": "p001",
+      "quote": "M1 Family/A14 Bionic: P-Core cluster 12MiB, 12-way, 128B lines; E-Core cluster 4MiB, 16-way, 128B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 12,
+      "unit": "ways",
+      "supports": [
+        "l2.assoc"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-slc-size": {
+      "text": "Apple's optimization guide gives the memory cache (SLC) of the M1, M2, M3 and M4 as 8 MiB",
+      "loc": "p001",
+      "quote": "Memory Cache\uff08\u5728\u522b\u7684\u5904\u7406\u5668\u4e5f\u53eb System Level Cache\uff0c\u5c31\u662f Last Level Cache\uff09\u7684\u914d\u7f6e\u5982\u4e0b ... M1/M2/M3/M4: 8MiB, 16-way, 128B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 8,
+      "unit": "MiB",
+      "supports": [
+        "slc.size"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-slc-ways": {
+      "text": "Apple's optimization guide gives the M1 memory cache 16 ways",
+      "loc": "p001",
+      "quote": "M1/M2/M3/M4: 8MiB, 16-way, 128B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 16,
+      "unit": "ways",
+      "supports": [
+        "slc.assoc"
+      ],
+      "notes": "From Apple's optimization guide.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-slc-line": {
+      "text": "Apple's optimization guide gives the M1 memory cache 128 B lines",
+      "loc": "p001",
+      "quote": "M1/M2/M3/M4: 8MiB, 16-way, 128B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 128,
+      "unit": "B",
+      "supports": [
+        "slc.line"
+      ],
+      "notes": "From Apple's optimization guide. Contradicts the mechanism's 512 B sectored line (c-mh-v8-slc-line-512).",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-slc-pro-max": {
+      "text": "Apple's optimization guide gives the memory cache as 24 MiB, 12-way on the M1 Pro, 48 MiB, 12-way on the M1 Max and 96 MiB, 12-way on the M1 Ultra, all with 128 B lines",
+      "loc": "p001",
+      "quote": "M1 Pro/M2 Pro/M4 Pro/A16 Bionic/A17 Pro/A18 Pro: 24MiB, 12-way, 128B lines ... M1 Max/M2 Max/M3 Max/M4 Max: 48MiB, 12-way, 128B lines ... M1 Ultra/M2 Ultra/M3 Ultra: 96MiB, 12-way, 128B lines",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 24,
+      "unit": "MiB",
+      "supports": [],
+      "notes": "From Apple's optimization guide. Values for the M1 Pro, Max and Ultra, not the M1.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-guide-l2tlb": {
+      "text": "Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 3072-entry L2 TLB",
+      "loc": "p001",
+      "quote": "P-Core \u7684 L2 TLB \u5bb9\u91cf\uff0c\u4ece M1 Family \u5230 M4 Family\uff0c\u4ece A14 Bionic \u5230 A18 Family\uff0c\u90fd\u662f 3072 entries",
+      "method": "secondhand",
+      "derivation": "reported",
+      "value": 3072,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "notes": "From Apple's optimization guide. The M1 E-core is given 1024 entries.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l2tlb-unified": {
+      "text": "Apple's performance counters split the L1 TLBs into instruction and data while the L2 TLB serves both",
+      "loc": "p001",
+      "quote": "\u4ece\u82f9\u679c\u63d0\u4f9b\u7684\u6027\u80fd\u8ba1\u6570\u5668\u6765\u770b\uff0cL1 TLB \u5206\u4e3a\u6307\u4ee4\u548c\u6570\u636e\uff0c\u800c L2 TLB \u662f Unified\uff0c\u4e0d\u533a\u5206\u6307\u4ee4\u548c\u6570\u636e",
+      "method": "counter",
+      "derivation": "inferred",
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l2tlb-3072": {
+      "text": "Extending the page-spread pointer chase, the L2 TLB step comes at 3072 pages",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u62d0\u70b9\u662f 3072 \u4e2a Page\uff0c\u8bf4\u660e Firestorm \u7684 L2 TLB \u5bb9\u91cf\u662f 3072 \u9879",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3072,
+      "unit": "entries",
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l2tlb-org": {
+      "text": "With one pointer every 32 to 256 pages the L2 TLB step falls from 96 to 12 and stays at 12 for 512, so the L2 TLB is 12-way with 256 sets indexed by VA bits 21:14",
+      "loc": "p001",
+      "quote": "\u8ba4\u4e3a Firestorm \u7684 L2 TLB \u662f 12 Way\uff0c256 Set\uff0cIndex \u4f4d\u662f VA[21:14]",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": "12-way, 256 sets, indexed by VA bits 21:14",
+      "supports": [],
+      "contradicts": [
+        "dtlb.l2_org"
+      ],
+      "notes": "Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.",
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-l2tlb-miss": {
+      "text": "In the page-spread chase a load takes 3 cycles on an L1 dTLB hit, 9 on an L2 TLB hit and 35 to 36.5 on an L2 TLB miss, with no cache misses",
+      "loc": "p001",
+      "quote": "\u89c2\u5bdf\u5230\u547d\u4e2d L1 DTLB \u65f6 CPI \u662f 3\uff0c\u547d\u4e2d L2 TLB \u65f6 CPI \u662f 9\uff0cL2 TLB \u7f3a\u5931\u65f6 CPI \u662f 35-36.5\uff0c\u6b64\u65f6\u7f13\u5b58\u7f3a\u5931\u7387\u4e3a 0",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 36.5,
+      "unit": "cycles",
+      "range": [
+        35,
+        36.5
+      ],
+      "supports": [],
+      "source": "jia-m1",
+      "chip": "m1",
+      "entered": "jia-m1"
+    },
+    "c-jia-ice-l2tlb": {
+      "text": "Icestorm's L2 TLB holds 1024 entries and, if 4-way, has 256 sets indexed by VA bits 21:14",
+      "loc": "p001",
+      "quote": "\u53ef\u4ee5\u770b\u5230\u62d0\u70b9\u662f 1024 \u4e2a Page\uff0c\u8bf4\u660e Icestorm \u7684 L2 TLB \u5bb9\u91cf\u662f 1024 \u9879 ... \u5047\u5982\u662f 4 Way\uff0c\u90a3\u4e48 Icestorm \u7684 L2 TLB \u662f 4 Way\uff0c256 Set\uff0cIndex \u4f4d\u662f VA[21:14]",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 1024,
+      "unit": "entries",
+      "hedge": "\u5047\u5982\u662f 4 Way",
+      "supports": [],
+      "chip": "icestorm",
+      "source": "jia-m1",
+      "entered": "jia-m1"
+    },
     "c-dj-width": {
       "text": "Firestorm's pipeline width is eight instructions (uops) per cycle",
       "loc": "#other-limits",
@@ -30801,6 +31014,7 @@
         "c-mh-v8-slc-line-512",
         "c-mh-v8-slc-partial-valid",
         "c-mh-v8-64b-dirty",
+        "c-jia-guide-slc-line",
         "c-slac-index-low-bits"
       ],
       "name": "SLC line states and sectors",

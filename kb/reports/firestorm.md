@@ -1,6 +1,6 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 158, claims 2030, sources 58, mechanisms 178
+blocks 40, links 37, params 158, claims 2043, sources 58, mechanisms 178
 
 ## By status
 
@@ -26,7 +26,7 @@ blocks 40, links 37, params 158, claims 2030, sources 58, mechanisms 178
 - iq.depth (iq): Fetch-to-decode queue depth
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (29)
+## Open disputes (30)
 
 - fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
 - fetch.width: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.  [c-dj-width, c-jia-fetch-16]
@@ -51,6 +51,7 @@ blocks 40, links 37, params 158, claims 2030, sources 58, mechanisms 178
 - dispatch.fp_entries: 12 vs 14 at equal rank  [c-mh-v1-dispatch-fp-12, c-mh-v1-dispatch-fp-14]
 - l2.core_capacity: 7.5 vs 8 at equal rank  [c-mh-v2-l2-transitions, c-at-mini-l2-partition]
 - memctrl.dram_load_bw: 64 vs 58 at equal rank  [c-mh-v2-slc-dram-load-64, c-at-mini-dram-read-bw]
+- dtlb.l2_org: Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.  [c-mh-v2-tlb2-org, c-jia-l2tlb-org]
 - dtlb.l2_org: Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).  [c-mh-v2-tlb2-org, c-pac-l2tlb-23x2048]
 - slc.replacement: Lines placed by GPU reads. Disagrees with EXAM's pseudo-random finding (c-exam-repl-random) and with the patent reading c-mh-v3-slc-replacement.  [c-exam-repl-random, c-slac-repl-lru]
 - l1i.assoc: M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).  [c-mh-v8-l1i-12way, c-ilk-l1i-ways]

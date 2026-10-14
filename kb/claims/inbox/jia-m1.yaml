@@ -1053,6 +1053,156 @@ claims:
     hedge: "目测"
     supports: []
 
+  - id: c-jia-ice-rob
+    text: >-
+      Icestorm's NOP window steps at 413 instructions and its load/store window near 57, so its ROB has 59 groups of up
+      to 7 uops
+    loc: p001
+    quote: "可以看到拐点是 413 条指令。改成用 load/store 指令，可以测到拐点在 57 左右 ... 结论：Icestorm 的 ROB 有 59 个 group，每个 group 最多保存 7 个 uop"
+    method: wong-probe
+    derivation: derived
+    value: 59
+    unit: groups
+    supports: []
+    chip: icestorm
+
+  - id: c-jia-sysctl-l2
+    text: macOS reports a 12 MB L2 shared by the four Firestorm cores and a 4 MB L2 shared by the four Icestorm cores
+    loc: p001
+    quote: "4 个 Firestorm 核心共享一个 12MB L2 Cache，4 个 Icestorm 核心共享一个 4MB L2 Cache ... hw.perflevel0.l2cachesize: 12582912 hw.perflevel0.cpusperl2: 4"
+    method: other
+    derivation: documented
+    value: 12
+    unit: MiB
+    supports: [l2.size]
+    notes: macOS sysctl values as read by Chen.
+
+  - id: c-jia-guide-l2
+    text: >-
+      Apple's optimization guide gives the M1 and A14 P-cluster L2 as 12 MiB, 12-way, 128 B lines, and the E-cluster L2
+      as 4 MiB, 16-way, 128 B lines
+    loc: p001
+    quote: "M1 Family/A14 Bionic: P-Core cluster 12MiB, 12-way, 128B lines; E-Core cluster 4MiB, 16-way, 128B lines"
+    method: secondhand
+    derivation: reported
+    value: 12
+    unit: ways
+    supports: [l2.assoc]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-guide-slc-size
+    text: Apple's optimization guide gives the memory cache (SLC) of the M1, M2, M3 and M4 as 8 MiB
+    loc: p001
+    quote: "Memory Cache（在别的处理器也叫 System Level Cache，就是 Last Level Cache）的配置如下 ... M1/M2/M3/M4: 8MiB, 16-way, 128B lines"
+    method: secondhand
+    derivation: reported
+    value: 8
+    unit: MiB
+    supports: [slc.size]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-guide-slc-ways
+    text: Apple's optimization guide gives the M1 memory cache 16 ways
+    loc: p001
+    quote: "M1/M2/M3/M4: 8MiB, 16-way, 128B lines"
+    method: secondhand
+    derivation: reported
+    value: 16
+    unit: ways
+    supports: [slc.assoc]
+    notes: From Apple's optimization guide.
+
+  - id: c-jia-guide-slc-line
+    text: Apple's optimization guide gives the M1 memory cache 128 B lines
+    loc: p001
+    quote: "M1/M2/M3/M4: 8MiB, 16-way, 128B lines"
+    method: secondhand
+    derivation: reported
+    value: 128
+    unit: B
+    supports: [slc.line]
+    notes: From Apple's optimization guide. Contradicts the mechanism's 512 B sectored line (c-mh-v8-slc-line-512).
+
+  - id: c-jia-guide-slc-pro-max
+    text: >-
+      Apple's optimization guide gives the memory cache as 24 MiB, 12-way on the M1 Pro, 48 MiB, 12-way on the M1 Max and
+      96 MiB, 12-way on the M1 Ultra, all with 128 B lines
+    loc: p001
+    quote: "M1 Pro/M2 Pro/M4 Pro/A16 Bionic/A17 Pro/A18 Pro: 24MiB, 12-way, 128B lines ... M1 Max/M2 Max/M3 Max/M4 Max: 48MiB, 12-way, 128B lines ... M1 Ultra/M2 Ultra/M3 Ultra: 96MiB, 12-way, 128B lines"
+    method: secondhand
+    derivation: reported
+    value: 24
+    unit: MiB
+    supports: []
+    notes: From Apple's optimization guide. Values for the M1 Pro, Max and Ultra, not the M1.
+
+  - id: c-jia-guide-l2tlb
+    text: Apple's optimization guide gives every P-core from the A14 and M1 to the A18 and M4 a 3072-entry L2 TLB
+    loc: p001
+    quote: "P-Core 的 L2 TLB 容量，从 M1 Family 到 M4 Family，从 A14 Bionic 到 A18 Family，都是 3072 entries"
+    method: secondhand
+    derivation: reported
+    value: 3072
+    unit: entries
+    supports: [dtlb.l2_entries]
+    notes: From Apple's optimization guide. The M1 E-core is given 1024 entries.
+
+  - id: c-jia-l2tlb-unified
+    text: Apple's performance counters split the L1 TLBs into instruction and data while the L2 TLB serves both
+    loc: p001
+    quote: "从苹果提供的性能计数器来看，L1 TLB 分为指令和数据，而 L2 TLB 是 Unified，不区分指令和数据"
+    method: counter
+    derivation: inferred
+    supports: []
+
+  - id: c-jia-l2tlb-3072
+    text: Extending the page-spread pointer chase, the L2 TLB step comes at 3072 pages
+    loc: p001
+    quote: "可以看到拐点是 3072 个 Page，说明 Firestorm 的 L2 TLB 容量是 3072 项"
+    method: pointer-chase
+    derivation: measured
+    value: 3072
+    unit: entries
+    supports: [dtlb.l2_entries]
+
+  - id: c-jia-l2tlb-org
+    text: >-
+      With one pointer every 32 to 256 pages the L2 TLB step falls from 96 to 12 and stays at 12 for 512, so the L2 TLB
+      is 12-way with 256 sets indexed by VA bits 21:14
+    loc: p001
+    quote: "认为 Firestorm 的 L2 TLB 是 12 Way，256 Set，Index 位是 VA[21:14]"
+    method: pointer-chase
+    derivation: measured
+    value: "12-way, 256 sets, indexed by VA bits 21:14"
+    supports: []
+    contradicts: [dtlb.l2_org]
+    notes: Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.
+
+  - id: c-jia-l2tlb-miss
+    text: >-
+      In the page-spread chase a load takes 3 cycles on an L1 dTLB hit, 9 on an L2 TLB hit and 35 to 36.5 on an L2 TLB
+      miss, with no cache misses
+    loc: p001
+    quote: "观察到命中 L1 DTLB 时 CPI 是 3，命中 L2 TLB 时 CPI 是 9，L2 TLB 缺失时 CPI 是 35-36.5，此时缓存缺失率为 0"
+    method: pointer-chase
+    derivation: measured
+    value: 36.5
+    unit: cycles
+    range: [35, 36.5]
+    supports: []
+
+  - id: c-jia-ice-l2tlb
+    text: Icestorm's L2 TLB holds 1024 entries and, if 4-way, has 256 sets indexed by VA bits 21:14
+    loc: p001
+    quote: "可以看到拐点是 1024 个 Page，说明 Icestorm 的 L2 TLB 容量是 1024 项 ... 假如是 4 Way，那么 Icestorm 的 L2 TLB 是 4 Way，256 Set，Index 位是 VA[21:14]"
+    method: pointer-chase
+    derivation: measured
+    value: 1024
+    unit: entries
+    hedge: "假如是 4 Way"
+    supports: []
+    chip: icestorm
+
 new_params:
   btb.l0_org: {block: btb, name: Zero-bubble BTB organisation}
   fp_prf.headroom: {block: fp_prf, name: FP/SIMD rename headroom, unit: registers}
@@ -1112,3 +1262,4 @@ mechanism_claims:
   dispatch_buffers: [c-jia-fp-nsq, c-jia-int-nsq-24, c-jia-int-nsq-two]
   retire_groups: [c-jia-rob-ldst-325, c-jia-rob-side-effects]
   content_directed_prefetch: [c-jia-chase-prefetch]
+  slc_line_states: [c-jia-guide-slc-line]
