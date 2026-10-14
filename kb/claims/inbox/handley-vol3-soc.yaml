@@ -490,7 +490,7 @@ new_mechanisms:
   coprocessor_ordering_table:
     name: Coprocessor memory-ordering table
     block: lsu
-    status: speculative
+    status: inferred
     description: CPU loads and stores to a page with outstanding AMX (or LZ) accesses wait until the L2 reports those accesses done.
     params: []
     sim_switch: null

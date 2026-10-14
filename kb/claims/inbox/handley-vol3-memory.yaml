@@ -1002,7 +1002,7 @@ new_mechanisms:
   slc_victim_fill:
     name: SLC filled by L2 victims
     block: slc
-    status: inferred
+    status: measured
     description: CPU lines move from L1 to L2 to the SLC as each level evicts them, so a CPU miss does not allocate in the SLC.
     params: [slc.allocation, slc.size, l2.size]
     sim_switch: null

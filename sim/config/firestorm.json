@@ -12,17 +12,17 @@
   "fetch.taken_per_cycle": {
     "value": 1,
     "sim_key": "taken_per_cycle",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "l1i.size": {
     "value": 192,
     "sim_key": "l1i_kib",
-    "confidence": "confirmed"
+    "confidence": "corroborated"
   },
   "btb.l0_entries": {
     "value": 1024,
     "sim_key": "btb_l0",
-    "confidence": "single"
+    "confidence": "corroborated"
   },
   "btb.l1_entries": {
     "value": 8192,
@@ -47,7 +47,7 @@
   "ras.depth": {
     "value": 50,
     "sim_key": "ras_depth",
-    "confidence": "inferred"
+    "confidence": "single"
   },
   "ftq.depth": {
     "value": null,
@@ -82,12 +82,12 @@
   "dispatch.int_entries": {
     "value": 24,
     "sim_key": "dispatch_int",
-    "confidence": "single"
+    "confidence": "corroborated"
   },
   "dispatch.ls_entries": {
     "value": 10,
     "sim_key": "dispatch_ls",
-    "confidence": "single"
+    "confidence": "corroborated"
   },
   "sched_int.entries_per_queue": {
     "value": 13,
@@ -152,7 +152,7 @@
   "l1d.size": {
     "value": 128,
     "sim_key": "l1d_kib",
-    "confidence": "confirmed"
+    "confidence": "corroborated"
   },
   "l1d.line": {
     "value": 64,

@@ -13,7 +13,7 @@ questions:
       answers: [slc_speculative_read]}
     slc.power: {label: "power", q: "Power gating", answers: [slc_power_gating]}
     slc.line: {label: "line states", q: "SLC line format: size, sectors and coherence states",
-      answers: [slc_line_states]}
+      answers: [slc_line_states, slc.line]}
     slc.latency: {label: "latency", q: "Whether SLC hit latency varies with where a line sits", answers: []}
     slc.org: {label: "organization", q: "Slicing and how an address picks a slice",
       answers: [slc_slices, slc_memory_side]}
@@ -50,7 +50,7 @@ questions:
     fabric.topology: {label: "topology", q: "How the networks are laid out (tiers, rings, lanes, ports) and how commands and data travel",
       answers: [noc_layout, noc_split_paths, noc_rings_lanes]}
     fabric.interleave: {label: "interleave", q: "How addresses are spread over coherence, SLC and memory-controller units and over DRAM channels, ranks and banks",
-      answers: [address_interleave_hash]}
+      answers: [address_interleave_hash, slc_hashed_index]}
     fabric.ordering: {label: "ordering", q: "How same-address requests are ordered, and what a request does when it meets a busy line or a full resource",
       answers: [same_address_ordering]}
   power:
@@ -58,11 +58,11 @@ questions:
       answers: [pcluster.clock_domain, dvfs_transition, perf_controller, predictive_clock_crossing,
       clock_ramp, power_estimator_throttle]}
     power.throttle: {label: "throttling", q: "Power estimation and throttling",
-      answers: [power_estimator_throttle]}
+      answers: [power_estimator_throttle, power_telemetry]}
     power.idle: {label: "idle", q: "Idle and stall clocking, core power-up",
-      answers: [idle_clock_division, core_power_cycle, l2_snoop_filter]}
+      answers: [idle_clock_division, core_power_cycle, l2_snoop_filter, cluster_sleep_states]}
     power.irq: {label: "interrupts", q: "How interrupts reach a core (routing over clusters, holding while cores sleep, refusal, ordering behind device writes)",
-      answers: [interrupt_routing]}
+      answers: [interrupt_routing, fast_ipi]}
   l2:
     l2.org: {label: "organization", q: "Slicing and banking", answers: [l2_cachelets, noc_split_paths]}
     l2.inclusion: {label: "inclusion", q: "Inclusion and fill path",
@@ -71,8 +71,8 @@ questions:
       answers: [l2.replacement, l2_insertion_priority, ipv_replacement, l2_core_lru, l2_half_lines]}
     l2.snoop: {label: "snoop", q: "Snoop filtering for the cores", answers: [l2_snoop_filter]}
     l2.arb: {label: "arbitration", q: "Arbitration among cores and request priority",
-      answers: [l2_core_round_robin]}
-    l2.queues: {label: "queues", q: "L2 miss handling and queues", answers: [l2_line_ordering]}
+      answers: [l2_core_round_robin, l2_request_pipelines, snoop_starvation_guard]}
+    l2.queues: {label: "queues", q: "L2 miss handling and queues", answers: [l2_line_ordering, l2_request_pipelines]}
     l2.power: {label: "power", q: "Power gating of ways", answers: [l2_way_power, l2_zero_line_tags]}
     l2.clients: {label: "clients", q: "Which cores and clusters may use an L2", answers: [ecores_share_pl2]}
     l2.lookup: {label: "lookup", q: "How an L2 access finds its set and way (index hashing",
@@ -85,7 +85,7 @@ questions:
     amx.issue: {label: "issue", q: "How the core sends AMX work and orders against it",
       answers: [coprocessor_ordering_table, amx_lsu_issue]}
     amx.internals: {label: "internals", q: "AMX register state, datapath and memory access",
-      answers: [amx_datapath, amx_shared_contexts]}
+      answers: [amx_datapath, amx_shared_contexts, amx_z_dependency_window, amx.fma_latency, amx.ooo_buffer]}
     amx.ops: {label: "operations", q: "Which operations, data types and operand layouts AMX supports",
       answers: [amx_op_set]}
     amx.sharing: {label: "sharing", q: "How one AMX unit serves the cores of its cluster",
@@ -165,7 +165,7 @@ questions:
     fetch.coupling: {label: "coupling", q: "How prediction steers fetch (coupled or decoupled)",
       answers: [decoupled_fetch]}
     fetch.block: {label: "fetch block", q: "What one fetch delivers (alignment, line crossing, stop at taken branch)",
-      answers: [next_fetch_groups]}
+      answers: [next_fetch_groups, fetch_page_split]}
     fetch.multi_taken: {label: "several taken", q: "Whether more than one taken branch can be fetched per cycle",
       answers: [trace_cache, next_fetch_groups]}
     fetch.redirect: {label: "redirects", q: "How redirects (mispredict, BTB miss, decode-time correction) flow back to fetch",
@@ -177,7 +177,7 @@ questions:
       answers: [ftq.fdip, decoupled_fetch]}
   decode:
     decode.crack: {label: "cracking", q: "Which instructions become several uops, and where they split",
-      answers: [uop_split_merge, ldpq_lsu_split]}
+      answers: [uop_split_merge, ldpq_lsu_split, store_address_data_uops]}
     decode.fusion: {label: "fusion", q: "Which pairs fuse and at which stage",
       answers: [rename.fusion, load_op_fusion, macro_op_fusion]}
     decode.loop: {label: "loops", q: "Loop buffer or replay of loops from a queue", answers: [loop_modes]}
@@ -214,7 +214,7 @@ questions:
     dispatch.stall: {label: "stalls", q: "What stalls rename when a buffer or queue is full",
       answers: [dispatch_buffers]}
   sched_int:
-    sched.select: {label: "select", q: "Which ready uop issues first", answers: [matrix_scheduler]}
+    sched.select: {label: "select", q: "Which ready uop issues first", answers: [matrix_scheduler, hierarchical_reservation_station]}
     sched.pairing: {label: "pairing", q: "Paired or shared queues", answers: [paired_sched_queues]}
     sched.wakeup: {label: "wakeup", q: "How dependents wake (tag broadcast, speculative wakeup behind loads)",
       answers: [matrix_scheduler]}
@@ -233,14 +233,14 @@ questions:
     exec.bypass: {label: "bypass", q: "Forwarding network and cross-domain (int to FP) delays",
       answers: [fp_back_to_back_fusion, exec_forwarding]}
     exec.power: {label: "power", q: "Power and throttling of the execution units",
-      answers: [simd_power_down, power_estimator_throttle]}
+      answers: [simd_power_down, power_estimator_throttle, exec_clock_gating]}
   retire:
     retire.groups: {label: "groups", q: "How uops retire (groups, rows, rate)", answers: [retire_groups]}
     retire.renames: {label: "renames", q: "What limits renames in flight", answers: [rename_retire_queue]}
     retire.branches: {label: "branches", q: "How in-flight branches are tracked and limited",
       answers: [retire_time_training]}
     retire.exceptions: {label: "exceptions", q: "How exceptions and interrupts are taken",
-      answers: [abandonable_requests, interrupt_routing]}
+      answers: [abandonable_requests, interrupt_routing, forced_nonspec_mode]}
     retire.release: {label: "early release", q: "Which resources are released before retire",
       answers: [lsq_early_release]}
   lq:
@@ -249,17 +249,17 @@ questions:
       answers: [load_poison_bits, late_ordering_check]}
   sq:
     sq.structure: {label: "structure", q: "Store queue organization and search",
-      answers: [hierarchical_store_queue]}
+      answers: [hierarchical_store_queue, banked_lsq]}
     sq.commit: {label: "commit", q: "How stores leave the queue (order, merging, write combining)",
-      answers: [sq_32b_slots, uncached_line_handling]}
+      answers: [sq_32b_slots, uncached_line_handling, store_merge_buffer]}
     sq.stream: {label: "streaming", q: "Streaming and zeroing stores",
       answers: [streaming_store_nt, dczva_l2_zero]}
   l1d:
     l1d.banking: {label: "banking", q: "Banks, ports and access merging", answers: [l1d_banked_piggyback]}
-    l1d.way: {label: "way lookup", q: "Way lookup and placement", answers: [l1d_way_lookup, l1d_hashed_way]}
+    l1d.way: {label: "way lookup", q: "Way lookup and placement", answers: [l1d_way_lookup, l1d_hashed_way, l1d_utag_way_predictor]}
     l1d.repl: {label: "replacement", q: "Replacement", answers: [l1d.replacement, l1d_tree_plru]}
     l1d.write: {label: "write policy", q: "Write policy and what a store miss does",
-      answers: [l1d_write_allocate]}
+      answers: [l1d_write_allocate, l1d.write_policy]}
     l1d.fill: {label: "fill", q: "How fills return and wake loads",
       answers: [fill_forwarding, fill_bank_conflicts]}
     l1d.coherence: {label: "coherence", q: "Coherence states held and how snoops reach the L1D",
@@ -295,7 +295,7 @@ questions:
     prefetch.control: {label: "controls", q: "Which control bits or modes (HID bits, DIT) turn a prefetcher off",
       answers: [content_directed_prefetch]}
   mshr:
-    mshr.merge: {label: "merging", q: "Whether misses to one line merge", answers: [fill_buffer_pool]}
+    mshr.merge: {label: "merging", q: "Whether misses to one line merge", answers: [fill_buffer_pool, l2_half_lines]}
     mshr.store: {label: "store misses", q: "How store misses are handled", answers: [l1d_write_allocate]}
     mshr.share: {label: "sharing", q: "Sharing between loads, stores and prefetches, and what happens when full",
       answers: [fill_buffer_pool]}

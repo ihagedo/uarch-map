@@ -70,24 +70,24 @@ mechanisms:
   amx_lsu_issue:
     name: AMX issue through the store queue
     block: amx
-    status: inferred
+    status: measured
     description: >-
       AMX instructions pass through the core's load/store pipeline, wait in the store queue until non-
       speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four.
   amx_op_set:
     name: AMX operation set
     block: amx
-    status: inferred
+    status: measured
     description: >-
-      AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add
-      2x2 packing, lookup tables, strided dots, mixed precision and row moves.
+      AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and integer types, 8-bit multiplicands
+      included; patents add 2x2 packing, lookup tables, strided dots, mixed precision and row moves.
   amx_shared_contexts:
     name: One AMX unit per cluster
     block: amx
-    status: inferred
+    status: measured
     description: >-
-      One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor
-      tells the OS when several cores overload it.
+      One AMX unit per cluster, the E-cluster included, serves its cores, keeping a full register set for each,
+      and a queue monitor tells the OS when several cores overload it.
   clock_ramp:
     name: Clock ramp from idle
     block: power
@@ -148,7 +148,7 @@ mechanisms:
   slc_memory_side:
     name: Memory-side SLC
     block: slc
-    status: speculative
+    status: inferred
     description: >-
       The SLC sits behind coherence as a front end owned by the memory controller, caching any range, even
       uncacheable ones, and a write that reaches it counts as written to DRAM.
@@ -343,6 +343,16 @@ mechanisms:
     description: >-
       A store-exclusive and the barrier right after it fuse in the LSU into one operation that needs a single
       trip to the point of coherency.
+  l1i_maintenance_only:
+    name: Code changes by invalidation only
+    block: l1i
+    status: measured
+    description: >-
+      The L1I does not snoop stores: code written as data runs only after it is invalidated by line. The data side
+      is coherent to the point of unification, so no data-cache clean is needed first.
+    params: []
+    sim_switch: null
+    detection_rule: Code rewritten without an I-cache invalidate keeps running its old instructions.
   cold_start_mode:
     name: Cold-start fetch and predictor mode
     block: l1i

@@ -2766,12 +2766,13 @@
       "confidence": "single",
       "judgment": {
         "basis": [
+          "c-exam-cpu-exclusive",
+          "c-slac-gpu-read-fills",
           "c-7cpu-slc-exclusive",
-          "c-mh-v3-slc-neither-incl-excl",
-          "c-mh-v8-slc-victim"
+          "c-mh-v3-slc-neither-incl-excl"
         ],
         "verdict": "settled",
-        "text": "Neither inclusive nor strictly exclusive. For CPU lines the SLC is a victim cache of the L2, so CPU reads do not allocate in it, close to the exclusive SLC 7-cpu suggests."
+        "text": "Exclusive of the CPU caches, as EXAM measured. GPU reads still allocate in the SLC, which is the part of Handley's neither-inclusive-nor-exclusive reading that holds."
       }
     },
     "chip.coherence_protocol": {
@@ -31844,31 +31845,6 @@
       "alternative": "Random or round-robin replacement.",
       "detection_rule": "An eviction sequence built on tree-PLRU state evicts the predicted code line, as Prime+Retouch showed for the L1D."
     },
-    "l1i_maintenance_only": {
-      "claims": [
-        "c-ajit-icache-not-coherent",
-        "c-ajit-invalidate-before-exec",
-        "c-alp-ic-ivau-by-line",
-        "c-alp-dsb-every-20",
-        "c-boot-idc",
-        "c-boot-no-dic",
-        "c-asahi-ic-ivau-asid",
-        "c-m1n1-dc-mva-off",
-        "c-xnu-dcache-fully-coherent",
-        "c-xnu-icache-invalidate"
-      ],
-      "name": "Code changes by cache maintenance only",
-      "block": "l1i",
-      "status": "conjecture",
-      "ours": true,
-      "description": "The L1I does not snoop stores; code written at run time is cleaned to the L2 and invalidated by line, and the L2 forwards the invalidate through its copies of the L1 tags.",
-      "basis": [
-        "c-mh-v3-l2-dup-tags",
-        "c-mh-v3-l2-snoop-filter"
-      ],
-      "alternative": "The L1I snoops stores to lines it holds and drops them itself.",
-      "detection_rule": "Code rewritten without an I-cache invalidate keeps running its old instructions."
-    },
     "path_history_rewind": {
       "claims": [],
       "name": "Path history rewind",
@@ -32110,7 +32086,7 @@
       ],
       "name": "AMX issue through the store queue",
       "block": "amx",
-      "status": "inferred",
+      "status": "measured",
       "description": "AMX instructions pass through the core's load/store pipeline, wait in the store queue until non- speculative, and go to AMX over the L2 bus, up to two a cycle, in bundles of three or four."
     },
     "amx_op_set": {
@@ -32148,8 +32124,17 @@
       ],
       "name": "AMX operation set",
       "block": "amx",
-      "status": "inferred",
-      "description": "AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and int16, with no int8; patents add 2x2 packing, lookup tables, strided dots, mixed precision and row moves."
+      "status": "measured",
+      "description": "AMX multiply-adds and -subtracts outer products in fp64, fp32, fp16 and integer types, 8-bit multiplicands included; patents add 2x2 packing, lookup tables, strided dots, mixed precision and row moves.",
+      "judgment": {
+        "basis": [
+          "c-cx-matint-int8",
+          "c-pat-us10776125b2-int8",
+          "c-mh-v3-amx-no-int8"
+        ],
+        "verdict": "settled",
+        "text": "The M1's AMX takes 8-bit integer multiplicands, as Cawley's matint mode shows and the ordering patent lists; the no-int8 reading does not hold."
+      }
     },
     "amx_shared_contexts": {
       "claims": [
@@ -32176,8 +32161,17 @@
       ],
       "name": "One AMX unit per cluster",
       "block": "amx",
-      "status": "inferred",
-      "description": "One AMX unit per P-cluster serves its cores, keeping a full register set for each, and a queue monitor tells the OS when several cores overload it."
+      "status": "measured",
+      "description": "One AMX unit per cluster, the E-cluster included, serves its cores, keeping a full register set for each, and a queue monitor tells the OS when several cores overload it.",
+      "judgment": {
+        "basis": [
+          "c-dj-amx-e-unit",
+          "c-cx-one-to-one",
+          "c-mh-v8-amx-per-cluster"
+        ],
+        "verdict": "settled",
+        "text": "One unit per cluster, the E-cluster included, as Johnson and Cawley measured; the per-P-cluster reading leaves the E-cluster's unit out."
+      }
     },
     "clock_ramp": {
       "claims": [
@@ -32305,7 +32299,7 @@
       ],
       "name": "Memory-side SLC",
       "block": "slc",
-      "status": "speculative",
+      "status": "inferred",
       "description": "The SLC sits behind coherence as a front end owned by the memory controller, caching any range, even uncacheable ones, and a write that reaches it counts as written to DRAM."
     },
     "slc_slices": {
@@ -32639,6 +32633,27 @@
       "block": "lsu",
       "status": "speculative",
       "description": "A store-exclusive and the barrier right after it fuse in the LSU into one operation that needs a single trip to the point of coherency."
+    },
+    "l1i_maintenance_only": {
+      "claims": [
+        "c-ajit-icache-not-coherent",
+        "c-ajit-invalidate-before-exec",
+        "c-alp-ic-ivau-by-line",
+        "c-alp-dsb-every-20",
+        "c-boot-idc",
+        "c-boot-no-dic",
+        "c-asahi-ic-ivau-asid",
+        "c-m1n1-dc-mva-off",
+        "c-xnu-dcache-fully-coherent",
+        "c-xnu-icache-invalidate"
+      ],
+      "name": "Code changes by invalidation only",
+      "block": "l1i",
+      "status": "measured",
+      "description": "The L1I does not snoop stores: code written as data runs only after it is invalidated by line. The data side is coherent to the point of unification, so no data-cache clean is needed first.",
+      "params": [],
+      "sim_switch": null,
+      "detection_rule": "Code rewritten without an I-cache invalidate keeps running its old instructions."
     },
     "cold_start_mode": {
       "claims": [
@@ -34285,11 +34300,12 @@
       "judgment": {
         "basis": [
           "c-slap-m1-hid11-dmp",
+          "c-m1n1-dmp-disable",
           "c-aug-not-disableable",
           "c-gf-no-disable"
         ],
         "verdict": "settled",
-        "text": "Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2; no control outside the kernel does, which is what Augury and GoFetch found."
+        "text": "Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2, and m1n1 sets it against GoFetch; no control outside the kernel does, which is what Augury and GoFetch found."
       }
     },
     "barrier_colors": {
@@ -34483,7 +34499,7 @@
       ],
       "name": "SLC filled by L2 victims",
       "block": "slc",
-      "status": "inferred",
+      "status": "measured",
       "description": "CPU lines move from L1 to L2 to the SLC as each level evicts them, so a CPU miss does not allocate in the SLC.",
       "params": [
         "slc.allocation",
@@ -34494,13 +34510,12 @@
       "detection_rule": "the cached region seen by one core extends to about the L2 share plus the SLC, not to the larger of the two",
       "judgment": {
         "basis": [
-          "c-mh-v3-cpu-no-slc-alloc",
-          "c-mh-v8-slc-victim",
-          "c-mh-v2-slc-spatial",
-          "c-mh-v2-region-prefetch"
+          "c-slac-cpu-fill-via-l2",
+          "c-exam-l2-victim-fill",
+          "c-mh-v3-cpu-no-slc-alloc"
         ],
-        "verdict": "likely",
-        "text": "Handley's later readings agree that CPU misses do not allocate in the SLC; his result of about 50 cycles in random boxes fits region prefetch into the L2 better than an SLC prefetcher."
+        "verdict": "settled",
+        "text": "SLAC and EXAM measured it. CPU loads fill the L1 and L2 only, and the SLC takes L2 victims."
       }
     },
     "coherence_duplicate_tags": {
@@ -34711,7 +34726,7 @@
       ],
       "name": "Coprocessor memory-ordering table",
       "block": "lsu",
-      "status": "speculative",
+      "status": "inferred",
       "description": "CPU loads and stores to a page with outstanding AMX (or LZ) accesses wait until the L2 reports those accesses done.",
       "params": [],
       "sim_switch": null,
@@ -35377,9 +35392,10 @@
       "label": "line states",
       "q": "SLC line format: size, sectors and coherence states",
       "answers": [
-        "slc_line_states"
+        "slc_line_states",
+        "slc.line"
       ],
-      "state": "patent"
+      "state": "measured"
     },
     "slc.latency": {
       "block": "slc",
@@ -35405,7 +35421,7 @@
       "answers": [
         "slc_memory_side"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "slc.dirty": {
       "block": "slc",
@@ -35549,9 +35565,10 @@
       "label": "interleave",
       "q": "How addresses are spread over coherence, SLC and memory-controller units and over DRAM channels, ranks and banks",
       "answers": [
-        "address_interleave_hash"
+        "address_interleave_hash",
+        "slc_hashed_index"
       ],
-      "state": "patent"
+      "state": "measured"
     },
     "fabric.ordering": {
       "block": "fabric",
@@ -35581,9 +35598,10 @@
       "label": "throttling",
       "q": "Power estimation and throttling",
       "answers": [
-        "power_estimator_throttle"
+        "power_estimator_throttle",
+        "power_telemetry"
       ],
-      "state": "patent"
+      "state": "measured"
     },
     "power.idle": {
       "block": "power",
@@ -35592,18 +35610,20 @@
       "answers": [
         "idle_clock_division",
         "core_power_cycle",
-        "l2_snoop_filter"
+        "l2_snoop_filter",
+        "cluster_sleep_states"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "power.irq": {
       "block": "power",
       "label": "interrupts",
       "q": "How interrupts reach a core (routing over clusters, holding while cores sleep, refusal, ordering behind device writes)",
       "answers": [
-        "interrupt_routing"
+        "interrupt_routing",
+        "fast_ipi"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "l2.org": {
       "block": "l2",
@@ -35655,16 +35675,19 @@
       "label": "arbitration",
       "q": "Arbitration among cores and request priority",
       "answers": [
-        "l2_core_round_robin"
+        "l2_core_round_robin",
+        "l2_request_pipelines",
+        "snoop_starvation_guard"
       ],
-      "state": "ours"
+      "state": "inferred"
     },
     "l2.queues": {
       "block": "l2",
       "label": "queues",
       "q": "L2 miss handling and queues",
       "answers": [
-        "l2_line_ordering"
+        "l2_line_ordering",
+        "l2_request_pipelines"
       ],
       "state": "patent"
     },
@@ -35722,7 +35745,7 @@
         "coprocessor_ordering_table",
         "amx_lsu_issue"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "amx.internals": {
       "block": "amx",
@@ -35730,9 +35753,12 @@
       "q": "AMX register state, datapath and memory access",
       "answers": [
         "amx_datapath",
-        "amx_shared_contexts"
+        "amx_shared_contexts",
+        "amx_z_dependency_window",
+        "amx.fma_latency",
+        "amx.ooo_buffer"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "amx.ops": {
       "block": "amx",
@@ -35741,7 +35767,7 @@
       "answers": [
         "amx_op_set"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "amx.sharing": {
       "block": "amx",
@@ -35750,7 +35776,7 @@
       "answers": [
         "amx_shared_contexts"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "lsu.alloc": {
       "block": "lsu",
@@ -35830,7 +35856,7 @@
       "answers": [
         "coprocessor_ordering_table"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "lsu.agen": {
       "block": "lsu",
@@ -35908,7 +35934,7 @@
       "answers": [
         "l1i_maintenance_only"
       ],
-      "state": "ours"
+      "state": "measured"
     },
     "itlb.org": {
       "block": "itlb",
@@ -36102,9 +36128,10 @@
       "label": "fetch block",
       "q": "What one fetch delivers (alignment, line crossing, stop at taken branch)",
       "answers": [
-        "next_fetch_groups"
+        "next_fetch_groups",
+        "fetch_page_split"
       ],
-      "state": "inferred"
+      "state": "measured"
     },
     "fetch.multi_taken": {
       "block": "fetch",
@@ -36152,7 +36179,8 @@
       "q": "Which instructions become several uops, and where they split",
       "answers": [
         "uop_split_merge",
-        "ldpq_lsu_split"
+        "ldpq_lsu_split",
+        "store_address_data_uops"
       ],
       "state": "measured"
     },
@@ -36314,7 +36342,8 @@
       "label": "select",
       "q": "Which ready uop issues first",
       "answers": [
-        "matrix_scheduler"
+        "matrix_scheduler",
+        "hierarchical_reservation_station"
       ],
       "state": "patent"
     },
@@ -36400,9 +36429,10 @@
       "q": "Power and throttling of the execution units",
       "answers": [
         "simd_power_down",
-        "power_estimator_throttle"
+        "power_estimator_throttle",
+        "exec_clock_gating"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "retire.groups": {
       "block": "retire",
@@ -36437,9 +36467,10 @@
       "q": "How exceptions and interrupts are taken",
       "answers": [
         "abandonable_requests",
-        "interrupt_routing"
+        "interrupt_routing",
+        "forced_nonspec_mode"
       ],
-      "state": "patent"
+      "state": "inferred"
     },
     "retire.release": {
       "block": "retire",
@@ -36474,7 +36505,8 @@
       "label": "structure",
       "q": "Store queue organization and search",
       "answers": [
-        "hierarchical_store_queue"
+        "hierarchical_store_queue",
+        "banked_lsq"
       ],
       "state": "patent"
     },
@@ -36484,7 +36516,8 @@
       "q": "How stores leave the queue (order, merging, write combining)",
       "answers": [
         "sq_32b_slots",
-        "uncached_line_handling"
+        "uncached_line_handling",
+        "store_merge_buffer"
       ],
       "state": "inferred"
     },
@@ -36513,9 +36546,10 @@
       "q": "Way lookup and placement",
       "answers": [
         "l1d_way_lookup",
-        "l1d_hashed_way"
+        "l1d_hashed_way",
+        "l1d_utag_way_predictor"
       ],
-      "state": "patent"
+      "state": "measured"
     },
     "l1d.repl": {
       "block": "l1d",
@@ -36532,9 +36566,10 @@
       "label": "write policy",
       "q": "Write policy and what a store miss does",
       "answers": [
-        "l1d_write_allocate"
+        "l1d_write_allocate",
+        "l1d.write_policy"
       ],
-      "state": "ours"
+      "state": "measured"
     },
     "l1d.fill": {
       "block": "l1d",
@@ -36711,9 +36746,10 @@
       "label": "merging",
       "q": "Whether misses to one line merge",
       "answers": [
-        "fill_buffer_pool"
+        "fill_buffer_pool",
+        "l2_half_lines"
       ],
-      "state": "ours"
+      "state": "measured"
     },
     "mshr.store": {
       "block": "mshr",

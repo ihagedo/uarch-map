@@ -28,17 +28,6 @@ mechanisms:
     alternative: Random or round-robin replacement.
     detection_rule: An eviction sequence built on tree-PLRU state evicts the predicted code line, as Prime+Retouch showed
       for the L1D.
-  l1i_maintenance_only:
-    name: Code changes by cache maintenance only
-    block: l1i
-    status: conjecture
-    ours: true
-    description: >-
-      The L1I does not snoop stores; code written at run time is cleaned to the L2 and invalidated by line, and the
-      L2 forwards the invalidate through its copies of the L1 tags.
-    basis: [c-mh-v3-l2-dup-tags, c-mh-v3-l2-snoop-filter]
-    alternative: The L1I snoops stores to lines it holds and drops them itself.
-    detection_rule: Code rewritten without an I-cache invalidate keeps running its old instructions.
   path_history_rewind:
     name: Path history rewind
     block: dirpred
@@ -140,9 +129,9 @@ judgments:
     basis: [c-s2c-l2-repl, c-mh-v2-l2-random-repl, c-mh-v3-l2-stream-lru0]
   content_directed_prefetch:
     verdict: settled
-    text: Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2; no control outside the kernel does, which
-      is what Augury and GoFetch found.
-    basis: [c-slap-m1-hid11-dmp, c-aug-not-disableable, c-gf-no-disable]
+    text: Both hold. A privileged HID11 bit turns the DMP off on the M1 and M2, and m1n1 sets it against GoFetch; no
+      control outside the kernel does, which is what Augury and GoFetch found.
+    basis: [c-slap-m1-hid11-dmp, c-m1n1-dmp-disable, c-aug-not-disableable, c-gf-no-disable]
   early_barrier_completion:
     verdict: unlikely
     text: Not on the M1 for DSB. A DSB alone does not stop speculation past a mispredicted branch on the M1; the design
@@ -155,14 +144,23 @@ judgments:
     basis: [c-ox-nop-decoder, c-mh-v1-nop-rob-slot, c-dj-nop-b-no-issue, c-mh-v1-nop-window]
   slc.inclusion:
     verdict: settled
-    text: Neither inclusive nor strictly exclusive. For CPU lines the SLC is a victim cache of the L2, so CPU reads do not
-      allocate in it, close to the exclusive SLC 7-cpu suggests.
-    basis: [c-7cpu-slc-exclusive, c-mh-v3-slc-neither-incl-excl, c-mh-v8-slc-victim]
+    text: Exclusive of the CPU caches, as EXAM measured. GPU reads still allocate in the SLC, which is the part of
+      Handley's neither-inclusive-nor-exclusive reading that holds.
+    basis: [c-exam-cpu-exclusive, c-slac-gpu-read-fills, c-7cpu-slc-exclusive, c-mh-v3-slc-neither-incl-excl]
   slc_victim_fill:
-    verdict: likely
-    text: Handley's later readings agree that CPU misses do not allocate in the SLC; his result of about 50 cycles in
-      random boxes fits region prefetch into the L2 better than an SLC prefetcher.
-    basis: [c-mh-v3-cpu-no-slc-alloc, c-mh-v8-slc-victim, c-mh-v2-slc-spatial, c-mh-v2-region-prefetch]
+    verdict: settled
+    text: SLAC and EXAM measured it. CPU loads fill the L1 and L2 only, and the SLC takes L2 victims.
+    basis: [c-slac-cpu-fill-via-l2, c-exam-l2-victim-fill, c-mh-v3-cpu-no-slc-alloc]
+  amx_op_set:
+    verdict: settled
+    text: The M1's AMX takes 8-bit integer multiplicands, as Cawley's matint mode shows and the ordering patent lists;
+      the no-int8 reading does not hold.
+    basis: [c-cx-matint-int8, c-pat-us10776125b2-int8, c-mh-v3-amx-no-int8]
+  amx_shared_contexts:
+    verdict: settled
+    text: One unit per cluster, the E-cluster included, as Johnson and Cawley measured; the per-P-cluster reading leaves
+      the E-cluster's unit out.
+    basis: [c-dj-amx-e-unit, c-cx-one-to-one, c-mh-v8-amx-per-cluster]
   zero_cycle_loads:
     verdict: likely
     text: Present but narrow. Handley's probes speed up only a load that uses the store's address register with an
