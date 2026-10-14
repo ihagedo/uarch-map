@@ -2721,14 +2721,15 @@
       "claims": [
         "c-mh-v3-cluster-clock-shared",
         "c-mh-v3-cluster-one-freq",
-        "c-mh-v8-cluster-one-clock"
+        "c-mh-v8-cluster-one-clock",
+        "c-m1n1-cluster-pstate"
       ],
       "disputes": [],
       "block": "power",
       "name": "Clock domain",
       "value": "per cluster",
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "documented",
+      "confidence": "single"
     },
     "pcluster.core_powerup": {
       "claims": [
@@ -24645,6 +24646,150 @@
       "chip": "m1",
       "entered": "m1n1"
     },
+    "c-m1n1-zcl": {
+      "text": "The HID1 bit names show ZCL through the register file (RF) and the stack pointer (SP), each with a mispredict threshold and a restart threshold, read as predicted zero-cycle loads",
+      "loc": "p003",
+      "quote": "#define HID1_ZCL_SP_MISPREDICT_THRESHOLD(x) ((ULONG(x)) << 38) ... #define HID1_ZCL_SP_RESTART_THRESHOLD(x) ((ULONG(x)) << 40) ... #define HID1_ZCL_RF_MISPREDICT_THRESHOLD(x) ((ULONG(x)) << 42)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "ZCL is not expanded in the source. Fits Handley's register-file forwarding and its stack-pointer variant (c-mh-v1-sp-lsdp).",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-zcm": {
+      "text": "The HID1 bit names include separate disables for integer and NEON ZCM, read as zero-cycle moves in both register files",
+      "loc": "p003",
+      "quote": "#define HID1_DIS_INT_ZCM BIT(8) #define HID1_DIS_NEON_ZCM BIT(9)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "ZCM is not expanded in the source.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-lsp": {
+      "text": "The HID1 bit names show an LSP that can be disabled, ages out its entries at a set interval and is flushed on a context switch unless a bit stops it, read as the store/load dependence predictor",
+      "loc": "p003",
+      "quote": "#define HID1_LSP_DISABLE BIT(4) #define HID1_FORCE_SSBS_ORDERING BIT(5) #define HID1_LSP_AGE_OUT_INTERVAL BIT(6) ... #define HID1_DIS_LSP_FLUSH_WITH_CONTEXT_SWITCH BIT(25)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "LSP is not expanded. The E-core register adds counter init, retrain, increment and replay values for it.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-ld-ordering": {
+      "text": "The HID4 bit names show that younger loads are not flushed at a barrier or load-acquire, and that ordered loads and barriers may launch with older accesses outstanding, unless bits force otherwise",
+      "loc": "p003",
+      "quote": "#define HID4_FORCE_YNG_LD_FLUSH_ON_BAR_OP BIT(37) #define HID4_FORCE_YNG_LD_FLUSH_ON_LD_ACQ BIT(38) #define HID4_FORCE_NS_ORD_LD_REQ_NO_OLDER_LD BIT(39) ... #define HID4_FORCE_BAR_LNCH_NO_OLDER_ST BIT(42)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Fits loads past a barrier being checked later instead of held back, as in c-mh-v3-load-poison.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-antilivelock": {
+      "text": "The HID4 bit names show anti-livelock counters for victimized lock lines, for replays of the oldest load or store and for load/store issue stalls, plus LFSR random stalls at points up to SMB drain",
+      "loc": "p003",
+      "quote": "#define HID4_DIS_ANTI_LIVELOCK_ON_LOCK_VICTIMIZATION BIT(16) ... #define HID4_CT0_ANTI_LIVELOCK_ON_OLDEST_LD_ST_REPLAY(x) ((ULONG(x)) << 26) ... #define HID4_CT0_ANTI_LIVELOCK_ON_LS_ISS_STALL_ON_LS_REPLAY(x) ... #define HID4_ENABLE_LFSR_STALL_SMB_DRAIN BIT(55)",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "The LFSR stall points also include load/store pipe issue, pass-2 launch, queue replays and ready-to-retire.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-smb-drain": {
+      "text": "The bit names include an LFSR stall at SMB drain in the P-core HID4 and an SMB drain threshold in the E-core HID11, so stores pass through an SMB that drains at a threshold",
+      "loc": "p003",
+      "quote": "#define HID4_ENABLE_LFSR_STALL_SMB_DRAIN BIT(55) ... #define EHID11_SMB_DRAIN_THRESH_MASK GENMASK(41, 40)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "SMB is not expanded in the source; store merge buffer is a reading.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-rcc-clocks": {
+      "text": "The HID1 and HID4 bit names show clocks for the special-register, NEX, MDR, checkpoint and load/store logic gated at two levels (L3 and L6), with bits to force them on and to stall inactive units",
+      "loc": "p003",
+      "quote": "#define HID1_FORCE_SPR_L3_CLK_ON BIT(10) ... #define HID1_FORCE_NEX_L3_CLK_ON BIT(15) ... #define HID1_RCC_FORCE_ALL_MDR_L6_CLKS_ON BIT(19) ... #define HID1_RCC_DIS_STALL_INACTIVE_MDR_CTL BIT(21) ... #define HID4_RCC_FORCE_ALL_LSU_L3_CLKS_ON BIT(14)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "MDR, RCC, L3 and L6 are not expanded in the source.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-nrg-acc": {
+      "text": "The core has per-core energy accumulator registers (CORE_NRG_ACC_DAT and an SRM variant), and the cluster override register can disable C1 peak-power throttling",
+      "loc": "p003",
+      "quote": "#define ACC_OVRD_DISABLE_C1_PPT_THROTTLE_0 BIT(40) ... #define SYS_IMP_APL_CORE_NRG_ACC_DAT sys_reg(3, 7, 15, 1, 1) #define SYS_IMP_APL_CORE_SRM_NRG_ACC_DAT sys_reg(3, 7, 15, 3, 1)",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "SRM and C1 are not expanded. Fits the per-core power estimates read from a patent in c-mh-v3-dpe-throttle.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-acc-llc": {
+      "text": "The cluster override names include halting the LLC before run, skipping the LLC flush when it is empty and an AMX power-down timer, so the LLC is a cluster-level cache flushed for cluster sleep",
+      "loc": "p003",
+      "quote": "#define ACC_OVRD_HALT_LLC_BFR_RUN BIT(10) ... #define ACC_OVRD_FRC_ZOUT_AMX_PWR_DN_TMR BIT(20) ... #define ACC_OVRD_BYPASS_LLC_FLUSH_IF_EMPTY BIT(36)",
+      "derivation": "inferred",
+      "supports": [],
+      "notes": "Ties LLC in these names to the cluster, so the LLC of the sibling-merge erratum is most likely the shared L2.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-blz-dmd-merge": {
+      "text": "The M2 E-core register names include a disable for merging a demand miss into a prefetch fill with forwarding, and a miss-queue watermark",
+      "loc": "p003",
+      "quote": "#define EHID20_BLZ_DIS_DMD_MERGE_PREF_FILL_FWD BIT(54) #define EHID20_BLZ_DISABLE_PWR_OPT BIT(55) #define EHID20_BLZ_INC_MISS_Q_WATER_MARK(x) ((ULONG(x)) << 56)",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "notes": "BLZ read as Blizzard, the M2 E-core; nothing here shows the merge on Firestorm.",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-cluster-pstate": {
+      "text": "Each M1 CPU cluster, ECPU and PCPU, has its own register block whose CLUSTER_PSTATE register m1n1 writes and polls until busy clears, so each cluster runs at its own p-state",
+      "loc": "p004",
+      "quote": "write64(cluster->base + CLUSTER_PSTATE, val); if (poll64(cluster->base + CLUSTER_PSTATE, CLUSTER_PSTATE_BUSY, 0, CLUSTER_SWITCH_TIMEOUT) < ... static const struct cluster_t t8103_clusters[] = { {\"ECPU\", 0x210e00000, false, 1, 5}, {\"PCPU\", 0x211e00000, true, 1, 7},",
+      "derivation": "documented",
+      "value": "per cluster",
+      "supports": [
+        "pcluster.clock_domain"
+      ],
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-throttle": {
+      "text": "The M1's cluster registers have separate enables for peak-power (ppt-thrtl), LLC (llc-thrtl) and AMX (amx-thrtl) throttling, set from Apple's device-tree features",
+      "loc": "p004",
+      "quote": "static const struct feat_t t8103_features[] = { ... {\"ppt-thrtl\", 0x48400, 0, BIT(63), 0, false}, {\"llc-thrtl\", 0x40240, 0, BIT(63), 0, false}, {\"amx-thrtl\", 0x40250, 0, BIT(63), 0, false},",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "How each throttle acts is not stated.",
+      "source": "m1n1",
+      "chip": "m1",
+      "entered": "m1n1"
+    },
+    "c-m1n1-m2-no-llc-thrtl": {
+      "text": "m1n1's M2 (T8112) cluster features list peak-power and AMX throttles but no LLC throttle, unlike the M1 and the M2 Pro and Max",
+      "loc": "p004",
+      "quote": "static const struct feat_t t8112_features[] = { {\"cpu-apsc\", CLUSTER_PSTATE, CLUSTER_PSTATE_M2_APSC_DIS, 0, CLUSTER_PSTATE_APSC_BUSY, false}, {\"ppt-thrtl\", 0x40270, 0, BIT(63), 0, false},",
+      "derivation": "documented",
+      "supports": [],
+      "chip": "m2",
+      "source": "m1n1",
+      "entered": "m1n1"
+    },
     "c-kc-m2-btb-2k": {
       "text": "The M2 P-core BTB holds about 2K entries; mispredictions stay near zero up to about 2K indirect branches and rise sharply beyond",
       "loc": "p009",
@@ -28365,7 +28510,9 @@
       "detection_rule": "A load right after a store that missed hits the L1D if the store allocated the line, and goes to the L2 if it wrote around."
     },
     "fill_buffer_pool": {
-      "claims": [],
+      "claims": [
+        "c-m1n1-blz-dmd-merge"
+      ],
       "name": "Shared fill buffers with line merging",
       "block": "mshr",
       "status": "conjecture",
@@ -28646,7 +28793,8 @@
         "c-mh-v3-cluster-shared-frequency",
         "c-mh-v3-voltage-detect",
         "c-mh-v3-cpu-l2-scale-together",
-        "c-mh-v3-pll-divider-ramp"
+        "c-mh-v3-pll-divider-ramp",
+        "c-m1n1-cluster-pstate"
       ],
       "name": "DVFS transition sequence",
       "block": "power",
@@ -29041,7 +29189,8 @@
         "c-mh-v1-lsdp-default-no-alias",
         "c-mh-v1-stp-lsdp-third",
         "c-dj-lsq-x29-base",
-        "c-dj-lsq-mov-counter"
+        "c-dj-lsq-mov-counter",
+        "c-m1n1-lsp"
       ],
       "name": "Store/load PC-pair dependence predictor",
       "block": "lsu",
@@ -29406,7 +29555,8 @@
         "c-mh-v1-mov-xzr-not-elim",
         "c-mh-v1-subreg-mov-not-elim",
         "c-mh-v1-zero-other-6wide",
-        "c-mh-v1-eor-zero-not-idiom"
+        "c-mh-v1-eor-zero-not-idiom",
+        "c-m1n1-zcm"
       ],
       "name": "Move elimination and zeroing",
       "block": "rename",
@@ -30181,7 +30331,8 @@
         "c-mh-v1-zcl-addressing",
         "c-mh-v1-zcl-5-vs-7",
         "c-mh-v1-zcl-no-simd",
-        "c-mh-v1-zcl-stack"
+        "c-mh-v1-zcl-stack",
+        "c-m1n1-zcl"
       ],
       "name": "Zero-cycle loads (register-file memory renaming)",
       "block": "lsu",
@@ -30606,6 +30757,7 @@
         "c-mh-v3-load-poison",
         "c-mh-v3-wfe-poison",
         "c-mh-v3-lsq-cam-filter",
+        "c-m1n1-ld-ordering",
         "c-tso-ll-squash-rule",
         "c-xnu-a12-poison-barrier",
         "c-xnu-a12-poison-acquire",
@@ -31007,6 +31159,9 @@
         "c-mh-v3-freeze-levels",
         "c-mh-v8-power-levels",
         "c-mh-v8-hw-dvfs",
+        "c-m1n1-nrg-acc",
+        "c-m1n1-throttle",
+        "c-m1n1-m2-no-llc-thrtl",
         "c-xnu-core-throttle-rate"
       ],
       "name": "Digital power estimator throttling",
@@ -31272,7 +31427,8 @@
     },
     "lsu_forward_progress": {
       "claims": [
-        "c-m1n1-lfsr-stalls"
+        "c-m1n1-lfsr-stalls",
+        "c-m1n1-antilivelock"
       ],
       "name": "Load-store forward-progress widgets",
       "block": "lsu",
@@ -31458,7 +31614,8 @@
     },
     "store_merge_buffer": {
       "claims": [
-        "c-xnu-smb-drain"
+        "c-xnu-smb-drain",
+        "c-m1n1-smb-drain"
       ],
       "name": "Store merge buffer",
       "block": "sq",
@@ -31491,6 +31648,7 @@
         "c-xnu-a11-acc-link-fsm",
         "c-xnu-bp-retention",
         "c-m1n1-wfi-retention",
+        "c-m1n1-acc-llc",
         "c-m1n1-bp-retention"
       ],
       "name": "Core and cluster sleep states",
@@ -31519,7 +31677,8 @@
     "exec_clock_gating": {
       "claims": [
         "c-xnu-a12-iex-clock-gating",
-        "c-xnu-a12-prefetch-pipe-gating"
+        "c-xnu-a12-prefetch-pipe-gating",
+        "c-m1n1-rcc-clocks"
       ],
       "name": "Clock gating of idle execution pipes",
       "block": "eu_int",
