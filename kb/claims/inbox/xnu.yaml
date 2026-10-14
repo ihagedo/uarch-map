@@ -440,6 +440,110 @@ claims:
     derivation: documented
     supports: []
     notes: Generic code for all Apple cores; builds defining NO_CPU_OVRD skip it.
+  - id: c-xnu-wfi-clock-gate
+    text: XNU can force a core's WFI to clock-gate only, keeping the core powered, by setting the same field to force-up
+    loc: p002
+    quote: "Force WFI to use clock gating only ... orr x0, x0, #(ARM64_REG_CYC_OVRD_ok2pwrdn_force_up)"
+    derivation: documented
+    supports: []
+    notes: Generic code for all Apple cores; on other Arm cores the same routine does nothing.
+  - id: c-xnu-acc-deep-sleep
+    text: >-
+      Cluster deep sleep is set up in ACC_OVRD, whose fields for the L2 flush on cluster sleep, SRM power-down, link train-down
+      and CPM power-down each take a deep-sleep value
+    loc: p002
+    quote: "Enable deep sleep mrs x1, ACC_OVRD orr x1, x1, #(ARM64_REG_ACC_OVRD_enDeepSleep) ... ARM64_REG_ACC_OVRD_disL2Flush4AccSlp_deepsleep) ... ARM64_REG_ACC_OVRD_ok2PwrDnSRM_deepsleep) ... ARM64_REG_ACC_OVRD_ok2TrDnLnk_deepsleep) ... ARM64_REG_ACC_OVRD_ok2PwrDnCPM_deepsleep)"
+    derivation: documented
+    supports: []
+    notes: The fields are defined for every Apple core after A9; this path runs on builds with the global sleep bit. On A11 the E and P blocks each have their own copy.
+  - id: c-xnu-irq-mask-wfi
+    text: On multi-cluster chips XNU masks IRQ and FIQ at the core through CPU_OVRD before a power-down WFI, so they cannot wake it spuriously
+    loc: p002
+    quote: "Mask FIQ and IRQ to avoid spurious wakeups ... mov x10, #(ARM64_REG_CYC_OVRD_irq_disable | ARM64_REG_CYC_OVRD_fiq_disable)"
+    derivation: documented
+    supports: []
+    notes: Built for multi-cluster (HAS_CLUSTER) parts such as the M1, and only outside deep sleep; builds with NO_CPU_OVRD mask the timer interrupt instead.
+  - id: c-xnu-bp-retention
+    text: XNU has a routine that lets branch predictor state be kept across cluster (ACC) sleep, chosen by a boot argument
+    loc: p002
+    quote: "Helper function to enable branch predictor state retention ... across ACC sleep"
+    derivation: documented
+    chip: a13
+    supports: []
+    notes: >-
+      Built only with HAS_BP_RET, which the A13-era start.s already calls, so some core up to the A13 has it; the cores are not
+      named. The register header names two sleep-enable bits, bdpSlpEn and btpSlpEn.
+  - id: c-xnu-core-throttle-rate
+    text: Each Apple core has a memory-mapped throttle register, CORE_THRTL_CFG2, with an 8-bit throttle-rate field named c1pptThrtlRate
+    loc: p001
+    quote: "CORE_THRTL_CFG2 non-sysreg tunable ... #define CORE_THRTL_CFG2_c1pptThrtlRate_mask (0xFFULL << CORE_THRTL_CFG2_c1pptThrtlRate_shift)"
+    derivation: documented
+    supports: []
+    notes: Defined for all Apple cores without a condition; the code read here does not show how it is set.
+  - id: c-xnu-fast-ipi-types
+    text: A fast IPI request names one of four types, immediate, retract, deferred or no-wake
+    loc: p001
+    quote: "#define ARM64_REG_IPI_RR_TYPE_IMMEDIATE (0 << 28) #define ARM64_REG_IPI_RR_TYPE_RETRACT (1 << 28) #define ARM64_REG_IPI_RR_TYPE_DEFERRED (2 << 28) #define ARM64_REG_IPI_RR_TYPE_NOWAKE (3 << 28)"
+    derivation: documented
+    chip: a11
+    supports: []
+    notes: Built only with HAS_IPI. XNU's IPI code cites the Skye (A11) ACC spec; current XNU uses the same code on every core built with HAS_IPI.
+  - id: c-xnu-ipi-deferred-timer
+    text: >-
+      A deferred fast IPI waits for a countdown kept in REFCLK ticks in a 16-bit field of a global register, and XNU's default
+      is 64 µs
+    loc: p005
+    quote: "#define kDeferredIPITimerDefault (64 * NSEC_PER_USEC) ... adjust IPI_CR timer countdown value for deferred IPI ... clamp maximum REFCLK ticks to 0xFFFF (16 bit field) ... from Skye ACC user spec section 5.7.3.3"
+    derivation: documented
+    value: 64
+    unit: µs
+    chip: a11
+    supports: []
+    notes: The 64 µs is a kernel default that a boot argument can change. The register layout comes from the Skye (A11) ACC spec.
+  - id: c-xnu-ipicr-two-copies
+    text: >-
+      On Skye the IPI control register has one copy in the P block and one in the E block, and a system-register write travels as
+      a token around both CPM rings to update both
+    loc: p005
+    quote: "IPICR is a global register but there are two copies in ACC: one at pBLK and one at eBLK. ... IPICR write SPR token also traverses both pCPM and eCPM rings and updates both copies."
+    derivation: documented
+    chip: a11
+    supports: []
+    notes: Earlier chip (A11), whose P and E cores share one ACC.
+  - id: c-xnu-dcache-fully-coherent
+    text: On Apple cores, cleaning the data cache to the point of unification is an empty routine, because the caches are fully coherent
+    loc: p006
+    quote: 'LEXT(CleanPoU_DcacheRegion) ARM64_PROLOG #if defined(APPLE_ARM64_ARCH_FAMILY) /* "Fully Coherent." */'
+    derivation: documented
+    supports: []
+    notes: >-
+      Generic code for all Apple cores; clean and flush to the point of coherency are empty too. Contradicts the mechanism in
+      part, since new code needs no data-side clean before the I-cache invalidate.
+  - id: c-xnu-icache-invalidate
+    text: >-
+      To make new code visible XNU still invalidates the instruction cache, line by line with IC IVAU when the I-cache does not
+      alias, otherwise in full
+    loc: p006
+    quote: "bl EXT(CleanPoU_DcacheRegion) #if __ARM_IC_NOALIAS_ICACHE__ ... ic ivau, x0 // Invalidate icache line ... #else bl EXT(InvalidatePoU_Icache)"
+    derivation: documented
+    supports: []
+    notes: Generic code for all Apple cores; the full invalidate is IC IALLUIS. Which cores build with the non-aliasing flag is not stated.
+  - id: c-xnu-dc-cvac-nop
+    text: DC CVAC does nothing on Apple cores, so XNU cleans to the point of coherency with DC CIVAC, clean and invalidate
+    loc: p006
+    quote: "It may be tempting to clean the cache (dc cvac), but it's always a NOP on ... Apple hardware. dc civac, x0"
+    derivation: documented
+    supports: []
+    notes: Generic code for all Apple cores. The older tag says the same of Cyclone only.
+  - id: c-xnu-dc-mva-toggle
+    text: Apple cores have a HID4 bit (EHID4 on E-cores) that turns off data-cache maintenance by VA, and XNU's cache code can toggle it
+    loc: p006
+    quote: "Disables cache maintenance by VA instructions on Apple SoCs."
+    derivation: documented
+    supports: []
+    notes: At the A13-era tag, boot code common to all Apple cores sets this bit, and a second one for set/way operations on the L2 (DisDcSWL2Ops).
+
+new_params: {}
 
 new_mechanisms:
   store_merge_buffer:
@@ -476,11 +580,25 @@ new_mechanisms:
       WFI either only clock-gates a core or lets it power down, chosen in CPU_OVRD; cluster deep sleep sets ACC_OVRD fields for
       the L2 flush, SRM and CPM power-down and link train-down, and branch predictor state can be kept across cluster sleep.
     params: []
-    claims: [c-xnu-wfi-power-down, c-xnu-a11-acc-link-fsm]
+    claims: [c-xnu-wfi-power-down, c-xnu-wfi-clock-gate, c-xnu-acc-deep-sleep, c-xnu-a11-acc-link-fsm, c-xnu-bp-retention]
     sim_switch: null
     detection_rule: >-
       Wake-up delay after idle falls into distinct levels (clock-gated, core powered down, cluster in deep sleep), and branch
       mispredicts right after a cluster wake show whether predictor state survived.
+  fast_ipi:
+    name: Fast IPIs through system registers
+    block: power
+    chip: a11
+    status: inferred
+    description: >-
+      A core interrupts another by writing a system register with an immediate, deferred, retract or no-wake request; a deferred
+      request waits for a countdown in reference-clock ticks set in a global register.
+    params: []
+    claims: [c-xnu-fast-ipi-types, c-xnu-ipi-deferred-timer, c-xnu-ipicr-two-copies]
+    sim_switch: null
+    detection_rule: >-
+      A cross-core ping-pong through the IPI request register has a much shorter round trip than one through the interrupt
+      controller, and a deferred request arrives only after the programmed countdown.
   exec_clock_gating:
     name: Clock gating of idle execution pipes
     block: eu_int
@@ -516,4 +634,7 @@ mechanism_claims:
   simd_power_down: [c-xnu-a13-nex-pg]
   load_replay_shadow: [c-xnu-a13-leq-credits]
   l2_half_lines: [c-xnu-a13-sibling-merge]
+  interrupt_routing: [c-xnu-irq-mask-wfi]
+  power_estimator_throttle: [c-xnu-core-throttle-rate]
   speculation_barriers: [c-xnu-eret-no-sls]
+  l1i_maintenance_only: [c-xnu-dcache-fully-coherent, c-xnu-icache-invalidate]
