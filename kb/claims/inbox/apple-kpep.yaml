@@ -64,9 +64,73 @@ claims:
     derivation: documented
     supports: []
     notes: A rewind that takes cycles fits a walk back through the rename history rather than an instant checkpoint restore; the counter gives no length.
+  - id: c-kpep-flush-causes
+    text: Branch mispredicts and memory-order violations flush and restart the pipeline, and other causes do too
+    loc: p001
+    quote: "FLUSH_RESTART_OTHER_NONSPEC (132, 0x84): Pipeline flush and restarts that were not due to branch mispredictions or memory order violations"
+    derivation: documented
+    supports: []
+    notes: The other causes are not listed; exceptions and barriers are the likely ones.
+  - id: c-kpep-order-viol-store
+    text: A memory-order violation between a store and a load of the core is charged to the store that triggered it, counted when the store retires
+    loc: p001
+    quote: "ST_MEM_ORDER_VIOL_LD_NONSPEC (196, 0xc4): Retired core store uops that triggered memory order violations with core load uops"
+    derivation: documented
+    supports: []
+    notes: The store finds the violation, which fits a store checking younger loads once its address is known.
+  - id: c-kpep-irq-pending
+    text: The core tracks cycles in which an interrupt is pending but held because it is masked
+    loc: p001
+    quote: "INTERRUPT_PENDING (108, 0x6c): Cycles while an interrupt was pending because it was masked"
+    derivation: documented
+    supports: []
+  - id: c-kpep-sched-empty
+    text: Apple's counters treat the uop scheduler as one unit, counting cycles in which all of it is empty and uops it issues to any unit
+    loc: p001
+    quote: "SCHEDULE_EMPTY (81, 0x51): Cycles while the uop scheduler is empty - SCHEDULE_UOP (82, 0x52): Uops issued by the scheduler to any execution unit"
+    derivation: documented
+    supports: []
+    notes: Says nothing on how many queues make up the scheduler.
+  - id: c-kpep-dispatch-backpressure
+    text: The Map unit stalls when dispatch pushes back, and such stalls are counted apart from cycles with no uops to map
+    loc: p001
+    quote: "MAP_STALL_DISPATCH (112, 0x70): Cycles while the Map Unit was stalled because of Dispatch back pressure"
+    derivation: documented
+    supports: []
+    notes: MAP_DISPATCH_BUBBLE counts cycles with no uops and no stall. Full dispatch buffers or queues back up into rename.
+  - id: c-kpep-fetch-restart
+    text: The fetch unit restarts internally for reasons other than branch mispredicts, and these restarts are counted apart
+    loc: p001
+    quote: "FETCH_RESTART (222, 0xde): Fetch Unit internal restarts for any reason. Does not include branch mispredicts"
+    derivation: documented
+    supports: []
+    notes: Fits fetch-side redirects that stop short of a pipeline flush.
+  - id: c-kpep-dczva-not-store
+    text: DC ZVA is not counted among retired store or load-store instructions
+    loc: p001
+    quote: "INST_INT_ST (150, 0x96): Retired store Integer Unit instructions.  Does not count DC ZVA (Data Cache Zero by VA)."
+    derivation: documented
+    supports: []
+    notes: INST_LDST says the same. Fits DC ZVA being handled outside the normal store path.
+  - id: c-kpep-table-walk
+    text: Page-table walks issue memory requests, counted separately for data accesses and for instruction fetches
+    loc: p001
+    quote: "MMU_TABLE_WALK_DATA (8, 0x8): Table walk memory requests on behalf of data accesses - MMU_TABLE_WALK_INSTRUCTION (7, 0x7): Table walk memory requests on behalf of instruction fetches"
+    derivation: documented
+    supports: []
+    notes: Says nothing about a walk cache.
+  - id: c-kpep-cross-line-page
+    text: Load and store uops that cross a 64 B boundary and those that cross a 16 KiB page boundary are counted separately
+    loc: p001
+    quote: "LDST_X64_UOP (177, 0xb1): Load and store uops that crossed a 64B boundary - LDST_XPG_UOP (178, 0xb2): Load and store uops that crossed a 16KiB page boundary."
+    derivation: documented
+    supports: []
+    notes: The rest of the page-crossing text is about SME and comes from a later macOS.
 
 new_params:
   l1d.write_policy: {block: l1d, name: L1D write policy, mechanism: l1d_write_allocate}
+
+new_mechanisms: {}
 
 mechanism_claims:
   l1d_write_allocate: [c-kpep-l1d-writeback, c-kpep-store-miss]
@@ -76,3 +140,9 @@ mechanism_claims:
   amx_lsu_issue: [c-kpep-coproc-store-unit]
   exec_forwarding: [c-kpep-gpr-vec-ldst]
   rename_retire_queue: [c-kpep-map-rewind]
+  store_load_dep_predictor: [c-kpep-order-viol-store]
+  dispatch_buffers: [c-kpep-dispatch-backpressure]
+  staged_fetch_redirect: [c-kpep-fetch-restart]
+  dczva_l2_zero: [c-kpep-dczva-not-store]
+  mmu_walk_cache: [c-kpep-table-walk]
+  split_access_handling: [c-kpep-cross-line-page]
