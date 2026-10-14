@@ -23823,6 +23823,67 @@
       "chip": "m1",
       "entered": "johnson"
     },
+    "c-lem-m1-mlp-28": {
+      "text": "One M1 core keeps about 28 random memory accesses in flight at once, possibly more",
+      "loc": "p001",
+      "quote": "It looks like a single core has about 28 levels of memory parallelism ... and possibly more.",
+      "derivation": "measured",
+      "value": 28,
+      "unit": "accesses",
+      "approx": true,
+      "hedge": "It looks like ... and possibly more",
+      "supports": [],
+      "notes": "A lower bound on misses in flight beyond the L1D from one core, not an L1D miss-buffer count (mshr.outstanding). The test is not described here; his lane test stops at 28 lanes (c-lem-m2-lanes).",
+      "source": "lemire-m1-mlp",
+      "chip": "m1",
+      "entered": "lemire"
+    },
+    "c-lem-m1-adjacent": {
+      "text": "In random byte gathers over a 1 GB array, also reading the byte after each address makes a 2-wise gather 40% slower, 8.9 to 12.5 ns per iteration, close to a 3-wise gather at 13.0 ns, so a second access next to a random one is not free",
+      "loc": "p001",
+      "quote": "2-wise | 8.9 ns ... 2-wise + | 12.5 ns ... the last one is 40% more expensive than the first 2-wise function. It contradicts our prediction.",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 40,
+      "unit": "%",
+      "hedge": "The run-to-run variability is relatively high on such a test",
+      "supports": [],
+      "notes": "He gives no cause; the extra reads target the byte after each random address.",
+      "source": "lemire-m1-mlp",
+      "chip": "m1",
+      "entered": "lemire"
+    },
+    "c-lem-m2-lanes": {
+      "source": "lemire-m2-m4-mlp",
+      "text": "Split into lanes, a random pointer chase over an array of over 33 million 64-bit words shows one M2 core visibly sustaining 28 lanes, the most the test runs because more lanes are too noisy",
+      "loc": "p001",
+      "quote": "I have to limit the number of lanes since beyond a certain point, there is too much noise. A maximum of 28 lanes works well. ... Both processors can visibly sustain 28 lanes.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 28,
+      "unit": "lanes",
+      "approx": true,
+      "hedge": "I have to limit the number of lanes since beyond a certain point, there is too much noise",
+      "supports": [],
+      "chip": "m2",
+      "notes": "A floor, not a limit, since the test stops at 28 lanes. Same figure as the M1 (c-lem-m1-mlp-28).",
+      "entered": "lemire"
+    },
+    "c-lem-m4-lanes": {
+      "source": "lemire-m2-m4-mlp",
+      "text": "One M4 core also sustains the full 28 lanes and runs the test only about 15% faster than the M2",
+      "loc": "p001",
+      "quote": "the difference between the M4 and the M2 is not enormous (about 15%). Both processors can visibly sustain 28 lanes.",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 28,
+      "unit": "lanes",
+      "approx": true,
+      "supports": [],
+      "chip": "m4",
+      "notes": "The M4 uses LPDDR5X memory, the M2 LPDDR5. The test stops at 28 lanes.",
+      "entered": "lemire"
+    },
     "c-kc-m2-btb-2k": {
       "text": "The M2 P-core BTB holds about 2K entries; mispredictions stay near zero up to about 2K indirect branches and rise sharply beyond",
       "loc": "p009",
@@ -27299,6 +27360,20 @@
       "year": 2023,
       "url": "https://github.com/corsix/amx/issues/6",
       "notes": "Claims come from Cawley's own posts; the threads also hold posts by other users"
+    },
+    "lemire-m1-mlp": {
+      "type": "web",
+      "title": "Memory access on the Apple M1 processor",
+      "author": "Lemire, Daniel",
+      "year": 2021,
+      "url": "https://lemire.me/blog/2021/01/06/memory-access-on-the-apple-m1-processor/"
+    },
+    "lemire-m2-m4-mlp": {
+      "type": "web",
+      "title": "Memory-level parallelism: Apple M2 vs Apple M4",
+      "author": "Lemire, Daniel",
+      "year": 2025,
+      "url": "https://lemire.me/blog/2025/07/09/memory-level-parallelism-apple-m2-vs-apple-m4/"
     },
     "ccs26-slac": {
       "type": "paper",
