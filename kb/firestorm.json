@@ -637,6 +637,7 @@
     },
     "l1i.line": {
       "claims": [
+        "c-alp-icache-line-64",
         "c-ilk-l1i-line",
         "c-pac-l1i-line",
         "c-xnu-fs-line-64"
@@ -4129,6 +4130,55 @@
       "source": "apple-kpep",
       "chip": "m1",
       "entered": "apple-kpep"
+    },
+    "c-alp-icache-line-64": {
+      "text": "Apple's I-cache invalidate routine steps through memory in 64 B instruction cache lines",
+      "loc": "p001",
+      "quote": "#define MMU_I_CLINE 6 // cache line size as 1<<MMU_I_CLINE (64)",
+      "derivation": "documented",
+      "value": 64,
+      "unit": "B",
+      "supports": [
+        "l1i.line"
+      ],
+      "notes": "One constant for every arm64 CPU the library runs on, the M1 among them.",
+      "source": "apple-libplatform",
+      "chip": "m1",
+      "entered": "apple-libplatform"
+    },
+    "c-alp-ic-ivau-by-line": {
+      "text": "To make new code visible, sys_icache_invalidate issues a DSB, then one IC IVAU per 64 B line over the range, then a DSB and an ISB, with no data-cache clean",
+      "loc": "p001",
+      "quote": "dsb ish mov x2, #20 ... ic ivau, x9 // invalidate icache line add x9, x9, #1<<MMU_I_CLINE // next cacheline address ... dsb ish isb 2: ret",
+      "derivation": "documented",
+      "supports": [],
+      "notes": "Supports the mechanism's invalidation by line; contradicts its clean step, as no DC CVAU is issued. The comment points to InvalidatePoU_IcacheRegion in XNU.",
+      "source": "apple-libplatform",
+      "chip": "m1",
+      "entered": "apple-libplatform"
+    },
+    "c-alp-dsb-every-20": {
+      "text": "On CPU families in Apple's list of CPUs that need a DSB for IC IVAU, the M1's family first, the routine adds a DSB after every 20 line invalidates",
+      "loc": "p001",
+      "quote": "//we did some invalidates, time to maybe DSB? ... _cpus_that_need_dsb_for_ic_ivau: .word 0x1b588bb3 .word 0xda33d83d .word 0x8765edea",
+      "derivation": "documented",
+      "value": 20,
+      "unit": "invalidates",
+      "supports": [],
+      "notes": "0x1b588bb3 is CPUFAMILY_ARM_FIRESTORM_ICESTORM in XNU's machine.h; the list also names the Blizzard/Avalanche and Everest/Sawtooth families and the Ibiza, Coll, Palma and Lobos ids. Why the barrier is needed is not stated.",
+      "source": "apple-libplatform",
+      "chip": "m1",
+      "entered": "apple-libplatform"
+    },
+    "c-alp-dcache-flush-noop": {
+      "text": "Apple's data-cache flush to the point of coherency is only a DSB, commented as a no-op because the system is fully coherent",
+      "loc": "p001",
+      "quote": "_sys_dcache_flush: // see FlushPoC_DcacheRegion() in xnu/osfmk/arm64/caches_asm.s dsb ish // noop, we are fully coherent",
+      "derivation": "documented",
+      "supports": [],
+      "source": "apple-libplatform",
+      "chip": "m1",
+      "entered": "apple-libplatform"
     },
     "c-pat-us20210064376a1-last-reference": {
       "source": "us20210064376a1",
@@ -26807,6 +26857,13 @@
       "year": 2025,
       "url": "https://arxiv.org/abs/2512.21473"
     },
+    "apple-libplatform": {
+      "type": "repo",
+      "title": "libplatform: sys_icache_invalidate for arm64",
+      "author": "Apple",
+      "year": 2024,
+      "url": "https://github.com/apple-oss-distributions/libplatform/blob/libplatform-316.100.10/src/cachecontrol/arm64/cache.s"
+    },
     "us20210064376a1": {
       "type": "patent",
       "title": "Last physical register reference scheme",
@@ -26928,6 +26985,8 @@
       "claims": [
         "c-ajit-icache-not-coherent",
         "c-ajit-invalidate-before-exec",
+        "c-alp-ic-ivau-by-line",
+        "c-alp-dsb-every-20",
         "c-xnu-dcache-fully-coherent",
         "c-xnu-icache-invalidate"
       ],

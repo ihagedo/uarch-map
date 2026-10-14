@@ -253,3 +253,9 @@ sources:
     author: Deng, Chencheng
     year: 2025
     url: https://arxiv.org/abs/2512.21473
+  apple-libplatform:
+    type: repo
+    title: "libplatform: sys_icache_invalidate for arm64"
+    author: Apple
+    year: 2024
+    url: https://github.com/apple-oss-distributions/libplatform/blob/libplatform-316.100.10/src/cachecontrol/arm64/cache.s
