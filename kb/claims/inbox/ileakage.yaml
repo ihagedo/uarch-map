@@ -13,8 +13,7 @@ claims:
     derivation: measured
     value: 6
     unit: ways
-    supports: []
-    contradicts: [l1i.assoc]
+    supports: [l1i.assoc]
     notes: >-
       M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of
       c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).

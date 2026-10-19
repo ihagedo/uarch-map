@@ -102,7 +102,7 @@ def merge(core):
     }
     problems = []
 
-    descriptions, conjectures, judgments, questions = {}, {}, {}, {}
+    descriptions, conjectures, judgments, questions, resolutions = {}, {}, {}, {}, []
     for seed in load_yaml_dir(os.path.join(ROOT, "kb", "seed", core, "*.yaml")):
         kb["isa"] = seed.get("isa", kb["isa"]) or kb["isa"]
         kb["blocks"] += seed.get("blocks", [])
@@ -115,6 +115,7 @@ def merge(core):
         descriptions.update(seed.get("descriptions") or {})
         conjectures.update(seed.get("conjectures") or {})
         judgments.update(seed.get("judgments") or {})
+        resolutions += seed.get("resolutions") or []
         for bid, qs in (seed.get("questions") or {}).items():
             for qid, q in qs.items():
                 questions[qid] = {"block": bid, **q}
@@ -165,6 +166,13 @@ def merge(core):
         for mid, cids in (sess.get("mechanism_claims") or {}).items():
             if mid in kb["mechanisms"]:
                 kb["mechanisms"][mid]["claims"] += cids
+    # our resolutions (conjectures.yaml) settle disputes the way a claim file's do, marked ours
+    for r in resolutions:
+        p = kb["params"].get(r["param"])
+        if p is None:
+            problems.append(f"resolution for unknown param {r['param']}")
+            continue
+        p.setdefault("_resolutions", []).append({**r, "ours": True})
 
     for pid, p in kb["params"].items():
         supporting = [
@@ -238,10 +246,14 @@ def merge(core):
                 }
             )
         for r in p.pop("_resolutions", []):
-            for d in disputes:
-                if set(r.get("claims", [])) == set(d["claims"]):
-                    d["resolution"] = r["resolution"]
-                    d["resolved_by"] = r.get("resolved_by")
+            hit = [d for d in disputes if set(r.get("claims", [])) == set(d["claims"])]
+            if not hit:
+                problems.append(f"resolution for {pid} matches no dispute: {r.get('claims')}")
+            for d in hit:
+                d["resolution"] = r["resolution"]
+                d["resolved_by"] = r.get("resolved_by")
+                if r.get("ours"):
+                    d["ours"] = True
         for d in disputes:
             d.pop("_auto", None)
         p["disputes"] = disputes

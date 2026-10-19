@@ -535,7 +535,8 @@
     if (p.judgment) h += `<p class="ev-flag">${judgmentHTML(p.judgment)}</p>`;
     for (const d of p.disputes) {
       const sides = d.claims.map((cid) => `${D.sources[D.claims[cid].source].cite} ${D.claims[cid].value}`).join(", ");
-      h += `<p class="ev-flag">${DISPUTE_HTML}${d.resolution ? "Resolved" : "Disputed"}: ${esc(sides)}` +
+      const by = d.ours ? `<span class="ours-tag">Ours</span>` : "";
+      h += `<p class="ev-flag">${DISPUTE_HTML}${d.resolution ? by + "Resolved" : "Disputed"}: ${esc(sides)}` +
         (d.resolution ? `. ${esc(d.resolution)}` : "") + `</p>`;
     }
     if (p.for.length) h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map(claimHTML).join("");

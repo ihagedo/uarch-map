@@ -232,6 +232,10 @@
                       "null"
                     ],
                     "description": "claim id or PoC id"
+                  },
+                  "ours": {
+                    "type": "boolean",
+                    "description": "resolved by us (conjectures.yaml), not by a source"
                   }
                 }
               }

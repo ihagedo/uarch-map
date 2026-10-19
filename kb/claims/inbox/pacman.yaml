@@ -13,8 +13,7 @@ claims:
     derivation: documented
     value: 6
     unit: ways
-    supports: []
-    contradicts: [l1i.assoc]
+    supports: [l1i.assoc]
     notes: Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).
   - id: c-pac-l1i-size
     text: The Firestorm L1I is 192 KB according to the cache configuration registers
@@ -301,7 +300,8 @@ claims:
     derivation: derived
     value: 128
     unit: entries
-    supports: [itlb.entries]
+    supports: []
+    contradicts: [itlb.entries]
     notes: The paper states the shape, not the count; 128 is 4 ways times 32 sets. One such iTLB each for user and kernel code.
   - id: c-pac-itlb-victim-steps
     text: >-

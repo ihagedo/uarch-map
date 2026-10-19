@@ -17,7 +17,7 @@
   "l1i.size": {
     "value": 192,
     "sim_key": "l1i_kib",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "btb.l0_entries": {
     "value": 1024,
@@ -107,7 +107,7 @@
   "eu_int.count": {
     "value": 6,
     "sim_key": "int_units",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "eu_fp.count": {
     "value": 4,
@@ -152,7 +152,7 @@
   "l1d.size": {
     "value": 128,
     "sim_key": "l1d_kib",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "l1d.line": {
     "value": 64,
@@ -167,7 +167,7 @@
   "dtlb.l1_entries": {
     "value": 160,
     "sim_key": "dtlb_l1",
-    "confidence": "corroborated"
+    "confidence": "confirmed"
   },
   "mshr.outstanding": {
     "value": null,

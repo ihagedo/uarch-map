@@ -69,6 +69,7 @@ class Dispute:
     note: str
     resolution: str | None = None
     resolved_by: str | None = None
+    ours: bool = False
 
     @property
     def open(self):
@@ -278,6 +279,7 @@ class KB:
                     note=d.get("note", ""),
                     resolution=d.get("resolution"),
                     resolved_by=d.get("resolved_by"),
+                    ours=bool(d.get("ours")),
                 )
                 for d in v.get("disputes", [])
             ]

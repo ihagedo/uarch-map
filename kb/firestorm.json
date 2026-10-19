@@ -640,8 +640,9 @@
             "c-xnu-fs-l1i-256"
           ],
           "note": "A comment in proc_reg.h. The measured and cache-register value is 192 KiB (c-pac-l1i-size, c-ilk-l1i-size).",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "Every measurement and the cache registers give 192 KB; the kernel comment's 6 ways match the hardware but its size does not, so the comment is likely stale",
+          "resolved_by": "c-pac-l1i-size",
+          "ours": true
         }
       ],
       "block": "l1i",
@@ -650,7 +651,7 @@
       "sim_key": "l1i_kib",
       "value": 192,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "l1i.line": {
       "claims": [
@@ -676,20 +677,21 @@
       "disputes": [
         {
           "claims": [
-            "c-pac-itlb-128",
-            "c-jia-itlb-192"
+            "c-jia-itlb-192",
+            "c-pac-itlb-128"
           ],
-          "note": "Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).",
-          "resolution": null,
-          "resolved_by": null
+          "note": "The paper states the shape, not the count; 128 is 4 ways times 32 sets. One such iTLB each for user and kernel code.",
+          "resolution": "Chen's page-stride test steps at 192 pages, the size Apple's guide gives as Chen quotes it; PACMAN states only a shape, 4 ways of 32 sets, from which 128 is computed. Shape and size do not fit together, so the organisation stays open",
+          "resolved_by": "c-jia-guide-itlb",
+          "ours": true
         }
       ],
       "block": "itlb",
       "name": "iTLB entries",
       "unit": "entries",
-      "value": 128,
-      "status": "derived",
-      "confidence": "derived"
+      "value": 192,
+      "status": "measured",
+      "confidence": "single"
     },
     "btb.l0_entries": {
       "claims": [
@@ -996,8 +998,9 @@
             "c-at-int-prf"
           ],
           "note": "measured on the A14",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "AnandTech's 354 is close to the integer registers free for speculation that Chen measured (362), not the whole file of about 380",
+          "resolved_by": "c-jia-int-spec-362",
+          "ours": true
         }
       ],
       "block": "int_prf",
@@ -1034,8 +1037,9 @@
             "c-at-fp-prf"
           ],
           "note": "measured on the A14",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "AnandTech's 384 matches the FP registers free for speculation that Chen measured (382), not the whole file of about 432",
+          "resolved_by": "c-jia-fp-spec-382",
+          "ours": true
         }
       ],
       "block": "fp_prf",
@@ -1222,8 +1226,9 @@
             "c-at-int-units"
           ],
           "note": "measured on the A14",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "AnandTech counts the integer divider as a port of its own; it sits behind one of the six units",
+          "resolved_by": "c-dj-int-roles",
+          "ours": true
         }
       ],
       "block": "eu_int",
@@ -1232,7 +1237,7 @@
       "sim_key": "int_units",
       "value": 6,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "eu_int.roles": {
       "claims": [
@@ -1472,8 +1477,9 @@
             "c-at-sq"
           ],
           "note": "measured on the A14, probe not described",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "AnandTech's 106 counts stores still waiting in the 48-entry load/store scheduler as well as the 60 queue entries; Chen's probe steps at 107, which is 60 + 48 - 1",
+          "resolved_by": "c-jc-store-107",
+          "ours": true
         }
       ],
       "block": "sq",
@@ -1563,8 +1569,9 @@
             "c-xnu-fs-l1d-160"
           ],
           "note": "A comment in proc_reg.h. Every measurement gives 128 KiB (l1d.size).",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "Every measurement and the cache registers give 128 KB; the kernel comment's 8 ways match the hardware but its size does not, so the comment is likely stale",
+          "resolved_by": "c-pac-l1d-size",
+          "ours": true
         }
       ],
       "block": "l1d",
@@ -1573,7 +1580,7 @@
       "sim_key": "l1d_kib",
       "value": 128,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "l1d.line": {
       "claims": [
@@ -1685,8 +1692,9 @@
             "c-at-l1-tlb"
           ],
           "note": "measured on the A14; the article does not say data or instruction TLB",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "AnandTech measured the A14, whose L1 dTLB Apple's guide gives as 256 entries against 160 on the M1, as Chen quotes it",
+          "resolved_by": "c-jia-guide-a14-dtlb",
+          "ours": true
         }
       ],
       "block": "dtlb",
@@ -1695,7 +1703,7 @@
       "sim_key": "dtlb_l1",
       "value": 160,
       "status": "measured",
-      "confidence": "corroborated"
+      "confidence": "confirmed"
     },
     "dtlb.l1_org": {
       "claims": [
@@ -1710,8 +1718,9 @@
             "c-pac-dtlb-12x256"
           ],
           "note": "Disagrees with the 160-entry, 5-way L1 dTLB of c-mh-v2-dtlb and c-mh-v2-dtlb-5way. Handley gives the same 256 x 12 shape for the 3072-entry L2 TLB (c-mh-v2-tlb2-256x12).",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "Chen's stride test gives 5 ways of 32 sets (160 entries), as Handley's does; PACMAN's fit of its first step assumes inclusive TLBs, and Handley gives that 12 by 256 shape to the L2 TLB",
+          "resolved_by": "c-mh-v2-dtlb-5way",
+          "ours": true
         }
       ],
       "block": "dtlb",
@@ -1826,8 +1835,9 @@
             "c-7cpu-l2-latency"
           ],
           "note": "17 vs 18 at equal rank",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "Within a cycle of each other; Handley also gives 18 for the inner L2, and 7-cpu does not say how it measured",
+          "resolved_by": null,
+          "ours": true
         },
         {
           "claims": [
@@ -1835,8 +1845,9 @@
             "c-mh-v1-l2-latency-aside"
           ],
           "note": "Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "The 15 is a passing figure; Handley's own measurement in his memory volume is 17",
+          "resolved_by": null,
+          "ours": true
         }
       ],
       "block": "l2",
@@ -2547,8 +2558,9 @@
             "c-at-mini-l2-partition"
           ],
           "note": "7.5 vs 8 at equal rank",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "The same finding read off coarse curves; one core's bandwidth changes at about 7.5 MiB and its latency rises past about 8 MB",
+          "resolved_by": null,
+          "ours": true
         }
       ],
       "block": "l2",
@@ -2682,28 +2694,20 @@
       "disputes": [
         {
           "claims": [
-            "c-mh-v2-tlb2-org",
-            "c-jia-l2tlb-org"
-          ],
-          "note": "Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v2-tlb2-org",
+            "c-jia-l2tlb-org",
             "c-pac-l2tlb-23x2048"
           ],
           "note": "Disagrees with the 3072-entry L2 TLB (c-mh-v2-dtlb-l2-3072, c-7cpu-dtlb-l2) and its 3-way, 1024-set shape (c-mh-v2-tlb2-org).",
-          "resolution": null,
-          "resolved_by": null
+          "resolution": "Chen's stride test gives 12 ways of 256 sets (3072 entries), as Handley's second reading does; PACMAN's fit assumes inclusive TLBs, and its authors warn that hidden structures may explain the steps",
+          "resolved_by": "c-mh-v2-tlb2-256x12",
+          "ours": true
         }
       ],
       "block": "dtlb",
       "name": "L2 TLB organisation",
-      "value": "3-way, 1024 sets, hashed index",
-      "status": "derived",
-      "confidence": "derived"
+      "value": "12-way, 256 sets, indexed by VA bits 21:14",
+      "status": "measured",
+      "confidence": "single"
     },
     "prefetch.streams": {
       "claims": [
@@ -2916,47 +2920,21 @@
       "disputes": [
         {
           "claims": [
-            "c-mh-v8-l1i-12way",
-            "c-ilk-l1i-ways"
+            "c-ilk-l1i-ways",
+            "c-mh-v8-l1i-12way"
           ],
-          "note": "M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v8-l1i-12way",
-            "c-jia-l1i-6way"
-          ],
-          "note": "Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v8-l1i-12way",
-            "c-pac-l1i-ways"
-          ],
-          "note": "Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v8-l1i-12way",
-            "c-xnu-fs-l1i-6way"
-          ],
-          "note": "The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.",
-          "resolution": null,
-          "resolved_by": null
+          "note": "L2 associativity, he adds, varies from model to model.",
+          "resolution": "Six ways. The cache registers PACMAN read, two measurements and Apple's kernel header agree; the 12 is a passing remark with no test behind it",
+          "resolved_by": "c-pac-l1i-ways",
+          "ours": true
         }
       ],
       "block": "l1i",
       "name": "L1I associativity",
       "unit": "ways",
-      "value": 12,
-      "status": "inferred",
-      "confidence": "inferred"
+      "value": 6,
+      "status": "measured",
+      "confidence": "confirmed"
     },
     "pcluster.noc_ports": {
       "claims": [
@@ -23406,7 +23384,8 @@
       "derivation": "inferred",
       "value": 12,
       "unit": "ways",
-      "supports": [
+      "supports": [],
+      "contradicts": [
         "l1i.assoc"
       ],
       "notes": "L2 associativity, he adds, varies from model to model.",
@@ -24217,8 +24196,7 @@
       "derivation": "measured",
       "value": 6,
       "unit": "ways",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l1i.assoc"
       ],
       "notes": "M1 (P) row, Mac Mini; M1 Pro, M1 Max, A14 and M2 P-cores also show 6 ways. Disagrees with the 12 ways of c-mh-v8-l1i-12way; the registers read by PACMAN say 6 (c-pac-l1i-ways).",
@@ -24821,8 +24799,7 @@
       "value": 6,
       "unit": "ways",
       "hedge": "\u4fa7\u9762\u4f50\u8bc1",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l1i.assoc"
       ],
       "notes": "Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.",
@@ -24901,8 +24878,7 @@
       "derivation": "measured",
       "value": 192,
       "unit": "entries",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "itlb.entries"
       ],
       "notes": "Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).",
@@ -26016,8 +25992,7 @@
       "method": "pointer-chase",
       "derivation": "measured",
       "value": "12-way, 256 sets, indexed by VA bits 21:14",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "dtlb.l2_org"
       ],
       "notes": "Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.",
@@ -28195,8 +28170,7 @@
       "derivation": "documented",
       "value": 6,
       "unit": "ways",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l1i.assoc"
       ],
       "notes": "Read with a kernel extension. Disagrees with the 12 ways of c-mh-v8-l1i-12way; iLeakage measures 6 (c-ilk-l1i-ways).",
@@ -28594,7 +28568,8 @@
       "derivation": "derived",
       "value": 128,
       "unit": "entries",
-      "supports": [
+      "supports": [],
+      "contradicts": [
         "itlb.entries"
       ],
       "notes": "The paper states the shape, not the count; 128 is 4 ways times 32 sets. One such iTLB each for user and kernel code.",
@@ -30940,8 +30915,7 @@
       "derivation": "documented",
       "value": 6,
       "unit": "ways",
-      "supports": [],
-      "contradicts": [
+      "supports": [
         "l1i.assoc"
       ],
       "notes": "The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.",

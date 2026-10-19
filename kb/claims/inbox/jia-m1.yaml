@@ -208,8 +208,7 @@ claims:
     value: 6
     unit: ways
     hedge: "侧面佐证"
-    supports: []
-    contradicts: [l1i.assoc]
+    supports: [l1i.assoc]
     notes: Agrees with c-ilk-l1i-ways and c-pac-l1i-ways.
 
   - id: c-jia-ice-btb-1024
@@ -282,8 +281,7 @@ claims:
     derivation: measured
     value: 192
     unit: entries
-    supports: []
-    contradicts: [itlb.entries]
+    supports: [itlb.entries]
     notes: Against the 128 entries PACMAN derives from 4 ways and 32 sets (c-pac-itlb-128).
 
   - id: c-jia-ice-itlb-128
@@ -1174,8 +1172,7 @@ claims:
     method: pointer-chase
     derivation: measured
     value: "12-way, 256 sets, indexed by VA bits 21:14"
-    supports: []
-    contradicts: [dtlb.l2_org]
+    supports: [dtlb.l2_org]
     notes: Agrees with c-mh-v2-tlb2-256x12; against the hashed 3-way, 1024-set reading of c-mh-v2-tlb2-org.
 
   - id: c-jia-l2tlb-miss

@@ -509,7 +509,8 @@ claims:
     derivation: inferred
     value: 12
     unit: ways
-    supports: [l1i.assoc]
+    supports: []
+    contradicts: [l1i.assoc]
     notes: L2 associativity, he adds, varies from model to model.
 
   - id: c-mh-v8-ipv-replacement

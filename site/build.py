@@ -237,6 +237,7 @@ def view_data(kb, geo):
                         "note": d.note,
                         "resolution": d.resolution,
                         "resolvedBy": d.resolved_by,
+                        "ours": d.ours,
                     }
                     for d in p.disputes
                 ],

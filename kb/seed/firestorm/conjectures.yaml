@@ -166,3 +166,71 @@ judgments:
     text: Present but narrow. Handley's probes speed up only a load that uses the store's address register with an
       immediate offset, a case ocxtal's tests need not have hit.
     basis: [c-mh-v1-zcl-5-vs-7, c-mh-v1-zcl-addressing, c-ox-no-aliasing]
+
+resolutions:
+  - param: l1i.assoc
+    claims: [c-ilk-l1i-ways, c-mh-v8-l1i-12way]
+    resolution: Six ways. The cache registers PACMAN read, two measurements and Apple's kernel header agree; the 12 is a
+      passing remark with no test behind it
+    resolved_by: c-pac-l1i-ways
+  - param: l1i.size
+    claims: [c-jia-l1i-192, c-xnu-fs-l1i-256]
+    resolution: Every measurement and the cache registers give 192 KB; the kernel comment's 6 ways match the hardware but
+      its size does not, so the comment is likely stale
+    resolved_by: c-pac-l1i-size
+  - param: l1d.size
+    claims: [c-jia-l1d-128, c-xnu-fs-l1d-160]
+    resolution: Every measurement and the cache registers give 128 KB; the kernel comment's 8 ways match the hardware but
+      its size does not, so the comment is likely stale
+    resolved_by: c-pac-l1d-size
+  - param: int_prf.total
+    claims: [c-mh-v1-int-prf-add, c-at-int-prf]
+    resolution: AnandTech's 354 is close to the integer registers free for speculation that Chen measured (362), not the
+      whole file of about 380
+    resolved_by: c-jia-int-spec-362
+  - param: fp_prf.total
+    claims: [c-dj-fp-prf, c-at-fp-prf]
+    resolution: AnandTech's 384 matches the FP registers free for speculation that Chen measured (382), not the whole
+      file of about 432
+    resolved_by: c-jia-fp-spec-382
+  - param: sq.entries
+    claims: [c-dj-stores, c-at-sq]
+    resolution: AnandTech's 106 counts stores still waiting in the 48-entry load/store scheduler as well as the 60 queue
+      entries; Chen's probe steps at 107, which is 60 + 48 - 1
+    resolved_by: c-jc-store-107
+  - param: eu_int.count
+    claims: [c-ox-int-units, c-at-int-units]
+    resolution: AnandTech counts the integer divider as a port of its own; it sits behind one of the six units
+    resolved_by: c-dj-int-roles
+  - param: dtlb.l1_entries
+    claims: [c-jia-dtlb-160, c-at-l1-tlb]
+    resolution: AnandTech measured the A14, whose L1 dTLB Apple's guide gives as 256 entries against 160 on the M1, as
+      Chen quotes it
+    resolved_by: c-jia-guide-a14-dtlb
+  - param: dtlb.l1_org
+    claims: [c-jia-dtlb-5way, c-pac-dtlb-12x256]
+    resolution: Chen's stride test gives 5 ways of 32 sets (160 entries), as Handley's does; PACMAN's fit of its first
+      step assumes inclusive TLBs, and Handley gives that 12 by 256 shape to the L2 TLB
+    resolved_by: c-mh-v2-dtlb-5way
+  - param: itlb.entries
+    claims: [c-jia-itlb-192, c-pac-itlb-128]
+    resolution: Chen's page-stride test steps at 192 pages, the size Apple's guide gives as Chen quotes it; PACMAN states
+      only a shape, 4 ways of 32 sets, from which 128 is computed. Shape and size do not fit together, so the
+      organisation stays open
+    resolved_by: c-jia-guide-itlb
+  - param: dtlb.l2_org
+    claims: [c-jia-l2tlb-org, c-pac-l2tlb-23x2048]
+    resolution: Chen's stride test gives 12 ways of 256 sets (3072 entries), as Handley's second reading does; PACMAN's
+      fit assumes inclusive TLBs, and its authors warn that hidden structures may explain the steps
+    resolved_by: c-mh-v2-tlb2-256x12
+  - param: l2.latency
+    claims: [c-mh-v2-l2-latency-17, c-7cpu-l2-latency]
+    resolution: Within a cycle of each other; Handley also gives 18 for the inner L2, and 7-cpu does not say how it
+      measured
+  - param: l2.latency
+    claims: [c-mh-v2-l2-latency-17, c-mh-v1-l2-latency-aside]
+    resolution: The 15 is a passing figure; Handley's own measurement in his memory volume is 17
+  - param: l2.core_capacity
+    claims: [c-mh-v2-l2-transitions, c-at-mini-l2-partition]
+    resolution: The same finding read off coarse curves; one core's bandwidth changes at about 7.5 MiB and its latency
+      rises past about 8 MB

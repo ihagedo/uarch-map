@@ -330,8 +330,7 @@ claims:
     derivation: documented
     value: 6
     unit: ways
-    supports: []
-    contradicts: [l1i.assoc]
+    supports: [l1i.assoc]
     notes: The 6-way follows both sizes, as in the other cores' comments. Agrees with c-pac-l1i-ways and c-ilk-l1i-ways against the inferred 12.
   - id: c-xnu-fs-l1d-160
     text: Apple's kernel header gives Firestorm a 160 KB data cache
