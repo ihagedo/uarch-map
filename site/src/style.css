@@ -136,7 +136,8 @@ h1 {
 .conf-derived .body { fill: color-mix(in srgb, var(--hue) 8%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 9 3; }
 .conf-inferred .body { fill: color-mix(in srgb, var(--hue) 4%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 70%, var(--surface)); stroke-dasharray: 4 3; }
 /* ours: conjectures and our own mechanisms take one color, whatever the region */
-.conf-conjecture { --hue: var(--ours) !important; }
+.conf-ours, .conf-conjecture { --hue: var(--ours) !important; }
+.conf-ours .body { fill: color-mix(in srgb, var(--hue) 14%, var(--surface)); stroke: var(--hue); stroke-width: 1.5; }
 .conf-conjecture .body { fill: none; stroke: color-mix(in srgb, var(--hue) 60%, var(--ink-3)); stroke-width: 1.3; stroke-dasharray: 1 2.5; }
 .conf-unknown .body { fill: none; stroke: var(--ink-3); stroke-dasharray: 2 3; }
 .box .name { font-size: 12px; font-weight: 600; fill: var(--ink); }
@@ -150,7 +151,7 @@ h1 {
 .row .value { font: 500 10.5px var(--font-num); fill: var(--ink); }
 .row.conf-unknown .label, .row.conf-unknown .value, .row.conf-conjecture .label, .row.conf-conjecture .value { fill: var(--ink-3); }
 .row.conf-conjecture .value { font-style: italic; }
-.row.conf-conjecture .label, .row.conf-conjecture .value { fill: var(--ours); }
+.row.conf-conjecture .label, .row.conf-conjecture .value, .row.conf-ours .label, .row.conf-ours .value { fill: var(--ours); }
 .row .row-bg { fill: transparent; }
 .row:hover .row-bg { fill: var(--hue); fill-opacity: 0.1; }
 .row.selected .row-bg, .row.mech-hit .row-bg { fill: var(--hue); fill-opacity: 0.25; }
@@ -212,6 +213,7 @@ h1 {
 .conf-tag.conf-conjecture, .card.conf-conjecture {
   background: transparent; border: 1.3px dotted color-mix(in srgb, var(--hue) 60%, var(--ink-3)); color: var(--ours); font-weight: 500; font-style: italic;
 }
+.conf-tag.conf-ours, .card.conf-ours { background: color-mix(in srgb, var(--ours) 12%, var(--surface)); border: 1.5px solid var(--ours); color: var(--ours); font-weight: 500; }
 .conf-tag.conf-unknown, .card.conf-unknown { background: transparent; border: 1px dotted var(--ink-3); color: var(--ink-2); font-weight: 500; }
 .blackbox-note {
   margin: 0; padding: 10px 12px; border: 1px dashed var(--ink-3); border-radius: 8px;
@@ -237,7 +239,7 @@ h1 {
 .p-row .p-meta { grid-column: 2 / span 2; display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 12.5px; color: var(--ink-2); }
 .p-row.conf-unknown .p-name, .p-row.conf-unknown .p-value, .p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value { color: var(--ink-3); }
 .p-row.conf-conjecture .p-value { font-style: italic; }
-.p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value { color: var(--ours); }
+.p-row.conf-conjecture .p-name, .p-row.conf-conjecture .p-value, .p-row.conf-ours .p-name, .p-row.conf-ours .p-value { color: var(--ours); }
 .evidence { display: grid; gap: 10px; padding: 6px 0 10px 22px; }
 .ev-h { margin: 4px 0 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
 .ev-flag, .flag { display: inline-flex; align-items: center; gap: 6px; }

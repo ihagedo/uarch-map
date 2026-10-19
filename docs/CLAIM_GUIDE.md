@@ -104,6 +104,10 @@ Derivation:
   marked `ours: true`, each with the claims it rests on (`basis`), an `alternative` and what would tell
   them apart. Status says how far it goes: `inferred` when reasoned from specific claims, `conjecture`
   when only plausible. The map draws everything ours in one color, apart from sources' inferences.
+- Our own M1 measurements (uarch-re's kernels) cite a source marked `ours: true`, with `c-us-` claim ids. They
+  set a value only where nothing published is measured, documented or derived (confidence "ours", drawn in
+  the ours color); next to a published value they support it without counting as an author, or open a
+  dispute marked ours. They never outrank a published measurement.
 - A dispute we settle goes under `resolutions:` in `kb/seed/firestorm/conjectures.yaml` (same shape as a
   claim file's), with the reason; the map marks it ours. A source's own correction stays in its claim file.
 

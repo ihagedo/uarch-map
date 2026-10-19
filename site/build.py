@@ -264,6 +264,7 @@ def view_data(kb, geo):
                 "title": s.title,
                 "type": s.type,
                 "url": s.url,
+                "ours": s.ours,
                 "claims": sum(1 for c in kb.claims.values() if c.source is s),
             }
             for s in kb.sources.values()

@@ -6,10 +6,10 @@
   const D = JSON.parse(document.getElementById("map-data").textContent);
   const M = D.views.metrics;
   const NS = "http://www.w3.org/2000/svg";
-  const CONFS = ["confirmed", "corroborated", "single", "derived", "inferred", "conjecture", "unknown"];
+  const CONFS = ["confirmed", "corroborated", "single", "derived", "ours", "inferred", "conjecture", "unknown"];
   const DERIVS = ["measured", "documented", "derived", "inferred", "reported"];
   const CONF_WORD = { confirmed: "Confirmed", corroborated: "Corroborated", single: "One source", derived: "Derived",
-    inferred: "Inferred", conjecture: "Conjecture", unknown: "Unknown" };
+    ours: "Ours, measured", inferred: "Inferred", conjecture: "Conjecture", unknown: "Unknown" };
   const DERIV_WORD = { measured: "Measured", documented: "Documented", derived: "Derived", inferred: "Inferred",
     reported: "Reported" };
   const state = { view: "L2", l3: null, block: null, param: null, show: new Set(CONFS), derivs: new Set(DERIVS),
@@ -536,7 +536,7 @@
     for (const d of p.disputes) {
       const sides = d.claims.map((cid) => `${D.sources[D.claims[cid].source].cite} ${D.claims[cid].value}`).join(", ");
       const by = d.ours ? `<span class="ours-tag">Ours</span>` : "";
-      h += `<p class="ev-flag">${DISPUTE_HTML}${d.resolution ? by + "Resolved" : "Disputed"}: ${esc(sides)}` +
+      h += `<p class="ev-flag">${DISPUTE_HTML}${by}${d.resolution ? "Resolved" : "Disputed"}: ${esc(sides)}` +
         (d.resolution ? `. ${esc(d.resolution)}` : "") + `</p>`;
     }
     if (p.for.length) h += `<h4 class="ev-h">Supporting claims (${p.for.length})</h4>` + p.for.map(claimHTML).join("");
@@ -561,6 +561,7 @@
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
     const where = [src, esc(locText(c.loc)), `<span class="deriv">${pinHTML(c.deriv)}${DERIV_WORD[c.deriv]}</span>`];
     if (c.chip && c.chip !== "m1") where.push(esc(c.chip.toUpperCase()));
+    if (s.ours) where.unshift(`<span class="ours-tag">Ours</span>`);
     return h + `<p class="claim-src">${where.join(" · ")}</p></article>`;
   }
 

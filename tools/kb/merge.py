@@ -198,6 +198,12 @@ def merge(core):
             continue
         if pid in conjectures:
             problems.append(f"conjecture for {pid}, which now has a value; drop it")
+        # our own measurements: they set a value only where nothing published is measured, documented or
+        # derived; next to a published value they support it or open a dispute marked ours
+        mine = [(cid, c) for cid, c in supporting if kb["sources"].get(c["source"], {}).get("ours")]
+        published = [(cid, c) for cid, c in supporting if (cid, c) not in mine]
+        by_us = bool(mine) and not any(RANK[c["derivation"]] <= RANK["derived"] for _, c in published)
+        ranked = (mine if by_us else published) or supporting
 
         def key(item):
             cid, c = item
@@ -212,8 +218,8 @@ def merge(core):
                 c.get("entered", ""),
             )
 
-        supporting.sort(key=key)
-        best_cid, best = supporting[0]
+        ranked.sort(key=key)
+        best_cid, best = ranked[0]
         p["value"] = best.get("value", p.get("value"))
         if "unit" in best and "unit" not in p:
             p["unit"] = best["unit"]
@@ -223,7 +229,7 @@ def merge(core):
 
         disputes = [d for d in p.get("disputes", []) if not d.get("_auto")]
         top_rank = RANK[best["derivation"]]
-        peers = [(cid, c) for cid, c in supporting if RANK[c["derivation"]] == top_rank]
+        peers = [(cid, c) for cid, c in ranked if RANK[c["derivation"]] == top_rank]
         for cid, c in peers[1:]:
             if c.get("value") is not None and not agree(best, c):
                 disputes.append(
@@ -235,16 +241,23 @@ def merge(core):
                         "resolved_by": None,
                     }
                 )
-        for cid in contradicting:
-            disputes.append(
-                {
-                    "claims": [best_cid, cid],
-                    "_auto": True,
-                    "note": kb["claims"][cid].get("notes") or "explicit contradiction",
-                    "resolution": None,
-                    "resolved_by": None,
-                }
-            )
+        against = [(cid, kb["claims"][cid], False) for cid in contradicting]
+        if not by_us:
+            against += [
+                (cid, c, True) for cid, c in mine if c.get("value") is not None and not agree(best, c)
+            ]
+        for cid, c, ours_run in against:
+            d = {
+                "claims": [best_cid, cid],
+                "_auto": True,
+                "note": c.get("notes")
+                or ("our measurement disagrees" if ours_run else "explicit contradiction"),
+                "resolution": None,
+                "resolved_by": None,
+            }
+            if ours_run or kb["sources"].get(c["source"], {}).get("ours"):
+                d["ours"] = True
+            disputes.append(d)
         for r in p.pop("_resolutions", []):
             hit = [d for d in disputes if set(r.get("claims", [])) == set(d["claims"])]
             if not hit:
@@ -261,7 +274,7 @@ def merge(core):
 
         # each author counts once, at their strongest agreeing claim
         by_author = {}
-        for _, c in supporting:
+        for _, c in published:
             if c.get("value") is None or agree(best, c):
                 a = author_of(kb["sources"].get(c["source"], {}))
                 by_author[a] = min(by_author.get(a, 9), RANK[c["derivation"]])
@@ -280,6 +293,8 @@ def merge(core):
             conf = "inferred"
         if open_disputes and conf == "confirmed":
             conf = "corroborated"
+        if by_us:
+            conf = "ours"
         p["confidence"] = conf
 
     block_ids = {b["id"] for b in kb["blocks"]}
@@ -331,7 +346,9 @@ def merge(core):
                 published.append(max(r, 2) if m.get("chip", "m1") in LATER else r)
             elif aid in kb["params"]:
                 p = kb["params"][aid]
-                if p.get("value") is not None:
+                if p.get("confidence") == "ours":
+                    ours = True
+                elif p.get("value") is not None:
                     published.append(0 if p["status"] in ("measured", "documented", "derived") else 1)
                 elif p.get("confidence") == "conjecture":
                     ours = True

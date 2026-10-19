@@ -13,6 +13,7 @@ CONF_RANK = {
     "unknown": 0,
     "conjecture": 1,
     "inferred": 2,
+    "ours": 3,  # our own measurement; averages like derived, and CONF_NAME[3] stays "derived"
     "derived": 3,
     "single": 4,
     "corroborated": 5,
@@ -31,6 +32,7 @@ class Source:
     year: int | None = None
     url: str = ""
     notes: str = ""
+    ours: bool = False  # our own measurements
     name: str = ""  # display name; set by KB when two authors share a surname
 
     @property
@@ -191,6 +193,7 @@ class KB:
                 year=v.get("year"),
                 url=v.get("url", ""),
                 notes=v.get("notes", ""),
+                ours=bool(v.get("ours")),
             )
             for k, v in data["sources"].items()
         }

@@ -184,6 +184,7 @@
                 "corroborated",
                 "single",
                 "derived",
+                "ours",
                 "inferred",
                 "conjecture",
                 "unknown"
@@ -487,6 +488,10 @@
                 "type": "string"
               },
               "description": "claim ids or '<source>:<loc>' pointers"
+            },
+            "ours": {
+              "type": "boolean",
+              "description": "our own measurements: never outrank a published measurement"
             },
             "notes": {
               "type": "string"
