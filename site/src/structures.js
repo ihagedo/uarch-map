@@ -257,15 +257,20 @@
       ["Complete", "early release", null],
       ["Retire", "entry freed", null],
     ];
-    const bw = 96, bh = 58, gap = 12, by = 96;
+    // each box as wide as its measured text; the gaps leave the arrows a visible run
+    const bh = 58, gap = 20, by = 96;
+    let x = x0;
     steps.forEach(([name, note, pid], i) => {
-      const x = x0 + i * (bw + gap);
       const conf = pid ? D.params[pid].conf : "single";
-      el("rect", { x, y: by, width: bw, height: bh, rx: 6, class: "stage-box body" }, el("g", { class: `conf-${pid ? conf : "unknown"} flow` }, g));
-      txt(g, x + 8, by + 18, name, "st-t strong");
-      if (pid) pval(g, x + 8, by + 44, pid, { raw: !D.params[pid].num });
-      else if (note) txt(g, x + 8, by + 44, note, "st-note");
+      const rect = el("rect", { x, y: by, height: bh, rx: 6, class: "stage-box body" },
+        el("g", { class: `conf-${pid ? conf : "unknown"} flow` }, g));
+      let w = txt(g, x + 8, by + 18, name, "st-t strong").getComputedTextLength();
+      if (pid) w = Math.max(w, pval(g, x + 8, by + 44, pid, { raw: !D.params[pid].num }));
+      else if (note) w = Math.max(w, txt(g, x + 8, by + 44, note, "st-note").getComputedTextLength());
+      const bw = Math.max(80, Math.ceil(w) + 16);
+      rect.setAttribute("width", bw);
       if (i) el("path", { d: `M${x - gap + 1} ${by + bh / 2} H${x - 2}`, class: "link", "marker-end": "url(#arrow)" }, g);
+      x += bw + gap;
     });
     const my = by + bh + 34;
     let mbottom = my;
@@ -416,13 +421,13 @@
       ["Instruction queue", [{ pid: P.iq }, "entries"], [P.iq]],
     ];
     steps.forEach(([name, parts, pids], i) => {
-      const y = 92 + i * 76;
+      const y = 92 + i * 82;  // 24 between boxes: the arrows get a run past their heads
       box(x0, y, 540, 58, conf(...pids));
       txt(g, x0 + 14, y + 22, name, "st-t strong");
       line(g, x0 + 14, y + 46, parts);
-      if (i) el("path", { d: `M${x0 + 40} ${y - 17} V${y - 2}`, class: "link", "marker-end": "url(#arrow)" }, g);
+      if (i) el("path", { d: `M${x0 + 40} ${y - 23} V${y - 2}`, class: "link", "marker-end": "url(#arrow)" }, g);
     });
-    let my = Math.max(92 + steps.length * 76 + 20, py + 212), mb = my;
+    let my = Math.max(92 + steps.length * 82 + 20, py + 212), mb = my;
     S.mechanisms.forEach((mid, i) => {
       if (i && i % 2 === 0) my = mb + 14;
       const m = D.mechanisms[mid], x = 16 + (i % 2) * 590;
@@ -481,8 +486,8 @@
     };
     tl(118, "L1 data TLB", [{ pid: P.t1 }, "entries,", { pid: P.t1_org, raw: true }],
       [{ pid: P.t1_ports }, "lookup per cycle; a miss costs", { pid: P.t1_miss }, "cycles"], D.params[P.t1].conf);
-    el("path", { d: `M${x0 + 40} ${200} V${214}`, class: "link", "marker-end": "url(#arrow)" }, g);
-    tl(216, "L2 TLB", [{ pid: P.t2 }, "entries,", { pid: P.t2_org, raw: true }],
+    el("path", { d: `M${x0 + 40} ${200} V${220}`, class: "link", "marker-end": "url(#arrow)" }, g);
+    tl(222, "L2 TLB", [{ pid: P.t2 }, "entries,", { pid: P.t2_org, raw: true }],
       ["a miss (page walk) costs", { pid: P.t2_miss }, "cycles"], D.params[P.t2].conf);
     const py = 340;
     txt(g, x0, py, "Prefetch and misses", "st-h");

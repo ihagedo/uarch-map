@@ -18,11 +18,14 @@ OUT = os.path.join(ROOT, "build", "site")
 
 # geometry, in SVG user units (1 unit = 1 CSS px at scale 1)
 MARGIN = 16
-COL_W, COL_GAP = 156, 22
+COL_W, COL_GAP = 156, 36  # a gutter holds about three link lanes
 HEAD_H = 40  # stage-column header strip
 FRAME_PAD, FRAME_LABEL = 11, 26
 BOX_HEAD, ROW_H, BOX_FOOT = 30, 17, 9
-STACK_GAP, BAND_GAP = 12, 26
+LINE_H = 12.5  # each extra line of a row whose value wraps
+ROW_FONT = 10.5
+ROW_TEXT = 156 - 31  # from the confidence pin's column to the value's right edge
+STACK_GAP, BAND_GAP = 24, 26  # links can cross between stacked boxes
 L1_BOX_H = 132  # a collapsed region at L1
 
 
@@ -53,8 +56,70 @@ def conjecture_short(p):
     return f"{'~' if c.get('approx') else ''}{c['value']}?"
 
 
+# text width estimates by character class (narrow, wide, capital, digit), in px at a given font size
+NARROW = set("iljtfrI.,:;'|!()[] 1")
+WIDE = set("mwMW@")
+UPPER = set("ABCDEFGHJKLNOPQRSTUVXYZ")
+
+
+def text_width(s, size, mono=False):
+    if mono:
+        return len(s) * size * 0.62
+    w = sum(
+        0.32 if c in NARROW else 0.88 if c in WIDE else 0.68 if c in UPPER else 0.58 if c.isdigit() else 0.54
+        for c in s
+    )
+    return w * size * 1.04
+
+
+def fit(s, width, mono=False):
+    """s cut at a word so it fits width, with an ellipsis."""
+    if text_width(s, ROW_FONT, mono) <= width:
+        return s
+    while s and text_width(s + "…", ROW_FONT, mono) > width:
+        s = s[:-1] if " " not in s.strip() else s.rstrip().rsplit(" ", 1)[0]
+    return s.rstrip(" ,;") + "…"
+
+
+def wrap(s, width, lines, mono=True):
+    """s in at most `lines` lines of width, broken at spaces; the last line takes an ellipsis if cut."""
+    out, cur = [], ""
+    for word in s.split(" "):
+        t = f"{cur} {word}".strip()
+        if text_width(t, ROW_FONT, mono) <= width or not cur:
+            cur = t
+        else:
+            out.append(cur)
+            cur = word
+    out.append(cur)
+    if len(out) > lines:
+        out = out[: lines - 1] + [fit(" ".join(out[lines - 1 :]), width, mono)]
+    return [fit(x, width, mono) for x in out]
+
+
+def box_value(p):
+    return fmt(p.value, p.approx) if p.known else conjecture_short(p)
+
+
+def box_rows(block):
+    """Each parameter row of a stage box: label and value on one line when they fit, otherwise the label on
+    its own line and the value below it, wrapped to three lines at most (the dossier has it in full)."""
+    rows, y = [], 0.0
+    for p in block.params:
+        room = ROW_TEXT - (13 if p.open_disputes else 0)
+        label, value = p.label, box_value(p)
+        if text_width(label, ROW_FONT) + 8 + text_width(value, ROW_FONT, True) <= room:
+            lines, split = [value], False
+        else:
+            label, lines, split = fit(label, room), wrap(value, ROW_TEXT, 3), True
+        h = ROW_H + (LINE_H * len(lines) if split else 0)
+        rows.append({"pid": p.id, "y": y, "h": h, "label": label, "value": lines, "split": split})
+        y += h
+    return rows
+
+
 def box_height(block):
-    return BOX_HEAD + max(1, len(block.params)) * ROW_H + BOX_FOOT
+    return BOX_HEAD + (sum(r["h"] for r in box_rows(block)) if block.params else ROW_H) + BOX_FOOT
 
 
 def geometry(kb, layout):
@@ -87,7 +152,14 @@ def geometry(kb, layout):
                     placed.add(bid)
                     b = kb.blocks[bid]
                     h = box_height(b)
-                    boxes[bid] = {"x": colx[cid], "y": y, "w": COL_W, "h": h, "frame": fid}
+                    boxes[bid] = {
+                        "x": colx[cid],
+                        "y": y,
+                        "w": COL_W,
+                        "h": h,
+                        "frame": fid,
+                        "rows": box_rows(b),
+                    }
                     members.append(b)
                     y += h + STACK_GAP
                 tallest = max(tallest, y - STACK_GAP - y2)
@@ -132,6 +204,7 @@ def geometry(kb, layout):
             "colGap": COL_GAP,
             "boxHead": BOX_HEAD,
             "rowH": ROW_H,
+            "lineH": LINE_H,
             "frameLabel": FRAME_LABEL,
             "framePad": FRAME_PAD,
         },

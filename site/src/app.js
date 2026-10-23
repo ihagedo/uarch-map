@@ -148,10 +148,12 @@
       const size = drawStructure(state.l3, D.views.L3[state.l3]);
       svg.setAttribute("viewBox", `0 0 ${size.w} ${size.h}`);
       svg.style.maxWidth = `${size.w}px`;
+      svg.style.minWidth = "";
     } else {
       const V = D.views[state.view];
       svg.setAttribute("viewBox", `0 0 ${V.width} ${V.height}`);
-      svg.style.maxWidth = `${V.width}px`;
+      // drawn at full size; the pane scrolls sideways when it is narrower
+      svg.style.maxWidth = svg.style.minWidth = `${V.width}px`;
       drawColumns(V);
       if (state.view === "L2") drawStages(V); else drawRegions(V);
     }
@@ -210,22 +212,24 @@
     if (!b.params.length) {
       el("text", { x: bx.x + 10, y: bx.y + M.boxHead + 10, class: "empty" }, g).textContent = "no parameters yet";
     }
-    b.params.forEach((pid, i) => {
-      const p = D.params[pid];
-      const ry = bx.y + M.boxHead - 2 + i * M.rowH;
+    // rows come laid out from the build: a value that does not fit beside its label wraps below it
+    for (const row of bx.rows) {
+      const pid = row.pid, p = D.params[pid];
+      const ry = bx.y + M.boxHead - 2 + row.y;
       const disputed = openDispute(p);
       const r = el("g", { class: `row conf-${p.conf}`, "data-param": pid }, g);
-      el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: M.rowH, rx: 3, class: "row-bg anchor" }, r);
+      el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: row.h, rx: 3, class: "row-bg anchor" }, r);
       if (p.known) pin(r, p.status, bx.x + 12, ry + M.rowH / 2);
-      // label gets the width the value leaves (at 10.5px: ~5.9px/char labels, ~6.4px/char values)
-      const room = bx.w - 31 - p.short.length * 6.4 - 8 - (disputed ? 13 : 0);
-      el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = clip(p.label, Math.max(5, Math.floor(room / 5.9)));
-      el("text", { x: bx.x + bx.w - 10 - (disputed ? 13 : 0), y: ry + 12.5, "text-anchor": "end", class: "value" }, r)
-        .textContent = p.short;
+      el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = row.label;
+      row.value.forEach((v, i) => {
+        const right = bx.x + bx.w - 10 - (disputed && !row.split ? 13 : 0);
+        el("text", { x: right, y: ry + 12.5 + (row.split ? (i + 1) * M.lineH : 0), "text-anchor": "end", class: "value" }, r)
+          .textContent = v;
+      });
       if (disputed) disputePin(r, bx.x + bx.w - 13, ry + M.rowH / 2);
       el("title", {}, r).textContent = `${p.name}: ` +
         (p.known ? `${p.value}${p.unit ? " " + p.unit : ""}` : p.conj ? `conjecture ${p.short}` : "nothing published") + ` (${CONF_WORD[p.conf].toLowerCase()})`;
-    });
+    }
   }
 
   function drawRegions(V) {
@@ -252,22 +256,200 @@
     }
   }
 
-  function route(a, b, frameTop, k) {
-    const g = M.colGap / 2, off = (k % 4) * 4 - 6;
-    const ya = a.y + 15, yb = b.y + 15;
-    if (Math.abs(a.x - b.x) < 1) {
-      const xg = a.x - g + off;
-      return [[a.x, ya], [xg, ya], [xg, yb], [b.x, yb]];
+  // Links of the selected block, routed on a 2-unit grid around every box (A* with a cost per bend), by these
+  // layout rules: keep CLEAR units off every box but the link's own two, leave and enter
+  // a box side square, make every run after a turn at least RUN units long (no jogs), and never share a run
+  // with a link drawn before (parallel runs within NEAR units cost extra) unless the two make a bus: same kind
+  // into the same box, which merge into one trunk.
+  const GRID = 2, CLEAR = 8, RUN = 12, BEND = 16, NEAR = 6, TIGHT = 4;
+  const TAIL = [10, 12, 14, 16, 18, 20, 22, 24, 26], HEAD = TAIL.slice(1);
+  function linkRoutes(links, V) {
+    const B = V.boxes, ids = Object.keys(B), W = Math.ceil(V.width / GRID) + 1, H = Math.ceil(V.height / GRID) + 1;
+    // owner of each cell: 0 free, i + 1 inside box i's clearance, -1 taken (two clearances, a label, a box)
+    const own = new Int16Array(W * H), used = new Uint8Array(W * H), near = new Uint8Array(W * H * 2);
+    const bus = new Int16Array(W * H * 2).fill(-1);  // the bus (to and kind) that covers each cell, by orientation
+    const close = new Int16Array(W * H * 2).fill(-1);  // ... and the bus running parallel within TIGHT units
+    let me = -1;  // the bus of the link being routed
+    const mark = (x0, y0, x1, y1, v) => {
+      for (let gy = Math.max(0, Math.floor(y0 / GRID) + 1); gy <= Math.min(H - 1, Math.ceil(y1 / GRID) - 1); gy++)
+        for (let gx = Math.max(0, Math.floor(x0 / GRID) + 1); gx <= Math.min(W - 1, Math.ceil(x1 / GRID) - 1); gx++) {
+          const c = gy * W + gx;
+          own[c] = own[c] === 0 || own[c] === v ? v : -1;
+        }
+    };
+    ids.forEach((id, i) => { const b = B[id]; mark(b.x - CLEAR, b.y - CLEAR, b.x + b.w + CLEAR, b.y + b.h + CLEAR, i + 1); });
+    ids.forEach((id) => { const b = B[id]; mark(b.x, b.y, b.x + b.w, b.y + b.h, -1); });
+    for (const f of V.frames) {  // the frame's label and count
+      mark(f.x + 6, f.y + 2, f.x + 18 + f.label.length * 8.6, f.y + 25, -1);
+      mark(f.x + f.w - 18 - 6.2 * `${f.known} of ${f.params.length} known`.length, f.y + 2, f.x + f.w - 6, f.y + 25, -1);
     }
-    const right = b.x > a.x;
-    const x1 = right ? a.x + a.w : a.x, x2 = right ? b.x : b.x + b.w;
-    const xg1 = right ? x1 + g : x1 - g, xg2 = right ? x2 - g : x2 + g;
-    if (Math.abs(xg1 - xg2) < 1) {
-      const xg = xg1 + off;
-      return [[x1, ya], [xg, ya], [xg, yb], [x2, yb]];
+    mark(-GRID, -GRID, V.width + GRID, M.margin + M.headH - 6, -1);
+    // running beside a frame's border reads as part of the frame: cost it like running beside another link
+    for (const f of V.frames) {
+      for (let x = f.x; x <= f.x + f.w; x += GRID) for (let k = -NEAR; k <= NEAR; k += GRID) for (const y of [f.y, f.y + f.h]) {
+        const gx = Math.round(x / GRID), gy = Math.round((y + k) / GRID);
+        if (gx >= 0 && gy >= 0 && gx < W && gy < H) near[(gy * W + gx) * 2] = 1;
+      }
+      for (let y = f.y; y <= f.y + f.h; y += GRID) for (let k = -NEAR; k <= NEAR; k += GRID) for (const x of [f.x, f.x + f.w]) {
+        const gx = Math.round((x + k) / GRID), gy = Math.round(y / GRID);
+        if (gx >= 0 && gy >= 0 && gx < W && gy < H) near[(gy * W + gx) * 2 + 1] = 1;
+      }
     }
-    const yc = Math.min(frameTop[a.frame], frameTop[b.frame]) + M.frameLabel + M.framePad - 6 - k * 3;
-    return [[x1, ya], [xg1 + off, ya], [xg1 + off, yc], [xg2 - off, yc], [xg2 - off, yb], [x2, yb]];
+    const DX = [1, 0, -1, 0], DY = [0, 1, 0, -1], R = RUN / GRID;
+    const inGrid = (x, y) => x >= 0 && y >= 0 && x < W && y < H;
+    // a straight run of n cells from (x, y) in direction d, all free (or the given box's clearance)
+    function clear(x, y, d, n, mine) {
+      for (let k = 1; k <= n; k++) {
+        const qx = x + DX[d] * k, qy = y + DY[d] * k;
+        if (!inGrid(qx, qy)) return false;
+        const c = qy * W + qx;
+        if (own[c] !== 0 && own[c] !== mine) return false;
+        if ((used[c] & (1 << (d % 2)) && bus[c * 2 + d % 2] !== me) || (close[c * 2 + d % 2] >= 0 && close[c * 2 + d % 2] !== me)) return false;
+      }
+      return true;
+    }
+    // ports: cells 10-26 units off a side (12-26 at the head), reached by a straight run through the box's clearance
+    function ports(b, i, out) {
+      const res = [], hy = b.y + 15, cx = b.x + b.w / 2;
+      const side = (d, edge, at, pref) => {
+        for (const dist of out ? TAIL : HEAD) {  // the head's run carries the arrowhead
+          // round away from the box, so the run to the side is never short of `dist`
+          const away = (v, sgn) => (sgn > 0 ? Math.ceil(v / GRID) : Math.floor(v / GRID));
+          const gx = d % 2 ? Math.round(at / GRID) : away(edge + (d === 0 ? dist : -dist), d === 0 ? 1 : -1);
+          const gy = d % 2 ? away(edge + (d === 1 ? dist : -dist), d === 1 ? 1 : -1) : Math.round(at / GRID);
+          if (!inGrid(gx, gy) || own[gy * W + gx] !== 0) continue;
+          const back = (d + 2) % 4, n = Math.abs(d % 2 ? gy * GRID - edge : gx * GRID - edge) / GRID - 1;
+          if (n > 0 && !clear(gx, gy, back, n, i + 1)) continue;
+          const tip = d % 2 ? [gx * GRID, edge] : [edge, gy * GRID];
+          res.push({ gx, gy, dir: out ? d : back, cost: pref + Math.abs(dist - 12) * 0.2, tip });
+        }
+      };
+      for (let y = b.y + 10; y <= b.y + b.h - 10; y += GRID) {
+        const c = Math.abs(y - hy) * 0.25;
+        side(0, b.x + b.w, y, c);
+        side(2, b.x, y, c);
+      }
+      for (let x = b.x + 14; x <= b.x + b.w - 14; x += GRID) {
+        const c = 30 + Math.abs(x - cx) * 0.25;
+        side(1, b.y + b.h, x, c);
+        side(3, b.y, x, c);
+      }
+      return res;
+    }
+    function search(ia, ib) {
+      const a = B[ids[ia]], b = B[ids[ib]];
+      const starts = ports(a, ia, true), goals = new Map();
+      for (const p of ports(b, ib, false)) {
+        const k = (p.gy * W + p.gx) * 4 + p.dir;
+        if (!goals.has(k) || goals.get(k).cost > p.cost) goals.set(k, p);
+      }
+      const tx0 = (b.x - 16) / GRID, tx1 = (b.x + b.w + 16) / GRID, ty0 = (b.y - 16) / GRID, ty1 = (b.y + b.h + 16) / GRID;
+      const h = (gx, gy) => (Math.max(0, tx0 - gx, gx - tx1) + Math.max(0, ty0 - gy, gy - ty1)) * GRID;
+      const g = new Float32Array(W * H * 4).fill(Infinity), prev = new Int32Array(W * H * 4).fill(-1);
+      const heap = [];
+      const push = (f, st) => {
+        heap.push([f, st]);
+        for (let i = heap.length - 1; i > 0;) {
+          const j = (i - 1) >> 1;
+          if (heap[j][0] <= heap[i][0]) break;
+          [heap[i], heap[j]] = [heap[j], heap[i]]; i = j;
+        }
+      };
+      const pop = () => {
+        const top = heap[0], last = heap.pop();
+        if (heap.length) {
+          heap[0] = last;
+          for (let i = 0; ;) {
+            const l = 2 * i + 1, r = l + 1;
+            let m = i;
+            if (l < heap.length && heap[l][0] < heap[m][0]) m = l;
+            if (r < heap.length && heap[r][0] < heap[m][0]) m = r;
+            if (m === i) break;
+            [heap[i], heap[m]] = [heap[m], heap[i]]; i = m;
+          }
+        }
+        return top;
+      };
+      const startOf = new Map();
+      for (const p of starts) {
+        const st = (p.gy * W + p.gx) * 4 + p.dir;
+        if (p.cost < g[st]) { g[st] = p.cost; startOf.set(st, p); push(p.cost + h(p.gx, p.gy), st); }
+      }
+      while (heap.length) {
+        const [f, st] = pop();
+        const cell = st >> 2, dir = st & 3, gx = cell % W, gy = (cell - gx) / W;
+        if (f - h(gx, gy) > g[st] + 1e-6) continue;
+        const goal = goals.get(st);
+        if (goal) {
+          const chain = [];
+          for (let s2 = st; s2 >= 0; s2 = prev[s2]) chain.push(s2);
+          chain.reverse();
+          return { chain, start: startOf.get(chain[0]), goal };
+        }
+        // turn onto a head port here (its run to the box is the last run), go on one cell, or turn and run R cells
+        for (const nd of [(dir + 1) % 4, (dir + 3) % 4]) {
+          const ns = cell * 4 + nd, cost = g[st] + BEND;
+          if (goals.has(ns) && cost < g[ns]) { g[ns] = cost; prev[ns] = st; push(cost + h(gx, gy), ns); }
+        }
+        for (const [nd, n] of [[dir, 1], [(dir + 1) % 4, R], [(dir + 3) % 4, R]]) {
+          if (!clear(gx, gy, nd, n, 0)) continue;
+          const nx = gx + DX[nd] * n, ny = gy + DY[nd] * n, nc = ny * W + nx, o = nd % 2;
+          let extra = 0;
+          for (let k = 1; k <= n; k++) {
+            const q = (gy + DY[nd] * k) * W + gx + DX[nd] * k;
+            extra += bus[q * 2 + o] === me ? -1 : (near[q * 2 + o] ? 8 : 0) + (used[q] ? 3 : 0);
+          }
+          const ns = nc * 4 + nd, cost = g[st] + n * GRID + (nd !== dir ? BEND : 0) + extra;
+          if (cost < g[ns]) { g[ns] = cost; prev[ns] = st; push(cost + h(nx, ny), ns); }
+        }
+      }
+      return null;
+    }
+    const dist = (l) => Math.abs(B[l.from].x - B[l.to].x) + Math.abs(B[l.from].y - B[l.to].y);
+    const out = new Map();
+    const buses = [...new Set(links.map((l) => `${l.to} ${l.kind}`))];
+    const size = (l) => links.filter((k) => k.to === l.to && k.kind === l.kind).length;
+    // the widest bus first, so a trunk gets the gutter on its sources' side; then the shortest link first
+    for (const l of links.slice().sort((p, q) => size(q) - size(p) || dist(p) - dist(q))) {
+      me = buses.indexOf(`${l.to} ${l.kind}`);
+      const r = search(ids.indexOf(l.from), ids.indexOf(l.to));
+      if (!r) continue;
+      // every cell of the route between the two tips; collinear points drop out below
+      const pts = [r.start.tip, ...r.chain.map((st) => [((st >> 2) % W) * GRID, Math.floor((st >> 2) / W) * GRID])];
+      pts.push(r.goal.tip);
+      // keep the corners, then mark the cells the route covers by orientation and the cells NEAR units either side
+      const clean = [pts[0]];
+      for (let i = 1; i < pts.length; i++) {
+        const [p0, p1] = [clean[clean.length - 1], pts[i]];
+        if (Math.abs(p0[0] - p1[0]) + Math.abs(p0[1] - p1[1]) < 0.5) continue;
+        if (clean.length > 1) {
+          const q = clean[clean.length - 2];
+          if ((Math.abs(q[0] - p0[0]) < 0.5 && Math.abs(p0[0] - p1[0]) < 0.5) || (Math.abs(q[1] - p0[1]) < 0.5 && Math.abs(p0[1] - p1[1]) < 0.5)) {
+            clean[clean.length - 1] = p1;
+            continue;
+          }
+        }
+        clean.push(p1);
+      }
+      for (let i = 0; i + 1 < clean.length; i++) {
+        const [x0, y0] = clean[i], [x1, y1] = clean[i + 1], o = Math.abs(y1 - y0) > 0.5 ? 1 : 0;
+        const n = Math.round((Math.abs(x1 - x0) + Math.abs(y1 - y0)) / GRID);
+        for (let k = 0; k <= n; k++) {
+          const cx = Math.round((x0 + ((x1 - x0) * k) / Math.max(1, n)) / GRID), cy = Math.round((y0 + ((y1 - y0) * k) / Math.max(1, n)) / GRID);
+          if (!inGrid(cx, cy)) continue;
+          used[cy * W + cx] |= 1 << o;
+          if (bus[(cy * W + cx) * 2 + o] < 0) bus[(cy * W + cx) * 2 + o] = me;
+          for (let j = 1; j <= NEAR / GRID; j++) for (const sgn of [-1, 1]) {
+            const qx = cx + (o ? sgn * j : 0), qy = cy + (o ? 0 : sgn * j);
+            if (!inGrid(qx, qy)) continue;
+            near[(qy * W + qx) * 2 + o] = 1;
+            if (j * GRID < TIGHT && close[(qy * W + qx) * 2 + o] < 0) close[(qy * W + qx) * 2 + o] = me;
+          }
+        }
+      }
+      out.set(l, clean);
+    }
+    return out;
   }
 
   function rounded(pts, r) {
@@ -289,12 +471,10 @@
     linkLayer.replaceChildren();
     if (state.view !== "L2" || !state.block) return;
     const V = D.views.L2, B = V.boxes;
-    const frameTop = Object.fromEntries(V.frames.map((f) => [f.id, f.y]));
     const mine = D.links.filter((l) => (l.from === state.block || l.to === state.block) && B[l.from] && B[l.to]);
-    mine.forEach((l, k) => {
-      const pts = route(B[l.from], B[l.to], frameTop, k);
-      el("path", { d: rounded(pts, 6), class: `link k-${l.kind}`, "marker-end": "url(#arrow)" }, linkLayer);
-    });
+    for (const [l, pts] of linkRoutes(mine, V)) {
+      el("path", { d: rounded(pts, 6), class: `link k-${l.kind}`, "marker-end": "url(#arrow)", "data-bus": `${l.to} ${l.kind}`, "data-link": `${l.from} ${l.to}` }, linkLayer);
+    }
   }
 
   function refresh() {
