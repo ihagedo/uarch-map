@@ -289,7 +289,7 @@ h1 {
   padding-top: 6px;
 }
 .legend-group { display: grid; gap: 8px; align-content: start; min-width: 0; }
-.legend h2, .sources h2 {
+.legend h2, .sources h2, .figures h2 {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
 }
 .legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
@@ -468,3 +468,20 @@ h1 {
 .q-answers { grid-column: 2; list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; font-size: 13.5px; color: var(--ink-2); }
 .q-answers b { font-weight: 500; color: var(--ink); }
 .q-answers li.ours b, .q-answers li.ours .status-tag { color: var(--ours); }
+
+/* figures: inlined drawings; the SVGs carry their own palette, so they sit on white in both themes */
+.figures { display: grid; gap: 18px; }
+.fig-group { display: grid; gap: 14px; padding-top: 10px; border-top: 1px solid var(--line); }
+.fig-group > h3 { margin: 0; font-size: 18px; font-weight: 650; }
+.figure { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); scroll-margin-top: 12px; }
+.figure.lit { box-shadow: 0 0 0 2px var(--link); }
+.fig-blocks { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.fig-block { padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--raise); font-size: 12.5px; cursor: pointer; color: var(--ink); }
+.fig-block:hover { border-color: var(--link); }
+.fig-scroll { overflow-x: auto; cursor: zoom-in; border-radius: 6px; background: #fff; }
+.fig-scroll svg { display: block; width: 100%; height: auto; min-width: 640px; }
+.fig-scroll.full { cursor: zoom-out; }
+.fig-scroll.full svg { width: var(--full); max-width: none; }
+.fig-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.fig-link { color: var(--link); text-decoration: none; font-size: 13.5px; }
+.fig-link:hover { text-decoration: underline; }

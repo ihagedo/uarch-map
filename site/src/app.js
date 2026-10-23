@@ -674,6 +674,9 @@
     const mechs = Object.entries(D.mechanisms)
       .filter(([, m]) => m.block === bid || m.params.some((pid) => D.params[pid].block === bid));
     if (mechs.length) h += `<section class="d-section"><h3>Mechanisms</h3>${mechs.map(mechHTML).join("")}</section>`;
+    const figs = Object.entries(D.figures).filter(([, f]) => f.blocks.includes(bid));
+    if (figs.length) h += `<section class="d-section"><h3>Figures</h3><ul class="fig-list">${figs.map(([fid, f]) =>
+      `<li><a class="fig-link" href="#fig-${fid}" data-fig="${fid}">${esc(f.title)}</a></li>`).join("")}</ul></section>`;
     h += questionsHTML(bid);
     const outs = D.links.filter((l) => l.from === bid), ins = D.links.filter((l) => l.to === bid);
     if (outs.length || ins.length) {
@@ -863,6 +866,25 @@
     if (mech) { state.mech = state.mech === mech.dataset.mech ? null : mech.dataset.mech; return refresh(); }
     const jump = e.target.closest("[data-block]");
     if (jump) select(jump.dataset.block);
+  });
+  const figures = $("figures");
+  if (figures) figures.addEventListener("click", (e) => {
+    const chip = e.target.closest(".fig-block");
+    if (chip) {
+      select(chip.dataset.block);
+      return $("workspace").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    const scroll = e.target.closest(".fig-scroll");
+    if (scroll) scroll.classList.toggle("full");
+  });
+  dossier.addEventListener("click", (e) => {
+    const link = e.target.closest(".fig-link");
+    if (!link) return;
+    e.preventDefault();
+    const art = $(`fig-${link.dataset.fig}`);
+    art.scrollIntoView({ behavior: "smooth", block: "start" });
+    art.classList.add("lit");
+    setTimeout(() => art.classList.remove("lit"), 1600);
   });
   $("stage-list").addEventListener("click", (e) => {
     const card = e.target.closest(".card");

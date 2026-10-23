@@ -1,0 +1,79 @@
+# figures.yaml
+# Isaac Hagedorn, 2026-10-23
+# The figures under the map, in page order, with the KB ids each one draws.
+
+groups:
+  - id: l1d
+    title: L1 data cache
+    figures: [c1-l1d, d1-l1d, r1-load-rtl, m6-lsu]
+  - id: l2
+    title: Shared L2
+    figures: [c2-l2, d2-l2]
+  - id: rename
+    title: Map, rename and the register files
+    figures: [03-rename, m3-rename]
+  - id: hierarchy
+    title: The memory hierarchy
+    figures: [c4-hierarchy, d4-hierarchy]
+
+figures:
+  c1-l1d:
+    title: "L1 data cache, textbook form"
+    file: c1-l1d.svg
+    blocks: [l1d, dtlb]
+    params: [l1d.size, l1d.assoc, l1d.line, l1d.latency, l1d.latency_alu, l1d.banks, l1d.bank_width, l1d.replacement, l1d.load_bw, dtlb.l1_entries, dtlb.l1_org]
+    mechanisms: [l1d_page_offset_index, l1d_utag_way_predictor, l1d_tree_plru, l1d_banked_piggyback]
+  d1-l1d:
+    title: "L1 data cache, one load from address to data"
+    file: d1-l1d.svg
+    blocks: [l1d, dtlb, sq, mshr]
+    params: [l1d.size, l1d.assoc, l1d.banks, l1d.load_bw, l1d.store_bw, sq.entries, mshr.outstanding]
+    mechanisms: [l1d_page_offset_index, l1d_utag_way_predictor, l1d_tree_plru, l1d_banked_piggyback, fill_forwarding, l1d_write_allocate, sq_32b_slots]
+  r1-load-rtl:
+    title: "Load pipeline, RTL view"
+    file: r1-load-rtl.svg
+    blocks: [lsu, sched_ls, l1d, dtlb, lq, sq]
+    params: [sched_ls.entries, lsu.lsdp_entries, lsu.store_load_latency, lsu.loads_per_cycle, l1d.latency, dtlb.l1_entries, mshr.outstanding]
+    mechanisms: [agu_same_page_check, store_load_dep_predictor, l1d_utag_way_predictor, l1d_banked_piggyback, sq_partial_forwarding, load_replay_shadow, late_ordering_check]
+  m6-lsu:
+    title: "A load and a store through the LSU, cycle by cycle"
+    file: m6-lsu.svg
+    blocks: [lsu, lq, sq, l1d, dtlb]
+    params: [lsu.loads_per_cycle, lsu.stores_per_cycle, lsu.store_load_latency, lsu.lsdp_entries, lsu.disambiguation, lsu.forwarding, l1d.latency, l1d.latency_alu, l1d.latency_simd, l1d.store_bw, sq.entries, lsu.exclusive_granule]
+    mechanisms: [agu_same_page_check, store_load_dep_predictor, l1d_utag_way_predictor, l1d_page_offset_index, l1d_banked_piggyback, sq_partial_forwarding, late_ordering_check, lsu_load_to_load_bypass, store_address_data_uops, sq_32b_slots, split_access_handling, ldpq_lsu_split]
+  c2-l2:
+    title: "Shared L2, textbook form"
+    file: c2-l2.svg
+    blocks: [l2]
+    params: [l2.size, l2.assoc, l2.line, l2.latency, l2.inner_slice, l2.core_capacity, l2.replacement, l2.inclusion, l2.load_bw, l2.store_bw, l2.l1_path_width]
+    mechanisms: [l2_physical_index, l2_hashed_way_filter, l2_half_lines, l2_core_lru, l2_autolock, l2_cachelets, l2_zero_line_tags, l2_line_ordering]
+  d2-l2:
+    title: "Shared L2, four cores through one cache"
+    file: d2-l2.svg
+    blocks: [l2]
+    params: [l2.size, l2.assoc, l2.line, l2.latency, l2.inner_slice, l2.replacement, l2.inclusion, l2.l1_path_width]
+    mechanisms: [l2_physical_index, l2_hashed_way_filter, l2_half_lines, l2_core_lru, l2_core_round_robin, l2_autolock, l2_victim_fill, l2_cachelets, l2_zero_line_tags, l2_request_pipelines, ecores_share_pl2]
+  03-rename:
+    title: "Map, rename and the register files"
+    file: 03-rename.svg
+    blocks: [rename, int_prf, fp_prf, flags_prf, dispatch, retire]
+    params: [rename.width, rename.mov_elimination, rename.zero_idiom, rename.mov_imm_limit, rename.fusion, rename.fusion_read_limit, rename.security_tag, int_prf.total, int_prf.headroom, int_prf.banks, int_prf.imm_regs, fp_prf.total, fp_prf.headroom, flags_prf.total, flags_prf.headroom, retire.rename_queue, retire.rate_renames, retire.nop_window, retire.issuing_window, retire.inflight_branches, dispatch.int_entries, dispatch.int_buffers, dispatch.mul_entries, dispatch.ls_entries, dispatch.fp_entries, dispatch.queue_inflow, dispatch.accept_width]
+    mechanisms: [group_map, move_elimination, macro_op_fusion, immediate_regs, register_security_tag, rename_retire_queue, split_flag_files, banked_prf_power, writeback_overflow_pool, speculative_special_regs, dispatch_buffers]
+  m3-rename:
+    title: "An 8 wide group through map and rename"
+    file: m3-rename.svg
+    blocks: [rename, int_prf, flags_prf]
+    params: [rename.width, rename.mov_imm_limit, rename.fusion, rename.fusion_read_limit, rename.security_tag, int_prf.imm_regs, retire.rename_queue]
+    mechanisms: [group_map, move_elimination, macro_op_fusion, immediate_regs, register_security_tag, store_address_data_uops, lsq_at_issue, rename_retire_queue]
+  c4-hierarchy:
+    title: "The hierarchy, a line's life from DRAM to L1 and back"
+    file: c4-hierarchy.svg
+    blocks: [l1i, l1d, l2, slc, memctrl]
+    params: [l1i.size, l1i.assoc, l1i.line, l1d.size, l1d.assoc, l1d.line, l2.size, l2.assoc, l2.line, l2.latency, l2.inclusion, slc.size, slc.assoc, slc.sets, slc.line, slc.latency, slc.inclusion, slc.allocation, memctrl.dram_latency, memctrl.channels]
+    mechanisms: [l2_victim_fill, slc_victim_fill, l2_autolock, l1i_maintenance_only, slc_speculative_read, coherence_duplicate_tags, fill_forwarding]
+  d4-hierarchy:
+    title: "The hierarchy, where lines move"
+    file: d4-hierarchy.svg
+    blocks: [l1i, l1d, l2, slc, memctrl, fabric]
+    params: [l1d.load_bw, l1d.store_bw, l1d.latency, l2.l1_path_width, l2.latency, l2.inner_slice, l2.size, slc.size, slc.latency, memctrl.dram_latency, memctrl.peak_bw, memctrl.channels, lsu.loads_per_cycle, lsu.stores_per_cycle]
+    mechanisms: [l2_victim_fill, slc_victim_fill, l2_autolock, dczva_l2_zero, coherence_duplicate_tags]
