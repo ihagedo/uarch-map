@@ -59,10 +59,15 @@
     <div class="legend-group">
       <h2>Regions</h2>
       <ul>
-        <li><span class="hue-chip" style="--hue: var(--c-frontend)" aria-hidden="true"></span><span>Frontend</span></li>
-        <li><span class="hue-chip" style="--hue: var(--c-backend)" aria-hidden="true"></span><span>Backend</span></li>
-        <li><span class="hue-chip" style="--hue: var(--c-lsu)" aria-hidden="true"></span><span>Load-store unit</span></li>
-        <li><span class="hue-chip" style="--hue: var(--c-beyond)" aria-hidden="true"></span><span>Beyond the core</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-frontend)" aria-hidden="true"></span><span><b>Frontend</b> predict, fetch, decode</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-handoff)" aria-hidden="true"></span><span><b>Frontend + backend</b> decode to rename, branch units</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-backend)" aria-hidden="true"></span><span><b>Backend</b> rename, issue, execute, retire</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-lsu)" aria-hidden="true"></span><span><b>Backend + memory</b> load-store unit, L1D, dTLB</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-shared)" aria-hidden="true"></span><span><b>Memory + cache</b> L2, system level cache</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-beyond)" aria-hidden="true"></span><span><b>Memory side</b> fabric, controllers, DRAM</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-icache)" aria-hidden="true"></span><span><b>Frontend + memory</b> L1I, iTLB</span></li>
+        <li><span class="hue-chip" style="--hue: var(--c-chip)" aria-hidden="true"></span><span><b>All three</b> the die, clusters, power</span></li>
+        <li><span class="hue-chip" style="--hue: var(--ours)" aria-hidden="true"></span><span><b>Ours</b> conjecture, holes, our proposals</span></li>
       </ul>
     </div>
     <div class="legend-group">

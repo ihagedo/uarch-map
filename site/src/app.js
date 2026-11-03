@@ -193,7 +193,7 @@
   function drawBox(layer, bid, bx) {
     const b = D.blocks[bid];
     const known = b.params.filter((pid) => D.params[pid].known).length;
-    const g = el("g", { class: `box conf-${b.conf}`, "data-block": bid, tabindex: "0", role: "button", style: hue(bx.frame),
+    const g = el("g", { class: `box conf-${b.conf}`, "data-block": bid, tabindex: "0", role: "button", style: hue(b.hue || bx.frame),
       "aria-label": `${b.name}: ${CONF_WORD[b.conf].toLowerCase()} confidence, ${known} of ${b.params.length} parameters known` +
         (b.disputed ? ", disputed" : "") }, layer);
     if (b.desc) el("title", {}, g).textContent = b.desc;
@@ -517,7 +517,7 @@
     if (!wide.matches || state.view === "L1" || dossier.hidden) return;
     const ws = workspace.getBoundingClientRect(), wr = wrap.getBoundingClientRect(), dr = dossier.getBoundingClientRect();
     const clampY = (y) => Math.min(Math.max(y, dr.top + 8), dr.bottom - 8);
-    const frameOf = (pid) => (D.views.L2.boxes[D.params[pid].block] || {}).frame;
+    const frameOf = (pid) => D.blocks[D.params[pid].block].hue || (D.views.L2.boxes[D.params[pid].block] || {}).frame;
     const rowEnd = (pid) => {
       for (const bg of svg.querySelectorAll(`[data-param="${CSS.escape(pid)}"] .anchor`)) {
         const b = bg.getBoundingClientRect();
@@ -654,7 +654,7 @@
     dossier.hidden = false;
     const b = D.blocks[bid];
     const frame = D.views.L2.boxes[bid] && D.views.L2.boxes[bid].frame;
-    dossier.style.cssText = frame ? hue(frame) : "";
+    dossier.style.cssText = b.hue || frame ? hue(b.hue || frame) : "";
     const params = b.params.map((pid) => [pid, D.params[pid]]);
     const known = params.filter(([, p]) => p.known).length;
     const claims = new Set(params.flatMap(([, p]) => p.for.concat(p.against)));
@@ -777,7 +777,7 @@
       `<section class="sl-frame" style="${hue(f.id)}"><h3>${esc(f.label)}<span>${f.known} of ${f.params.length} known</span></h3>` +
       f.blocks.map((bid) => {
         const b = D.blocks[bid];
-        return `<button type="button" class="card conf-${b.conf}" data-block="${bid}">` +
+        return `<button type="button" class="card conf-${b.conf}" data-block="${bid}"${b.hue ? ` style="${hue(b.hue)}"` : ""}>` +
           `<span class="c-name">${esc(b.name)}<span>${b.disputed ? DISPUTE_HTML : ""}</span></span>` +
           b.params.map((pid) => {
             const p = D.params[pid];

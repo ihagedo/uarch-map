@@ -130,3 +130,11 @@ structures:
              t1: dtlb.l1_entries, t1_org: dtlb.l1_org, t1_ports: dtlb.l1_lookups_per_cycle, page: dtlb.page_size,
              t1_miss: dtlb.l1_miss_penalty, t2: dtlb.l2_entries, t2_org: dtlb.l2_org, t2_miss: dtlb.l2_miss_penalty,
              pf: prefetch.kinds, pf_n: prefetch.streams, mlp: mshr.outstanding}
+
+# Blocks between subsystems take the mixture hue; any other block takes its frame's.
+palette:
+  shared: [l2, slc]                      # orange = memory + cache
+  icache: [l1i, itlb]                    # purple = front end + memory
+  chip: [chip, pcluster, ecluster, power] # silver = all three
+  beyond: [fabric, memctrl]              # red: the memory path
+  handoff: []                            # cyan = front end + back end; none at block level yet

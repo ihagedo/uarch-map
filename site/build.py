@@ -252,7 +252,9 @@ def aggregate(params):
     return CONF_NAME[int(sum(CONF_RANK[p.confidence] for p in params) / len(params) + 0.5)]
 
 
-def view_data(kb, geo):
+def view_data(kb, geo, palette=None):
+    hue_of = {bid: key for key, bids in (palette or {}).items() for bid in bids}
+
     def region_of(b):
         while b.parent is not None and b.level > 1:
             b = b.parent
@@ -276,6 +278,7 @@ def view_data(kb, geo):
                 "level": b.level,
                 "parent": b.parent.id if b.parent else None,
                 "region": region_of(b).name if b.parent else None,
+                "hue": hue_of.get(b.id),
                 "desc": b.description,
                 "conf": aggregate(b.params) if b.params else b.confidence,
                 "blackBox": not any(p.known for p in b.params) if b.params else b.black_box,
@@ -415,7 +418,7 @@ def main():
         layout = yaml.safe_load(fh)
     geo = geometry(kb, layout)
     geo["L3"] = structures(kb, layout)
-    data = view_data(kb, geo)
+    data = view_data(kb, geo, layout.get("palette"))
     fig_html, data["figures"] = figures(kb)
     for sid, st in geo["L3"].items():
         for bid in st["blocks"]:

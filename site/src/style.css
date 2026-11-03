@@ -11,12 +11,18 @@
   --line: #e5e7eb;
   --edge: #6b7280;
   --link: #2563eb;
-  --c-frontend: #2563eb;
-  --c-backend: #059669;
-  --c-lsu: #7c3aed;
-  --c-beyond: #d97706;
+  /* three subsystems as primaries; a block between two takes their mixture */
+  --c-frontend: #2563eb;   /* blue: predict, fetch, decode */
+  --c-handoff: #0891b2;    /* cyan = front end + back end: decode to rename, branch units */
+  --c-backend: #059669;    /* green: rename, issue, execute, retire */
+  --c-lsu: #eab308;        /* yellow = back end + memory: LSU, L1D, dTLB, fills, prefetch */
+  --c-shared: #f97316;     /* orange = memory + cache: L2, SLC */
+  --c-beyond: #dc2626;     /* red: fabric, controllers, DRAM */
+  --c-icache: #7c3aed;     /* purple = front end + memory: L1I, iTLB */
+  --c-chip: #9ca3af;       /* silver = all three: the die, clusters, power */
   --dispute: #dc2626;
   --ours: #c026d3;
+  --hue-text: 55%;  /* region hues as text, darkened for contrast */
   --font-ui: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-num: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
   color-scheme: light;
@@ -26,9 +32,10 @@
     --bg: #0b0f17; --surface: #121826; --raise: #1a2232;
     --ink: #f3f4f6; --ink-2: #c3c9d4; --ink-3: #6b7484;
     --line: #263041; --edge: #9aa3b2; --link: #60a5fa;
-    --c-frontend: #60a5fa; --c-backend: #34d399; --c-lsu: #a78bfa; --c-beyond: #fbbf24;
+    --c-frontend: #60a5fa; --c-handoff: #22d3ee; --c-backend: #34d399; --c-lsu: #fde047; --c-shared: #fb923c; --c-beyond: #f87171; --c-icache: #a78bfa; --c-chip: #d1d5db;
     --dispute: #f87171;
     --ours: #e879f9;
+    --hue-text: 100%;
     color-scheme: dark;
   }
 }
@@ -36,9 +43,10 @@
   --bg: #0b0f17; --surface: #121826; --raise: #1a2232;
   --ink: #f3f4f6; --ink-2: #c3c9d4; --ink-3: #6b7484;
   --line: #263041; --edge: #9aa3b2; --link: #60a5fa;
-  --c-frontend: #60a5fa; --c-backend: #34d399; --c-lsu: #a78bfa; --c-beyond: #fbbf24;
+  --c-frontend: #60a5fa; --c-handoff: #22d3ee; --c-backend: #34d399; --c-lsu: #fde047; --c-shared: #fb923c; --c-beyond: #f87171; --c-icache: #a78bfa; --c-chip: #d1d5db;
   --dispute: #f87171;
   --ours: #e879f9;
+  --hue-text: 100%;
   color-scheme: dark;
 }
 
@@ -124,7 +132,7 @@ h1 {
   fill: color-mix(in srgb, var(--hue) 5%, var(--surface));
   stroke: color-mix(in srgb, var(--hue) 35%, var(--line)); stroke-width: 1;
 }
-.frame-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: var(--hue); }
+.frame-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; fill: color-mix(in srgb, var(--hue) var(--hue-text), var(--ink)); }
 .frame-count { font-size: 11px; fill: var(--ink-2); }
 .frame.flash .frame-body { stroke: var(--hue); stroke-width: 2.5; }
 
@@ -322,7 +330,8 @@ h1 {
 .sl-frame { --hue: var(--edge); display: grid; gap: 8px; }
 .sl-frame h3 {
   margin: 0; display: flex; justify-content: space-between; gap: 12px;
-  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hue);
+  font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--hue) var(--hue-text), var(--ink));
 }
 .sl-frame h3 span { font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--ink-2); }
 .card {
@@ -452,7 +461,10 @@ h1 {
 .q-chip.q-open { border: 1px dotted var(--ink-3); color: var(--ink-3); }
 .q-blocks { display: grid; gap: 14px; }
 .q-region { display: grid; gap: 4px; }
-.q-region h3 { margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--hue); }
+.q-region h3 {
+  margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--hue) var(--hue-text), var(--ink));
+}
 .q-row {
   display: grid; grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr); gap: 10px; align-items: start; text-align: left;
   padding: 7px 10px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--hue); border-radius: 4px; cursor: pointer;
