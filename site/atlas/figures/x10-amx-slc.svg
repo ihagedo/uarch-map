@@ -239,24 +239,25 @@
 <polyline points="640.0,370.0 400.0,370.0 400.0,425.0 310.0,425.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="6" data-src="mon" data-dst="os"/>
 <polyline points="790.0,275.0 860.0,275.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="ooo" data-dst="yv"/>
 <polyline points="790.0,258.2 825.0,258.2 825.0,124.0 900.0,124.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="ooo" data-dst="xv"/>
-<polyline points="1240.0,168.0 1240.0,198.0 1140.0,198.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="l2" data-dst="amx_datapath"/>
-<polyline points="960.0,390.0 960.0,420.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="amx_datapath" data-dst="amx_op_set"/>
-<polyline points="1140.0,270.0 1250.0,270.0 1250.0,255.0 1350.0,255.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="amx_datapath" data-dst="zdep"/>
+<polyline points="1245.3,168.0 1245.3,203.3 1140.0,203.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="l2" data-dst="amx_datapath"/>
+<polyline points="1140.0,192.7 1234.7,192.7 1234.7,168.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="amx_datapath" data-dst="l2"/>
+<polyline points="960.0,390.0 960.0,420.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="amx_datapath" data-dst="amx_op_set"/>
+<polyline points="1140.0,270.0 1250.0,270.0 1250.0,255.0 1350.0,255.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="amx_datapath" data-dst="zdep"/>
 <path d="M 955.1,780.0 Q 1030.0,750.0 1104.9,780.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1120.0,766.0 C 1102.0,730.0 1158.0,730.0 1140.0,766.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1155.1,780.0 Q 1230.0,750.0 1304.9,780.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1304.9,800.0 Q 1230.0,830.0 1155.1,800.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1105.9,802.1 Q 1030.0,840.0 954.1,802.1" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
 <path d="M 1309.9,808.1 Q 1130.0,970.0 950.1,808.1" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-<polyline points="555.0,870.0 555.0,834.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="18" data-dst="ways"/>
-<polyline points="390.0,809.0 440.0,809.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="slc_sticky_quota" data-dst="ways"/>
-<polyline points="190.0,1002.0 230.0,1002.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="req" data-dst="rc"/>
-<polyline points="266.0,1002.0 310.0,1002.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="rc" data-dst="slc_address_ranges"/>
-<polyline points="500.0,983.0 900.0,983.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="slc_address_ranges" data-dst="planes"/>
-<polyline points="500.0,1032.5 900.0,1032.5" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="slc_address_ranges" data-dst="planes"/>
+<polyline points="555.0,870.0 555.0,834.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-dst="ways"/>
+<polyline points="390.0,809.0 440.0,809.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="slc_sticky_quota" data-dst="ways"/>
+<polyline points="190.0,1002.0 230.0,1002.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="req" data-dst="rc"/>
+<polyline points="266.0,1002.0 310.0,1002.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="rc" data-dst="slc_address_ranges"/>
+<polyline points="500.0,983.0 900.0,983.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="slc_address_ranges" data-dst="planes"/>
+<polyline points="500.0,1032.5 900.0,1032.5" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="slc_address_ranges" data-dst="planes"/>
 <path d="M 1439.7,1108.2 Q 1500.0,1072.0 1560.3,1108.2" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1560.3,1131.8 Q 1500.0,1168.0 1439.7,1131.8" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
-<polyline points="1320.0,1005.0 1370.0,1005.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="26" data-src="planes" data-dst="slc_power_gating"/>
+<polyline points="1320.0,1005.0 1370.0,1005.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="27" data-src="planes" data-dst="slc_power_gating"/>
 <text x="77.0" y="126.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">Core 0</text>
 <text x="77.0" y="184.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">Core 1</text>
 <text x="77.0" y="242.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">Core 2</text>
@@ -291,8 +292,8 @@
 <text x="1187.0" y="145.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
 <text x="1195.0" y="145.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">load or store with</text>
 <text x="1187.0" y="158.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">each op</text>
-<polyline points="1176.0,203.0 1184.0,193.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="1186.0" y="194.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">X, Y, Z rows</text>
+<polyline points="1176.0,208.3 1184.0,187.7" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="1186.0" y="215.3" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">X, Y, Z rows</text>
 <text x="945.2" y="436.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">fp64</text>
 <text x="1027.6" y="436.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">fp32</text>
 <text x="1110.0" y="436.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">fp16</text>
@@ -325,7 +326,7 @@
 <text x="1365.0" y="330.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="start">4 ranges → 1 op / clk</text>
 <text x="1365.0" y="346.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">same range again: wait 4</text>
 <text x="1365.0" y="362.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">another core: its own Z</text>
-<text x="1260.0" y="248.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="11">Z range busy</text>
+<text x="1260.0" y="248.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="12">Z range busy</text>
 <text x="127.7" y="706.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">tag</text>
 <text x="235.1" y="706.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">group ID</text>
 <text x="342.6" y="706.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">sticky</text>
@@ -353,7 +354,7 @@
 <text x="204.0" y="878.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#f97316" text-anchor="start">sticky</text>
 <text x="70.0" y="920.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">32 group IDs; replacement skips sticky lines</text>
 <text x="440.0" y="783.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">one set, 16 ways; filled = sticky</text>
-<text x="566.0" y="866.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="18">victim: random among the non-sticky</text>
+<text x="566.0" y="866.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="19">victim: random among the non-sticky</text>
 <text x="77.0" y="996.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">request PA</text>
 <text x="243.0" y="1005.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#1f2937" text-anchor="middle">in?</text>
 <text x="405.0" y="982.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#1f2937" text-anchor="middle">camera frames</text>
@@ -363,8 +364,8 @@
 <text x="405.0" y="962.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">range registers</text>
 <text x="1110.0" y="952.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">SLC data, 4 planes</text>
 <text x="1110.0" y="1065.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">4096 sets × 16 ways × 128 B</text>
-<text x="524.0" y="975.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="22">range held as memory</text>
-<text x="524.0" y="1025.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="23">filtered: keep part of the lines</text>
+<text x="524.0" y="975.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="23">range held as memory</text>
+<text x="524.0" y="1025.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="24">filtered: keep part of the lines</text>
 <text x="70.0" y="1050.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">speculative: patents</text>
 <text x="1500.0" y="972.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">ways powered</text>
 <text x="1500.0" y="1045.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">10 on, 6 at retention</text>

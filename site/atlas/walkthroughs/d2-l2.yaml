@@ -5,65 +5,128 @@ figure: d2-l2
 audience: architects who know what a shared cache is but not how four cores get through one
 goal: explain how a physical address finds its line in the 12 MiB L2, how the 128 B line is really two 64 B halves, and why one core sees only part of the cache
 steps:
-  - n: 1
-    targets: [pa, pab]
-    title: The physical address arrives from the dTLB
-    say: The L2 is physically indexed, so nothing happens until the dTLB has answered. The 40-bit physical address splits into a tag above bit 20, an eleven-bit index 19:9 that picks one of 8192 sets, two more index bits that are hashed, a half bit 6 that picks which 64 B half of the 128 B line, and the byte offset. 12 MiB in 12 ways of 128 B is 8192 sets exactly, which is the arithmetic behind the thirteen index bits.
-    rests_on: confirmed
-    ask: Why can the L1D start before translation but the L2 cannot?
-    slide: ["Physically indexed: waits for the dTLB", "Tag 39:20; index 19:9 plus two hashed bits; half bit 6", "12 MiB = 8192 sets × 12 ways × 128 B"]
-    status: draft
-  - n: 2
-    targets: [x, pab]
-    title: Two index bits are hashed
-    say: Bits 8 and 7 of the index are not taken from the address directly; they are the XOR of address bits with higher page-number bits. Hashing those two bits spreads power-of-two strides across four times as many sets instead of piling them into one. Which bits are folded in has not been published; S2C measured that the hashing exists and that it is two bits.
-    rests_on: single
-    ask: What access pattern would hurt most if the index were taken straight from the address?
-    slide: ["Index bits 8:7 are an XOR with higher page bits", "Power-of-two strides spread over four times the sets", "Which bits fold in: unpublished"]
-    status: draft
-  - n: 3
-    targets: [rq0, rq1, rq2, rq3, rr, snoop, pipe]
-    title: Four cores queue, one pipeline serves
-    say: Each core has its own request queue at the L2. An arbiter picks among them round robin, demand requests ahead of prefetches; snoops and replays enter the same pipeline. Inside, an early partial-tag compare narrows which of the twelve ways need a full tag read. Requests to one 128 B line stay in order; requests to different lines may pass each other, so a core's read can overtake its own write to the other half of a line.
-    rests_on: inferred
-    ask: Why would a cache keep per-line order but not global order?
-    slide: ["One request queue per core; round robin, demand first", "Snoops and replays share the pipeline", "Partial tag compare narrows the ways; order kept per line, not across lines"]
-    status: draft
-  - n: 4
-    targets: [tags, cmp]
-    title: Twelve tags, one 20-bit compare
-    say: The set's twelve tags are read and the chosen way's 20-bit tag is compared with the physical address. A hit sends the line toward the L1D; a miss sends a request to the fabric. The 17-cycle hit latency is measured by one group, with 15 and 18 also quoted.
-    rests_on: confirmed
-    slide: ["8192 sets × 12 ways of tags", "20-bit tag compare: hit to the L1D, miss to the fabric", "17 cycles measured; 15 and 18 also quoted"]
-    status: draft
-  - n: 5
-    targets: [half0, half1]
-    title: A 128 B line is two 64 B halves
-    say: The L2 line is 128 B, but the L1D line is 64 B, so each L2 line holds two L1 lines that fill and evict on their own, each with its own valid and dirty bits. The half bit of the address picks one. Whether a miss brings only the accessed half into the L1D or both halves is disputed; one study finds one, another finds both.
-    rests_on: corroborated
-    ask: What does a 128 B line buy over 64 B, and what does it cost?
-    slide: ["128 B line, two 64 B halves, each with its own valid and dirty bits", "The half bit picks one", "Disputed: does an L1 miss pull one half or both?"]
-    status: draft
-  - n: 6
-    targets: [l1copy, lru]
-    title: Inclusive, and replacement remembers which core
-    say: The L2 is inclusive of the L1Ds and keeps copy bits saying which core's L1D holds each line. When a victim is needed, lines no L1D holds go first; this is the AutoLock effect that security papers measured. Among one core's lines replacement is LRU, but across cores it is not; a cross-core eviction set needs several passes.
-    rests_on: single
-    ask: Why would an inclusive L2 avoid evicting a line that an L1D still holds?
-    slide: ["Inclusive of the L1Ds; copy bits say which core holds a line", "Victims: lines no L1D holds go first", "LRU among one core's lines, not across cores"]
-    status: draft
-  - n: 7
-    targets: [cl0, cl1, cl2, cl3, ecore]
-    title: Four cachelets, one core sees seven and a half
-    say: The 12 MiB behaves as four 3 MiB cachelets, one beside each core, so a core sees the near one at 17 cycles and the far ones slower, and its usable capacity measures at about 7.5 MiB rather than 12. Which address bits pick the cachelet is our proposal, drawn as the dashed select. While the P cores sleep, the E cores can use this L2, which then stays powered.
-    rests_on: conjecture
-    ask: How would you test whether a cachelet is picked by address or by requesting core?
-    slide: ["Four 3 MiB cachelets, one per core; near one at 17 cycles", "A core sees about 7.5 MiB, not 12", "Cachelet select by address: our proposal; E cores borrow the L2 when P sleeps"]
-    status: draft
-  - n: 8
-    targets: [tol1, fabric, zero]
-    title: Out to the L1D or the fabric
-    say: A hit returns 64 B to the L1D as two 32 B beats, 17 cycles after the request. A miss goes to the fabric, and a victim goes with it when the set is full. An all-zero line may be recorded as a tag bit without touching the data array, from a patent.
-    rests_on: single
-    slide: ["Hit: 64 B to the L1D as two 32 B beats", "Miss and victim: to the fabric", "All-zero lines as a tag bit only, from a patent"]
-    status: draft
+- n: 1
+  targets:
+  - pa
+  - pab
+  title: The physical address arrives from the dTLB
+  say: The L2 is physically indexed, so nothing happens until the dTLB has answered. The 40-bit physical address splits into a tag above bit 20, an eleven-bit index 19:9 that picks one of 8192 sets, two
+    more index bits that are hashed, a half bit 6 that picks which 64 B half of the 128 B line, and the byte offset. 12 MiB in 12 ways of 128 B is 8192 sets exactly, which is the arithmetic behind the thirteen
+    index bits.
+  rests_on: confirmed
+  ask: Why can the L1D start before translation but the L2 cannot?
+  slide:
+  - 'Physically indexed: waits for the dTLB'
+  - Tag 39:20; index 19:9 plus two hashed bits; half bit 6
+  - 12 MiB = 8192 sets × 12 ways × 128 B
+  status: draft
+- n: 2
+  targets:
+  - x
+  - pab
+  title: Two index bits are hashed
+  say: Bits 8 and 7 of the index are not taken from the address directly; they are the XOR of address bits with higher page-number bits. Hashing those two bits spreads power-of-two strides across four times
+    as many sets instead of piling them into one. Which bits are folded in has not been published; S2C measured that the hashing exists and that it is two bits.
+  rests_on: single
+  ask: What access pattern would hurt most if the index were taken straight from the address?
+  slide:
+  - Index bits 8:7 are an XOR with higher page bits
+  - Power-of-two strides spread over four times the sets
+  - 'Which bits fold in: unpublished'
+  status: draft
+- n: 3
+  targets:
+  - rq0
+  - rq1
+  - rq2
+  - rq3
+  - rr
+  - snoop
+  - pipe
+  title: Four cores queue, one pipeline serves
+  say: Each core has its own request queue at the L2. An arbiter picks among them round robin, demand requests ahead of prefetches; snoops and replays enter the same pipeline. Inside, an early partial-tag
+    compare narrows which of the twelve ways need a full tag read. Requests to one 128 B line stay in order; requests to different lines may pass each other, so a core's read can overtake its own write
+    to the other half of a line.
+  rests_on: inferred
+  ask: Why would a cache keep per-line order but not global order?
+  slide:
+  - One request queue per core; round robin, demand first
+  - Snoops and replays share the pipeline
+  - Partial tag compare narrows the ways; order kept per line, not across lines
+  status: draft
+- n: 4
+  targets:
+  - tags
+  - cmp
+  title: Twelve tags, one 20-bit compare
+  say: The set's twelve tags are read and the chosen way's 20-bit tag is compared with the physical address. A hit sends the line toward the L1D; a miss sends a request to the fabric. The 17-cycle hit latency
+    is measured by one group, with 15 and 18 also quoted.
+  rests_on: confirmed
+  slide:
+  - 8192 sets × 12 ways of tags
+  - '20-bit tag compare: hit to the L1D, miss to the fabric'
+  - 17 cycles measured; 15 and 18 also quoted
+  status: draft
+- n: 5
+  targets:
+  - half0
+  - half1
+  title: A 128 B line is two 64 B halves
+  say: The L2 line is 128 B, but the L1D line is 64 B, so each L2 line holds two L1 lines that fill and evict on their own, each with its own valid and dirty bits. The half bit of the address picks one.
+    Whether a miss brings only the accessed half into the L1D or both halves is disputed; one study finds one, another finds both.
+  rests_on: corroborated
+  ask: What does a 128 B line buy over 64 B, and what does it cost?
+  slide:
+  - 128 B line, two 64 B halves, each with its own valid and dirty bits
+  - The half bit picks one
+  - 'Disputed: does an L1 miss pull one half or both?'
+  - '  Augury: both halves arrive, each evictable on its own'
+  - '  GoFetch: only the accessed half reaches the L1D'
+  - '  We lean to GoFetch; the OS disables the sibling-half merge on the M1'
+  status: draft
+- n: 6
+  targets:
+  - l1copy
+  - lru
+  title: Inclusive, and replacement remembers which core
+  say: The L2 is inclusive of the L1Ds and keeps copy bits saying which core's L1D holds each line. When a victim is needed, lines no L1D holds go first; this is the AutoLock effect that security papers
+    measured. Among one core's lines replacement is LRU, but across cores it is not; a cross-core eviction set needs several passes.
+  rests_on: single
+  ask: Why would an inclusive L2 avoid evicting a line that an L1D still holds?
+  slide:
+  - Inclusive of the L1Ds; copy bits say which core holds a line
+  - 'Victims: lines no L1D holds go first'
+  - LRU among one core's lines, not across cores
+  status: draft
+- n: 7
+  targets:
+  - cl0
+  - cl1
+  - cl2
+  - cl3
+  - ecore
+  title: Four cachelets, one core sees seven and a half
+  say: The 12 MiB behaves as four 3 MiB cachelets, one beside each core, so a core sees the near one at 17 cycles and the far ones slower, and its usable capacity measures at about 7.5 MiB rather than 12.
+    Which address bits pick the cachelet is our proposal, drawn as the dashed select. While the P cores sleep, the E cores can use this L2, which then stays powered.
+  rests_on: conjecture
+  ask: How would you test whether a cachelet is picked by address or by requesting core?
+  slide:
+  - Four 3 MiB cachelets, one per core; near one at 17 cycles
+  - 'A core sees about 7.5 MiB, not 12: half its own cachelet plus half of each other'
+  - 'Cachelet select by address: our proposal; E cores borrow the L2 when P sleeps'
+  - '  A pinned sweep restricted to one hash class decides it: four curves if slices, one if a budget'
+  status: draft
+- n: 8
+  targets:
+  - tol1
+  - fabric
+  - zero
+  title: Out to the L1D or the fabric
+  say: A hit returns 64 B to the L1D as two 32 B beats, 17 cycles after the request. A miss goes to the fabric, and a victim goes with it when the set is full. An all-zero line may be recorded as a tag
+    bit without touching the data array, from a patent.
+  rests_on: single
+  slide:
+  - 'Hit: 64 B to the L1D as two 32 B beats'
+  - 'Miss and victim: to the fabric'
+  - All-zero lines as a tag bit only, from a patent
+  status: draft

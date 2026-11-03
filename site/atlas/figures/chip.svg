@@ -148,16 +148,22 @@
 <polyline points="992.0,210.0 992.0,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="ecore1" data-dst="el2"/>
 <polyline points="1076.0,210.0 1076.0,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="ecore2" data-dst="el2"/>
 <polyline points="1160.0,210.0 1160.0,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="ecore3" data-dst="el2"/>
-<polyline points="350.0,410.0 350.0,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="l2" data-dst="fab"/>
-<polyline points="1200.0,335.0 1260.0,335.0 1260.0,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="el2" data-dst="fab"/>
-<polyline points="1490.0,480.0 1490.0,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="io" data-dst="fab"/>
-<polyline points="1630.0,155.0 1680.0,155.0" fill="none" stroke="#1f2937" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="gpu"/>
-<polyline points="1680.0,155.0 1680.0,598.0 1650.0,598.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-dst="fab"/>
-<polyline points="420.0,636.0 420.0,710.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-src="fab" data-dst="slc"/>
-<polyline points="770.0,775.0 830.0,775.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="16" data-src="slc" data-dst="mc"/>
-<polyline points="1190.0,775.0 1250.0,775.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="17" data-src="mc" data-dst="dram"/>
-<polyline points="1010.0,636.0 1010.0,710.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="18" data-src="fab" data-dst="mc"/>
-<polyline points="790.0,440.0 830.0,440.0 830.0,458.0 870.0,458.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="pwr" data-dst="epwr"/>
+<polyline points="355.3,410.0 355.3,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="l2" data-dst="fab"/>
+<polyline points="344.7,560.0 344.7,410.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="fab" data-dst="l2"/>
+<polyline points="1200.0,329.7 1265.3,329.7 1265.3,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="el2" data-dst="fab"/>
+<polyline points="1254.7,560.0 1254.7,340.3 1200.0,340.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="fab" data-dst="el2"/>
+<polyline points="1495.3,480.0 1495.3,560.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="io" data-dst="fab"/>
+<polyline points="1484.7,560.0 1484.7,480.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-src="fab" data-dst="io"/>
+<polyline points="1630.0,155.0 1680.0,155.0" fill="none" stroke="#1f2937" stroke-width="2.8" stroke-linejoin="round" stroke-linecap="round" data-eid="16" data-src="gpu"/>
+<polyline points="1680.0,155.0 1680.0,598.0 1650.0,598.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="17" data-dst="fab"/>
+<polyline points="425.3,636.0 425.3,710.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="18" data-src="fab" data-dst="slc"/>
+<polyline points="414.7,710.0 414.7,636.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="slc" data-dst="fab"/>
+<polyline points="770.0,769.7 830.0,769.7" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="slc" data-dst="mc"/>
+<polyline points="830.0,780.3 770.0,780.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="mc" data-dst="slc"/>
+<polyline points="1190.0,769.7 1250.0,769.7" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="mc" data-dst="dram"/>
+<polyline points="1250.0,780.3 1190.0,780.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="dram" data-dst="mc"/>
+<polyline points="1010.0,636.0 1010.0,710.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="fab" data-dst="mc"/>
+<polyline points="790.0,440.0 830.0,440.0 830.0,458.0 870.0,458.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="25" data-src="pwr" data-dst="epwr"/>
 <text x="77.0" y="116.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">Firestorm 0</text>
 <text x="77.0" y="135.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
 <text x="85.9" y="135.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">8 wide, ~630 window</text>
@@ -274,11 +280,11 @@
 <text x="1440.0" y="722.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">LPDDR4X, 16 GB, 8 channels</text>
 <text x="1440.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">91 ns, 68 GB/s peak</text>
 <text x="742.0" y="250.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="4">through the SQ</text>
-<polyline points="345.0,489.0 355.0,481.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="358.0" y="488.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">2 × 32 B/clk</text>
-<polyline points="415.0,677.0 425.0,669.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
-<text x="428.0" y="676.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">64 GB/s per core</text>
-<text x="1020.0" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="18">uncached, PIO</text>
+<polyline points="339.7,489.0 360.3,481.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="363.3" y="488.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">2 × 32 B/clk</text>
+<polyline points="409.7,677.0 430.3,669.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="433.3" y="676.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#1f2937" text-anchor="start" data-owner="slash">64 GB/s per core</text>
+<text x="1020.0" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="24">uncached, PIO</text>
 <rect x="60.0" y="891.0" width="16.0" height="11.0" rx="2" fill="#dbdee2" stroke="#9ca3af" stroke-width="2.2"/>
 <text x="80.0" y="900.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
 <rect x="190.6" y="891.0" width="16.0" height="11.0" rx="2" fill="#e6e8eb" stroke="#9ca3af" stroke-width="1.4"/>

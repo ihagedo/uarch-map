@@ -178,30 +178,36 @@
 <rect x="1108.8" y="800.0" width="37.5" height="24.0" rx="2" fill="#fef6f6" stroke="#e66767" stroke-width="1" stroke-dasharray="4 3"/>
 <rect x="1146.2" y="800.0" width="300.0" height="24.0" rx="2" fill="#fef6f6" stroke="#e66767" stroke-width="1" stroke-dasharray="4 3"/>
 <rect x="1446.2" y="800.0" width="243.8" height="24.0" rx="2" fill="#fef6f6" stroke="#e66767" stroke-width="1" stroke-dasharray="4 3"/>
-<polyline points="170.0,260.0 170.0,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="0" data-src="pl2" data-dst="coh"/>
-<polyline points="390.0,260.0 390.0,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="1" data-src="el2" data-dst="coh"/>
-<polyline points="610.0,260.0 610.0,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="2" data-src="gpu" data-dst="coh"/>
-<polyline points="710.0,358.0 790.0,358.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="3" data-src="coh" data-dst="arr"/>
-<polyline points="518.0,396.0 518.0,685.0 790.0,685.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="4" data-src="coh" data-dst="mc"/>
-<polyline points="1000.0,141.0 1000.0,190.0 952.0,190.0 952.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="5" data-dst="x2"/>
-<polyline points="952.0,190.0 840.0,190.0 840.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="6" data-dst="x0"/>
-<polyline points="840.0,251.0 840.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="x0" data-dst="arr"/>
-<polyline points="952.0,190.0 896.0,190.0 896.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-dst="x1"/>
-<polyline points="896.0,251.0 896.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="x1" data-dst="arr"/>
-<polyline points="952.0,251.0 952.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="x2" data-dst="arr"/>
-<polyline points="952.0,190.0 1008.0,190.0 1008.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-dst="x3"/>
-<polyline points="1008.0,251.0 1008.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="x3" data-dst="arr"/>
-<polyline points="952.0,190.0 1064.0,190.0 1064.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-dst="x4"/>
-<polyline points="1064.0,251.0 1064.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="x4" data-dst="arr"/>
-<polyline points="952.0,190.0 1120.0,190.0 1120.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-dst="x5"/>
-<polyline points="1120.0,251.0 1120.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="16" data-src="x5" data-dst="arr"/>
-<polyline points="952.0,520.0 952.0,650.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="17" data-src="arr" data-dst="mc"/>
-<polyline points="1050.0,685.0 1080.0,685.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="18" data-src="mc" data-dst="dram"/>
-<polyline points="1222.0,520.0 1222.0,600.0 1500.0,600.0 1500.0,650.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="arr" data-dst="ret"/>
-<polyline points="1500.0,726.0 1500.0,745.0 740.0,745.0 740.0,380.8 710.0,380.8" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="ret" data-dst="coh"/>
-<polyline points="1330.0,350.0 1370.0,350.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="arr" data-dst="spec"/>
-<polyline points="1370.0,442.0 1330.0,442.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="quota" data-dst="arr"/>
-<polyline points="1330.0,500.0 1350.0,500.0 1350.0,535.0 1370.0,535.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="arr" data-dst="repl"/>
+<polyline points="175.3,260.0 175.3,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="0" data-src="pl2" data-dst="coh"/>
+<polyline points="164.7,320.0 164.7,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="1" data-src="coh" data-dst="pl2"/>
+<polyline points="395.3,260.0 395.3,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="2" data-src="el2" data-dst="coh"/>
+<polyline points="384.7,320.0 384.7,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="3" data-src="coh" data-dst="el2"/>
+<polyline points="615.3,260.0 615.3,320.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="4" data-src="gpu" data-dst="coh"/>
+<polyline points="604.7,320.0 604.7,260.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="5" data-src="coh" data-dst="gpu"/>
+<polyline points="710.0,352.7 790.0,352.7" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="6" data-src="coh" data-dst="arr"/>
+<polyline points="790.0,363.3 710.0,363.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="arr" data-dst="coh"/>
+<polyline points="518.0,396.0 518.0,685.0 790.0,685.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="coh" data-dst="mc"/>
+<polyline points="1000.0,141.0 1000.0,190.0 952.0,190.0 952.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-dst="x2"/>
+<polyline points="952.0,190.0 840.0,190.0 840.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-dst="x0"/>
+<polyline points="840.0,251.0 840.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="x0" data-dst="arr"/>
+<polyline points="952.0,190.0 896.0,190.0 896.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-dst="x1"/>
+<polyline points="896.0,251.0 896.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="x1" data-dst="arr"/>
+<polyline points="952.0,251.0 952.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="x2" data-dst="arr"/>
+<polyline points="952.0,190.0 1008.0,190.0 1008.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-dst="x3"/>
+<polyline points="1008.0,251.0 1008.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="16" data-src="x3" data-dst="arr"/>
+<polyline points="952.0,190.0 1064.0,190.0 1064.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="17" data-dst="x4"/>
+<polyline points="1064.0,251.0 1064.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="18" data-src="x4" data-dst="arr"/>
+<polyline points="952.0,190.0 1120.0,190.0 1120.0,229.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-dst="x5"/>
+<polyline points="1120.0,251.0 1120.0,320.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="x5" data-dst="arr"/>
+<polyline points="957.3,520.0 957.3,650.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="arr" data-dst="mc"/>
+<polyline points="946.7,650.0 946.7,520.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="mc" data-dst="arr"/>
+<polyline points="1050.0,679.7 1080.0,679.7" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="mc" data-dst="dram"/>
+<polyline points="1080.0,690.3 1050.0,690.3" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="dram" data-dst="mc"/>
+<polyline points="1222.0,520.0 1222.0,600.0 1500.0,600.0 1500.0,650.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="25" data-src="arr" data-dst="ret"/>
+<polyline points="1500.0,726.0 1500.0,745.0 740.0,745.0 740.0,380.8 710.0,380.8" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="26" data-src="ret" data-dst="coh"/>
+<polyline points="1330.0,350.0 1370.0,350.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="27" data-src="arr" data-dst="spec"/>
+<polyline points="1370.0,442.0 1330.0,442.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="28" data-src="quota" data-dst="arr"/>
+<polyline points="1330.0,500.0 1350.0,500.0 1350.0,535.0 1370.0,535.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="29" data-src="arr" data-dst="repl"/>
 <text x="206.5" y="116.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" fill="#1f2937" text-anchor="middle">tag</text>
 <text x="72.0" y="138.8" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.25" font-weight="400" fill="#9ca3af" text-anchor="start">39</text>
 <text x="341.0" y="138.8" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.25" font-weight="400" fill="#9ca3af" text-anchor="end">33</text>
@@ -267,12 +273,12 @@
 <text x="1448.2" y="836.8" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.25" font-weight="400" fill="#9ca3af" text-anchor="start">12</text>
 <text x="1688.0" y="836.8" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.25" font-weight="400" fill="#9ca3af" text-anchor="end">0</text>
 <text x="790.0" y="790.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="400" fill="#4b5563" text-anchor="start">one line</text>
-<text x="729.5" y="345.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="3">victim</text>
-<text x="534.0" y="678.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="4">CPU miss</text>
-<text x="1014.0" y="176.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="5">PA 32:7</text>
-<text x="964.0" y="600.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="17">miss · wb</text>
-<text x="1234.0" y="593.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="19">hit</text>
-<text x="981.9" y="760.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="20">return</text>
+<text x="729.5" y="345.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="6">victim</text>
+<text x="534.0" y="678.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="8">CPU miss</text>
+<text x="1014.0" y="176.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="9">PA 32:7</text>
+<text x="964.0" y="600.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="21">miss · wb</text>
+<text x="1234.0" y="593.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="25">hit</text>
+<text x="981.9" y="760.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="13.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="26">return</text>
 <rect x="60.0" y="881.0" width="16.0" height="11.0" rx="2" fill="#fdcdab" stroke="#f97316" stroke-width="2.2"/>
 <text x="80.0" y="890.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="14.25" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
 <rect x="230.9" y="881.0" width="16.0" height="11.0" rx="2" fill="#fedcc5" stroke="#f97316" stroke-width="1.4"/>

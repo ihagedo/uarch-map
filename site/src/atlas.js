@@ -9,6 +9,10 @@
 
   function light(fig, test) {
     fig.querySelectorAll(".hot").forEach((r) => r.classList.toggle("lit", !!test(r.dataset)));
+    fig.querySelectorAll("[data-src]").forEach((w) => {
+      const d = w.dataset;
+      w.classList.toggle("lit", !!(test({ bid: d.src }) || test({ bid: d.dst })));
+    });
   }
 
   function go(ds, here) {

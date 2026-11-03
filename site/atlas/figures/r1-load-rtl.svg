@@ -230,8 +230,9 @@
 <polyline points="1337.0,330.0 1350.0,330.0 1350.0,500.0 1364.0,500.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="30" data-src="r4" data-dst="sqcam"/>
 <polyline points="1414.0,470.0 1414.0,440.0 1475.0,440.0 1475.0,270.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="31" data-src="sqcam" data-dst="wb"/>
 <polyline points="1580.0,374.0 1600.0,374.0 1600.0,80.0 130.0,80.0 130.0,190.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="32" data-src="replay" data-dst="sched"/>
-<polyline points="1540.0,530.0 1540.0,580.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="33" data-src="fill"/>
-<polyline points="1510.0,240.0 1700.0,240.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="34" data-src="wb"/>
+<polyline points="1545.3,530.0 1545.3,580.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="33" data-src="fill"/>
+<polyline points="1534.7,580.0 1534.7,530.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="34" data-dst="fill"/>
+<polyline points="1510.0,240.0 1700.0,240.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="35" data-src="wb"/>
 <text x="185.0" y="110.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="middle">c0</text>
 <text x="480.0" y="110.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="middle">c1</text>
 <text x="830.0" y="110.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="middle">c2</text>
@@ -313,7 +314,7 @@
 <text x="1484.0" y="296.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="31">fwd</text>
 <text x="1610.0" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="32">replay</text>
 <text x="1550.0" y="585.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="33">L2</text>
-<text x="1619.0" y="234.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="34">3 × 128 / clk</text>
+<text x="1619.0" y="234.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="35">3 × 128 / clk</text>
 <rect x="60.0" y="671.0" width="16.0" height="11.0" rx="2" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
 <text x="80.0" y="680.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
 <rect x="190.6" y="671.0" width="16.0" height="11.0" rx="2" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>

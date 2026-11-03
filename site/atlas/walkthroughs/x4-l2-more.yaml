@@ -1,0 +1,213 @@
+# x4-l2-more.yaml
+# Isaac Hagedorn, 2026-11-03
+# The x4-l2-more figure read step by step.
+figure: x4-l2-more
+audience: architects who have followed one request through the L2 and now want to know what else the L2 is doing
+goal: explain the machinery around the L2 array as Apple's patents describe it, say which parts a measurement has touched, and leave the listener able to tell a patent reading from a measured fact
+steps:
+- n: 1
+  targets:
+  - demand
+  - pref
+  - snoop
+  - replay
+  - arb
+  title: Four kinds of request, one arbiter
+  say: Requests reach an L2 pipeline from four queues, for demand misses, prefetches, snoops from other cores and replays of requests whose data has come back. An arbiter picks among them, demand ahead of
+    prefetch. This is a 2015 patent read as the L2; the queues and the arbiter have not been measured on the M1, and the figure shows one pipeline of what the patent says are several, each with its own
+    tags, banks and pending buffer.
+  rests_on: conjecture
+  ask: Why would a replay need its own queue instead of re-entering as a demand?
+  slide:
+  - 'Four queues: demand, prefetch, snoop, replay'
+  - One arbiter, demand ahead of prefetch
+  - 'A patent reading: one of several pipelines, none measured'
+  status: draft
+- n: 2
+  targets:
+  - l2tag
+  - l2banks
+  - prb
+  title: Tags, banks and the pending request buffer
+  say: The pipeline reads the tags, and a hit goes straight to the banked data array, where the banks let two accesses proceed at once and the arbiter can steer around a bank conflict. A miss parks in the
+    pending request buffer, a content-addressed table whose entries record who asked, what the request depends on and whether it was a prefetch. When the line arrives, the data waits in a paired buffer
+    and the request is replayed through the pipeline to write it into the array.
+  rests_on: conjecture
+  ask: What does a replay buy over writing the line into the array as soon as it arrives?
+  slide:
+  - 'Hit: tags, then the banked array, two banks at once'
+  - 'Miss: an entry in the pending request buffer, who asked and what it waits for'
+  - 'Fill: data waits, the request is replayed to write it in'
+  status: draft
+- n: 3
+  targets:
+  - demand
+  - prb
+  title: A demand miss takes over a pending prefetch
+  say: When a demand miss arrives for a line that a prefetch has already requested, it does not queue behind the prefetch. It takes over the prefetch's entry in the pending buffer, which is now marked as a
+    core request, so the data goes to the core as well as into the array. A later demand to the same line is marked dependent on that entry. Again a patent reading, and the one place in this band we
+    could test, by timing a load that lands just behind a prefetch.
+  rests_on: conjecture
+  ask: How would you tell a demand that merged into a prefetch from a demand that simply hit?
+  slide:
+  - A demand to a prefetched-but-pending line takes the prefetch's entry
+  - The entry becomes a core request, the data also goes to the core
+  - 'Testable: a load timed just behind a prefetch'
+  status: draft
+- n: 4
+  targets:
+  - flo
+  - lineA
+  - lineB
+  - ordq
+  title: Order is kept inside one line, not across lines
+  say: Requests queued at the L2 from its L1 clients stay in order within one 128 B line and may pass each other across lines. Because the two 64 B halves are separate L1 lines, a core's read of one half may
+    go ahead of its own earlier write to the other half; from different cores the read waits. In the figure, R A.0 waits for W A.0, and R A.1 may pass it. This is Handley's reading of a 2015 patent; nothing
+    on the M1 has measured it.
+  rests_on: conjecture
+  ask: Does letting a read pass a write to the other half break anything the memory model promises?
+  slide:
+  - In order within a 128 B line, out of order across lines
+  - A read of one half may pass the same core's write to the other half
+  - From different cores the read waits
+  status: draft
+- n: 5
+  targets:
+  - fsg
+  - sg0
+  - sg1
+  - evcred
+  title: Snoops are kept from starving
+  say: Two safeguards show up in the kernel's chip-specific settings rather than in a patent. The L2 has a starvation mode that a snoop evicting an exclusive-monitor line can trigger, and the kernel turns that
+    trigger off on the A8. The core also reserves eviction-buffer credits for snoops so they cannot be crowded out, and the kernel raises that reservation on the A10. These are inferred for the M1 from
+    the settings of its ancestors; the mechanism is there, its numbers are not.
+  rests_on: inferred
+  ask: What would starve a snoop in the first place?
+  slide:
+  - A starvation mode, triggered by a snoop evicting a monitored line
+  - Eviction credits held back for snoops
+  - 'Inferred from kernel settings on the A8 and A10: present, numbers unknown'
+  status: draft
+- n: 6
+  targets:
+  - pc0
+  - pc1
+  - pc2
+  - pc3
+  - cl0
+  - cl1
+  - cl2
+  - cl3
+  - ecores_share_pl2
+  title: Four cachelets, and the E cores borrow them
+  say: Bandwidth and latency curves for one core change together at about 3 MiB and 7.5 MiB, so Handley models the 12 MiB L2 as four 3 MiB cachelets, one beside each core, each half for its own core and
+    half spare for the other three. The steps are measured; whether the cachelets are physical, or a hash with a per-core line budget, is not. A 2017 patent lets the efficiency cluster use this L2 while the
+    performance cores sleep, with the L2's voltage and clock then following the E cores.
+  rests_on: conjecture
+  ask: How would a pinned sweep tell physical cachelets from a per-core budget?
+  slide:
+  - 'Measured: one core steps at 3 MiB and 7.5 MiB'
+  - 'Model: four 3 MiB cachelets, half own, half spare'
+  - 'Patent: the E cluster uses this L2 while the P cores sleep'
+  status: draft
+- n: 7
+  targets:
+  - l2_way_power
+  - wp0
+  - wp1
+  - wp2
+  title: Ways sleep in thirds
+  say: Per a 2014 patent, the twelve ways sit in three separately powered groups. A way group that idles for a count set from the part's leakage and its temperature drops into a sleep voltage that keeps the
+    data, and costs a cycle or two to wake. When use concentrates in few ways, a whole third can be powered off, and comes back when misses pile up on reused lines. Handley sees this as why the L2 and its
+    TLB are multiples of three. On the M1 only the noisy first accesses to the L2 TLB hint at it.
+  rests_on: conjecture
+  ask: What would you measure to catch a way group waking up?
+  slide:
+  - 'Twelve ways in three power groups: active, sleep, off'
+  - Sleep after an idle count set by leakage and temperature
+  - Off when use concentrates, back when misses pile up
+  - '  Hinted on the M1 only by noisy first accesses to the L2 TLB'
+  status: draft
+- n: 8
+  targets:
+  - l2_zero_line_tags
+  - loser
+  title: All-zero lines live in the tag
+  say: A 2017 patent records an all-zero line as one bit in its tag and never writes the data array; a read of such a line returns zeros without reading it either. Invalid and all-zero lines share a loser
+    bank that stays powered off until a real write needs it, and the cache repacks later to power it down again. On the M1, DC ZVA streams at about two lines every three cycles with no writebacks, which
+    fits a zero line created by a tag change rather than a data transfer.
+  rests_on: conjecture
+  ask: Why does zeroing a line that was just read run slower than zeroing a cold one?
+  slide:
+  - 'Zero line: a tag bit, no data write, reads return zeros'
+  - A loser bank for invalid and zero lines, kept powered off
+  - 'Measured: DC ZVA at two lines per three cycles, no writebacks'
+  status: draft
+- n: 9
+  targets:
+  - lru
+  - l2_insertion_priority
+  title: Where a victim from the L1 enters the stack
+  say: A line evicted from the L1 carries three bits of history, whether it was part of a stream, whether a prefetcher brought it in, and whether it has made a trip, into the L1 and back. Per a 2013 patent,
+    those bits pick where the line enters the L2's replacement order. A streaming line enters near LRU and moves up one step if reused, so a long stream replaces only earlier stream lines and displaces an
+    eighth, perhaps a quarter, of the set. A later patent adds a per-core quota, so replacement first takes the least recent line of a core over its quota. The AutoLock effect, lines an L1D still holds being
+    spared, is the one measured piece.
+  rests_on: conjecture
+  ask: Why insert a streaming line near LRU rather than not insert it at all?
+  slide:
+  - 'Three history bits: stream, prefetch, trip'
+  - 'Stream: enter near LRU, one step up on reuse, a sweep takes an eighth to a quarter'
+  - Per-core quotas, the over-quota core loses first
+  - '  Measured: lines an L1D holds are spared'
+  status: draft
+- n: 10
+  targets:
+  - ipv_replacement
+  - crit
+  title: Promotion vectors and critical lines
+  say: A 2022 patent replaces fixed LRU updates with small insertion and promotion vectors, one per combination of a line's prefetched and critical bits, tuned offline on benchmarks. Each vector says where
+    a hit moves the line and where a new line enters. Critical lines, page-table leaves and the heads of the fetch and load miss queues, carry their mark down to the L1 and up to the SLC and outlast both
+    prefetched and demand lines; unused prefetched lines leave first.
+  rests_on: conjecture
+  ask: What would a pointer chase through page-table leaves look like if critical lines really are kept longer?
+  slide:
+  - One vector per line class, tuned offline
+  - Each vector says where a hit moves the line and where a new one enters
+  - 'Critical lines outlast the rest: page table, instruction fetch, load miss heads'
+  status: draft
+- n: 11
+  targets:
+  - l2_snoop_filter
+  - snc
+  - snoopin
+  - fwd
+  - drop
+  - flush
+  title: Duplicate L1 tags shield the L1s
+  say: The L2 keeps a copy of each core's L1 tags, one row per core. A snoop that arrives from the fabric is checked against them, and only one that hits goes on to the L1; the rest are filtered, which is
+    what lets a sleeping core's L1 stay unclocked. The same tags drive a flush engine, one per cluster, that pulls a core's dirty L1 lines into the L2 while the core powers down. Several patents from
+    2010 to 2013 describe it, one of them plainly; a 2013 victimisation patent does not use the duplicate tags, so Handley keeps the question open.
+  rests_on: conjecture
+  ask: What does the L2 give up by keeping tags for lines it may not hold?
+  slide:
+  - A copy of every core's L1 tags, one row per core
+  - 'Snoops that miss are filtered: a sleeping L1 stays unclocked'
+  - One flush engine per cluster pulls dirty L1 lines before power-off
+  status: draft
+- n: 12
+  targets:
+  - fu
+  - uncached_line_handling
+  - ucmerge
+  - ucgather
+  title: Uncacheable traffic takes the side door
+  say: A read of an uncacheable range still fetches a full line into the L2, but only a few ways may hold such lines; a 2019 patent also gives each cache controller a pool of buffers that merge later loads to
+    the same line until a timer runs out or a full line is built. Writes to uncacheable ranges are gathered into full lines and go to the fabric past both the L1 and the L2. The kernel turns off early launch
+    of unaligned uncacheable stores on the A12 because it broke load ordering, which is the one trace of this on real hardware.
+  rests_on: conjecture
+  ask: Why fetch a whole line for a read the cache is not allowed to keep?
+  slide:
+  - 'Reads: a full line, into a few set-aside ways, or merged in a buffer'
+  - 'Writes: gathered into full lines, past the L1 and the L2'
+  - 'A kernel setting on the A12 is the only hardware trace'
+  status: draft

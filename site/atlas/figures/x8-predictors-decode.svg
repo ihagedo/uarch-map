@@ -187,34 +187,35 @@
 <polyline points="580.0,240.0 540.0,240.0 540.0,360.0 300.0,360.0 300.0,321.0 330.0,321.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="5" data-src="ras_main" data-dst="m_ras"/>
 <polyline points="346.0,305.0 420.0,305.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="6" data-src="m_ras" data-dst="next_pc"/>
 <polyline points="470.0,335.0 470.0,395.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="next_pc"/>
-<polyline points="640.0,360.0 640.0,380.0 715.0,380.0 715.0,400.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="ras_main" data-dst="ras_pac_check"/>
-<polyline points="750.8,400.0 750.8,320.4" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="ras_pac_check" data-dst="pac_cmp"/>
-<polyline points="776.0,312.0 800.0,312.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="pac_cmp"/>
-<polyline points="1160.0,175.0 1200.0,175.0 1200.0,214.0 1230.0,214.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="tage" data-dst="m_dir"/>
-<polyline points="1160.0,305.0 1200.0,305.0 1200.0,246.0 1230.0,246.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="loop_predictor" data-dst="m_dir"/>
-<polyline points="1160.0,329.5 1238.0,329.5 1238.0,265.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="loop_predictor" data-dst="m_dir"/>
-<polyline points="1246.0,230.0 1300.0,230.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="m_dir" data-dst="dir_out"/>
-<polyline points="920.0,305.0 905.0,305.0 905.0,175.0 920.0,175.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-src="loop_predictor" data-dst="tage"/>
+<polyline points="645.3,360.0 645.3,374.7 720.3,374.7 720.3,400.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="ras_main" data-dst="ras_pac_check"/>
+<polyline points="709.7,400.0 709.7,385.3 634.7,385.3 634.7,360.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="ras_pac_check" data-dst="ras_main"/>
+<polyline points="750.8,400.0 750.8,320.4" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="ras_pac_check" data-dst="pac_cmp"/>
+<polyline points="776.0,312.0 800.0,312.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="pac_cmp"/>
+<polyline points="1160.0,175.0 1200.0,175.0 1200.0,214.0 1230.0,214.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="tage" data-dst="m_dir"/>
+<polyline points="1160.0,305.0 1200.0,305.0 1200.0,246.0 1230.0,246.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="loop_predictor" data-dst="m_dir"/>
+<polyline points="1160.0,329.5 1238.0,329.5 1238.0,265.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="loop_predictor" data-dst="m_dir"/>
+<polyline points="1246.0,230.0 1300.0,230.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-src="m_dir" data-dst="dir_out"/>
+<polyline points="920.0,305.0 905.0,305.0 905.0,175.0 920.0,175.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="16" data-src="loop_predictor" data-dst="tage"/>
 <path d="M 1491.2,172.4 Q 1517.5,225.0 1575.4,235.5" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1575.4,244.5 Q 1517.5,255.0 1492.1,305.9" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1492.1,305.9 Q 1525.0,240.0 1491.2,172.4" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
-<polyline points="1455.0,416.0 1455.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="ctx_a"/>
-<polyline points="1585.0,416.0 1585.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="ctx_b"/>
-<polyline points="1585.0,450.0 1360.0,450.0 1360.0,407.2 1340.0,407.2" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-dst="bpu_isolation"/>
-<polyline points="230.0,655.0 290.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="ittage" data-dst="ibp_fetch"/>
-<polyline points="450.0,655.0 520.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="ibp_fetch" data-dst="ibp_context_check"/>
-<polyline points="556.0,655.0 730.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="ibp_context_check" data-dst="ibp_exec"/>
-<polyline points="530.8,663.4 530.8,700.0 600.0,700.0 600.0,738.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="25" data-src="ibp_context_check" data-dst="ib_sq"/>
-<polyline points="190.0,825.0 247.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="26" data-src="objc_uop" data-dst="objc_hash"/>
-<polyline points="273.0,825.0 330.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="27" data-src="objc_hash" data-dst="objc_msgsend_predictor"/>
-<polyline points="500.0,825.0 560.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="28" data-src="objc_msgsend_predictor" data-dst="objc_redirect"/>
+<polyline points="1455.0,416.0 1455.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="ctx_a"/>
+<polyline points="1585.0,416.0 1585.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-src="ctx_b"/>
+<polyline points="1585.0,450.0 1360.0,450.0 1360.0,407.2 1340.0,407.2" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-dst="bpu_isolation"/>
+<polyline points="230.0,655.0 290.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="ittage" data-dst="ibp_fetch"/>
+<polyline points="450.0,655.0 520.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="ibp_fetch" data-dst="ibp_context_check"/>
+<polyline points="556.0,655.0 730.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="25" data-src="ibp_context_check" data-dst="ibp_exec"/>
+<polyline points="530.8,663.4 530.8,700.0 600.0,700.0 600.0,738.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="26" data-src="ibp_context_check" data-dst="ib_sq"/>
+<polyline points="190.0,825.0 247.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="27" data-src="objc_uop" data-dst="objc_hash"/>
+<polyline points="273.0,825.0 330.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="28" data-src="objc_hash" data-dst="objc_msgsend_predictor"/>
+<polyline points="500.0,825.0 560.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="29" data-src="objc_msgsend_predictor" data-dst="objc_redirect"/>
 <path d="M 1008.8,831.5 Q 1070.0,856.0 1131.2,831.5" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1150.0,792.0 C 1132.0,756.0 1188.0,756.0 1170.0,792.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1188.8,831.5 Q 1250.0,856.0 1314.9,830.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
 <path d="M 1315.9,832.1 Q 1160.0,910.0 1007.7,833.9" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
-<polyline points="1530.0,785.0 1567.0,785.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="33" data-src="ldop_data" data-dst="load_op_fusion"/>
-<polyline points="1580.0,798.0 1580.0,820.0 1595.0,820.0 1595.0,840.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="34" data-src="load_op_fusion" data-dst="ldop_out"/>
-<polyline points="1580.0,740.0 1580.0,772.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="35" data-dst="load_op_fusion"/>
+<polyline points="1530.0,785.0 1567.0,785.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="34" data-src="ldop_data" data-dst="load_op_fusion"/>
+<polyline points="1580.0,798.0 1580.0,820.0 1595.0,820.0 1595.0,840.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="35" data-src="load_op_fusion" data-dst="ldop_out"/>
+<polyline points="1580.0,740.0 1580.0,772.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="36" data-dst="load_op_fusion"/>
 <text x="112.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tag</text>
 <text x="188.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">ret</text>
 <text x="150.0" y="132.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">return fetch table</text>
@@ -241,7 +242,7 @@
 <text x="723.6" y="224.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-ov0-ras_overflow_clear">call at 50</text>
 <text x="830.5" y="224.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-ras_overflow_clear-ov0">empty</text>
 <text x="250.0" y="160.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="3">ret, no target</text>
-<text x="650.0" y="374.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="8">push · pop</text>
+<text x="579.6" y="378.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="8">push · pop</text>
 <text x="806.0" y="316.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">fault</text>
 <text x="70.0" y="382.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">mini RAS: returns whose calls decode has not seen</text>
 <text x="943.3" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T1</text>
@@ -260,8 +261,8 @@
 <text x="1307.0" y="216.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">direction</text>
 <text x="1307.0" y="235.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
 <text x="1315.9" y="235.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">taken?</text>
-<text x="1170.0" y="323.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="13">loop mode</text>
-<text x="913.0" y="249.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="15">gate</text>
+<text x="1170.0" y="323.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="14">loop mode</text>
+<text x="913.0" y="249.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="16">gate</text>
 <text x="1480.0" y="153.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">TAGE</text>
 <text x="1600.0" y="238.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">loop</text>
 <text x="1600.0" y="249.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">mode</text>
@@ -288,7 +289,7 @@
 <text x="1537.0" y="386.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">kernel</text>
 <text x="1537.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
 <text x="1545.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">EL1</text>
-<text x="1474.0" y="464.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="21">same entry</text>
+<text x="1474.0" y="464.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="22">same entry</text>
 <text x="99.3" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tag</text>
 <text x="150.0" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tgt</text>
 <text x="200.7" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">u</text>
@@ -302,9 +303,9 @@
 <text x="737.0" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
 <text x="745.9" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">only in context</text>
 <text x="600.0" y="763.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">squash</text>
-<text x="242.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="22">target</text>
-<text x="576.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="24">EL, ASID =</text>
-<text x="610.0" y="724.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="25">other context</text>
+<text x="242.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="23">target</text>
+<text x="576.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="25">EL, ASID =</text>
+<text x="610.0" y="724.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="26">other context</text>
 <text x="70.0" y="740.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">no EL or ASID: a foreign target is fetched, not run</text>
 <text x="77.0" y="816.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">predict uop</text>
 <text x="77.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
@@ -316,7 +317,7 @@
 <text x="567.0" y="816.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">redirect fetch</text>
 <text x="567.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#9ca3af" text-anchor="start">?</text>
 <text x="575.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="start">absent on M1</text>
-<text x="200.0" y="816.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="26">class, sel</text>
+<text x="200.0" y="816.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="27">class, sel</text>
 <text x="927.0" y="596.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">uop split and merge</text>
 <text x="988.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">add, lsl</text>
 <text x="967.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
@@ -354,7 +355,7 @@
 <text x="1562.0" y="856.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">result</text>
 <text x="1562.0" y="875.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#9ca3af" text-anchor="start">?</text>
 <text x="1570.0" y="875.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="start">absent</text>
-<text x="1444.0" y="754.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="35">add, xor, shift, cbz</text>
+<text x="1444.0" y="754.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="36">add, xor, shift, cbz</text>
 <rect x="60.0" y="931.0" width="16.0" height="11.0" rx="2" fill="#b1c7f8" stroke="#2563eb" stroke-width="2.2"/>
 <text x="80.0" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
 <rect x="190.6" y="931.0" width="16.0" height="11.0" rx="2" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>

@@ -286,6 +286,110 @@ maps:
     drawio:
       file: drawio/overview.drawio
       page: 01 core overview
+  - id: p1-pipeline
+    title: Firestorm core, the pipeline as stacked stages
+    subtitle: ''
+    file: figures/p1-pipeline.svg
+    level: core
+    up: core
+    kinds:
+    - dataflow
+    - rtl
+    - structure
+    blocks:
+    - core
+    - frontend
+    - backend
+    - lsu
+    - fetch
+    - btb
+    - dirpred
+    - indpred
+    - ras
+    - ftq
+    - itlb
+    - l1i
+    - iq
+    - decode
+    - rename
+    - dispatch
+    - sched_int
+    - sched_fp
+    - sched_ls
+    - int_prf
+    - fp_prf
+    - flags_prf
+    - eu_int
+    - eu_fp
+    - lq
+    - sq
+    - dtlb
+    - l1d
+    - l2
+    - retire
+    mechanisms: []
+    hot:
+    - bru
+    - btb
+    - decode
+    - dirpred
+    - disp_fp
+    - disp_int
+    - disp_ls
+    - disp_mul
+    - dtlb
+    - eu_fp
+    - eu_int
+    - fetch
+    - flags_prf
+    - fp_prf
+    - freelists
+    - ftq
+    - fwd
+    - indpred
+    - int_prf
+    - iq
+    - itlb
+    - l1d
+    - l1i
+    - l2
+    - l_decode_rename
+    - l_dispatch_issue
+    - l_execute_writeback
+    - l_fetch_decode
+    - l_issue_registerread
+    - l_predict_fetch
+    - l_registerread_execute
+    - l_rename_dispatch
+    - l_writeback_retire
+    - lq
+    - ls_pipes
+    - maps
+    - pc
+    - ras
+    - rename
+    - retire
+    - rrq
+    - sched_fp
+    - sched_int
+    - sched_ls
+    - sq
+    - st_decode
+    - st_dispatch
+    - st_execute
+    - st_fetch
+    - st_issue
+    - st_predict
+    - st_register_read
+    - st_rename
+    - st_retire
+    - st_writeback
+    - stl
+    - wb
+    - window
+    drawio:
+      file: drawio/pipeline.drawio
+      page: P1 pipeline
   - id: 08-lifecycle
     title: Where a uop takes and gives back its resources
     subtitle: ''
@@ -1845,6 +1949,10 @@ maps:
     drawio:
       file: drawio/deep-lsucaches.drawio
       page: X11 prefetch, L1D, dTLB
+    walkthrough:
+      file: walkthroughs/x11-prefetch-l1d-tlb.yaml
+      steps: 11
+      agreed: 0
   - id: c2-l2
     title: 'Shared L2, textbook form: 12 MiB, 12 ways, 128 B lines in two halves, physically indexed and hashed'
     subtitle: ''
@@ -2056,6 +2164,10 @@ maps:
     drawio:
       file: drawio/deep-l2more.drawio
       page: X4 L2 machinery
+    walkthrough:
+      file: walkthroughs/x4-l2-more.yaml
+      steps: 12
+      agreed: 0
   sheets:
   - block: l1d
     name: L1 data cache
