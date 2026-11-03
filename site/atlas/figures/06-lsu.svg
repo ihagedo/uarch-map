@@ -1,0 +1,273 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 860" width="1500" height="860" role="img" aria-label="Fig. 6  Load-store unit" font-family="Inter, 'Helvetica Neue', Arial, sans-serif"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M10,0 L0,5 L10,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1500" height="860" fill="#ffffff"/><text x="20" y="30" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937">Fig. 6  Load-store unit</text><text x="20" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#4b5563" text-anchor="start">Three loads and two stores a cycle through four pipes. Queue entries are taken at issue; a store is an address uop and a data uop.</text>
+<rect x="20" y="70" width="400" height="250" rx="8" fill="#fefbf3" stroke="#dac991" stroke-width="1"/>
+<text x="30" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Address generation</text>
+<text x="410" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="end">4 pipes</text>
+<rect x="35" y="100" width="88" height="50" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="43" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">pipe 7</text>
+<line x1="41" y1="121" x2="117" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="43" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="54" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">store addr</text>
+<rect x="130" y="100" width="88" height="50" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="138" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">pipe 8</text>
+<line x1="136" y1="121" x2="212" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="138" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="149" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">load or store</text>
+<rect x="225" y="100" width="88" height="50" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="233" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">pipe 9</text>
+<line x1="231" y1="121" x2="307" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="233" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="244" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">load</text>
+<rect x="320" y="100" width="88" height="50" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="328" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">pipe 10</text>
+<line x1="326" y1="121" x2="402" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="328" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="339" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">load</text>
+<rect x="35" y="165" width="370" height="60" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="43" y="180" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Checks on the way</text>
+<line x1="41" y1="186" x2="399" y2="186" stroke="#d7cca6" stroke-width="1"/>
+<text x="43" y="200.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="54" y="200.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">same-page masked compare before the full add</text>
+<text x="43" y="215.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="54" y="215.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">load-to-load bypass: 3 cycles when base is a fresh L1 hit</text>
+<rect x="35" y="240" width="370" height="72" rx="5" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<text x="43" y="255" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Dependence predictor</text>
+<line x1="41" y1="261" x2="399" y2="261" stroke="#d7cca6" stroke-width="1"/>
+<text x="43" y="275.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="54" y="275.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">74 store/load PC pairs, round-robin replace</text>
+<text x="43" y="290.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="54" y="290.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">matching load waits for its store; others predicted free</text>
+<text x="43" y="304.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="54" y="304.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">ordering flush 25 cycles</text>
+<rect x="440" y="70" width="500" height="250" rx="8" fill="#fefbf3" stroke="#dac991" stroke-width="1"/>
+<text x="450" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Queues</text>
+<text x="930" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="end">allocated at issue, released before retire</text>
+<rect x="455" y="100" width="230" height="95" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="463" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Load queue</text>
+<line x1="461" y1="121" x2="679" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="463" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="474" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">130 entries (148 to 154 disputed)</text>
+<text x="463" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="474" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">2 interleaved banks</text>
+<text x="463" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="474" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">address recheck as data lands</text>
+<text x="463" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="474" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">poison bit on snoop before non-spec</text>
+<rect x="700" y="100" width="225" height="95" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="708" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Store queue</text>
+<line x1="706" y1="121" x2="919" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="708" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="719" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">60 entries</text>
+<text x="708" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="719" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">32 B slots gather stores</text>
+<text x="708" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="719" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">primary + secondary queue</text>
+<text x="708" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="719" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">AMX ops wait here until non-spec</text>
+<rect x="455" y="210" width="470" height="95" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="463" y="225" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Store-to-load forwarding</text>
+<line x1="461" y1="231" x2="919" y2="231" stroke="#d7cca6" stroke-width="1"/>
+<text x="463" y="245.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="474" y="245.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">6 cycles same address</text>
+<text x="463" y="260.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="474" y="260.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">partial overlap: bytes from queue plus L1 at full rate (2 entries: +1 cycle)</text>
+<text x="463" y="274.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="474" y="274.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">zero-cycle load when store and load share the address register</text>
+<text x="463" y="289.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="474" y="289.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">no load value prediction, no address prediction on M1</text>
+<rect x="960" y="70" width="520" height="250" rx="8" fill="#fefbf3" stroke="#dac991" stroke-width="1"/>
+<text x="970" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Translation</text>
+<text x="1470" y="86" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="end">one dTLB lookup per cycle</text>
+<rect x="975" y="100" width="240" height="100" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="983" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">L1 dTLB</text>
+<line x1="981" y1="121" x2="1209" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="983" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="994" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">160 entries</text>
+<text x="983" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="994" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">5-way, indexed by VA 18:14</text>
+<text x="983" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">miss 6 cycles</text>
+<text x="983" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">random replacement</text>
+<text x="983" y="193.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="193.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">also holds iTLB victims</text>
+<rect x="1230" y="100" width="235" height="95" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="1238" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">L2 TLB</text>
+<line x1="1236" y1="121" x2="1459" y2="121" stroke="#d7cca6" stroke-width="1"/>
+<text x="1238" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="1249" y="135.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">3072 entries</text>
+<text x="1238" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="1249" y="150.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">12-way, 256 sets, VA 21:14</text>
+<text x="1238" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="1249" y="164.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">miss 25 cycles</text>
+<text x="1238" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="1249" y="179.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">shared by the cluster</text>
+<rect x="975" y="210" width="490" height="95" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="983" y="225" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Page walk</text>
+<line x1="981" y1="231" x2="1459" y2="231" stroke="#d7cca6" stroke-width="1"/>
+<text x="983" y="245.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="245.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">16 KiB pages, 3 levels</text>
+<text x="983" y="260.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="260.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">MMU walk cache for upper levels, leaves from L2</text>
+<text x="983" y="274.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="274.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">piggyback: queued requests to one page share a lookup</text>
+<text x="983" y="289.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="994" y="289.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">indexed permissions, no shootdown on change</text>
+<polyline points="1215,147 1230,147" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<polyline points="1220,195 1220,210" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<rect x="20" y="345" width="920" height="300" rx="8" fill="#fefbf3" stroke="#dac991" stroke-width="1"/>
+<text x="30" y="361" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">L1 data cache</text>
+<text x="930" y="361" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="end">128 KiB, 8 ways, 64 B lines</text>
+<text x="35" y="375" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="600" fill="#1f2937" text-anchor="start">16 banks x 16 B</text>
+<rect x="35" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="50" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">0</text>
+<rect x="69" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="84" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">1</text>
+<rect x="103" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="118" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">2</text>
+<rect x="137" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="152" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">3</text>
+<rect x="171" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="186" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">4</text>
+<rect x="205" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="220" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">5</text>
+<rect x="239" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="254" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">6</text>
+<rect x="273" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="288" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">7</text>
+<rect x="307" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="322" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">8</text>
+<rect x="341" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="356" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">9</text>
+<rect x="375" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="390" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">10</text>
+<rect x="409" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="424" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">11</text>
+<rect x="443" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="458" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">12</text>
+<rect x="477" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="492" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">13</text>
+<rect x="511" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="526" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">14</text>
+<rect x="545" y="383" width="30" height="70" rx="2" fill="#fcf4dc" stroke="#f2d16b" stroke-width="1"/>
+<text x="560" y="422" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">15</text>
+<text x="35" y="472" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">piggybacked loads to one element share an access; fills take bank cycles (about 1 in 7)</text>
+<rect x="600" y="365" width="320" height="95" rx="5" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<text x="608" y="380" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Lookup</text>
+<line x1="606" y1="386" x2="914" y2="386" stroke="#d7cca6" stroke-width="1"/>
+<text x="608" y="400.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="619" y="400.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">set = VA bits 13:6, inside the page offset</text>
+<text x="608" y="415.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="619" y="415.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">8 bit utag from VA 47:14 picks the way</text>
+<text x="608" y="429.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="619" y="429.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">tree PLRU replacement over 8 ways</text>
+<text x="608" y="444.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">*</text>
+<text x="619" y="444.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start">write-back, write-allocate, store-miss entries</text>
+<rect x="35" y="495" width="270" height="130" rx="5" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="43" y="510" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Latency (cycles)</text>
+<line x1="41" y1="516" x2="299" y2="516" stroke="#d7cca6" stroke-width="1"/>
+<text x="43" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="54" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">3 pointer chase</text>
+<text x="43" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">●</text>
+<text x="54" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">4 to an ALU, 4 complex address</text>
+<text x="43" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="54" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">5 to a SIMD register</text>
+<text x="43" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="54" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">+1 line crossing</text>
+<text x="43" y="588.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="54" y="588.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">+28 to 31 page crossing</text>
+<rect x="325" y="495" width="270" height="130" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="333" y="510" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Bandwidth</text>
+<line x1="331" y1="516" x2="589" y2="516" stroke="#d7cca6" stroke-width="1"/>
+<text x="333" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="344" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">48 B/cycle load (3 x 16 B)</text>
+<text x="333" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="344" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">32 B/cycle store (2 x 16 B)</text>
+<text x="333" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="344" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">copy about 150 GB/s</text>
+<text x="333" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◇</text>
+<text x="344" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">L1 to L2 32 B/cycle each way</text>
+<rect x="615" y="495" width="305" height="130" rx="5" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="623" y="510" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#4b5563" text-anchor="start">Miss handling</text>
+<line x1="621" y1="516" x2="914" y2="516" stroke="#d7cca6" stroke-width="1"/>
+<text x="623" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#9ca3af" text-anchor="start">?</text>
+<text x="634" y="530.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#9ca3af" text-anchor="start">outstanding misses ?</text>
+<text x="623" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="634" y="545.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">fill buffer per line, misses merge</text>
+<text x="623" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="634" y="559.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">load woken as the fill passes</text>
+<text x="623" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="634" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">full buffers: load replays</text>
+<text x="623" y="588.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="634" y="588.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">streaming stores become non-temporal</text>
+<rect x="960" y="345" width="520" height="300" rx="8" fill="#fefbf3" stroke="#dac991" stroke-width="1"/>
+<text x="970" y="361" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Prefetchers</text>
+<text x="1470" y="361" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="end">train on virtual addresses in the LSU</text>
+<rect x="975" y="375" width="490" height="80" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="983" y="390" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Stride and region (AMPM-like)</text>
+<line x1="981" y1="396" x2="1459" y2="396" stroke="#d7cca6" stroke-width="1"/>
+<text x="983" y="410.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="410.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">16 simultaneous stride streams</text>
+<text x="983" y="425.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="425.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">access map per region, stride and density patterns</text>
+<text x="983" y="439.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="439.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">large-stride and SMS side tables</text>
+<rect x="975" y="470" width="490" height="80" rx="5" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<text x="983" y="485" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Pointer chasing (data memory-dependent)</text>
+<line x1="981" y1="491" x2="1459" y2="491" stroke="#d7cca6" stroke-width="1"/>
+<text x="983" y="505.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="505.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">1 dereference level, needs 3 accesses to arm</text>
+<text x="983" y="520.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="520.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">stride up to 8 KiB, reaches 64 KiB past the array</text>
+<text x="983" y="534.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="994" y="534.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">pointer and line share a 4 GiB region; 128-entry filter</text>
+<rect x="975" y="565" width="490" height="65" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="983" y="580" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12" font-weight="600" fill="#1f2937" text-anchor="start">Temporal and throttle</text>
+<line x1="981" y1="586" x2="1459" y2="586" stroke="#d7cca6" stroke-width="1"/>
+<text x="983" y="600.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="994" y="600.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#4b5563" text-anchor="start">history of just under 256 entries, 15 KiB regions</text>
+<text x="983" y="615.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="994" y="615.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">L2 rates each core every 32 cycles, ~4 prefetches per region</text>
+<polyline points="405,125 455,125" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="430" y="115" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">alloc</text>
+<polyline points="925,147 975,147" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="950" y="137" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">VA</text>
+<polyline points="570,195 570,210" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-linejoin="round"/>
+<polyline points="812,195 812,210" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-linejoin="round"/>
+<polyline points="570,305 570,345" fill="none" stroke="#1f2937" stroke-width="2.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="600" y="335" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">3 loads</text>
+<polyline points="812,305 812,345" fill="none" stroke="#1f2937" stroke-width="2.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="846" y="322" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">2 stores</text>
+<polyline points="1094,305 1094,338 770,338 770,365" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<rect x="927.3" y="326" width="65.4" height="13" rx="2" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="960" y="334" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">physical tag</text>
+<polyline points="1220,630 1220,650 770,650 770,630" fill="none" stroke="#1f2937" stroke-width="2.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<rect x="931.9125" y="657.5" width="126.17500000000001" height="13.5" rx="2" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="995" y="666" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">prefetch into L1 and L2</text>
+<polyline points="470,625 470,690" fill="none" stroke="#1f2937" stroke-width="2.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<rect x="527" y="677.5" width="131.4" height="13.5" rx="2" fill="#ffffff" stroke="none" stroke-width="1"/>
+<text x="530" y="686" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">to shared L2, 32 B/cycle</text>
+<rect x="30" y="726" width="16" height="11" rx="2" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="50" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● confirmed, 3+ measurements</text>
+<rect x="210.4" y="726" width="16" height="11" rx="2" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="230.4" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ corroborated, 2 sources</text>
+<rect x="374.6" y="726" width="16" height="11" rx="2" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<text x="394.6" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○ one source</text>
+<rect x="468.6" y="726" width="16" height="11" rx="2" fill="#fdf9eb" stroke="#f0ca52" stroke-width="1" stroke-dasharray="9 3"/>
+<text x="488.6" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◇ derived</text>
+<rect x="546.4000000000001" y="726" width="16" height="11" rx="2" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="566.4000000000001" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred, patent or analogy</text>
+<rect x="732.2" y="726" width="16" height="11" rx="2" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<text x="752.2" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? conjecture in the KB</text>
+<rect x="880.2" y="726" width="16" height="11" rx="2" fill="#fbf2fc" stroke="#c026d3" stroke-width="1.2" stroke-dasharray="6 2"/>
+<text x="900.2" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">+ proposed here, to vet</text>
+<rect x="1033.6000000000001" y="726" width="16" height="11" rx="2" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="1053.6000000000001" y="735" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? unknown</text>
+<polyline points="30,747 56,747" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="62" y="751" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">instruction flow</text>
+<polyline points="172.4,747 198.4,747" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="204.4" y="751" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">control</text>
+<polyline points="266.20000000000005,747 292.20000000000005,747" fill="none" stroke="#1f2937" stroke-width="2.6" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="298.20000000000005" y="751" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">data</text>
+<polyline points="343.80000000000007,747 369.80000000000007,747" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow)" stroke-linejoin="round"/>
+<text x="375.80000000000007" y="751" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">allocation / release</text>
+<text x="30" y="770" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start" font-style="italic">Also measured: TSO mode switch for Rosetta, exclusive monitor tied to L1D residency (64 B granule), no redundant load/store elimination.</text></svg>

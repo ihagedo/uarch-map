@@ -1,0 +1,60 @@
+/* atlas.css
+   Isaac Hagedorn, 2026-11-03
+   Styles for the atlas map pages and the map cards, on top of the map page's styles. */
+.atlas { display: grid; gap: 22px; }
+.atlas .masthead .eyebrow a { color: inherit; text-decoration: none; }
+.atlas .sub { margin: 0; font-size: 16px; color: var(--ink-2); }
+.atlas-nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; font-size: 14px; }
+.atlas-nav a { color: var(--link); text-decoration: none; }
+.atlas-nav a:hover { text-decoration: underline; }
+.locator { display: block; width: min(420px, 100%); }
+.atlas > *, .atlas .figure, .atlas .sheet, .rail { min-width: 0; }
+.atlas .figures { display: grid; gap: 22px; }
+.atlas .figure header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; }
+.atlas .figure h2 { margin: 0; font-size: 20px; font-weight: 650; }
+.kinds { margin: 0; display: flex; gap: 6px; align-items: center; }
+.kind { font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.full-toggle { margin-left: 6px; padding: 1px 8px; border: 1px solid var(--line); border-radius: 999px; background: var(--raise); color: var(--ink-2); font-size: 12px; cursor: pointer; }
+.full-toggle[aria-pressed="true"] { border-color: var(--link); color: var(--link); }
+.hot { cursor: pointer; }
+.hot.lit { fill: color-mix(in srgb, var(--link) 18%, transparent) !important; stroke: var(--link) !important; stroke-width: 2.5px !important; }
+.rail { display: grid; gap: 10px; }
+.tags { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { --hue: var(--edge); padding: 2px 9px; border: 1px solid color-mix(in srgb, var(--hue) 45%, var(--line)); border-radius: 999px; background: color-mix(in srgb, var(--hue) 10%, var(--surface)); color: var(--ink); font-size: 12.5px; text-decoration: none; }
+.tag:hover, .tag.lit { border-color: var(--hue); background: color-mix(in srgb, var(--hue) 28%, var(--surface)); }
+.tag.mech { --hue: var(--ink-3); border-style: dashed; }
+.tag.mech.st-measured { --hue: var(--edge); border-style: solid; }
+.tag.mech.st-speculative, .tag.mech.st-proposed { --hue: var(--ours); }
+.src { margin-left: auto; font-size: 12.5px; color: var(--ink-3); text-decoration: none; }
+.src:hover { color: var(--link); }
+.walk { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px; }
+.step { display: flex; align-items: baseline; gap: 7px; padding: 4px 10px 4px 6px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 13.5px; cursor: pointer; text-align: left; }
+.step .n { min-width: 20px; height: 20px; border-radius: 10px; background: var(--raise); color: var(--ink-2); font-size: 12px; font-weight: 700; line-height: 20px; text-align: center; }
+.step:hover { border-color: var(--link); }
+.step[aria-pressed="true"] { border-color: var(--link); background: color-mix(in srgb, var(--link) 8%, var(--surface)); }
+.step[aria-pressed="true"] .n { background: var(--link); color: #fff; }
+.draft { margin-left: 2px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ours); }
+.say { max-width: 64ch; padding: 12px 16px; border-left: 3px solid var(--link); background: var(--raise); border-radius: 0 8px 8px 0; font-size: 15px; line-height: 1.55; }
+.say p { margin: 0; }
+.say .ask { margin-top: 8px; font-style: italic; color: var(--ink-2); }
+.say .rests { margin-top: 8px; font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); }
+.sheets { display: grid; gap: 18px; }
+.sheets h2 { margin: 0; font-size: 20px; font-weight: 650; }
+.sheet .fig-scroll svg { min-width: 560px; }
+.tbl { overflow-x: auto; }
+.coverage { border-collapse: collapse; font-size: 14px; }
+.coverage th, .coverage td { padding: 4px 10px; border-bottom: 1px solid var(--line); text-align: center; white-space: nowrap; }
+.coverage th { font-weight: 600; }
+.coverage tbody th { text-align: left; }
+.coverage tbody th a { color: inherit; text-decoration: none; }
+.coverage tbody th a:hover { color: var(--link); }
+.coverage .lvl-1 { padding-left: 24px; } .coverage .lvl-2 { padding-left: 42px; } .coverage .lvl-3 { padding-left: 60px; }
+.coverage .c-have { color: var(--c-backend); font-weight: 700; }
+.coverage .c-next { color: var(--ink-2); }
+.coverage .c-gap, .coverage .c-na { color: var(--ink-3); }
+.coverage .n { font-variant-numeric: tabular-nums; color: var(--ink-2); }
+@media (max-width: 760px) {
+  .atlas-nav { font-size: 13px; }
+  .atlas .figure h2 { font-size: 17px; }
+  .coverage { font-size: 12.5px; }
+}

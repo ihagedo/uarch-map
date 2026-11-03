@@ -297,7 +297,7 @@ h1 {
   padding-top: 6px;
 }
 .legend-group { display: grid; gap: 8px; align-content: start; min-width: 0; }
-.legend h2, .sources h2, .figures h2 {
+.legend h2, .sources h2, .maps-sec h2 {
   margin: 0; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
 }
 .legend ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
@@ -481,19 +481,30 @@ h1 {
 .q-answers b { font-weight: 500; color: var(--ink); }
 .q-answers li.ours b, .q-answers li.ours .status-tag { color: var(--ours); }
 
-/* figures: inlined drawings; the SVGs carry their own palette, so they sit on white in both themes */
-.figures { display: grid; gap: 18px; }
-.fig-group { display: grid; gap: 14px; padding-top: 10px; border-top: 1px solid var(--line); }
-.fig-group > h3 { margin: 0; font-size: 18px; font-weight: 650; }
-.figure { display: grid; gap: 10px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); scroll-margin-top: 12px; }
-.figure.lit { box-shadow: 0 0 0 2px var(--link); }
-.fig-blocks { margin: 0; display: flex; flex-wrap: wrap; gap: 6px; }
-.fig-block { padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px; background: var(--raise); font-size: 12.5px; cursor: pointer; color: var(--ink); }
-.fig-block:hover { border-color: var(--link); }
-.fig-scroll { overflow-x: auto; cursor: zoom-in; border-radius: 6px; background: #fff; }
+/* drawings sit on white in both themes; the atlas pages add their own rules */
+.fig-scroll { overflow-x: auto; border-radius: 6px; background: #fff; }
 .fig-scroll svg { display: block; width: 100%; height: auto; min-width: 640px; }
-.fig-scroll.full { cursor: zoom-out; }
 .fig-scroll.full svg { width: var(--full); max-width: none; }
 .fig-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .fig-link { color: var(--link); text-decoration: none; font-size: 13.5px; }
 .fig-link:hover { text-decoration: underline; }
+.fig-map { font-size: 12.5px; color: var(--ink-3); }
+/* the world map in miniature: on the map cards and at the top of each atlas page */
+.locator, .map-card svg { display: block; }
+.locator svg, .map-card svg { display: block; width: 100%; height: auto; }
+.lbg { fill: var(--surface); stroke: var(--line); stroke-width: 2; }
+.lf { fill: color-mix(in srgb, var(--hue) 4%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 30%, var(--line)); stroke-width: 3; }
+.lb { fill: color-mix(in srgb, var(--hue) 10%, var(--surface)); stroke: color-mix(in srgb, var(--hue) 25%, var(--line)); stroke-width: 2; }
+.lf.lit { fill: color-mix(in srgb, var(--hue) 14%, var(--surface)); stroke: var(--hue); }
+.lb.lit { fill: color-mix(in srgb, var(--hue) 55%, var(--surface)); stroke: var(--hue); }
+.maps-sec { display: grid; gap: 14px; }
+.maps { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+.map-card { display: grid; gap: 4px; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); text-decoration: none; }
+.map-card:hover { border-color: var(--link); }
+.map-card svg { margin-bottom: 6px; }
+.map-card .map-n { font-size: 11.5px; letter-spacing: 0.08em; color: var(--ink-3); }
+.map-card b { font-size: 16px; font-weight: 650; }
+.map-card span:last-child { font-size: 13px; color: var(--ink-2); }
+.maps-more { margin: 0; font-size: 13.5px; }
+.maps-more a { color: var(--link); text-decoration: none; }
+.maps-more a:hover { text-decoration: underline; }

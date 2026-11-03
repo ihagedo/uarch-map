@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 714" width="1700" height="714" role="img" aria-label="AMX coprocessor" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-kinds="structure"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M10,0 L0,5 L10,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1700" height="714" fill="#ffffff"/><text x="20" y="30" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937">AMX coprocessor</text><text x="20" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#4b5563">Matrix coprocessor shared by a cluster&#x27;s cores.</text><rect x="40.0" y="106.0" width="1620.0" height="256.0" rx="9" fill="#fef6f6" stroke="#d5989c" stroke-width="1"/>
+<text x="50.0" y="123.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#dc2626" text-anchor="start">Structure</text>
+<text x="1650.0" y="123.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">7 parameters</text>
+<rect x="40.0" y="372.0" width="1620.0" height="188.0" rx="9" fill="#fef6f6" stroke="#d5989c" stroke-width="1"/>
+<text x="50.0" y="389.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#dc2626" text-anchor="start">Mechanisms</text>
+<text x="1650.0" y="389.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">5: ◆ 4 measured, ? 1 speculative</text>
+<rect x="40.0" y="570.0" width="1620.0" height="60.0" rx="9" fill="#fef6f6" stroke="#d5989c" stroke-width="1"/>
+<text x="50.0" y="587.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#dc2626" text-anchor="start">Drawn in detail</text>
+<text x="1650.0" y="587.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">4 figures</text>
+<rect x="40.0" y="70.0" width="54.9" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="116.9" y="70.0" width="56.9" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="195.8" y="70.0" width="93.6" height="18.5" rx="4" fill="#fceeee" stroke="#d58f93" stroke-width="0.8"/>
+<rect x="54.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fae1e1" stroke="#e66767" stroke-width="1"/>
+<rect x="58.0" y="140.0" width="290.5" height="44.0" rx="1.5" fill="#fce9e9" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="378.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fae1e1" stroke="#e66767" stroke-width="1"/>
+<rect x="382.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fce9e9" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="455.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fce9e9" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="528.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fce9e9" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="601.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fce9e9" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="702.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fef8f8" stroke="#d4a0a5" stroke-width="0.8"/>
+<rect x="882.0" y="146.0" width="60.0" height="34.0" rx="3" fill="#fae1e1" stroke="#dc2626" stroke-width="1"/>
+<polyline points="812.0,155.5 878.0,155.5" fill="none" stroke="#dc2626" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="812.0,170.5 878.0,170.5" fill="none" stroke="#dc2626" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1026.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fef8f8" stroke="#d4a0a5" stroke-width="0.8"/>
+<rect x="1034.0" y="182.0" width="284.0" height="8.0" rx="3" fill="#fbe5e5" stroke="none" stroke-width="1"/>
+<rect x="1350.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fef8f8" stroke="#d4a0a5" stroke-width="0.8"/>
+<polyline points="1366.0,166.0 1634.0,166.0" fill="none" stroke="#dc2626" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1370.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#ea7d7d" stroke="none" stroke-width="1"/>
+<rect x="1432.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#ea7d7d" stroke="none" stroke-width="1"/>
+<rect x="1494.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#ea7d7d" stroke="none" stroke-width="1"/>
+<rect x="1556.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#ea7d7d" stroke="none" stroke-width="1"/>
+<rect x="54.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fef8f8" stroke="#d4a0a5" stroke-width="0.8"/>
+<rect x="234.0" y="258.0" width="60.0" height="34.0" rx="3" fill="#fae1e1" stroke="#dc2626" stroke-width="1"/>
+<polyline points="164.0,275.0 230.0,275.0" fill="none" stroke="#dc2626" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="378.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fae1e1" stroke="#e66767" stroke-width="1"/>
+<rect x="382.0" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="400.2" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="418.5" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="436.8" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="455.0" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="473.2" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="491.5" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="509.8" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="528.0" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="546.2" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="564.5" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="582.8" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="601.0" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="619.2" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="637.5" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="655.8" y="252.0" width="16.8" height="44.0" rx="1.5" fill="#fceeee" stroke="#d6868a" stroke-width="0.6"/>
+<rect x="54.0" y="402.0" width="389.0" height="66.0" rx="5" fill="#f6c9c9" stroke="#dc2626" stroke-width="1.4"/>
+<rect x="67.0" y="423.0" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="67.0" y="429.3" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="67.0" y="435.6" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="67.0" y="441.9" width="22.0" height="5.0" rx="1" fill="#f4bebe" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="455.0" y="402.0" width="389.0" height="66.0" rx="5" fill="#f6c9c9" stroke="#dc2626" stroke-width="1.4"/>
+<rect x="468.0" y="425.0" width="22.0" height="20.0" rx="3" fill="#fceeee" stroke="#dc2626" stroke-width="0.9"/>
+<circle cx="479.0" cy="435.0" r="3" fill="#dc2626" stroke="none" stroke-width="1"/>
+<rect x="856.0" y="402.0" width="389.0" height="66.0" rx="5" fill="#f6c9c9" stroke="#dc2626" stroke-width="1.4"/>
+<circle cx="873.0" cy="435.0" r="5" fill="#f6c9c9" stroke="#dc2626" stroke-width="1"/>
+<circle cx="887.0" cy="435.0" r="5" fill="#ffffff" stroke="#dc2626" stroke-width="1"/>
+<path d="M876.0,431.0 Q880.0,423.0 884.0,431.0" fill="none" stroke="#dc2626" stroke-width="1.1" marker-end="url(#arrow)"/>
+<rect x="1257.0" y="402.0" width="389.0" height="66.0" rx="5" fill="#f6c9c9" stroke="#dc2626" stroke-width="1.4"/>
+<rect x="1270.0" y="423.0" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="1270.0" y="429.3" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="1270.0" y="435.6" width="22.0" height="5.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="1270.0" y="441.9" width="22.0" height="5.0" rx="1" fill="#f4bebe" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="54.0" y="480.0" width="389.0" height="66.0" rx="5" fill="#ffffff" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="66.0" y="502.0" width="5.0" height="22.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="72.5" y="502.0" width="5.0" height="22.0" rx="1" fill="#f4bebe" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="79.0" y="502.0" width="5.0" height="22.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="85.5" y="502.0" width="5.0" height="22.0" rx="1" fill="#fce9e9" stroke="#dc2626" stroke-width="0.6"/>
+<rect x="54.0" y="600.0" width="201.9" height="18.0" rx="4" fill="#fceeee" stroke="#d58f93" stroke-width="0.8"/>
+<rect x="265.9" y="600.0" width="300.4" height="18.0" rx="4" fill="#fceeee" stroke="#d58f93" stroke-width="0.8"/>
+<rect x="576.4" y="600.0" width="249.5" height="18.0" rx="4" fill="#fceeee" stroke="#d58f93" stroke-width="0.8"/>
+<rect x="835.9" y="600.0" width="249.1" height="18.0" rx="4" fill="#fceeee" stroke="#d58f93" stroke-width="0.8"/>
+<text x="47.0" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">Apple M1</text>
+<text x="101.9" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="123.9" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">P-cluster</text>
+<text x="180.8" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="202.8" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#dc2626" text-anchor="start">AMX coprocessor</text>
+<text x="204.0" y="195.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">1 units</text>
+<text x="54.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX units per P-cluster</text>
+<text x="528.0" y="195.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">4 sets</text>
+<text x="378.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX register sets</text>
+<text x="802.0" y="168.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="end">~ 2 instr/cycle</text>
+<text x="702.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX instructions sent per cycle</text>
+<text x="1038.0" y="156.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">~</text>
+<text x="1052.0" y="156.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#1f2937" text-anchor="start">8x8</text>
+<text x="1026.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">Processing-element grid</text>
+<text x="1500.0" y="192.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">○ 4 cycles</text>
+<text x="1350.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX FMA latency</text>
+<text x="154.0" y="280.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="end">○ 1 instr/cycle</text>
+<text x="54.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX fp32/fp64 FMA instructions per cycle</text>
+<text x="528.0" y="307.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">30 ops</text>
+<text x="378.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">AMX out-of-order buffer</text>
+<text x="102.0" y="428.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">AMX issue through the store queue</text>
+<text x="102.0" y="446.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="503.0" y="428.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">AMX operation set</text>
+<text x="503.0" y="446.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="904.0" y="428.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">AMX out-of-order window without Z renaming</text>
+<text x="904.0" y="446.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="1305.0" y="428.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">One AMX unit per cluster</text>
+<text x="1305.0" y="446.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="102.0" y="506.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">AMX outer-product grid</text>
+<text x="102.0" y="524.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">? speculative</text>
+<text x="61.0" y="611.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#dc2626" text-anchor="start">chip · Apple M1, the die as a block diagram</text>
+<text x="272.9" y="611.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#dc2626" text-anchor="start">core · Apple M1 Firestorm core, the whole machine as we think i…</text>
+<text x="583.4" y="611.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#dc2626" text-anchor="start">region · Beyond the core, cache hierarchy and memory</text>
+<text x="842.9" y="611.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#dc2626" text-anchor="start">mechanism · AMX and the system level cache, inside</text>
+<rect x="40.0" y="677.0" width="16.0" height="11.0" rx="2" fill="#f2b1b1" stroke="#dc2626" stroke-width="2.2"/>
+<text x="60.0" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
+<rect x="170.6" y="677.0" width="16.0" height="11.0" rx="2" fill="#f6c9c9" stroke="#dc2626" stroke-width="1.4"/>
+<text x="190.6" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ 2 sources</text>
+<rect x="264.7" y="677.0" width="16.0" height="11.0" rx="2" fill="#fae1e1" stroke="#e66767" stroke-width="1"/>
+<text x="284.7" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○ one source</text>
+<rect x="363.7" y="677.0" width="16.0" height="11.0" rx="2" fill="#fceeee" stroke="#e66767" stroke-width="1" stroke-dasharray="9 3"/>
+<text x="383.7" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◇ derived</text>
+<rect x="446.7" y="677.0" width="16.0" height="11.0" rx="2" fill="#fef6f6" stroke="#e66767" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="466.7" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~ patent or analogy</text>
+<rect x="574.3" y="677.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<text x="594.3" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? KB conjecture</text>
+<rect x="687.8" y="677.0" width="16.0" height="11.0" rx="2" fill="#fbf2fc" stroke="#c026d3" stroke-width="1.2" stroke-dasharray="6 2"/>
+<text x="707.8" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">+ proposed here</text>
+<rect x="800.6" y="677.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="820.6" y="686.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? unknown</text><g class="hot-layer"><rect class="hot" data-bid="crumb-chip" data-fig="chip" x="40.0" y="70.0" width="54.9" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-pcluster" data-fig="block-pcluster" x="116.9" y="70.0" width="56.9" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-amx" data-fig="block-amx" x="195.8" y="70.0" width="93.6" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.units" data-param="amx.units" x="54.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.register_sets" data-param="amx.register_sets" x="378.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.issue_width" data-param="amx.issue_width" x="702.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.pe_grid" data-param="amx.pe_grid" x="1026.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.fma_latency" data-param="amx.fma_latency" x="1350.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.fma_throughput" data-param="amx.fma_throughput" x="54.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx.ooo_buffer" data-param="amx.ooo_buffer" x="378.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx_lsu_issue" data-mech="amx_lsu_issue" x="54.0" y="402.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx_op_set" data-mech="amx_op_set" x="455.0" y="402.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx_z_dependency_window" data-mech="amx_z_dependency_window" x="856.0" y="402.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx_shared_contexts" data-mech="amx_shared_contexts" x="1257.0" y="402.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="amx_datapath" data-mech="amx_datapath" x="54.0" y="480.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-chip" data-fig="chip" x="54.0" y="600.0" width="201.9" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-poster" data-fig="poster" x="265.9" y="600.0" width="300.4" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-07-beyond" data-fig="07-beyond" x="576.4" y="600.0" width="249.5" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-x10-amx-slc" data-fig="x10-amx-slc" x="835.9" y="600.0" width="249.1" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot hot-frame" data-bid="params-amx" x="40" y="106" width="1620" height="256" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="mechs-amx" x="40" y="372" width="1620" height="188" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="deeper-amx" x="40" y="570" width="1620" height="60" fill="transparent" stroke="none" pointer-events="none"/></g></svg>

@@ -4,15 +4,15 @@ Isaac Hagedorn, 2026-10-04
 Build the map page from kb/<core>.json and site/layout/<core>.yaml into one self-contained HTML file.
 """
 
-import html
 import json
 import os
-import re
 import sys
 
 import yaml
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools", "kb"))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import atlas_pages  # noqa: E402
 from model import CONF_NAME, CONF_RANK, KB, ROOT  # noqa: E402
 
 SRC = os.path.join(ROOT, "site", "src")
@@ -372,45 +372,6 @@ def view_data(kb, geo, palette=None):
     }
 
 
-def figures(kb):
-    """site/figures/figures.yaml: each figure inlined under its group. Returns (page html, script data)."""
-    fdir = os.path.join(ROOT, "site", "figures")
-    if not os.path.exists(os.path.join(fdir, "figures.yaml")):
-        return "", {}
-    with open(os.path.join(fdir, "figures.yaml")) as fh:
-        spec = yaml.safe_load(fh)
-    for fid, f in spec["figures"].items():
-        for kind, known in (("blocks", kb.blocks), ("params", kb.params), ("mechanisms", kb.mechanisms)):
-            for x in f.get(kind, []):
-                if x not in known:
-                    raise SystemExit(f"figures: {fid} names unknown {kind} {x}")
-    parts, data = [], {}
-    for g in spec["groups"]:
-        parts.append(f'<div class="fig-group" id="figs-{g["id"]}"><h3>{html.escape(g["title"])}</h3>')
-        for fid in g["figures"]:
-            f = spec["figures"][fid]
-            with open(os.path.join(fdir, f["file"])) as fh:
-                svg = fh.read()
-            width = re.search(r'<svg[^>]*?\swidth="([\d.]+)"', svg).group(1)
-            svg = re.sub(r'<svg([^>]*?)\swidth="[\d.]+"\sheight="[\d.]+"', r"<svg\1", svg, count=1)
-            svg = re.sub(r'<g class="hot-layer">.*?</g>', "", svg, count=1, flags=re.S)
-            # the map has its own #arrow marker, so each figure's ids get a prefix
-            svg = re.sub(r'(\sid="|url\(#)', rf"\1fig-{fid}-", svg)
-            chips = "".join(
-                f'<button type="button" class="fig-block" data-block="{b}">'
-                f"{html.escape(kb.blocks[b].name)}</button>"
-                for b in f["blocks"]
-            )
-            parts.append(
-                f'<article class="figure" id="fig-{fid}"><p class="fig-blocks">{chips}</p>'
-                f'<div class="fig-scroll" style="--full: {width}px" tabindex="0" title="Click for full size">'
-                f"{svg}</div></article>"
-            )
-            data[fid] = {"title": f["title"], "blocks": f["blocks"]}
-        parts.append("</div>")
-    return "".join(parts), data
-
-
 def main():
     core = sys.argv[1] if len(sys.argv) > 1 else "firestorm"
     kb = KB.load(core)
@@ -419,7 +380,6 @@ def main():
     geo = geometry(kb, layout)
     geo["L3"] = structures(kb, layout)
     data = view_data(kb, geo, layout.get("palette"))
-    fig_html, data["figures"] = figures(kb)
     for sid, st in geo["L3"].items():
         for bid in st["blocks"]:
             data["blocks"][bid]["l3"] = sid
@@ -428,11 +388,12 @@ def main():
         with open(os.path.join(SRC, name)) as fh:
             return fh.read()
 
+    cards, data["atlas"] = atlas_pages.build(kb, geo, layout, read("style.css"))
     page = read("page.html")
     payload = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
     app = read("app.js").replace("/*STRUCTURES*/", read("structures.js"))
     page = page.replace("/*STYLE*/", read("style.css")).replace("/*APP*/", app).replace("{{DATA}}", payload)
-    page = page.replace("{{FIGURES}}", fig_html)
+    page = page.replace("{{MAPS}}", cards)
     head, body = page.split("<!-- body -->", 1)
     os.makedirs(OUT, exist_ok=True)
     with open(os.path.join(OUT, "index.html"), "w") as fh:
@@ -441,12 +402,12 @@ def main():
             '<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n'
             f"{head}</head>\n<body>\n{body}</body>\n</html>\n"
         )
-    with open(os.path.join(OUT, "artifact.html"), "w") as fh:
+    with open(os.path.join(ROOT, "build", "artifact.html"), "w") as fh:
         fh.write(head + body)
     size = os.path.getsize(os.path.join(OUT, "index.html"))
     print(
         f"{core}: {len(data['blocks'])} blocks, {len(data['params'])} params, {len(data['claims'])} claims "
-        f"-> build/site/index.html ({size // 1024} KiB), build/site/artifact.html"
+        f"-> build/site/index.html ({size // 1024} KiB), build/artifact.html"
     )
 
 

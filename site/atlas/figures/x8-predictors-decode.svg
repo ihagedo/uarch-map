@@ -1,0 +1,385 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 965" width="1700" height="965" role="img" aria-label="Predictor companions and decode rules" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-kinds="dataflow fsm rtl structure"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M10,0 L0,5 L10,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1700" height="965" fill="#ffffff"/><text x="20" y="30" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937">Predictor companions and decode rules</text><text x="20" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#4b5563">Return stack, loop predictor, context tags, the method cache the M1 lacks, and what decode does to an instruction. Dotted outlines are speculative, grey dotted means absent on the M1.</text><rect x="50.0" y="70.0" width="820.0" height="440.0" rx="9" fill="#f6f9fe" stroke="#95ade1" stroke-width="1"/>
+<text x="60.0" y="87.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#2563eb" text-anchor="start">Return address stack</text>
+<text x="860.0" y="87.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">two levels, 50 deep</text>
+<polyline points="250.0,110.0 250.0,480.0" fill="none" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="540.0,110.0 540.0,480.0" fill="none" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="395.0" y="104.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#4b5563" text-anchor="middle">fetch</text>
+<text x="615.0" y="104.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#4b5563" text-anchor="middle">decode</text>
+<rect x="900.0" y="70.0" width="750.0" height="440.0" rx="9" fill="#f6f9fe" stroke="#95ade1" stroke-width="1"/>
+<text x="910.0" y="87.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#2563eb" text-anchor="start">Beside the direction predictor</text>
+<text x="1640.0" y="87.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">loop mode and no context tag</text>
+<rect x="50.0" y="540.0" width="820.0" height="380.0" rx="9" fill="#f6f9fe" stroke="#95ade1" stroke-width="1"/>
+<text x="60.0" y="557.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#2563eb" text-anchor="start">Indirect targets</text>
+<text x="860.0" y="557.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">shared entries, checked at execute</text>
+<polyline points="250.0,580.0 250.0,900.0" fill="none" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="480.0,580.0 480.0,900.0" fill="none" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="700.0,580.0 700.0,900.0" fill="none" stroke="#9ca3af" stroke-width="0.8" stroke-dasharray="6 4" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="365.0" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#4b5563" text-anchor="middle">predict</text>
+<text x="590.0" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#4b5563" text-anchor="middle">fetch</text>
+<text x="775.0" y="574.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="700" fill="#4b5563" text-anchor="middle">execute</text>
+<rect x="900.0" y="540.0" width="750.0" height="380.0" rx="9" fill="#f6f9fe" stroke="#95ade1" stroke-width="1"/>
+<text x="910.0" y="557.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#2563eb" text-anchor="start">Decode</text>
+<text x="1640.0" y="557.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">8 instructions a cycle</text>
+<rect x="70.0" y="120.0" width="160.0" height="90.0" rx="4" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="74.0" y="148.0" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="150.0" y="148.0" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="159.5" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="150.0" y="159.5" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="171.0" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="150.0" y="171.0" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="182.5" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="150.0" y="182.5" width="74.8" height="10.3" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="70.0" y="250.0" width="110.0" height="110.0" rx="4" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="74.0" y="268.0" width="102.0" height="17.5" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="74.0" y="287.0" width="102.0" height="17.5" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="74.0" y="306.0" width="102.0" height="17.5" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="74.0" y="325.0" width="102.0" height="17.5" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<polygon points="330.0,265.0 346.0,275.0 346.0,335.0 330.0,345.0" fill="#ffffff" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="420.0" y="275.0" width="100.0" height="60.0" rx="5" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<line x1="425.0" y1="299.0" x2="515.0" y2="299.0" stroke="#a6b8df" stroke-width="1"/>
+<rect x="580.0" y="120.0" width="120.0" height="240.0" rx="4" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<rect x="584.0" y="138.0" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="158.6" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="179.2" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="199.8" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="220.4" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="241.0" width="112.0" height="19.1" rx="1.5" fill="#a8c1f7" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="261.6" width="112.0" height="19.1" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="282.2" width="112.0" height="19.1" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="302.8" width="112.0" height="19.1" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="584.0" y="323.4" width="112.0" height="19.1" rx="1.5" fill="#eef3fd" stroke="#84a2e2" stroke-width="0.6"/>
+<rect x="580.0" y="400.0" width="270.0" height="24.0" rx="2" fill="#f8fafe" stroke="#9db3e0" stroke-width="1"/>
+<rect x="580.0" y="400.0" width="67.5" height="24.0" rx="2" fill="#fbfcff" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="647.5" y="400.0" width="202.5" height="24.0" rx="2" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<polygon points="740.0,300.0 776.0,312.0 740.0,324.0" fill="#ffffff" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="805.0" cy="182.0" r="26" fill="#f6f9fe" stroke="#6692f1" stroke-width="1.2"/>
+<circle cx="805.0" cy="262.0" r="22" fill="#f6f9fe" stroke="#6692f1" stroke-width="1.2"/>
+<rect x="920.0" y="120.0" width="240.0" height="110.0" rx="4" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="924.0" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="148.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="159.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="170.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="181.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="192.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="962.7" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1040.0" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1117.3" y="203.0" width="37.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="920.0" y="270.0" width="240.0" height="70.0" rx="4" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="924.0" y="298.0" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="298.0" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="298.0" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="306.7" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="306.7" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="306.7" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="924.0" y="315.3" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1001.3" y="315.3" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="1078.7" y="315.3" width="76.1" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<polygon points="1230.0,190.0 1246.0,200.0 1246.0,260.0 1230.0,270.0" fill="#ffffff" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1300.0" y="200.0" width="110.0" height="60.0" rx="5" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<line x1="1305.0" y1="224.0" x2="1405.0" y2="224.0" stroke="#a6b8df" stroke-width="1"/>
+<circle cx="1480.0" cy="150.0" r="24" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<circle cx="1600.0" cy="240.0" r="24" fill="#ffffff" stroke="#b258c5" stroke-width="1.3"/>
+<circle cx="1480.0" cy="330.0" r="26" fill="#ffffff" stroke="#b258c5" stroke-width="1.3"/>
+<rect x="920.0" y="390.0" width="420.0" height="24.0" rx="2" fill="#f8fafe" stroke="#9db3e0" stroke-width="1"/>
+<rect x="920.0" y="390.0" width="210.0" height="24.0" rx="2" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="1130.0" y="390.0" width="52.5" height="24.0" rx="2" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="1182.5" y="390.0" width="35.0" height="24.0" rx="2" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<rect x="1217.5" y="390.0" width="122.5" height="24.0" rx="2" fill="#fbfcff" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<rect x="1400.0" y="370.0" width="110.0" height="46.0" rx="5" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<line x1="1405.0" y1="395.0" x2="1505.0" y2="395.0" stroke="#a6b8df" stroke-width="1"/>
+<rect x="1530.0" y="370.0" width="110.0" height="46.0" rx="5" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<line x1="1535.0" y1="395.0" x2="1635.0" y2="395.0" stroke="#a6b8df" stroke-width="1"/>
+<rect x="70.0" y="600.0" width="160.0" height="110.0" rx="4" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<rect x="74.0" y="628.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="628.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="628.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="639.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="639.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="639.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="650.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="650.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="650.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="661.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="661.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="661.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="672.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="672.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="672.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="74.0" y="683.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="124.7" y="683.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="175.3" y="683.0" width="49.5" height="9.8" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="290.0" y="625.0" width="160.0" height="60.0" rx="5" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<line x1="295.0" y1="649.0" x2="445.0" y2="649.0" stroke="#a6b8df" stroke-width="1"/>
+<polygon points="520.0,643.0 556.0,655.0 520.0,667.0" fill="#ffffff" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="730.0" y="625.0" width="120.0" height="60.0" rx="5" fill="#c1e4ec" stroke="#0891b2" stroke-width="1.4"/>
+<line x1="735.0" y1="649.0" x2="845.0" y2="649.0" stroke="#9fc4d1" stroke-width="1"/>
+<circle cx="600.0" cy="760.0" r="22" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="70.0" y="800.0" width="120.0" height="50.0" rx="5" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="75.0" y1="825.0" x2="185.0" y2="825.0" stroke="#a6b8df" stroke-width="1"/>
+<circle cx="260.0" cy="825.0" r="13" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+<polyline points="252.2,825.0 267.8,825.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="260.0,817.2 260.0,832.8" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="330.0" y="790.0" width="170.0" height="70.0" rx="4" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<rect x="334.0" y="818.0" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="415.0" y="818.0" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="334.0" y="826.7" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="415.0" y="826.7" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="334.0" y="835.3" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="415.0" y="835.3" width="79.8" height="7.5" rx="1" fill="#eef3fd" stroke="#8ca7e1" stroke-width="0.5"/>
+<rect x="560.0" y="800.0" width="120.0" height="50.0" rx="5" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="565.0" y1="825.0" x2="675.0" y2="825.0" stroke="#a6b8df" stroke-width="1"/>
+<rect x="920.0" y="580.0" width="710.0" height="150.0" rx="5" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="940.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="950.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<rect x="990.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<rect x="1054.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="1064.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<rect x="1168.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="1178.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<rect x="1282.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="1396.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="1510.0" y="610.0" width="96.0" height="22.0" rx="3" fill="#d3e0fb" stroke="#2563eb" stroke-width="1"/>
+<rect x="1520.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<rect x="1560.0" y="652.0" width="34.0" height="20.0" rx="2" fill="#eef3fd" stroke="#7ca1f3" stroke-width="0.8"/>
+<circle cx="980.0" cy="820.0" r="30" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<circle cx="1160.0" cy="820.0" r="30" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<circle cx="1340.0" cy="820.0" r="26" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<rect x="1430.0" y="760.0" width="100.0" height="50.0" rx="4" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<rect x="1434.0" y="778.0" width="21.5" height="28.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="1457.0" y="778.0" width="21.5" height="28.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="1480.0" y="778.0" width="21.5" height="28.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="1503.0" y="778.0" width="21.5" height="28.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<circle cx="1580.0" cy="785.0" r="13" fill="#ffffff" stroke="#1f2937" stroke-width="1.1"/>
+<rect x="1555.0" y="840.0" width="80.0" height="46.0" rx="5" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<line x1="1560.0" y1="865.0" x2="1630.0" y2="865.0" stroke="#a6b8df" stroke-width="1"/>
+<path d="M 795.0,158.0 C 777.0,122.0 833.0,122.0 815.0,158.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 791.1,205.2 Q 781.0,222.0 793.2,242.3" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<path d="M 816.8,242.3 Q 829.0,222.0 818.9,205.2" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<polyline points="230.0,165.0 338.0,165.0 338.0,250.0 338.0,270.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="3" data-src="return_fetch_table" data-dst="m_ras"/>
+<polyline points="180.0,305.0 250.0,305.0 250.0,289.0 330.0,289.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="4" data-src="two_level_ras" data-dst="m_ras"/>
+<polyline points="580.0,240.0 540.0,240.0 540.0,360.0 300.0,360.0 300.0,321.0 330.0,321.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="5" data-src="ras_main" data-dst="m_ras"/>
+<polyline points="346.0,305.0 420.0,305.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="6" data-src="m_ras" data-dst="next_pc"/>
+<polyline points="470.0,335.0 470.0,395.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="7" data-src="next_pc"/>
+<polyline points="640.0,360.0 640.0,380.0 715.0,380.0 715.0,400.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" marker-start="url(#arrowrev)" stroke-linejoin="round" stroke-linecap="round" data-eid="8" data-src="ras_main" data-dst="ras_pac_check"/>
+<polyline points="750.8,400.0 750.8,320.4" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="9" data-src="ras_pac_check" data-dst="pac_cmp"/>
+<polyline points="776.0,312.0 800.0,312.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="10" data-src="pac_cmp"/>
+<polyline points="1160.0,175.0 1200.0,175.0 1200.0,214.0 1230.0,214.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="11" data-src="tage" data-dst="m_dir"/>
+<polyline points="1160.0,305.0 1200.0,305.0 1200.0,246.0 1230.0,246.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="12" data-src="loop_predictor" data-dst="m_dir"/>
+<polyline points="1160.0,329.5 1238.0,329.5 1238.0,265.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="13" data-src="loop_predictor" data-dst="m_dir"/>
+<polyline points="1246.0,230.0 1300.0,230.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="14" data-src="m_dir" data-dst="dir_out"/>
+<polyline points="920.0,305.0 905.0,305.0 905.0,175.0 920.0,175.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="15" data-src="loop_predictor" data-dst="tage"/>
+<path d="M 1491.2,172.4 Q 1517.5,225.0 1575.4,235.5" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 1575.4,244.5 Q 1517.5,255.0 1492.1,305.9" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 1492.1,305.9 Q 1525.0,240.0 1491.2,172.4" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#arrow)"/>
+<polyline points="1455.0,416.0 1455.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="19" data-src="ctx_a"/>
+<polyline points="1585.0,416.0 1585.0,450.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" data-eid="20" data-src="ctx_b"/>
+<polyline points="1585.0,450.0 1360.0,450.0 1360.0,407.2 1340.0,407.2" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="21" data-dst="bpu_isolation"/>
+<polyline points="230.0,655.0 290.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="22" data-src="ittage" data-dst="ibp_fetch"/>
+<polyline points="450.0,655.0 520.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="23" data-src="ibp_fetch" data-dst="ibp_context_check"/>
+<polyline points="556.0,655.0 730.0,655.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="24" data-src="ibp_context_check" data-dst="ibp_exec"/>
+<polyline points="530.8,663.4 530.8,700.0 600.0,700.0 600.0,738.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="25" data-src="ibp_context_check" data-dst="ib_sq"/>
+<polyline points="190.0,825.0 247.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="26" data-src="objc_uop" data-dst="objc_hash"/>
+<polyline points="273.0,825.0 330.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="27" data-src="objc_hash" data-dst="objc_msgsend_predictor"/>
+<polyline points="500.0,825.0 560.0,825.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="28" data-src="objc_msgsend_predictor" data-dst="objc_redirect"/>
+<path d="M 1008.8,831.5 Q 1070.0,856.0 1131.2,831.5" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 1150.0,792.0 C 1132.0,756.0 1188.0,756.0 1170.0,792.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 1188.8,831.5 Q 1250.0,856.0 1314.9,830.0" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<path d="M 1315.9,832.1 Q 1160.0,910.0 1007.7,833.9" fill="none" stroke="#1f2937" stroke-width="1.2" marker-end="url(#arrow)"/>
+<polyline points="1530.0,785.0 1567.0,785.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="33" data-src="ldop_data" data-dst="load_op_fusion"/>
+<polyline points="1580.0,798.0 1580.0,820.0 1595.0,820.0 1595.0,840.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="34" data-src="load_op_fusion" data-dst="ldop_out"/>
+<polyline points="1580.0,740.0 1580.0,772.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round" data-eid="35" data-dst="load_op_fusion"/>
+<text x="112.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tag</text>
+<text x="188.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">ret</text>
+<text x="150.0" y="132.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">return fetch table</text>
+<text x="150.0" y="205.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">tag · ends in ret</text>
+<text x="125.0" y="262.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">mini RAS</text>
+<text x="125.0" y="355.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">returns before decode</text>
+<text x="427.0" y="291.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">next PC</text>
+<text x="427.0" y="310.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="435.9" y="310.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">after a return</text>
+<text x="360.0" y="400.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">max length</text>
+<text x="640.0" y="132.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">RAS</text>
+<text x="640.0" y="355.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">50 entries</text>
+<text x="613.8" y="415.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">PAC</text>
+<text x="582.0" y="433.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">63</text>
+<text x="645.5" y="433.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">48</text>
+<text x="748.8" y="415.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">return address</text>
+<text x="649.5" y="433.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">47</text>
+<text x="848.0" y="433.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">0</text>
+<text x="754.4" y="296.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle" data-owner="pac_cmp">= pac</text>
+<text x="805.0" y="180.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">depth &lt;</text>
+<text x="805.0" y="191.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">50</text>
+<text x="805.0" y="265.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">cleared</text>
+<text x="785.0" y="118.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-ov0-ov0">call: push</text>
+<text x="723.6" y="224.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-ov0-ras_overflow_clear">call at 50</text>
+<text x="830.5" y="224.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-ras_overflow_clear-ov0">empty</text>
+<text x="250.0" y="160.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="3">ret, no target</text>
+<text x="650.0" y="374.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="8">push · pop</text>
+<text x="806.0" y="316.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">fault</text>
+<text x="70.0" y="382.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">mini RAS: returns whose calls decode has not seen</text>
+<text x="943.3" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T1</text>
+<text x="982.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T2</text>
+<text x="1020.7" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T3</text>
+<text x="1059.3" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T4</text>
+<text x="1098.0" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T5</text>
+<text x="1136.7" y="146.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">T6</text>
+<text x="1040.0" y="132.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">TAGE</text>
+<text x="1040.0" y="225.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">6 tables, 100 b history</text>
+<text x="962.7" y="296.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">PC</text>
+<text x="1040.0" y="296.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">trip</text>
+<text x="1117.3" y="296.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">iter</text>
+<text x="1040.0" y="282.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">loop predictor</text>
+<text x="1040.0" y="335.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">trip count · iteration</text>
+<text x="1307.0" y="216.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">direction</text>
+<text x="1307.0" y="235.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="1315.9" y="235.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">taken?</text>
+<text x="1170.0" y="323.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="13">loop mode</text>
+<text x="913.0" y="249.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="15">gate</text>
+<text x="1480.0" y="153.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">TAGE</text>
+<text x="1600.0" y="238.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">loop</text>
+<text x="1600.0" y="249.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">mode</text>
+<text x="1480.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">tables</text>
+<text x="1480.0" y="339.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">gated</text>
+<text x="1535.8" y="206.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-lp0-lp1">loop found</text>
+<text x="1542.8" y="278.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-lp1-lp2">soon after</text>
+<text x="1422.8" y="240.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-lp2-lp0">exit or mispredict</text>
+<text x="1025.0" y="405.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">tag</text>
+<text x="922.0" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">23</text>
+<text x="1128.0" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">12</text>
+<text x="1156.2" y="405.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">ctr</text>
+<text x="1132.0" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">11</text>
+<text x="1180.5" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">9</text>
+<text x="1200.0" y="405.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">u</text>
+<text x="1184.5" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">8</text>
+<text x="1215.5" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">7</text>
+<text x="1278.8" y="405.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle">EL / ASID: none</text>
+<text x="1219.5" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="start">6</text>
+<text x="1338.0" y="423.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="end">0</text>
+<text x="1407.0" y="386.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">process A</text>
+<text x="1407.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="1415.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">EL0</text>
+<text x="1537.0" y="386.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">kernel</text>
+<text x="1537.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="1545.0" y="405.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">EL1</text>
+<text x="1474.0" y="464.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="21">same entry</text>
+<text x="99.3" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tag</text>
+<text x="150.0" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">tgt</text>
+<text x="200.7" y="626.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">u</text>
+<text x="150.0" y="612.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">ITTAGE</text>
+<text x="150.0" y="705.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">1024 targets</text>
+<text x="297.0" y="641.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">target line</text>
+<text x="297.0" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="305.9" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">I-cache fill</text>
+<text x="534.4" y="639.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="middle" data-owner="ibp_context_check">= ctx</text>
+<text x="737.0" y="641.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">execute</text>
+<text x="737.0" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">◆</text>
+<text x="745.9" y="660.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="start">only in context</text>
+<text x="600.0" y="763.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">squash</text>
+<text x="242.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="22">target</text>
+<text x="576.0" y="650.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="24">EL, ASID =</text>
+<text x="610.0" y="724.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="25">other context</text>
+<text x="70.0" y="740.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">no EL or ASID: a foreign target is fetched, not run</text>
+<text x="77.0" y="816.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">predict uop</text>
+<text x="77.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#c026d3" text-anchor="start">?</text>
+<text x="85.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#c026d3" text-anchor="start" font-style="italic">hot indirect</text>
+<text x="374.5" y="816.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">key</text>
+<text x="455.5" y="816.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="7.5" font-weight="400" fill="#9ca3af" text-anchor="middle">target</text>
+<text x="415.0" y="802.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">method cache</text>
+<text x="415.0" y="855.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">class ⊕ selector</text>
+<text x="567.0" y="816.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">redirect fetch</text>
+<text x="567.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#9ca3af" text-anchor="start">?</text>
+<text x="575.0" y="835.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="start">absent on M1</text>
+<text x="200.0" y="816.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="26">class, sel</text>
+<text x="927.0" y="596.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#1f2937" text-anchor="start">uop split and merge</text>
+<text x="988.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">add, lsl</text>
+<text x="967.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="1007.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="988.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">issues twice</text>
+<text x="1102.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">ldp</text>
+<text x="1081.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="1102.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">one issue</text>
+<text x="1216.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">cmp + b.cc</text>
+<text x="1195.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="1216.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">fused</text>
+<text x="1330.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">nop</text>
+<text x="1330.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">—</text>
+<text x="1330.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">never issues</text>
+<text x="1444.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">b</text>
+<text x="1444.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">—</text>
+<text x="1444.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">never issues</text>
+<text x="1558.0" y="625.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="600" fill="#1f2937" text-anchor="middle">ldr [x]!</text>
+<text x="1537.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="1577.0" y="666.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">uop</text>
+<text x="1558.0" y="700.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="middle">+ base update</text>
+<text x="1275.0" y="718.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#9ca3af" text-anchor="middle">measured on the issue counters</text>
+<text x="980.0" y="812.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">bounds</text>
+<text x="980.0" y="823.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">branch</text>
+<text x="980.0" y="834.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">predicted</text>
+<text x="1160.0" y="818.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">speculating</text>
+<text x="1160.0" y="829.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">past it</text>
+<text x="1340.0" y="823.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="600" fill="#1f2937" text-anchor="middle">stopped</text>
+<text x="1060.0" y="830.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-sb0-sb1">fetch</text>
+<text x="1117.8" y="752.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-sb1-sb1">DMB, DSB: no effect</text>
+<text x="1223.9" y="830.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-sb1-speculation_barriers">CSDB or ISB</text>
+<text x="1145.2" y="887.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="trans-speculation_barriers-sb0">resolve</text>
+<text x="1480.0" y="772.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="600" fill="#1f2937" text-anchor="middle">L1D data</text>
+<text x="1580.0" y="789.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#1f2937" text-anchor="middle">+</text>
+<text x="1562.0" y="856.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11.5" font-weight="600" fill="#4b5563" text-anchor="start">result</text>
+<text x="1562.0" y="875.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8" font-weight="400" fill="#9ca3af" text-anchor="start">?</text>
+<text x="1570.0" y="875.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#9ca3af" text-anchor="start">absent</text>
+<text x="1444.0" y="754.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#1f2937" text-anchor="start" data-owner="35">add, xor, shift, cbz</text>
+<rect x="60.0" y="931.0" width="16.0" height="11.0" rx="2" fill="#b1c7f8" stroke="#2563eb" stroke-width="2.2"/>
+<text x="80.0" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
+<rect x="190.6" y="931.0" width="16.0" height="11.0" rx="2" fill="#c8d8fa" stroke="#2563eb" stroke-width="1.4"/>
+<text x="210.6" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ 2 sources</text>
+<rect x="284.7" y="931.0" width="16.0" height="11.0" rx="2" fill="#e0e9fc" stroke="#6692f1" stroke-width="1"/>
+<text x="304.7" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○ one source</text>
+<rect x="383.7" y="931.0" width="16.0" height="11.0" rx="2" fill="#eef3fd" stroke="#6692f1" stroke-width="1" stroke-dasharray="9 3"/>
+<text x="403.7" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◇ derived</text>
+<rect x="466.7" y="931.0" width="16.0" height="11.0" rx="2" fill="#f6f9fe" stroke="#6692f1" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="486.7" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~ patent or analogy</text>
+<rect x="594.3" y="931.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<text x="614.3" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? KB conjecture</text>
+<rect x="707.8" y="931.0" width="16.0" height="11.0" rx="2" fill="#fbf2fc" stroke="#c026d3" stroke-width="1.2" stroke-dasharray="6 2"/>
+<text x="727.8" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">+ proposed here</text>
+<rect x="820.6" y="931.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="840.6" y="940.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? unknown</text>
+<polyline points="60.0,953.0 86.0,953.0" fill="none" stroke="#1f2937" stroke-width="1.6" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="92.0" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">instruction flow</text>
+<polyline points="191.3,953.0 217.3,953.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="223.3" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">control</text>
+<polyline points="282.2,953.0 308.2,953.0" fill="none" stroke="#1f2937" stroke-width="2.8" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="314.2" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">data</text>
+<polyline points="361.3,953.0 387.3,953.0" fill="none" stroke="#1f2937" stroke-width="1.2" stroke-dasharray="2 3" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="393.3" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">allocate / release</text>
+<polyline points="502.1,953.0 528.1,953.0" fill="none" stroke="#1f2937" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="534.1" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">wire</text>
+<polyline points="582.5,953.0 608.5,953.0" fill="none" stroke="#1f2937" stroke-width="1.0" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="614.5" y="957.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">signal</text><g class="hot-layer"><rect class="hot" data-bid="return_fetch_table" x="70.0" y="120.0" width="160.0" height="90.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="two_level_ras" x="70.0" y="250.0" width="110.0" height="110.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="m_ras" x="330.0" y="265.0" width="16.0" height="80.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="next_pc" x="420.0" y="275.0" width="100.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ras_main" x="580.0" y="120.0" width="120.0" height="240.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ras_pac_check" x="580.0" y="400.0" width="270.0" height="34.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="pac_cmp" x="740.0" y="300.0" width="36.0" height="24.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ov0" x="779.0" y="156.0" width="52.0" height="52.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ras_overflow_clear" x="783.0" y="240.0" width="44.0" height="44.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="tage" x="920.0" y="120.0" width="240.0" height="110.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="loop_predictor" x="920.0" y="270.0" width="240.0" height="70.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="m_dir" x="1230.0" y="190.0" width="16.0" height="80.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="dir_out" x="1300.0" y="200.0" width="110.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="lp0" x="1456.0" y="126.0" width="48.0" height="48.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="lp1" x="1576.0" y="216.0" width="48.0" height="48.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="lp2" x="1454.0" y="304.0" width="52.0" height="52.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="bpu_isolation" x="920.0" y="390.0" width="420.0" height="34.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ctx_a" x="1400.0" y="370.0" width="110.0" height="46.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ctx_b" x="1530.0" y="370.0" width="110.0" height="46.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ittage" x="70.0" y="600.0" width="160.0" height="110.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ibp_fetch" x="290.0" y="625.0" width="160.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ibp_context_check" x="520.0" y="643.0" width="36.0" height="24.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ibp_exec" x="730.0" y="625.0" width="120.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ib_sq" x="578.0" y="738.0" width="44.0" height="44.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="objc_uop" x="70.0" y="800.0" width="120.0" height="50.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="objc_hash" x="247.0" y="812.0" width="26.0" height="26.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="objc_msgsend_predictor" x="330.0" y="790.0" width="170.0" height="70.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="objc_redirect" x="560.0" y="800.0" width="120.0" height="50.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="uop_split_merge" x="920.0" y="580.0" width="710.0" height="150.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="sb0" x="950.0" y="790.0" width="60.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="sb1" x="1130.0" y="790.0" width="60.0" height="60.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="speculation_barriers" x="1314.0" y="794.0" width="52.0" height="52.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ldop_data" x="1430.0" y="760.0" width="100.0" height="50.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="load_op_fusion" x="1567.0" y="772.0" width="26.0" height="26.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="ldop_out" x="1555.0" y="840.0" width="80.0" height="46.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot hot-frame" data-bid="fa" x="50" y="70" width="820" height="440" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="fb" x="900" y="70" width="750" height="440" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="fc" x="50" y="540" width="820" height="380" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="fd" x="900" y="540" width="750" height="380" fill="transparent" stroke="none" pointer-events="none"/></g></svg>

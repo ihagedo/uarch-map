@@ -1,0 +1,287 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1700 956" width="1700" height="956" role="img" aria-label="L1 data cache" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" data-kinds="structure"><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f2937"/></marker><marker id="arrowrev" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M10,0 L0,5 L10,10 z" fill="#1f2937"/></marker></defs><rect x="0" y="0" width="1700" height="956" fill="#ffffff"/><text x="20" y="30" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="18" font-weight="700" fill="#1f2937">L1 data cache</text><text x="20" y="48" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" fill="#4b5563">First-level data cache.</text><rect x="40.0" y="106.0" width="1620.0" height="368.0" rx="9" fill="#fefcf5" stroke="#dac991" stroke-width="1"/>
+<text x="50.0" y="123.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Structure</text>
+<text x="1650.0" y="123.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">15 parameters</text>
+<rect x="40.0" y="484.0" width="1620.0" height="266.0" rx="9" fill="#fefcf5" stroke="#dac991" stroke-width="1"/>
+<text x="50.0" y="501.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Mechanisms</text>
+<text x="1650.0" y="501.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">11: ◆ 3 measured, ~ 6 inferred, ? 2 speculative</text>
+<rect x="40.0" y="760.0" width="1620.0" height="112.0" rx="9" fill="#fefcf5" stroke="#dac991" stroke-width="1"/>
+<text x="50.0" y="777.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="12.5" font-weight="700" fill="#eab308" text-anchor="start">Drawn in detail</text>
+<text x="1650.0" y="777.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#4b5563" text-anchor="end">12 figures</text>
+<rect x="40.0" y="70.0" width="54.9" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="116.9" y="70.0" width="56.9" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="195.8" y="70.0" width="80.4" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="298.2" y="70.0" width="84.5" height="18.5" rx="4" fill="#f1f1f3" stroke="#9ba2ab" stroke-width="0.8"/>
+<rect x="404.7" y="70.0" width="76.0" height="18.5" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="54.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<rect x="74.0" y="150.0" width="47.5" height="24.0" rx="3" fill="#f9eaba" stroke="#eab308" stroke-width="1"/>
+<rect x="378.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<rect x="382.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="455.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="528.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="601.0" y="140.0" width="71.5" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="702.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<rect x="706.0" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="742.5" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="779.0" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="815.5" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="852.0" y="140.0" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="888.5" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="925.0" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="961.5" y="140.0" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="706.0" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="742.5" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="779.0" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="815.5" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="852.0" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="888.5" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="925.0" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="961.5" y="154.7" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="706.0" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="742.5" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="779.0" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="815.5" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="852.0" y="169.3" width="35.3" height="13.5" rx="1" fill="#f8e4a9" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="888.5" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="925.0" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="961.5" y="169.3" width="35.3" height="13.5" rx="1" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.5"/>
+<rect x="1026.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="1042.0,166.0 1310.0,166.0" fill="none" stroke="#eab308" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1046.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1129.2" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1211.8" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1350.0" y="136.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="1366.0,166.0 1634.0,166.0" fill="none" stroke="#eab308" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1370.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1432.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1494.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1556.5" y="156.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="54.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="114.0,278.0 294.0,278.0" fill="none" stroke="#eab308" stroke-width="3.2" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="200.0,284.0 208.0,272.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="378.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<rect x="386.0" y="294.0" width="284.0" height="8.0" rx="3" fill="#fcf6e1" stroke="none" stroke-width="1"/>
+<rect x="702.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="718.0,278.0 986.0,278.0" fill="none" stroke="#eab308" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="722.5" y="268.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="772.1" y="268.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="821.7" y="268.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="871.3" y="268.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="920.9" y="268.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1026.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="1086.0,278.0 1266.0,278.0" fill="none" stroke="#eab308" stroke-width="3.2" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1172.0,284.0 1180.0,272.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1350.0" y="248.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="1410.0,278.0 1590.0,278.0" fill="none" stroke="#eab308" stroke-width="3.2" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="1496.0,284.0 1504.0,272.0" fill="none" stroke="#1f2937" stroke-width="1.1" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="54.0" y="360.0" width="300.0" height="64.0" rx="4" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<rect x="58.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="76.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="94.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="112.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="131.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="149.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="167.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="185.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="204.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="222.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="240.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="258.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="277.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="295.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="313.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="331.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="378.0" y="360.0" width="300.0" height="64.0" rx="4" fill="#fdf9eb" stroke="#f0ca52" stroke-width="1" stroke-dasharray="9 3"/>
+<rect x="382.0" y="364.0" width="290.5" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="702.0" y="360.0" width="300.0" height="64.0" rx="4" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<rect x="706.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="724.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="742.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="760.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="779.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="797.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="815.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="833.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="852.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="870.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="888.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="906.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="925.0" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="943.2" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="961.5" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="979.8" y="364.0" width="16.8" height="44.0" rx="1.5" fill="#fdf7e6" stroke="#dcc67c" stroke-width="0.6"/>
+<rect x="1026.0" y="360.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<polyline points="1042.0,390.0 1310.0,390.0" fill="none" stroke="#eab308" stroke-width="1.4" marker-end="url(#arrow)" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="1046.5" y="380.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1108.5" y="380.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1170.5" y="380.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1232.5" y="380.0" width="3.0" height="20.0" rx="0.5" fill="#f2d16b" stroke="none" stroke-width="1"/>
+<rect x="1350.0" y="360.0" width="300.0" height="64.0" rx="4" fill="#fefdf8" stroke="#d8cb9c" stroke-width="0.8"/>
+<rect x="1358.0" y="406.0" width="284.0" height="8.0" rx="3" fill="#fcf6e1" stroke="none" stroke-width="1"/>
+<rect x="54.0" y="514.0" width="389.0" height="66.0" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<circle cx="78.0" cy="547.0" r="10" fill="#ffffff" stroke="#eab308" stroke-width="1.1"/>
+<rect x="455.0" y="514.0" width="389.0" height="66.0" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<circle cx="479.0" cy="538.0" r="3" fill="#f9e8b5" stroke="#eab308" stroke-width="0.9"/>
+<circle cx="472.0" cy="547.0" r="3" fill="#fdf7e6" stroke="#eab308" stroke-width="0.9"/>
+<circle cx="486.0" cy="547.0" r="3" fill="#f9e8b5" stroke="#eab308" stroke-width="0.9"/>
+<polyline points="479.0,541.0 472.0,544.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="479.0,541.0 486.0,544.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="472.0,550.0 469.0,556.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="472.0,550.0 475.0,556.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="486.0,550.0 483.0,556.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="486.0,550.0 489.0,556.0" fill="none" stroke="#eab308" stroke-width="0.9" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="856.0" y="514.0" width="389.0" height="66.0" rx="5" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<rect x="868.0" y="535.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="535.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="535.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="868.0" y="543.5" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="543.5" width="7.5" height="7.5" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="543.5" width="7.5" height="7.5" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="868.0" y="552.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="552.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="552.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="1257.0" y="514.0" width="389.0" height="66.0" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="1269.0" y="536.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="1275.5" y="536.0" width="5.0" height="22.0" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="1282.0" y="536.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="1288.5" y="536.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="54.0" y="592.0" width="389.0" height="66.0" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="72.0" y="623.0" width="12.0" height="12.0" rx="2" fill="#fdf7e6" stroke="#eab308" stroke-width="0.9"/>
+<path d="M66.0,635.0 L66.0,619.0 Q78.0,609.0 90.0,619.0 L90.0,631.0" fill="none" stroke="#eab308" stroke-width="1.3" marker-end="url(#arrow)"/>
+<rect x="455.0" y="592.0" width="389.0" height="66.0" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<circle cx="472.0" cy="625.0" r="5" fill="#faecc1" stroke="#eab308" stroke-width="1"/>
+<circle cx="486.0" cy="625.0" r="5" fill="#ffffff" stroke="#eab308" stroke-width="1"/>
+<path d="M475.0,621.0 Q479.0,613.0 483.0,621.0" fill="none" stroke="#eab308" stroke-width="1.1" marker-end="url(#arrow)"/>
+<rect x="856.0" y="592.0" width="389.0" height="66.0" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="868.0" y="614.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="874.5" y="614.0" width="5.0" height="22.0" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="881.0" y="614.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="887.5" y="614.0" width="5.0" height="22.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="1257.0" y="592.0" width="389.0" height="66.0" rx="5" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<circle cx="1281.0" cy="626.0" r="9" fill="#ffffff" stroke="#eab308" stroke-width="1.3"/>
+<rect x="1278.0" y="614.0" width="6.0" height="10.0" rx="0" fill="#ffffff" stroke="none" stroke-width="1"/>
+<polyline points="1281.0,614.0 1281.0,625.0" fill="none" stroke="#eab308" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>
+<rect x="54.0" y="670.0" width="389.0" height="66.0" rx="5" fill="#f6e1f9" stroke="#c026d3" stroke-width="1.5"/>
+<rect x="67.0" y="691.0" width="22.0" height="5.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="67.0" y="697.3" width="22.0" height="5.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="67.0" y="703.6" width="22.0" height="5.0" rx="1" fill="#fdf7e6" stroke="#eab308" stroke-width="0.6"/>
+<rect x="67.0" y="709.9" width="22.0" height="5.0" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="455.0" y="670.0" width="389.0" height="66.0" rx="5" fill="#ffffff" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<circle cx="479.0" cy="703.0" r="10" fill="#ffffff" stroke="#eab308" stroke-width="1.1"/>
+<rect x="856.0" y="670.0" width="389.0" height="66.0" rx="5" fill="#ffffff" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<rect x="868.0" y="691.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="691.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="691.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="868.0" y="699.5" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="699.5" width="7.5" height="7.5" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="699.5" width="7.5" height="7.5" rx="1" fill="#f9e8b5" stroke="#eab308" stroke-width="0.6"/>
+<rect x="868.0" y="708.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="876.5" y="708.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="885.0" y="708.0" width="7.5" height="7.5" rx="1" fill="#fdf9eb" stroke="#eab308" stroke-width="0.6"/>
+<rect x="54.0" y="790.0" width="300.4" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="364.4" y="790.0" width="118.1" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="492.5" y="790.0" width="225.2" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="727.7" y="790.0" width="332.8" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="1070.5" y="790.0" width="306.2" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="54.0" y="816.0" width="266.7" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="330.7" y="816.0" width="216.6" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="557.3" y="816.0" width="183.0" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="750.3" y="816.0" width="181.2" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="941.5" y="816.0" width="278.5" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="1230.0" y="816.0" width="204.0" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<rect x="54.0" y="842.0" width="294.1" height="18.0" rx="4" fill="#fdf9eb" stroke="#dbc787" stroke-width="0.8"/>
+<text x="47.0" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">Apple M1</text>
+<text x="101.9" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="123.9" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">P-cluster</text>
+<text x="180.8" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="202.8" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">Firestorm core</text>
+<text x="283.2" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="305.2" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#4b5563" text-anchor="start">Load-store unit</text>
+<text x="389.7" y="83.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#9ca3af" text-anchor="middle">›</text>
+<text x="411.7" y="81.5" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#eab308" text-anchor="start">L1 data cache</text>
+<text x="204.0" y="192.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">● 128 KiB  (bar ~ √capacity)</text>
+<text x="54.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D capacity</text>
+<text x="528.0" y="195.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">64 B = 4 × 16 B</text>
+<text x="378.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D line size</text>
+<text x="852.0" y="195.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">8 ways</text>
+<text x="702.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D associativity</text>
+<text x="1176.0" y="192.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">● 3 cycles</text>
+<text x="1026.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D hit latency (pointer chase)</text>
+<text x="1500.0" y="192.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">○ 4 cycles</text>
+<text x="1350.0" y="216.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D hit latency (complex addr)</text>
+<text x="212.0" y="272.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="start">48 B/cycle</text>
+<text x="204.0" y="304.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">◆ L1D load bandwidth</text>
+<text x="54.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D load bandwidth</text>
+<text x="390.0" y="268.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="404.0" y="268.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#1f2937" text-anchor="start">write-back</text>
+<text x="378.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D write policy</text>
+<text x="852.0" y="304.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">○ 5 cycles</text>
+<text x="702.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D hit latency (FP/SIMD load)</text>
+<text x="1184.0" y="272.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="start">32 B/cycle</text>
+<text x="1176.0" y="304.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">◆ L1D store bandwidth</text>
+<text x="1026.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D store bandwidth</text>
+<text x="1508.0" y="272.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#1f2937" text-anchor="start">150 GB/s</text>
+<text x="1500.0" y="304.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">○ L1D copy bandwidth (load+store)</text>
+<text x="1350.0" y="328.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D copy bandwidth (load+store)</text>
+<text x="204.0" y="419.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">16 banks</text>
+<text x="54.0" y="440.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D banks</text>
+<text x="528.0" y="419.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">16 B = 1 × 16 B</text>
+<text x="378.0" y="440.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D bank width</text>
+<text x="852.0" y="419.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="middle">128 banks</text>
+<text x="702.0" y="440.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D sub banks</text>
+<text x="1176.0" y="416.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="middle">● 4 cycles</text>
+<text x="1026.0" y="440.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D hit latency (to ALU)</text>
+<text x="1362.0" y="380.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="400" fill="#4b5563" text-anchor="start">○</text>
+<text x="1376.0" y="380.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10" font-weight="400" fill="#1f2937" text-anchor="start">tree-PLRU</text>
+<text x="1350.0" y="440.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="500" fill="#1f2937" text-anchor="start">L1D replacement policy</text>
+<text x="78.0" y="551.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#eab308" text-anchor="middle">⊕</text>
+<text x="102.0" y="540.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Page-offset L1D index</text>
+<text x="102.0" y="558.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="503.0" y="540.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Tree-PLRU L1D replacement</text>
+<text x="503.0" y="558.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="904.0" y="540.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Virtual-address utag way predictor</text>
+<text x="904.0" y="558.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ measured</text>
+<text x="1305.0" y="540.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Banked L1D with piggybacked loads and buffered stores</text>
+<text x="1305.0" y="558.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred</text>
+<text x="102.0" y="618.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Fill forwarding to waiting loads</text>
+<text x="102.0" y="636.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred</text>
+<text x="503.0" y="618.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">L1-L2 coherence work limits mixed traffic</text>
+<text x="503.0" y="636.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred</text>
+<text x="904.0" y="618.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">L1D fills take bank cycles from loads</text>
+<text x="904.0" y="636.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred</text>
+<text x="1305.0" y="618.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">SRAM sub-array power-down</text>
+<text x="1305.0" y="636.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred</text>
+<text x="102.0" y="696.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">Write-allocate L1D with store-miss entries</text>
+<text x="102.0" y="714.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">~ inferred  * ours  ·  5 claims</text>
+<text x="479.0" y="707.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="11" font-weight="400" fill="#eab308" text-anchor="middle">⊕</text>
+<text x="503.0" y="696.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">L1D way chosen from physical page bits</text>
+<text x="503.0" y="714.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">? speculative</text>
+<text x="904.0" y="696.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="10.5" font-weight="600" fill="#1f2937" text-anchor="start">L1D way selection without visible misprediction</text>
+<text x="904.0" y="714.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="8.5" font-weight="400" fill="#4b5563" text-anchor="start">? speculative</text>
+<text x="61.0" y="801.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">core · Apple M1 Firestorm core, the whole machine as we think i…</text>
+<text x="371.4" y="801.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">region · Load-store unit</text>
+<text x="499.5" y="801.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · A load and a store through the LSU</text>
+<text x="734.7" y="801.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · L1 data cache: 128 KiB, 8 ways, 64 B lines, virtually index…</text>
+<text x="1077.5" y="801.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · The hierarchy, a line&#x27;s life from DRAM to L1 and back</text>
+<text x="61.0" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · L1 data cache, one load from address to data</text>
+<text x="337.7" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · The hierarchy, where lines move</text>
+<text x="564.3" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · Load pipeline, RTL view</text>
+<text x="757.3" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · Decision state machines</text>
+<text x="948.5" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · Prefetchers, L1D ways and power, dTLB extras</text>
+<text x="1237.0" y="827.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · Ordering in the load-store unit</text>
+<text x="61.0" y="853.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9" font-weight="500" fill="#eab308" text-anchor="start">mechanism · Load and store queues, what an entry goes through</text>
+<rect x="40.0" y="919.0" width="16.0" height="11.0" rx="2" fill="#f7e4a6" stroke="#eab308" stroke-width="2.2"/>
+<text x="60.0" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">● 3+ measurements</text>
+<rect x="170.6" y="919.0" width="16.0" height="11.0" rx="2" fill="#faecc1" stroke="#eab308" stroke-width="1.4"/>
+<text x="190.6" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◆ 2 sources</text>
+<rect x="264.7" y="919.0" width="16.0" height="11.0" rx="2" fill="#fcf4dc" stroke="#f0ca52" stroke-width="1"/>
+<text x="284.7" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">○ one source</text>
+<rect x="363.7" y="919.0" width="16.0" height="11.0" rx="2" fill="#fdf9eb" stroke="#f0ca52" stroke-width="1" stroke-dasharray="9 3"/>
+<text x="383.7" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">◇ derived</text>
+<rect x="446.7" y="919.0" width="16.0" height="11.0" rx="2" fill="#fefcf5" stroke="#f0ca52" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="466.7" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">~ patent or analogy</text>
+<rect x="574.3" y="919.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#b258c5" stroke-width="1.3" stroke-dasharray="1 2.5"/>
+<text x="594.3" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? KB conjecture</text>
+<rect x="687.8" y="919.0" width="16.0" height="11.0" rx="2" fill="#fbf2fc" stroke="#c026d3" stroke-width="1.2" stroke-dasharray="6 2"/>
+<text x="707.8" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">+ proposed here</text>
+<rect x="800.6" y="919.0" width="16.0" height="11.0" rx="2" fill="none" stroke="#9ca3af" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="820.6" y="928.0" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="9.5" font-weight="400" fill="#4b5563" text-anchor="start">? unknown</text><g class="hot-layer"><rect class="hot" data-bid="crumb-chip" data-fig="chip" x="40.0" y="70.0" width="54.9" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-pcluster" data-fig="block-pcluster" x="116.9" y="70.0" width="56.9" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-core" data-fig="poster" x="195.8" y="70.0" width="80.4" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-lsu" data-fig="block-lsu" x="298.2" y="70.0" width="84.5" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="crumb-l1d" data-fig="block-l1d" x="404.7" y="70.0" width="76.0" height="18.5" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.size" data-param="l1d.size" x="54.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.line" data-param="l1d.line" x="378.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.assoc" data-param="l1d.assoc" x="702.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.latency" data-param="l1d.latency" x="1026.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.latency_complex" data-param="l1d.latency_complex" x="1350.0" y="136.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.load_bw" data-param="l1d.load_bw" x="54.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.write_policy" data-param="l1d.write_policy" x="378.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.latency_simd" data-param="l1d.latency_simd" x="702.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.store_bw" data-param="l1d.store_bw" x="1026.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.copy_bw" data-param="l1d.copy_bw" x="1350.0" y="248.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.banks" data-param="l1d.banks" x="54.0" y="360.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.bank_width" data-param="l1d.bank_width" x="378.0" y="360.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.subbanks" data-param="l1d.subbanks" x="702.0" y="360.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.latency_alu" data-param="l1d.latency_alu" x="1026.0" y="360.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d.replacement" data-param="l1d.replacement" x="1350.0" y="360.0" width="300.0" height="64.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_page_offset_index" data-mech="l1d_page_offset_index" x="54.0" y="514.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_tree_plru" data-mech="l1d_tree_plru" x="455.0" y="514.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_utag_way_predictor" data-mech="l1d_utag_way_predictor" x="856.0" y="514.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_banked_piggyback" data-mech="l1d_banked_piggyback" x="1257.0" y="514.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fill_forwarding" data-mech="fill_forwarding" x="54.0" y="592.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1_l2_coherence_limit" data-mech="l1_l2_coherence_limit" x="455.0" y="592.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fill_bank_conflicts" data-mech="fill_bank_conflicts" x="856.0" y="592.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="cache_subarray_power" data-mech="cache_subarray_power" x="1257.0" y="592.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_write_allocate" data-mech="l1d_write_allocate" x="54.0" y="670.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_hashed_way" data-mech="l1d_hashed_way" x="455.0" y="670.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="l1d_way_lookup" data-mech="l1d_way_lookup" x="856.0" y="670.0" width="389.0" height="66.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-poster" data-fig="poster" x="54.0" y="790.0" width="300.4" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-06-lsu" data-fig="06-lsu" x="364.4" y="790.0" width="118.1" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-m6-lsu" data-fig="m6-lsu" x="492.5" y="790.0" width="225.2" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-c1-l1d" data-fig="c1-l1d" x="727.7" y="790.0" width="332.8" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-c4-hierarchy" data-fig="c4-hierarchy" x="1070.5" y="790.0" width="306.2" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-d1-l1d" data-fig="d1-l1d" x="54.0" y="816.0" width="266.7" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-d4-hierarchy" data-fig="d4-hierarchy" x="330.7" y="816.0" width="216.6" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-r1-load-rtl" data-fig="r1-load-rtl" x="557.3" y="816.0" width="183.0" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-f1-fsm" data-fig="f1-fsm" x="750.3" y="816.0" width="181.2" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-x11-prefetch-l1d-tlb" data-fig="x11-prefetch-l1d-tlb" x="941.5" y="816.0" width="278.5" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-x5-lsu-ordering" data-fig="x5-lsu-ordering" x="1230.0" y="816.0" width="204.0" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot" data-bid="fig-x6-lsu-queues" data-fig="x6-lsu-queues" x="54.0" y="842.0" width="294.1" height="18.0" fill="transparent" stroke="none" pointer-events="all"/><rect class="hot hot-frame" data-bid="params-l1d" x="40" y="106" width="1620" height="368" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="mechs-l1d" x="40" y="484" width="1620" height="266" fill="transparent" stroke="none" pointer-events="none"/><rect class="hot hot-frame" data-bid="deeper-l1d" x="40" y="760" width="1620" height="112" fill="transparent" stroke="none" pointer-events="none"/></g></svg>

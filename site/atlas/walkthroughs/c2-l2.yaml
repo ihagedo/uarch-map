@@ -1,0 +1,50 @@
+# c2-l2.yaml
+# Isaac Hagedorn, 2026-11-03
+# The c2-l2 figure read step by step.
+figure: c2-l2
+audience: the same class, before the dataflow figure D2; this is the textbook view of the L2
+goal: fix the L2's numbers and shape in the listener's head before D2 follows one request through it
+steps:
+  - n: 1
+    targets: [fa]
+    title: The address, in textbook form
+    say: 12 MiB in 12 ways of 128 B lines is 8192 sets, thirteen index bits. Eleven come straight from the physical address and two are hashed from page-number bits. All thirteen sit above the 16 KiB page offset, so the L2 waits for the dTLB.
+    rests_on: confirmed
+    slide: ["8192 sets × 12 ways × 128 B = 12 MiB", "Thirteen index bits: eleven direct, two hashed", "Above the page offset: waits for the dTLB"]
+    status: draft
+  - n: 2
+    targets: [fb, fd]
+    title: One set, twelve ways, each line in two halves
+    say: A set is twelve 128 B lines, and each line is two 64 B halves with their own valid and dirty bits, because the L1D line is 64 B. Whether the other half follows the accessed one into the L1D is disputed between two measurements.
+    rests_on: corroborated
+    slide: ["Twelve ways of 128 B", "Each line two 64 B halves, own valid and dirty", "Disputed: does the other half follow into the L1D?"]
+    status: draft
+  - n: 3
+    targets: [l2_core_lru, l2_autolock, l2_hashed_way_filter, l2_zero_line_tags]
+    title: Four rules inside the set
+    say: Replacement is LRU among one core's lines and not across cores. AutoLock spares lines an L1D still holds, measured at a threshold of about three of eight. The lookup reads a partial tag first and wakes only the ways that match, then does the full compare; there is no way-predictor table. All-zero lines may live as a tag bit only, from a patent and unmeasured.
+    rests_on: single
+    slide: ["LRU per core, not across cores", "AutoLock: lines an L1D holds are spared", "Partial tag first, then the full compare; zero lines as a tag bit"]
+    status: draft
+  - n: 4
+    targets: [fc, l2_cachelets]
+    title: Four cachelets, 2048 sets each
+    say: The 12 MiB behaves as four 3 MiB cachelets, each likely beside one core; one core sees about 7.5 MiB. Whether slices or a policy produce that is unknown; our proposal is that the hashed bits pick the slice, which a pinned-core latency sweep would show as four steps.
+    rests_on: conjecture
+    ask: Design the sweep that would show four latency steps.
+    slide: ["Four 3 MiB cachelets, 2048 sets each", "One core sees about 7.5 MiB", "Our proposal: the hashed bits pick the slice; test with a pinned-core sweep"]
+    status: draft
+  - n: 5
+    targets: [ft, fbw]
+    title: Seventeen cycles, 85 gigabytes a second
+    say: The hit latency is 17 cycles from the core, one source, with 15 and 18 quoted elsewhere. One core pulls 85 GB/s from the L2 and pushes 100 GB/s into it, over a path of 32 B per cycle each way. Requests to one line stay in order, requests to different lines may pass.
+    rests_on: single
+    slide: ["17 cycles from the core; 15 and 18 also quoted", "85 GB/s loads, 100 GB/s stores for one core; 32 B/cycle each way", "In order per line, not across lines"]
+    status: draft
+  - n: 6
+    targets: [story-1, story-2, story-3, story-4]
+    title: One request in four stills
+    say: The address picks the set; the partial tag fires two of twelve ways; the full 20-bit compare finds way 4 half 0; the half goes to the L1D as two 32 B beats, 17 cycles after the request. The order of these steps is read from a patent.
+    rests_on: inferred
+    slide: ["Set from index and hash", "Partial tag fires two of twelve ways", "Full compare: way 4, half 0, to the L1D in two beats"]
+    status: draft

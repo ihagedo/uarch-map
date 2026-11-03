@@ -1,7 +1,7 @@
 <!-- page.html
      Isaac Hagedorn, 2026-10-04
      Page template; build.py fills in the styles, the data and the script. -->
-<title>Firestorm Architecture Map</title>
+<title>Firestorm Atlas</title>
 <style>
 /*STYLE*/
 </style>
@@ -9,7 +9,7 @@
 <div class="page">
   <header class="masthead">
     <p class="eyebrow">Apple M1 · Firestorm performance core · AArch64</p>
-    <h1>Firestorm Architecture Map</h1>
+    <h1>Firestorm Atlas</h1>
     <dl class="stats" id="stats"></dl>
   </header>
 
@@ -107,9 +107,10 @@
     </div>
   </section>
 
-  <section class="figures" id="figures" aria-labelledby="figures-h">
-    <h2 id="figures-h">Figures</h2>
-    {{FIGURES}}
+  <section class="maps-sec" aria-labelledby="maps-h">
+    <h2 id="maps-h">Maps</h2>
+    <div class="maps">{{MAPS}}</div>
+    <p class="maps-more"><a href="atlas/coverage/">Coverage</a></p>
   </section>
 
   <section class="questions" aria-labelledby="questions-h">
