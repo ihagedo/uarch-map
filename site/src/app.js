@@ -40,28 +40,12 @@
     return n;
   }
 
-  function pin(g, deriv, x, y) {
-    if (deriv === "measured") el("circle", { cx: x, cy: y, r: 3.4, class: "pin pin-measured" }, g);
-    else if (deriv === "documented") el("circle", { cx: x, cy: y, r: 3, class: "pin pin-documented" }, g);
-    else if (deriv === "derived") {
-      el("circle", { cx: x, cy: y, r: 3, class: "pin pin-derived" }, g);
-      el("path", { d: `M${x} ${y - 3} A3 3 0 0 0 ${x} ${y + 3} Z`, class: "pin pin-derived-half" }, g);
-    }
-    else if (deriv === "inferred") el("rect", { x: x - 2.9, y: y - 2.9, width: 5.8, height: 5.8,
-      transform: `rotate(45 ${x} ${y})`, class: "pin pin-inferred" }, g);
-  }
+  // confidence glyphs, as in the diagrams: the same mark beside a value on every view and in the dossier
+  const GLYPH = { confirmed: "●", corroborated: "◆", single: "○", derived: "◇", ours: "*", inferred: "~",
+    conjecture: "?", unknown: "?" };
+  const glyphHTML = (conf) => `<span class="p-glyph" aria-hidden="true">${GLYPH[conf]}</span>`;
   function disputePin(g, x, y) {
     el("path", { d: `M${x} ${y - 4.6} L${x + 4.6} ${y + 3.6} L${x - 4.6} ${y + 3.6} Z`, class: "pin pin-dispute" }, g);
-  }
-  function pinHTML(deriv) {
-    const body = {
-      measured: '<circle class="pin-measured" cx="6" cy="6" r="3.6"/>',
-      documented: '<circle class="pin-documented" cx="6" cy="6" r="3.2"/>',
-      derived: '<circle class="pin-derived" cx="6" cy="6" r="3.2"/><path class="pin-derived-half" d="M6 2.8 A3.2 3.2 0 0 0 6 9.2 Z"/>',
-
-      inferred: '<rect class="pin-inferred" x="3" y="3" width="6" height="6" transform="rotate(45 6 6)"/>',
-    }[deriv];
-    return body ? `<svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true">${body}</svg>` : "<span></span>";
   }
   const DISPUTE_HTML = '<svg class="p-pin" viewBox="0 0 12 12" aria-hidden="true">' +
     '<path class="pin-dispute" d="M6 1.4 L10.6 10 L1.4 10 Z"/></svg>';
@@ -182,7 +166,7 @@
     for (const f of V.frames) {
       const g = el("g", { class: "frame", "data-frame": f.id, style: hue(f.id) }, frames);
       el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 10, class: "frame-body" }, g);
-      el("text", { x: f.x + 12, y: f.y + 18, class: "frame-label" }, g).textContent = f.label.toUpperCase();
+      el("text", { x: f.x + 12, y: f.y + 18, class: "frame-label" }, g).textContent = f.label;
       el("text", { x: f.x + f.w - 12, y: f.y + 18, "text-anchor": "end", class: "frame-count" }, g)
         .textContent = `${f.known} of ${f.params.length} known`;
     }
@@ -219,7 +203,7 @@
       const disputed = openDispute(p);
       const r = el("g", { class: `row conf-${p.conf}`, "data-param": pid }, g);
       el("rect", { x: bx.x + 3, y: ry, width: bx.w - 6, height: row.h, rx: 3, class: "row-bg anchor" }, r);
-      if (p.known) pin(r, p.status, bx.x + 12, ry + M.rowH / 2);
+      el("text", { x: bx.x + 9, y: ry + 12.5, class: "glyph" }, r).textContent = GLYPH[p.conf];
       el("text", { x: bx.x + 21, y: ry + 12.5, class: "label" }, r).textContent = row.label;
       row.value.forEach((v, i) => {
         const right = bx.x + bx.w - 10 - (disputed && !row.split ? 13 : 0);
@@ -236,23 +220,36 @@
     const layer = el("g", { class: "regions" }, svg);
     for (const f of V.frames) {
       const claims = new Set(f.params.flatMap((pid) => D.params[pid].for));
-      const g = el("g", { class: `box region conf-${f.conf}`, "data-frame": f.id, tabindex: "0", role: "button", style: hue(f.id),
+      const g = el("g", { class: "box region", "data-frame": f.id, tabindex: "0", role: "button", style: hue(f.id),
         "aria-label": `${f.label}: ${f.known} of ${f.params.length} parameters known. Open the stage view.` }, layer);
       el("rect", { x: f.x - 4, y: f.y - 4, width: f.w + 8, height: f.h + 8, rx: 13, class: "sel-ring" }, g);
-      el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 10, class: "body", "pointer-events": "all" }, g);
-      el("text", { x: f.x + 16, y: f.y + 30, class: "r-name" }, g).textContent = f.label;
-      el("text", { x: f.x + 16, y: f.y + 52, class: "r-count" }, g).textContent =
-        `${f.known} of ${f.params.length} parameters known · ${plural(claims.size, "claim")}`;
-      const per = Math.max(1, Math.floor((f.w - 32 + 4) / 14));
+      el("rect", { x: f.x, y: f.y, width: f.w, height: f.h, rx: 9, class: "body", "pointer-events": "all" }, g);
+      el("text", { x: f.x + 14, y: f.y + 26, class: "r-name" }, g).textContent = f.label;
+      el("text", { x: f.x + f.w - 14, y: f.y + 26, "text-anchor": "end", class: "r-count" }, g).textContent =
+        `${f.known} of ${f.params.length} known · ${plural(claims.size, "claim")}`;
+      const per = Math.max(1, Math.floor((f.w - 28 + 4) / 14));
       f.params.forEach((pid, i) => {
         const p = D.params[pid];
-        const cx = f.x + 16 + (i % per) * 14, cy = f.y + 66 + Math.floor(i / per) * 14;
+        const cx = f.x + 14 + (i % per) * 14, cy = f.y + 44 + Math.floor(i / per) * 14;
         const c = el("g", { class: `cell conf-${p.conf}`, "data-param": pid }, g);
         el("rect", { x: cx, y: cy, width: 10, height: 10, rx: 2, class: "body" }, c);
-        el("title", {}, c).textContent = `${p.name} (${CONF_WORD[p.conf].toLowerCase()})`;
+        el("title", {}, c).textContent = `${GLYPH[p.conf]} ${p.name} (${CONF_WORD[p.conf].toLowerCase()})`;
       });
-      el("text", { x: f.x + 16, y: f.y + f.h - 16, class: "r-blocks" }, g)
-        .textContent = clip(f.desc || "", Math.floor((f.w - 32) / 5.6));
+      // the blocks it holds, by name, wrapped to the frame
+      const names = Object.entries(D.views.L2.boxes).filter(([, bx]) => bx.frame === f.id).map(([bid]) => D.blocks[bid].name);
+      const lines = [];
+      let cur = "";
+      const probe = el("text", { class: "r-blocks" }, g);
+      for (const n of names) {
+        const s = cur ? `${cur} · ${n}` : n;
+        probe.textContent = s;
+        if (cur && probe.getComputedTextLength() > f.w - 28) { lines.push(cur); cur = n; } else cur = s;
+      }
+      if (cur) lines.push(cur);
+      probe.remove();
+      lines.forEach((s, i) => {
+        el("text", { x: f.x + 14, y: f.y + f.h - 14 - (lines.length - 1 - i) * 16, class: "r-blocks" }, g).textContent = s;
+      });
     }
   }
 
@@ -701,7 +698,7 @@
     const n = p.for.length + p.against.length;
     const unit = p.known && p.unit ? `<small>${esc(p.unit)}</small>` : "";
     return `<li><button type="button" class="p-row conf-${p.conf}" data-param="${pid}" aria-expanded="${open}">` +
-      (p.known ? pinHTML(p.status) : "<span></span>") +
+      glyphHTML(p.conf) +
       `<span class="p-name">${esc(p.name)}</span><span class="p-value${p.value.length > 16 ? " long" : ""}">` +
       `${esc(p.known ? p.value : p.conj ? p.short : p.value)}${unit}</span>` +
       `<span class="p-meta"><span class="conf-tag conf-${p.conf}">${CONF_WORD[p.conf]}</span>` +
@@ -745,7 +742,7 @@
     const src = s.url ? `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.cite)}</a>` : esc(s.cite);
     let h = `<article class="claim" data-source="${esc(c.source)}" data-claim="${esc(cid)}"><p class="claim-text">${esc(c.text)}</p>`;
     if (c.quote) h += `<p class="claim-quote">“${esc(c.quote)}”</p>`;
-    const where = [src, esc(locText(c.loc)), `<span class="deriv">${pinHTML(c.deriv)}${DERIV_WORD[c.deriv]}</span>`];
+    const where = [src, esc(locText(c.loc)), `<span class="deriv">${DERIV_WORD[c.deriv]}</span>`];
     if (c.chip && c.chip !== "m1") where.push(esc(c.chip.toUpperCase()));
     if (s.ours) where.unshift(`<span class="ours-tag">Ours</span>`);
     return h + `<p class="claim-src">${where.join(" · ")}</p></article>`;
@@ -785,7 +782,7 @@
           b.params.map((pid) => {
             const p = D.params[pid];
             return `<span class="c-row conf-${p.conf}" data-param="${pid}"><span>${esc(p.label)}</span>` +
-              `<span class="v">${esc(p.short)}</span></span>`;
+              `<span class="v">${esc(p.known && p.brief ? p.brief : p.short)}</span></span>`;
           }).join("") + `</button>`;
       }).join("") + `</section>`).join("");
   }

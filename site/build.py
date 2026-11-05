@@ -29,6 +29,7 @@ ROW_FONT = 10.5
 ROW_TEXT = 156 - 31  # from the confidence pin's column to the value's right edge
 STACK_GAP, BAND_GAP = 24, 26  # links can cross between stacked boxes
 L1_BOX_H = 132  # a collapsed region at L1
+SHORT = {}  # param id -> the short form the map shows for a long text value (layout `short:`)
 
 
 def fmt(value, approx=False, limit=None):
@@ -100,7 +101,9 @@ def wrap(s, width, lines, mono=True):
 
 
 def box_value(p):
-    return fmt(p.value, p.approx) if p.known else conjecture_short(p)
+    if not p.known:
+        return conjecture_short(p)
+    return SHORT.get(p.id) or fmt(p.value, p.approx)
 
 
 def box_rows(block):
@@ -299,6 +302,7 @@ def view_data(kb, geo, palette=None):
                 else None,
                 "approx": p.approx,
                 "short": fmt(p.value, p.approx, limit=9) if p.known else conjecture_short(p),
+                "brief": SHORT.get(p.id),
                 "unit": p.unit or "",
                 "known": p.known,
                 "status": p.status,
@@ -377,6 +381,10 @@ def main():
     kb = KB.load(core)
     with open(os.path.join(ROOT, "site", "layout", f"{core}.yaml")) as fh:
         layout = yaml.safe_load(fh)
+    for pid in layout.get("short") or {}:
+        if pid not in kb.params:
+            raise SystemExit(f"layout: short names unknown param {pid}")
+    SHORT.update(layout.get("short") or {})
     geo = geometry(kb, layout)
     geo["L3"] = structures(kb, layout)
     data = view_data(kb, geo, layout.get("palette"))

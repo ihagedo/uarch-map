@@ -45,6 +45,7 @@ bands:
 structures:
   retire:
     label: Retire queue
+    subtitle: What a uop holds from rename to retire.
     kind: retire
     blocks: [retire]
     params: {groups: retire.groups, slots: retire.group_max_uops, issuing: retire.group_issuing_uops,
@@ -56,9 +57,10 @@ structures:
       - {filler: nop, window: retire.nop_window, rows: retire.groups, per_row: retire.group_max_uops}
       - {filler: issuing uops, window: retire.issuing_window, rows: retire.groups, per_row: retire.group_issuing_uops}
       - {filler: register writes, window: retire.rename_queue, note: rename retire queue}
-      - {filler: branches, window: retire.inflight_branches, note: in-flight branch limit}
+      - {filler: branches, window: retire.inflight_branches, note: branch limit}
   issue:
     label: Issue and execute
+    subtitle: Dispatch buffers, schedulers and units, lane by lane.
     kind: ports
     blocks: [dispatch, sched_int, sched_fp, sched_ls, eu_int, eu_fp]
     params: {d_int: dispatch.int_entries, d_mul: dispatch.mul_entries, d_ls: dispatch.ls_entries,
@@ -81,6 +83,7 @@ structures:
       u14: [{text: fcsel, claim: c-dj-fp-roles}, {text: fdiv, claim: c-dj-fp-roles}, {text: sha, claim: c-dj-fp-roles}]
   lsq:
     label: Load and store queues
+    subtitle: Where a memory op takes its queue entry and gives it back.
     kind: lsq
     blocks: [lq, sq, lsu]
     params: {lq: lq.entries, sq: sq.entries, alloc: lsu.allocation, units: lsu.ls_units,
@@ -90,28 +93,35 @@ structures:
     mechanisms: [lsq_at_issue, lsq_early_release]
     apparent:
       - {delay: Cache-missing loads, load: c-dj-lsq-lq-130, store: c-dj-lsq-store-107,
-         limit: "loads: load queue; stores: store queue + LS scheduler"}
+         limit: "queue"}
       - {delay: Loads missing to DRAM, load: c-mh-v1-lq-dram-125, store: c-mh-v1-sq-dram-100,
-         limit: "loads: load queue; stores: store queue + LS scheduler"}
+         limit: "queue"}
       - {delay: FSQRT chain, load: c-dj-lsq-fsqrt-329, store: c-dj-lsq-fsqrt-329,
-         limit: "retire groups, one memory op each; queues free early"}
+         limit: "retire groups"}
       - {delay: FSQRT chain, load: c-mh-v1-lsq-fsqrt-330, store: c-mh-v1-store-fsqrt-not-idempotent,
-         limit: "retire groups, one memory op each; queues free early"}
+         limit: "retire groups"}
       - {delay: FSQRT chain + dependent branch, load: c-dj-lsq-branch-loads-188, store: c-dj-lsq-branch-stores-118,
-         limit: "queue + LS scheduler + LS dispatch"}
+         limit: "queue + scheduler + dispatch"}
       - {delay: FSQRT chain into a store address, load: c-mh-v1-lq-storeaddr-188, store: c-mh-v1-sq-storeaddr-118,
-         limit: "queue + LS scheduler + LS dispatch"}
+         limit: "queue + scheduler + dispatch"}
       - {delay: Not described (A14), load: c-at-lq, store: c-at-sq, limit: ""}
   chip:
-    label: Chip
+    label: Apple M1
+    subtitle: Two CPU clusters share one memory side through the fabric.
     kind: chip
     blocks: [l2, slc, memctrl]
     params: {cores: pcluster.cores, clock: pcluster.clock_max, l2_size: l2.size, l2_line: l2.line, l2_assoc: l2.assoc,
              l2_lat: l2.latency, l2_inner: l2.inner_slice, l2_core: l2.core_capacity, l2_bw: l2.load_bw,
              slc_size: slc.size, slc_lat: slc.latency, slc_bw: slc.load_bw,
-             dram: memctrl.dram_latency, dram_bw: memctrl.dram_load_bw}
+             dram: memctrl.dram_latency, dram_bw: memctrl.dram_load_bw, peak: memctrl.peak_bw,
+             chan: memctrl.channels, slc_assoc: slc.assoc, slc_planes: slc.planes, slc_sets: slc.sets,
+             slc_incl: slc.inclusion, slc_alloc: slc.allocation, dw: decode.width, l1i: l1i.size, l1d: l1d.size,
+             amx_grid: amx.pe_grid, amx_regs: amx.register_sets, amx_lat: amx.fma_latency, amx_buf: amx.ooo_buffer,
+             clk_dom: pcluster.clock_domain, powerup: pcluster.core_powerup, coh: chip.coherence_protocol,
+             noc: pcluster.noc_ports}
   fetch:
     label: Fetch and prediction
+    subtitle: Where fetch finds a taken branch's target, and the path to decode.
     kind: frontend
     blocks: [btb, dirpred, indpred, ras, fetch, ftq, l1i, itlb]
     params: {l0: btb.l0_entries, foot: btb.l0_footprint, bubble: btb.taken_bubble, l1: btb.l1_entries,
@@ -119,10 +129,12 @@ structures:
              mis: dirpred.mispredict_penalty, ind: indpred.capacity, ras: ras.depth, l1i: l1i.size,
              line: l1i.line, itlb: itlb.entries, fw: fetch.width, taken: fetch.taken_per_cycle,
              ftq: ftq.present, ftqd: ftq.depth, fdip: ftq.fdip, dw: decode.width, iq: iq.depth,
-             ctr: dirpred.counter_bits, ikind: indpred.kind, rbub: ras.return_bubble}
+             ctr: dirpred.counter_bits, ikind: indpred.kind, rbub: ras.return_bubble, l1i_ways: l1i.assoc,
+             itlb_org: itlb.org}
     mechanisms: [l1i_coupled_btb, decoupled_fetch, path_history_shift_xor, bpu_isolation, loop_modes]
   dmem:
     label: Data caches and translation
+    subtitle: The L1 data cache, address translation and what happens on a miss.
     kind: dmem
     blocks: [l1d, dtlb, prefetch, mshr]
     params: {size: l1d.size, line: l1d.line, assoc: l1d.assoc, repl: l1d.replacement, banks: l1d.banks, bank_w: l1d.bank_width,
@@ -132,6 +144,23 @@ structures:
              t1: dtlb.l1_entries, t1_org: dtlb.l1_org, t1_ports: dtlb.l1_lookups_per_cycle, page: dtlb.page_size,
              t1_miss: dtlb.l1_miss_penalty, t2: dtlb.l2_entries, t2_org: dtlb.l2_org, t2_miss: dtlb.l2_miss_penalty,
              pf: prefetch.kinds, pf_n: prefetch.streams, mlp: mshr.outstanding}
+
+# Long text values as the map shows them; the dossier and the tooltips keep the full value.
+short:
+  btb.l0_org: 512 × 2-way
+  dirpred.history_update: shift 1, XOR
+  dirpred.history_inputs: PC, offset, target
+  rename.fusion: 7 pairs
+  eu_int.roles: alu 1-6, mul 5-6
+  eu_fp.roles: fp/simd 11-14
+  retire.model: coalesced + rename
+  l2.replacement: LRU per core
+  slc.inclusion: exclusive
+  lsu.forwarding: SQ + register
+  lsu.disambiguation: PC-pair predictor
+  dtlb.l1_org: 5-way, VA 14-18
+  dtlb.l2_org: 12-way × 256 sets
+  prefetch.kinds: 4 kinds
 
 # Blocks between subsystems take the mixture hue; any other block takes its frame's.
 palette:
