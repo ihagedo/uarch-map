@@ -1,0 +1,4 @@
+[submodule "site/atlas"]
+	path = site/atlas
+	url = https://github.com/ihagedo/firestorm-diagrams.git
+	branch = main
