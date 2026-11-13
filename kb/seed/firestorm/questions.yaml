@@ -237,8 +237,10 @@ questions:
   retire:
     retire.groups: {label: "groups", q: "How uops retire (groups, rows, rate)", answers: [retire_groups]}
     retire.renames: {label: "renames", q: "What limits renames in flight", answers: [rename_retire_queue]}
-    retire.branches: {label: "branches", q: "How in-flight branches are tracked and limited",
+    retire.branches: {label: "branches", q: "How in-flight branches are tracked",
       answers: [retire_time_training]}
+    retire.branch_limit: {label: "branch limit", q: "What limits branches in flight",
+      answers: [inflight_branch_limit]}
     retire.exceptions: {label: "exceptions", q: "How exceptions and interrupts are taken",
       answers: [abandonable_requests, interrupt_routing, forced_nonspec_mode]}
     retire.release: {label: "early release", q: "Which resources are released before retire",

@@ -31897,6 +31897,22 @@
       "alternative": "Requests from all cores enter one queue in arrival order.",
       "detection_rule": "With three cores streaming through the L2, a fourth core's pointer chase keeps its unloaded latency under round-robin and slows with the load under one shared queue."
     },
+    "inflight_branch_limit": {
+      "claims": [],
+      "name": "Branch limit below the retire rows",
+      "block": "retire",
+      "status": "inferred",
+      "ours": true,
+      "description": "Something other than the retire rows stops branches at about 144 in flight, below the ~330 the rows allow with one branch in each row's last slot. The branch information tables overwrite when full, so they are not it.",
+      "basis": [
+        "c-dj-branches",
+        "c-mh-v1-rob-rows-330",
+        "c-mh-v1-rob-failable-slot",
+        "c-mh-v4-bit-overwrite"
+      ],
+      "alternative": "Only the retire rows limit branches, so about 330 can be in flight.",
+      "detection_rule": "Independent branches behind a long-latency head knee near 144 with a separate limit, and near 330 if only the rows limit them."
+    },
     "address_interleave_hash": {
       "claims": [
         "c-mh-v3-dram-hash",
@@ -36429,11 +36445,20 @@
     "retire.branches": {
       "block": "retire",
       "label": "branches",
-      "q": "How in-flight branches are tracked and limited",
+      "q": "How in-flight branches are tracked",
       "answers": [
         "retire_time_training"
       ],
       "state": "patent"
+    },
+    "retire.branch_limit": {
+      "block": "retire",
+      "label": "branch limit",
+      "q": "What limits branches in flight",
+      "answers": [
+        "inflight_branch_limit"
+      ],
+      "state": "ours"
     },
     "retire.exceptions": {
       "block": "retire",
