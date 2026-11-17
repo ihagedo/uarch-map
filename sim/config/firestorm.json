@@ -95,7 +95,7 @@
     "confidence": "derived"
   },
   "sched_fp.entries_per_queue": {
-    "value": 18,
+    "value": 36,
     "sim_key": "sched_fp",
     "confidence": "derived"
   },

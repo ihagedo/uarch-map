@@ -190,6 +190,12 @@ resolutions:
     resolution: Every measurement and the cache registers give 192 KB; the kernel comment's 6 ways match the hardware but
       its size does not, so the comment is likely stale
     resolved_by: c-pac-l1i-size
+  - param: sched_fp.entries_per_queue
+    claims: [c-jc-fp-sched-36, c-mh-v1-sched-18]
+    resolution: Four queues of 36. Chen's FP probe fits 156 ops as one 12-entry dispatch queue ahead of four 36-entry
+      queues, and our masked fadd chain, out of the data prefetcher's reach, reads the same 156 in 5 runs
+    resolved_by: c-us-p1-5-scheduler-fadd-masked-queue
+    value_from: c-jc-fp-sched-36
   - param: l1d.size
     claims: [c-jia-l1d-128, c-xnu-fs-l1d-160]
     resolution: Every measurement and the cache registers give 128 KB; the kernel comment's 8 ways match the hardware but

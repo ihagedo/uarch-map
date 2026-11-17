@@ -766,8 +766,8 @@ claims:
 new_params:
   lsu.loads_per_cycle:     {block: lsu,      name: Loads per cycle,         unit: loads/cycle}
   lsu.stores_per_cycle:    {block: lsu,      name: Stores per cycle,        unit: stores/cycle}
-  dtlb.l1_miss_penalty:    {block: dtlb,     name: L1 dTLB miss penalty,    unit: cycles}
-  dtlb.l2_miss_penalty:    {block: dtlb,     name: L2 TLB miss penalty,     unit: cycles}
+  dtlb.l1_miss_penalty:    {block: dtlb,     name: L1 dTLB miss penalty,    unit: cycles, platform_sensitive: true}
+  dtlb.l2_miss_penalty:    {block: dtlb,     name: L2 TLB miss penalty,     unit: cycles, platform_sensitive: true}
 
 new_mechanisms:
   streaming_store_nt:

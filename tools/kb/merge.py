@@ -18,7 +18,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RANK = {"measured": 0, "documented": 1, "derived": 2, "inferred": 3, "reported": 4}
 TOL = 0.05
 # units whose readings depend on the platform (clock, DRAM state, OS); a param can also set
-# platform_sensitive in params.yaml. An ours reading from another platform makes a note, not a dispute.
+# platform_sensitive where it is declared. An ours reading from another platform makes a note, not a dispute.
 PLATFORM_UNITS = {"ns", "GHz", "MHz", "GB/s"}
 
 
@@ -343,7 +343,8 @@ def merge(core):
             conf = "derived"
         else:
             conf = "inferred"
-        if open_disputes and conf == "confirmed":
+        # an ours dispute never lowers a published confidence
+        if conf == "confirmed" and any(not d.get("ours") for d in open_disputes):
             conf = "corroborated"
         if by_us:
             conf = "ours"

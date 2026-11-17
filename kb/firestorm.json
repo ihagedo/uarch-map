@@ -550,7 +550,8 @@
     "fetch.width": {
       "claims": [
         "c-ox-fetch-8",
-        "c-dj-width"
+        "c-dj-width",
+        "c-us-p3-1-frontend-fetch-width-nop"
       ],
       "disputes": [],
       "block": "fetch",
@@ -565,7 +566,8 @@
       "claims": [
         "c-mh-v1-fetch-16",
         "c-mh-v4-fetch-16",
-        "c-jia-fetch-16"
+        "c-jia-fetch-16",
+        "c-us-p3-1-page-frontend-fetch-width-page"
       ],
       "disputes": [],
       "block": "fetch",
@@ -600,7 +602,8 @@
       "claims": [
         "c-ox-btb-zero-bubble",
         "c-jia-taken-1",
-        "c-dj-taken"
+        "c-dj-taken",
+        "c-us-p3-2-frontend-taken-jump-cycles"
       ],
       "disputes": [],
       "block": "fetch",
@@ -624,6 +627,7 @@
         "c-jia-guide-l1i-size",
         "c-jia-l1i-192",
         "c-pac-l1i-size",
+        "c-us-p3-2-frontend-l1i-size-kib",
         "c-xnu-fs-l1i-256"
       ],
       "disputes": [
@@ -665,7 +669,9 @@
     "itlb.entries": {
       "claims": [
         "c-jia-itlb-192",
-        "c-pac-itlb-128"
+        "c-pac-itlb-128",
+        "c-us-p2-2-l1-itlb-entries",
+        "c-us-p2-2-nothp-l1-itlb-entries"
       ],
       "disputes": [
         {
@@ -690,7 +696,8 @@
       "claims": [
         "c-ox-btb-1024",
         "c-mh-v4-btb-l0",
-        "c-jia-btb-1024"
+        "c-jia-btb-1024",
+        "c-us-p3-3-frontend-btb-levels-0-entries"
       ],
       "disputes": [],
       "block": "btb",
@@ -717,7 +724,8 @@
     "btb.taken_bubble": {
       "claims": [
         "c-ox-btb-miss-bubble",
-        "c-mh-v4-l1i-tier-bubble-2"
+        "c-mh-v4-l1i-tier-bubble-2",
+        "c-us-p3-3-frontend-btb-levels-1-taken-bubble-cycles"
       ],
       "disputes": [],
       "block": "btb",
@@ -762,7 +770,8 @@
         "c-tm-history-100",
         "c-cq-phr-100",
         "c-fr-phr-100",
-        "c-ien-phrt-pcore"
+        "c-ien-phrt-pcore",
+        "c-us-p3-4-frontend-direction-predictor-history"
       ],
       "disputes": [],
       "block": "dirpred",
@@ -789,9 +798,21 @@
     "dirpred.mispredict_penalty": {
       "claims": [
         "c-7cpu-mispredict",
-        "c-ox-mispredict"
+        "c-ox-mispredict",
+        "c-us-p3-7-frontend-mispredict-penalty"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-7cpu-mispredict",
+            "c-us-p3-7-frontend-mispredict-penalty"
+          ],
+          "note": "Reproduced (6 runs, sets 04,16,45; cpus 4,5,6,7; 3 days); runs and CIs 14.38 to 14.43. 2.988 GHz. fe_mispredict_w16384: (random - baseline) / 0.5, baseline data mode 2.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
+        }
+      ],
       "block": "dirpred",
       "name": "Mispredict penalty",
       "unit": "cycles",
@@ -859,14 +880,15 @@
     },
     "ftq.fdip": {
       "claims": [
-        "c-mh-v4-fdip-absent"
+        "c-mh-v4-fdip-absent",
+        "c-us-p3-8-g-decoupling-fdip-signature"
       ],
       "disputes": [],
       "block": "ftq",
       "name": "Fetch-directed prefetch present",
       "value": false,
-      "status": "inferred",
-      "confidence": "inferred"
+      "status": "derived",
+      "confidence": "ours"
     },
     "iq.depth": {
       "claims": [],
@@ -891,7 +913,8 @@
       "claims": [
         "c-mh-v1-frontend-8",
         "c-mh-v1-rename-8wide",
-        "c-dj-width"
+        "c-dj-width",
+        "c-us-p1-7-nop-stream"
       ],
       "disputes": [],
       "block": "rename",
@@ -934,7 +957,8 @@
       "claims": [
         "c-ox-mov-imm-8",
         "c-mh-v1-mov-imm-8wide",
-        "c-dj-mov-imm"
+        "c-dj-mov-imm",
+        "c-us-p1-6x-movimm-alu-share"
       ],
       "disputes": [
         {
@@ -1007,9 +1031,21 @@
     },
     "int_prf.headroom": {
       "claims": [
-        "c-jia-int-spec-362"
+        "c-jia-int-spec-362",
+        "c-us-window-int-d2-miss-masked"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-jia-int-spec-362",
+            "c-us-window-int-d2-miss-masked"
+          ],
+          "note": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 340 to 347. Fine step 1; the delay and loop hold up to 2 more than the knee counts. The knee counts free registers. Masked chain, out of the DMP's reach. 2.988 GHz.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
+        }
+      ],
       "block": "int_prf",
       "name": "Integer rename headroom",
       "unit": "registers",
@@ -1077,7 +1113,8 @@
     },
     "dispatch.mul_entries": {
       "claims": [
-        "c-mh-v1-dispatch-mul"
+        "c-mh-v1-dispatch-mul",
+        "c-us-p1-5-dispatch-mul"
       ],
       "disputes": [],
       "block": "dispatch",
@@ -1155,33 +1192,27 @@
       "claims": [
         "c-mh-v1-sched-18",
         "c-jia-sched-fp-36",
-        "c-jc-fp-sched-36"
+        "c-jc-fp-sched-36",
+        "c-us-p1-5-scheduler-fadd-masked-queue"
       ],
       "disputes": [
         {
           "claims": [
-            "c-mh-v1-sched-18",
-            "c-jia-sched-fp-36"
+            "c-jc-fp-sched-36",
+            "c-mh-v1-sched-18"
           ],
-          "note": "Against the 18 of c-mh-v1-sched-18, which holds Johnson's sizes about twice too large.",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-mh-v1-sched-18",
-            "c-jc-fp-sched-36"
-          ],
-          "note": "Same data as c-jia-sched-fp-36, here with one 12-entry FP queue rather than two of 6.",
-          "resolution": null,
-          "resolved_by": null
+          "note": "36 vs 18 at equal rank",
+          "resolution": "Four queues of 36. Chen's FP probe fits 156 ops as one 12-entry dispatch queue ahead of four 36-entry queues, and our masked fadd chain, out of the data prefetcher's reach, reads the same 156 in 5 runs",
+          "resolved_by": "c-us-p1-5-scheduler-fadd-masked-queue",
+          "ours": true
         }
       ],
       "block": "sched_fp",
       "name": "FP scheduler queue size",
       "unit": "entries",
       "sim_key": "sched_fp",
-      "value": 18,
+      "value_from": "c-jc-fp-sched-36",
+      "value": 36,
       "status": "derived",
       "confidence": "derived"
     },
@@ -1191,7 +1222,9 @@
         "c-mh-v1-sched-ls-split-48",
         "c-jia-sched-ls-48",
         "c-jc-sched-ls-48",
-        "c-dj-lsq-sched-48"
+        "c-dj-lsq-sched-48",
+        "c-us-p1-5-scheduler-load-masked",
+        "c-us-p1-5-scheduler-store-masked"
       ],
       "disputes": [],
       "block": "sched_ls",
@@ -1210,7 +1243,8 @@
         "c-mh-v1-int-rate-6",
         "c-jia-guide-int-units",
         "c-jia-addi-6",
-        "c-dj-int-units"
+        "c-dj-int-units",
+        "c-us-p1-8x-micro-add-imm-tput"
       ],
       "disputes": [
         {
@@ -1251,7 +1285,8 @@
         "c-ox-fp-units",
         "c-mh-v1-fabs-throughput",
         "c-jia-guide-fp-units",
-        "c-dj-fp-units"
+        "c-dj-fp-units",
+        "c-us-p1-8-micro-fadd-tput"
       ],
       "disputes": [],
       "block": "eu_fp",
@@ -1291,7 +1326,9 @@
       "claims": [
         "c-mh-v1-rob-rows",
         "c-jia-rob-groups",
-        "c-dj-retire-groups"
+        "c-dj-retire-groups",
+        "c-us-window-load-d24-fp",
+        "c-us-window-store-d24-fp"
       ],
       "disputes": [],
       "block": "retire",
@@ -1387,7 +1424,8 @@
     "retire.rate_groups": {
       "claims": [
         "c-mh-v1-retire-rows-per-cycle",
-        "c-dj-retire-rate"
+        "c-dj-retire-rate",
+        "c-us-p1-7-retire-rate"
       ],
       "disputes": [],
       "block": "retire",
@@ -1414,7 +1452,8 @@
     },
     "retire.inflight_branches": {
       "claims": [
-        "c-dj-branches"
+        "c-dj-branches",
+        "c-us-window-branch-d2-miss-masked"
       ],
       "disputes": [],
       "block": "retire",
@@ -1433,7 +1472,8 @@
         "c-jc-lq-130",
         "c-dj-loads",
         "c-dj-lsq-lq-130",
-        "c-tso-lq-130"
+        "c-tso-lq-130",
+        "c-us-window-load-d2-miss-masked"
       ],
       "disputes": [
         {
@@ -1553,6 +1593,7 @@
         "c-pac-l1d-size",
         "c-slap-l1d-128",
         "c-tso-l1d-128",
+        "c-us-p2-1-l1d-capacity",
         "c-xnu-fs-l1d-160"
       ],
       "disputes": [
@@ -1585,6 +1626,7 @@
         "c-pac-l1d-line",
         "c-prt-l1d-line",
         "c-slap-l1-line-64",
+        "c-us-p2-1-l1d-line",
         "c-xnu-fs-line-64"
       ],
       "disputes": [],
@@ -1609,6 +1651,8 @@
         "c-prt-l1d-ways",
         "c-s2c-l1d-8way",
         "c-tso-l1d-8way",
+        "c-us-p2-1-l1d-associativity",
+        "c-us-p2-1-repl-l1d-ways-one-set",
         "c-xnu-fs-l1d-8way"
       ],
       "disputes": [],
@@ -1630,7 +1674,10 @@
         "c-mh-v2-l1d-latency",
         "c-jia-l1d-lat-3",
         "c-jia-guide-ptr-chase",
-        "c-dj-l1d-latency"
+        "c-dj-l1d-latency",
+        "c-us-p1-8m-l1d-lat-base",
+        "c-us-p2-1-l1d-load-to-use",
+        "c-us-p1-8-micro-ldr-lat"
       ],
       "disputes": [],
       "block": "l1d",
@@ -1676,7 +1723,9 @@
         "c-mh-v2-dtlb-160-aside",
         "c-mh-v2-dtlb",
         "c-jia-guide-dtlb",
-        "c-jia-dtlb-160"
+        "c-jia-dtlb-160",
+        "c-us-p2-2-l1-dtlb-entries",
+        "c-us-p2-2-nothp-l1-dtlb-entries"
       ],
       "disputes": [
         {
@@ -1728,7 +1777,9 @@
         "c-7cpu-dtlb-l2",
         "c-mh-v2-dtlb-l2-3072",
         "c-jia-guide-l2tlb",
-        "c-jia-l2tlb-3072"
+        "c-jia-l2tlb-3072",
+        "c-us-p2-2-nothp-l2-tlb-entries",
+        "c-us-p2-2-nothp-l2-tlb-instruction-side-entries"
       ],
       "disputes": [],
       "block": "dtlb",
@@ -1804,7 +1855,8 @@
         "c-ilk-l2-line",
         "c-pac-l2-line",
         "c-prt-l2-line",
-        "c-s2c-l2-line-split"
+        "c-s2c-l2-line-split",
+        "c-us-p2-1-thp-l2-line-pair-steps-from-plus-0-b"
       ],
       "disputes": [],
       "block": "l2",
@@ -1819,7 +1871,8 @@
         "c-7cpu-l2-latency",
         "c-mh-v1-l2-latency-aside",
         "c-mh-v2-inner-l2-latency",
-        "c-mh-v2-l2-latency-17"
+        "c-mh-v2-l2-latency-17",
+        "c-us-p2-1-l2-load-to-use"
       ],
       "disputes": [
         {
@@ -1839,6 +1892,16 @@
           ],
           "note": "Passing figure in the introductory ROB-size discussion, no method stated; 7-cpu gives 18 cycles (c-7cpu-l2-latency). Vol 2 measures the cache hierarchy.",
           "resolution": "The 15 is a passing figure; Handley's own measurement in his memory volume is 17",
+          "resolved_by": null,
+          "ours": true
+        },
+        {
+          "claims": [
+            "c-mh-v2-l2-latency-17",
+            "c-us-p2-1-l2-load-to-use"
+          ],
+          "note": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days); runs and CIs 17.43 to 17.99. Load-to-load: ldr x, [x], no address add. Cores 4/5 read about 0.5 below 6/7. Raw pointer chain; masked 18.95; plain 18.96. 2.985 GHz.",
+          "resolution": null,
           "resolved_by": null,
           "ours": true
         }
@@ -1963,7 +2026,8 @@
     },
     "memctrl.dram_latency": {
       "claims": [
-        "c-7cpu-dram-latency"
+        "c-7cpu-dram-latency",
+        "c-us-p2-1-dram-load-to-use"
       ],
       "disputes": [],
       "block": "memctrl",
@@ -1972,6 +2036,13 @@
       "sim_key": "dram_latency_ns",
       "value": 91,
       "status": "measured",
+      "platform_notes": [
+        {
+          "claim": "c-us-p2-1-dram-load-to-use",
+          "value": 110.4,
+          "platform": "asahi-linux"
+        }
+      ],
       "confidence": "single"
     },
     "lsu.loads_per_cycle": {
@@ -1980,7 +2051,8 @@
         "c-mh-v2-l1-load-paths",
         "c-mh-v2-loads-per-cycle",
         "c-jia-ldst-mix",
-        "c-jia-guide-lsu"
+        "c-jia-guide-lsu",
+        "c-us-p1-8-micro-ldr-tput"
       ],
       "disputes": [],
       "block": "lsu",
@@ -1995,7 +2067,8 @@
         "c-at-stores-per-cycle",
         "c-mh-v2-two-stores-per-cycle",
         "c-mh-v2-stores-per-cycle",
-        "c-jia-stores-2"
+        "c-jia-stores-2",
+        "c-us-p1-8-micro-str-tput"
       ],
       "disputes": [],
       "block": "lsu",
@@ -2007,12 +2080,15 @@
     },
     "dtlb.l1_miss_penalty": {
       "claims": [
-        "c-7cpu-dtlb-l1-miss"
+        "c-7cpu-dtlb-l1-miss",
+        "c-us-p2-2-l1-dtlb-miss-penalty",
+        "c-us-p2-2-nothp-l1-dtlb-miss-penalty"
       ],
       "disputes": [],
       "block": "dtlb",
       "name": "L1 dTLB miss penalty",
       "unit": "cycles",
+      "platform_sensitive": true,
       "value": 6,
       "status": "measured",
       "confidence": "single"
@@ -2020,15 +2096,30 @@
     "dtlb.l2_miss_penalty": {
       "claims": [
         "c-7cpu-dtlb-l2-miss",
-        "c-mh-v2-tlb2-miss-25"
+        "c-mh-v2-tlb2-miss-25",
+        "c-us-p2-2-nothp-l2-tlb-miss-penalty",
+        "c-us-p2-2-nothp-l2-tlb-instruction-side-miss-penalty"
       ],
       "disputes": [],
       "block": "dtlb",
       "name": "L2 TLB miss penalty",
       "unit": "cycles",
+      "platform_sensitive": true,
       "value": 25,
       "approx": true,
       "status": "measured",
+      "platform_notes": [
+        {
+          "claim": "c-us-p2-2-nothp-l2-tlb-miss-penalty",
+          "value": 16.2,
+          "platform": "asahi-linux"
+        },
+        {
+          "claim": "c-us-p2-2-nothp-l2-tlb-instruction-side-miss-penalty",
+          "value": 21.7,
+          "platform": "asahi-linux"
+        }
+      ],
       "confidence": "corroborated"
     },
     "l1d.write_policy": {
@@ -2191,7 +2282,8 @@
         "c-ox-store-load",
         "c-mh-v1-forwarding-lam",
         "c-mh-v1-store-load-pair-6",
-        "c-jia-stlf-latency"
+        "c-jia-stlf-latency",
+        "c-us-p2-5-store-to-load-forwarding-forced-seq-5b094d"
       ],
       "disputes": [
         {
@@ -2202,6 +2294,16 @@
           "note": "Latency per forwarded store and load in his test; c-mh-v1-store-load-pair-6 gives 6.",
           "resolution": null,
           "resolved_by": null
+        },
+        {
+          "claims": [
+            "c-mh-v1-store-load-pair-6",
+            "c-us-p2-5-store-to-load-forwarding-forced-seq-5b094d"
+          ],
+          "note": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days). 2.988 GHz. str x1, [x1]; ldr x2, [x2], x1 = x2; 6 here vs 7.5 above: a setup difference; equal: that value.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
         }
       ],
       "block": "lsu",
@@ -2327,9 +2429,21 @@
       "claims": [
         "c-mh-v1-lsdp-74-delayed-data",
         "c-mh-v1-lsdp-74-chained",
-        "c-mh-v1-lsdp-74-flush"
+        "c-mh-v1-lsdp-74-flush",
+        "c-us-p2-5-store-load-pairs-tracked"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v1-lsdp-74-delayed-data",
+            "c-us-p2-5-store-load-pairs-tracked"
+          ],
+          "note": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days); spread 91 to 92. Store address delayed by udiv. 2.988 GHz. N store/load blocks, store address behind a divide; 2.0 -> 32.0 cycles per block.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
+        }
+      ],
       "block": "lsu",
       "name": "Dependence predictor entries",
       "unit": "entries",
@@ -2340,9 +2454,21 @@
     },
     "lsu.ordering_flush_penalty": {
       "claims": [
-        "c-mh-v1-ordering-flush-25"
+        "c-mh-v1-ordering-flush-25",
+        "c-us-p2-5-ordering-violation-cost-per-block"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-mh-v1-ordering-flush-25",
+            "c-us-p2-5-ordering-violation-cost-per-block"
+          ],
+          "note": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days); runs and CIs 29.97 to 29.98. 2.988 GHz. above 2x the knee, over the flat level.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
+        }
+      ],
       "block": "lsu",
       "name": "Memory-ordering flush penalty",
       "unit": "cycles",
@@ -2393,7 +2519,8 @@
       "claims": [
         "c-mh-v1-dispatch-fp-12",
         "c-mh-v1-dispatch-fp-14",
-        "c-jia-fp-nsq"
+        "c-jia-fp-nsq",
+        "c-us-p1-5-scheduler-fadd-masked"
       ],
       "disputes": [
         {
@@ -2606,7 +2733,8 @@
         "c-at-mini-dram-read-bw",
         "c-mh-v2-slc-dram-load-64",
         "c-mh-v2-one-thread-saturates",
-        "c-mh-v2-bw-summary-dram"
+        "c-mh-v2-bw-summary-dram",
+        "c-us-p2-3-bw-dram-read-bandwidth-one-core"
       ],
       "disputes": [
         {
@@ -2625,6 +2753,13 @@
       "value": 64,
       "approx": true,
       "status": "measured",
+      "platform_notes": [
+        {
+          "claim": "c-us-p2-3-bw-dram-read-bandwidth-one-core",
+          "value": 44.95,
+          "platform": "asahi-linux"
+        }
+      ],
       "confidence": "corroborated"
     },
     "l1d.banks": {
@@ -2908,6 +3043,11 @@
         "c-ilk-l1i-ways",
         "c-jia-l1i-6way",
         "c-pac-l1i-ways",
+        "c-us-p3-2-repl-frontend-l1i-ways-repl",
+        "c-us-p3-2-repl2-frontend-l1i-ways-repl",
+        "c-us-p3-2-ways-frontend-l1i-ways-32kib",
+        "c-us-p3-2-ways-frontend-l1i-ways-64kib",
+        "c-us-p3-2-ways-va-frontend-l1i-ways-32kib",
         "c-xnu-fs-l1i-6way"
       ],
       "disputes": [
@@ -2967,9 +3107,21 @@
     },
     "fp_prf.headroom": {
       "claims": [
-        "c-jia-fp-spec-382"
+        "c-jia-fp-spec-382",
+        "c-us-window-fp-d2-miss-masked"
       ],
-      "disputes": [],
+      "disputes": [
+        {
+          "claims": [
+            "c-jia-fp-spec-382",
+            "c-us-window-fp-d2-miss-masked"
+          ],
+          "note": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 400 to 408. Fine step 1; the delay and loop hold up to 1 more than the knee counts. The knee counts free registers. Masked chain, out of the DMP's reach. 2.988 GHz.",
+          "resolution": null,
+          "resolved_by": null,
+          "ours": true
+        }
+      ],
       "block": "fp_prf",
       "name": "FP/SIMD rename headroom",
       "unit": "registers",
@@ -2979,7 +3131,8 @@
     },
     "flags_prf.headroom": {
       "claims": [
-        "c-jia-flags-spec-123"
+        "c-jia-flags-spec-123",
+        "c-us-window-flags-d2-miss-masked"
       ],
       "disputes": [],
       "block": "flags_prf",
@@ -3005,7 +3158,9 @@
       "claims": [
         "c-mh-v2-load-alu-4",
         "c-jia-load-use-4",
-        "c-dj-load-alu-latency"
+        "c-dj-load-alu-latency",
+        "c-us-p1-8m-l1d-lat-reg",
+        "c-us-p2-1-l1d-load-to-use-masked"
       ],
       "disputes": [],
       "block": "l1d",
@@ -30485,6 +30640,1136 @@
       "source": "asplos26-tso",
       "entered": "tso"
     },
+    "c-us-p3-1-frontend-fetch-width-nop": {
+      "text": "Our P3.1 probe reads frontend.fetch_width[nop] as 8 instr/cycle on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 20, p3.1",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "instr/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "fetch.width"
+      ],
+      "notes": "Reproduced (6 runs, sets 04,16,20; cpus 4,5,6,7; 3 days). Sustained, inside a page. 2.988 GHz. Flags: shape.ramp 6/6. filler nop: peak 8.00 instr/cycle, ramp (staircase: fetch; ramp: decode).",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-1-page-frontend-fetch-width-page": {
+      "text": "Our P3.1-page probe reads frontend.fetch_width[page] as 16 instr/fetch on an M1 Firestorm core (median of 8 runs)",
+      "loc": "M1 run, set 43, p3.1-page-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 16,
+      "unit": "instr/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "fetch.block"
+      ],
+      "notes": "Reproduced (8 runs, sets 06,16,21,43; cpus 4,5,6,7; 4 days). Loop starting 4 B before a page. 2.988 GHz. Flags: period: start offsets disagree 3/8.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-frontend-l1i-size-kib": {
+      "text": "Our P3.2 probe reads frontend.l1i.size_kib as 192 KiB on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 20, p3.2",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 192,
+      "unit": "KiB",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.size"
+      ],
+      "notes": "Reproduced (6 runs, sets 04,16,20; cpus 4,5,6,7; 3 days). 2.988 GHz. 3072 lines of 64 B; cycles per line: 2.00 inside, 7.66 at 8688 lines.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-frontend-taken-jump-cycles": {
+      "text": "Our P3.2 probe reads frontend.taken_jump_cycles as 1 cycles; per cycle, 1 branches/cycle on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 20, p3.2",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 1,
+      "unit": "branches/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "fetch.taken_per_cycle"
+      ],
+      "notes": "Reproduced (6 runs, sets 04,16,20; cpus 4,5,6,7; 3 days). 2.988 GHz. jump_chain(512), orders [0, 1, 2]: taken jumps to new lines inside the L0 BTB and L1i.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-repl-frontend-l1i-ways-repl": {
+      "text": "Our P3.2-repl probe reads frontend.l1i.ways[repl] as 6 lines on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 25, p3.2-repl",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.assoc"
+      ],
+      "notes": "Reproduced (6 runs, sets 12,16,25; cpus 4,5,6,7; 2 days). 2.984 GHz. cyclic chains of 2..16 lines 64 KiB apart.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-repl2-frontend-l1i-ways-repl": {
+      "text": "Our P3.2-repl2 probe reads frontend.l1i.ways[repl] as 6 lines on an M1 Firestorm core (median of 4 runs)",
+      "loc": "M1 run, set 43, p3.2-repl2-cpu5",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.assoc"
+      ],
+      "notes": "4 runs on one day, agree (sets 35,43; cpus 4,5,6,7). 2.984 GHz. cyclic chains of 2..16 lines 64 KiB apart.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-ways-frontend-l1i-ways-32kib": {
+      "text": "Our P3.2-ways probe reads frontend.l1i.ways[32KiB] as 6 lines on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 25, p3.2-ways",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.assoc"
+      ],
+      "notes": "Reproduced (6 runs, sets 06,16,25; cpus 4,5,6,7; 3 days). 2.985 GHz. 6: 6 ways; 12: 12 ways; 6-12, moving by launch: 6 ways physically indexed; cycles per jump 1.00 at N=2, 20.86 at 24.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-ways-frontend-l1i-ways-64kib": {
+      "text": "Our P3.2-ways probe reads frontend.l1i.ways[64KiB] as 6 lines on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 25, p3.2-ways",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.assoc"
+      ],
+      "notes": "Reproduced (6 runs, sets 06,16,25; cpus 4,5,6,7; 3 days). 2.985 GHz. control: as 32 KiB unless a way holds more than 32 KiB; cycles per jump 1.00 at N=2, 21.23 at 24.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-2-ways-va-frontend-l1i-ways-32kib": {
+      "text": "Our P3.2-ways-va probe reads frontend.l1i.ways[32KiB] as 6 lines on an M1 Firestorm core",
+      "loc": "M1 run, set 35, p3.2-ways-va",
+      "method": "stride-sweep",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1i.assoc"
+      ],
+      "notes": "Single run (set 35; cpu 7). 2.985 GHz. 6: 6 ways; 12: 12 ways; 6-12, moving by launch: 6 ways physically indexed; cycles per jump 1.00 at N=2, 21.08 at 24.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-3-frontend-btb-levels-0-entries": {
+      "text": "Our P3.3 probe reads frontend.btb_levels[0].entries as 1030 entries on an M1 Firestorm core (median of 5 runs)",
+      "loc": "M1 run, set 16, p3.3-cpu7",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 1030,
+      "unit": "entries",
+      "range": [
+        1022,
+        1032
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "btb.l0_entries"
+      ],
+      "notes": "Reproduced (5 runs, sets 04,16; cpus 4,5,6,7; 2 days); range with the resolution 1022 to 1032. The tier edge moves with the search: misses show at 1027 and vanish at 1032; P3.3s reads 1038. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-3-frontend-btb-levels-1-entries": {
+      "text": "Our P3.3 probe reads frontend.btb_levels[1].entries as 49154 entries on an M1 Firestorm core (median of 5 runs); the second taken-jump tier ends at 192 KiB of 4 B jumps, the L1i's size, not at a BTB size",
+      "loc": "M1 run, set 16, p3.3-cpu7",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 49154,
+      "unit": "entries",
+      "range": [
+        49122,
+        49154
+      ],
+      "platform": "asahi-linux",
+      "supports": [],
+      "notes": "Reproduced (5 runs, sets 04,16; cpus 4,5,6,7; 2 days); spread 49122 to 49154. 2.988 GHz. Flags: placement: other chain orders disagree 2/5. 191.9 KiB of jumps; 16.23 cycles per jump at 131968 jumps.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-3-frontend-btb-levels-1-taken-bubble-cycles": {
+      "text": "Our P3.3 probe reads frontend.btb_levels[1].taken_bubble_cycles as 1.972 cycles on an M1 Firestorm core (median of 5 runs)",
+      "loc": "M1 run, set 16, p3.3-cpu7",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 1.972,
+      "unit": "cycles",
+      "range": [
+        1.517,
+        2
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "btb.taken_bubble"
+      ],
+      "notes": "Reproduced (5 runs, sets 04,16; cpus 4,5,6,7; 2 days); runs and CIs 1.517 to 2. 2.988 GHz. Flags: placement: other chain orders disagree 2/5. plateau 2062-46658 jumps.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-3s-frontend-btb-spacing-l1i": {
+      "text": "Our P3.3s probe reads frontend.btb_spacing.l1i as 196608 bytes on an M1 Firestorm core; jumps x spacing at the second tier's end is 192 KiB at 4, 16, 32, 64 and 128 B (177 KiB at 8 B): the tier follows code bytes, as the L1i does",
+      "loc": "M1 run, set 45, p3.3s",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 196608,
+      "unit": "bytes",
+      "range": [
+        181312,
+        196608
+      ],
+      "platform": "asahi-linux",
+      "supports": [],
+      "notes": "Single run (set 45; cpu 7); in-run CI 181312 to 196608. 2.988 GHz. Flags: btb.l1i_unmatched 1/1.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-7-frontend-mispredict-penalty": {
+      "text": "Our P3.7 probe reads frontend.mispredict_penalty as 14.4 cycles on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 45, p3.7x",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 14.4,
+      "unit": "cycles",
+      "range": [
+        14.38,
+        14.43
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dirpred.mispredict_penalty"
+      ],
+      "notes": "Reproduced (6 runs, sets 04,16,45; cpus 4,5,6,7; 3 days); runs and CIs 14.38 to 14.43. 2.988 GHz. fe_mispredict_w16384: (random - baseline) / 0.5, baseline data mode 2.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8m-l1d-lat-base": {
+      "text": "Our P1.8m probe reads L1D lat_base as 3.003 cycles on an M1 Firestorm core",
+      "loc": "M1 run, set 46, p1.8m",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3.003,
+      "unit": "cycles",
+      "range": [
+        2.983,
+        3.023
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "Single run (set 46; cpu 7); in-run CI 2.983 to 3.023. The load's result is the next load's base. 2.988 GHz. ldr x2, [x2].",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8m-l1d-lat-reg": {
+      "text": "Our P1.8m probe reads L1D lat_reg as 3.998 cycles on an M1 Firestorm core",
+      "loc": "M1 run, set 46, p1.8m",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3.998,
+      "unit": "cycles",
+      "range": [
+        3.995,
+        4.002
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.latency_alu"
+      ],
+      "notes": "Single run (set 46; cpu 7); in-run CI 3.995 to 4.002. The load's result is the next load's index. 2.988 GHz. ldr x2, [x7, x2].",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-dram-load-to-use": {
+      "text": "Our P2.1 probe reads DRAM load-to-use as 347.5 cycles; less our L2 load-to-use of the same runs (17.94 cycles), at 2.988 GHz, 110.4 ns on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "derived",
+      "value": 110.4,
+      "unit": "ns",
+      "range": [
+        110.2,
+        110.7
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "memctrl.dram_latency"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days); runs and CIs 110.2 to 110.7. (DRAM - L2 load-to-use cycles, same run) / 2.988 GHz: the KB's 91 ns is time beyond the L2. Raw pointer chain; masked 348.7; plain 348.9. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l1d-associativity": {
+      "text": "Our P2.1 probe reads L1D associativity as 8 ways on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days). Raw pointer chain; masked 8; plain 8. 2.985 GHz. K nodes S apart: S = 16 KiB -> 8, S = 64 KiB -> 8.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l1d-capacity": {
+      "text": "Our P2.1 probe reads L1D capacity as 130 KiB on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 130,
+      "unit": "KiB",
+      "range": [
+        128,
+        131.9
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.size"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days); range with the resolution 128 to 131.9. Grid 2 KiB; the masked control reads 128. Raw pointer chain; masked 128; plain 130. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l1d-line": {
+      "text": "Our P2.1 probe reads L1D line as 64 B on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 64,
+      "unit": "B",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.line"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days). Raw pointer chain; masked 64; plain 64. 2.985 GHz. pair chase over 2 MiB: first D past half the step from D = 8 B.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l1d-load-to-use-masked": {
+      "text": "Our P2.1 probe reads L1D load-to-use as 4.99 cycles; minus the chain's eor, 3.99 cycles on an M1 Firestorm core",
+      "loc": "M1 run, set 39, p2.1-masked",
+      "method": "pointer-chase",
+      "derivation": "derived",
+      "value": 3.99,
+      "unit": "cycles",
+      "range": [
+        3.983,
+        4
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.latency_alu"
+      ],
+      "notes": "Single run (set 39; cpu 7); in-run CI 3.983 to 4. Step - 1: an eor feeds each load. Masked chain, out of the DMP's reach. 2.985 GHz. random chain over 0 KiB to 64 KiB; chase masked.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l1d-load-to-use": {
+      "text": "Our P2.1 probe reads L1D load-to-use as 2.994 cycles on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 2.994,
+      "unit": "cycles",
+      "range": [
+        2.989,
+        3
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days); runs and CIs 2.989 to 3. Load-to-load: the address comes from a load. Raw pointer chain; masked 4.99; plain 4.991. 2.985 GHz. random chain over 0 KiB to 64 KiB.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-l2-load-to-use": {
+      "text": "Our P2.1 probe reads L2 load-to-use as 17.94 cycles on an M1 Firestorm core (median of 10 runs)",
+      "loc": "M1 run, set 20, p2.1",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 17.94,
+      "unit": "cycles",
+      "range": [
+        17.43,
+        17.99
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l2.latency"
+      ],
+      "notes": "Reproduced (10 runs, sets 03,13,15,20; cpus 4,5,6,7; 3 days); runs and CIs 17.43 to 17.99. Load-to-load: ldr x, [x], no address add. Cores 4/5 read about 0.5 below 6/7. Raw pointer chain; masked 18.95; plain 18.96. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-repl-l1d-ways-one-set": {
+      "text": "Our P2.1-repl probe reads L1D ways (one set) as 8 lines on an M1 Firestorm core",
+      "loc": "M1 run, set 46, p2.1-repl",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "ways",
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.assoc"
+      ],
+      "notes": "Single run (set 46; cpu 7). Cyclic chains of lines 16 KiB apart. 2.988 GHz. cycles per load, cyclic chains of 2..16 lines 16 KiB apart: 4.0 4.0 4.0 4.0 4.0 4.0 4.0 15.0 15.0 15.0 15.0 15.0 15.0 15.0 15.0.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-1-thp-l2-line-pair-steps-from-plus-0-b": {
+      "text": "Our P2.1-thp probe reads L2 line, pair steps from +0 B as 128 B on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 43, p2.1-thp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "B",
+      "platform": "asahi-linux",
+      "supports": [
+        "l2.line"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,43; cpus 4,6,7). Raw pointer chain, no masked control. 2.983 GHz. pair chase over 256 MiB: steps at D = 64 B +40, D = 128 B +57, D = 256 B +234 cycles; the second step is the line; half-step rule 256.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-l1-dtlb-entries": {
+      "text": "Our P2.2 probe reads L1 dTLB entries as 166 pages on an M1 Firestorm core (median of 7 runs)",
+      "loc": "M1 run, set 20, p2.2-cpu7",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 166,
+      "unit": "entries",
+      "range": [
+        156,
+        169
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "Reproduced (7 runs, sets 03,15,20; cpus 4,5,6,7; 3 days); range with the resolution 156 to 169. Fine grid 4 pages; the 10 % onset sits up to 10 pages into a miss ramp that starts at 156-161. Raw pointer chain; masked 166; plain 166.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-l1-dtlb-miss-penalty": {
+      "text": "Our P2.2 probe reads L1 dTLB miss penalty as 5.996 cycles on an M1 Firestorm core (median of 7 runs)",
+      "loc": "M1 run, set 20, p2.2-cpu7",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 5.996,
+      "unit": "cycles",
+      "range": [
+        5.989,
+        6.032
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l1_miss_penalty"
+      ],
+      "notes": "Reproduced (7 runs, sets 03,15,20; cpus 4,5,6,7; 3 days); runs and CIs 5.989 to 6.032. Raw pointer chain; masked 6.013; plain 6. 2.986 GHz. rise of the page-minus-dense curve.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-l1-itlb-entries": {
+      "text": "Our P2.2 probe reads L1 iTLB entries as 193 pages on an M1 Firestorm core (median of 9 runs)",
+      "loc": "M1 run, set 39, p2.2-plain",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 193,
+      "unit": "entries",
+      "range": [
+        189,
+        196
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "itlb.entries"
+      ],
+      "notes": "Reproduced (9 runs, sets 03,15,20,39; cpus 4,5,6,7; 4 days); range with the resolution 189 to 196. Fine grid 4 pages; the onset is the last count below 10 % of the rise. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l1-dtlb-entries": {
+      "text": "Our P2.2-nothp probe reads L1 dTLB entries as 166 pages on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 166,
+      "unit": "entries",
+      "range": [
+        156,
+        169
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l1_entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); range with the resolution 156 to 169. Fine grid 4 pages; the 10 % onset sits up to 10 pages into a miss ramp that starts at 156-161. Raw pointer chain, no masked control. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l1-dtlb-miss-penalty": {
+      "text": "Our P2.2-nothp probe reads L1 dTLB miss penalty as 6.023 cycles on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 6.023,
+      "unit": "cycles",
+      "range": [
+        5.99,
+        6.032
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l1_miss_penalty"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); runs and CIs 5.99 to 6.032. Raw pointer chain, no masked control. 2.985 GHz. rise of the page-minus-dense curve.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l1-itlb-entries": {
+      "text": "Our P2.2-nothp probe reads L1 iTLB entries as 193 pages on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 193,
+      "unit": "entries",
+      "range": [
+        189,
+        196
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "itlb.entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); range with the resolution 189 to 196. Fine grid 4 pages; the onset is the last count below 10 % of the rise. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l2-tlb-entries": {
+      "text": "Our P2.2-nothp probe reads L2 TLB entries as 3076 pages on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3076,
+      "unit": "entries",
+      "range": [
+        3031,
+        3165
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); range with the resolution 3031 to 3165. Fine grid 45 pages. Huge pages off. Raw pointer chain, no masked control. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l2-tlb-miss-penalty": {
+      "text": "Our P2.2-nothp probe reads L2 TLB miss penalty as 16.2 cycles on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 16.2,
+      "unit": "cycles",
+      "range": [
+        15.93,
+        16.22
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l2_miss_penalty"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); runs and CIs 15.93 to 16.22. Linux page tables, 16 KiB pages. Raw pointer chain, no masked control. 2.985 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l2-tlb-instruction-side-entries": {
+      "text": "Our P2.2-nothp probe reads L2 TLB, instruction side entries as 3076 pages on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 3076,
+      "unit": "entries",
+      "range": [
+        3031,
+        3120
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l2_entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); range with the resolution 3031 to 3120. Fine grid 45 pages. Instruction side. 2.985 GHz. page minus dense chain, 16384 B pages: reach 48.1 MiB; +21.9 cycles past it.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-2-nothp-l2-tlb-instruction-side-miss-penalty": {
+      "text": "Our P2.2-nothp probe reads L2 TLB, instruction side miss penalty as 21.7 cycles on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p2.2-nothp-cpu6",
+      "method": "pointer-chase",
+      "derivation": "measured",
+      "value": 21.7,
+      "unit": "cycles",
+      "range": [
+        21.37,
+        21.89
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dtlb.l2_miss_penalty"
+      ],
+      "notes": "3 runs on one day, agree (sets 33,42; cpus 4,6,7); runs and CIs 21.37 to 21.89. Instruction side; Linux page tables. 2.985 GHz. rise of the page-minus-dense curve; bump at 1448-1625 (+3.9, falls back).",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-3-bw-dram-read-bandwidth-one-core": {
+      "text": "Our P2.3-bw probe reads DRAM read bandwidth, one core as 44.95 GB/s on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 21, p2.3-bw",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 44.95,
+      "unit": "GB/s",
+      "range": [
+        44.95,
+        44.96
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "memctrl.dram_load_bw"
+      ],
+      "notes": "Reproduced (6 runs, sets 09,15,21; cpus 4,5,6,7; 2 days); spread 44.95 to 44.96. Chip-wide limit here: 2 cores read 22.8 each, 4 cores 11.4 (set 37). 2.984 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-5-ordering-violation-cost-per-block": {
+      "text": "Our P2.5 probe reads ordering violation cost per block as 29.97 cycles on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 21, p2.5",
+      "method": "contention",
+      "derivation": "measured",
+      "value": 29.97,
+      "unit": "cycles",
+      "range": [
+        29.97,
+        29.98
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "lsu.ordering_flush_penalty"
+      ],
+      "notes": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days); runs and CIs 29.97 to 29.98. 2.988 GHz. above 2x the knee, over the flat level.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-5-store-load-pairs-tracked": {
+      "text": "Our P2.5 probe reads store-load pairs tracked as 91.5 pairs on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 21, p2.5",
+      "method": "contention",
+      "derivation": "measured",
+      "value": 91.5,
+      "unit": "entries",
+      "range": [
+        91,
+        92
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "lsu.lsdp_entries"
+      ],
+      "notes": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days); spread 91 to 92. Store address delayed by udiv. 2.988 GHz. N store/load blocks, store address behind a divide; 2.0 -> 32.0 cycles per block.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p2-5-store-to-load-forwarding-forced-seq-5b094d": {
+      "text": "Our P2.5 probe reads store-to-load forwarding, forced-sequential pair as 7 cycles on an M1 Firestorm core (median of 6 runs)",
+      "loc": "M1 run, set 21, p2.5",
+      "method": "contention",
+      "derivation": "measured",
+      "value": 7,
+      "unit": "cycles",
+      "platform": "asahi-linux",
+      "supports": [
+        "lsu.store_load_latency"
+      ],
+      "notes": "Reproduced (6 runs, sets 07,15,21; cpus 4,5,6,7; 3 days). 2.988 GHz. str x1, [x1]; ldr x2, [x2], x1 = x2; 6 here vs 7.5 above: a setup difference; equal: that value.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-4-frontend-direction-predictor-history": {
+      "text": "Our P3.4 probe reads frontend.direction_predictor.history as 100 taken branches on an M1 Firestorm core (median of 5 runs)",
+      "loc": "M1 run, set 17, p3.4-cpu7",
+      "method": "branch-sweep",
+      "derivation": "measured",
+      "value": 100,
+      "unit": "branches",
+      "platform": "asahi-linux",
+      "supports": [
+        "dirpred.history"
+      ],
+      "notes": "Reproduced (5 runs, sets 05,17; cpus 4,5,6,7; 2 days). 2.985 GHz. last N on the low segment of 1 + f, + 1; 3 LFSR seeds, N 0-256.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p3-8-g-decoupling-fdip-signature": {
+      "text": "Our P3.8-g probe reads decoupling.fdip_signature as 0.9485 lines in flight; FDIP would read above 1.5, False on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 41, p3.8-g-cpu6",
+      "method": "other",
+      "derivation": "derived",
+      "value": false,
+      "platform": "asahi-linux",
+      "supports": [
+        "ftq.fdip"
+      ],
+      "notes": "3 runs on one day, agree (sets 34,41; cpus 4,6,7). Signature <= 1.5: no FDIP. 2.988 GHz. Flags: fdip.absent 3/3.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-5-dispatch-mul": {
+      "text": "Our P1.5 probe reads dispatch.mul as 11 entries on an M1 Firestorm core (median of 11 runs)",
+      "loc": "M1 run, set 45, p1.5d",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 11,
+      "unit": "entries",
+      "range": [
+        10.99,
+        13.61
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dispatch.mul_entries"
+      ],
+      "notes": "Reproduced (11 runs, sets 08,14,21,30,42,45; cpus 4,5,6,7; 3 days); range with the resolution 10.99 to 13.61. Up to 2.6 more: the fit takes off 2 x t0 (1.05-1.28 cycles); FCMP reads 11.5 with it, 12.7 without. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-5-scheduler-fadd-masked": {
+      "text": "Our P1.5 probe reads scheduler.fadd as 156 entries; minus 4 x 36 scheduler entries, 12 entries on an M1 Firestorm core (median of 5 runs)",
+      "loc": "M1 run, set 45, p1.5u-cpu6",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 12,
+      "unit": "entries",
+      "range": [
+        10,
+        12
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "dispatch.fp_entries"
+      ],
+      "notes": "5 runs on one day, agree (sets 30,42,45; cpus 4,6,7); range with the resolution 10 to 12. Knee - 144. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-5-scheduler-fadd-masked-queue": {
+      "text": "Our P1.5 probe reads scheduler.fadd as 156 entries; minus 12 dispatch entries, over 4 queues, 36 entries on an M1 Firestorm core (median of 5 runs)",
+      "loc": "M1 run, set 45, p1.5u-cpu6",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 36,
+      "unit": "entries",
+      "range": [
+        35.5,
+        36
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "sched_fp.entries_per_queue"
+      ],
+      "notes": "5 runs on one day, agree (sets 30,42,45; cpus 4,6,7); range with the resolution 35.5 to 36. (knee - 12) / 4. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-5-scheduler-load-masked": {
+      "text": "Our P1.5 probe reads scheduler.load as 47 entries; plus one, 48 entries on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p1.5-masked-cpu6",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 48,
+      "unit": "entries",
+      "platform": "asahi-linux",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 30,42; cpus 4,6,7). Knee + 1. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-5-scheduler-store-masked": {
+      "text": "Our P1.5 probe reads scheduler.store as 47 entries; plus one, 48 entries on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, p1.5-masked-cpu6",
+      "method": "wong-probe",
+      "derivation": "derived",
+      "value": 48,
+      "unit": "entries",
+      "platform": "asahi-linux",
+      "supports": [
+        "sched_ls.entries"
+      ],
+      "notes": "3 runs on one day, agree (sets 30,42; cpus 4,6,7). Knee + 1. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-6x-movimm-alu-share": {
+      "text": "Our P1.6x probe reads movimm.alu_share as 5.533 ALU movs per 8; 8 minus the moves that run on ALUs, 2.467 per 8 instr on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 41, p1.6x-cpu6",
+      "method": "throughput",
+      "derivation": "derived",
+      "value": 2.467,
+      "unit": "per 8 instr",
+      "range": [
+        1.009,
+        3.925
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "rename.mov_imm_limit"
+      ],
+      "notes": "3 runs on one day, agree (sets 34,41; cpus 4,6,7); runs and CIs 1.009 to 3.925. 2.988 GHz. 16 movs behind 80 adds: 0 = all at rename (8 per cycle), 6 = 2 per 8 at rename (5 if rename groups split), 8 = none; nop block / ALU bound 1.00.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-7-nop-stream": {
+      "text": "Our P1.7 probe reads nop_stream as 8 nops/cycle on an M1 Firestorm core (median of 13 runs)",
+      "loc": "M1 run, set 29, p1.7",
+      "method": "drain-timing",
+      "derivation": "measured",
+      "value": 8,
+      "unit": "uops/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "rename.width"
+      ],
+      "notes": "Reproduced (13 runs, sets 02,13,14,18,19,20,29; cpus 4,5,6,7; 4 days). 2.988 GHz. 1 / slope over K = [512, 1024, 1536, 2048] nops per iteration: the narrowest stage.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-7-retire-rate": {
+      "text": "Our P1.7 probe reads retire.rate as 7.993 rows/cycle on an M1 Firestorm core (median of 13 runs)",
+      "loc": "M1 run, set 29, p1.7",
+      "method": "drain-timing",
+      "derivation": "measured",
+      "value": 7.993,
+      "unit": "groups/cycle",
+      "range": [
+        7.811,
+        8.101
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "retire.rate_groups"
+      ],
+      "notes": "Reproduced (13 runs, sets 02,13,14,18,19,20,29; cpus 4,5,6,7; 4 days); spread 7.811 to 8.101. 2.988 GHz. drain rate / 7 nops per retire row.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8-micro-fadd-tput": {
+      "text": "Our P1.8 probe reads micro.fadd.tput as 0.25 cycles/instr; independent fadd per cycle, 4 units on an M1 Firestorm core (median of 15 runs)",
+      "loc": "M1 run, set 41, p1.8-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 4,
+      "unit": "units",
+      "platform": "asahi-linux",
+      "supports": [
+        "eu_fp.count"
+      ],
+      "notes": "Reproduced (15 runs, sets 02,13,14,18,19,20,29,41; cpus 4,5,6,7; 5 days). 2.988 GHz. slope over K = [16, 32, 48, 64], fadd d16, d30, d31.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8-micro-ldr-lat": {
+      "text": "Our P1.8 probe reads micro.ldr.lat as 2.977 cycles on an M1 Firestorm core (median of 4 runs)",
+      "loc": "M1 run, set 41, p1.8-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2.977,
+      "unit": "cycles",
+      "range": [
+        2.945,
+        3.002
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "l1d.latency"
+      ],
+      "notes": "Reproduced (4 runs, sets 20,29,41; cpus 4,6,7; 3 days); runs and CIs 2.945 to 3.002. 2.988 GHz. slope over K = [8, 16, 24, 32], ldr x9, [x9].",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8-micro-ldr-tput": {
+      "text": "Our P1.8 probe reads micro.ldr.tput as 0.3333 cycles/instr; per cycle, 3 loads/cycle on an M1 Firestorm core (median of 4 runs)",
+      "loc": "M1 run, set 41, p1.8-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 3,
+      "unit": "loads/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "lsu.loads_per_cycle"
+      ],
+      "notes": "Reproduced (4 runs, sets 20,29,41; cpus 4,6,7; 3 days). 2.988 GHz. slope over K = [16, 32, 48, 64], ldr x9, [%3, #40].",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8-micro-str-tput": {
+      "text": "Our P1.8 probe reads micro.str.tput as 0.5 cycles/instr; per cycle, 2 stores/cycle on an M1 Firestorm core (median of 4 runs)",
+      "loc": "M1 run, set 41, p1.8-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 2,
+      "unit": "stores/cycle",
+      "platform": "asahi-linux",
+      "supports": [
+        "lsu.stores_per_cycle"
+      ],
+      "notes": "Reproduced (4 runs, sets 20,29,41; cpus 4,6,7; 3 days). 2.988 GHz. slope over K = [16, 32, 48, 64], str x6, [%3, #40].",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-p1-8x-micro-add-imm-tput": {
+      "text": "Our P1.8x probe reads micro.add_imm.tput as 0.1667 cycles/instr; independent add #imm per cycle, 6 units on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 41, p1.8x-cpu6",
+      "method": "throughput",
+      "derivation": "measured",
+      "value": 6,
+      "unit": "units",
+      "platform": "asahi-linux",
+      "supports": [
+        "eu_int.count"
+      ],
+      "notes": "3 runs on one day, agree (sets 34,41; cpus 4,6,7). 2.988 GHz. slope over K = [16, 32, 48, 64], add x9, x6, #1; 6.00 a cycle.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-branch-d2-miss-masked": {
+      "text": "Our window probe reads the branch window knee (depth 2, miss delay, masked chain) as 142 instructions on an M1 Firestorm core (median of 2 runs)",
+      "loc": "M1 run, set 43, branch-d2-masked",
+      "method": "wong-probe",
+      "filler": "branch",
+      "derivation": "measured",
+      "value": 142,
+      "unit": "branches",
+      "range": [
+        141,
+        145
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "retire.inflight_branches"
+      ],
+      "notes": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 141 to 145. Fine step 1; the delay and loop hold up to 3 more than the knee counts. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-flags-d2-miss-masked": {
+      "text": "Our window probe reads the flags window knee (depth 2, miss delay, masked chain) as 124 instructions on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 42, flags-d2-masked-cpu6",
+      "method": "wong-probe",
+      "filler": "flags",
+      "derivation": "measured",
+      "value": 124,
+      "unit": "registers",
+      "range": [
+        123,
+        125
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "flags_prf.headroom"
+      ],
+      "notes": "3 runs on one day, agree (sets 31,42; cpus 4,6,7); range with the resolution 123 to 125. Fine step 1; the delay and loop hold up to 1 more than the knee counts. The knee counts free registers. Masked chain, out of the DMP's reach.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-fp-d2-miss-masked": {
+      "text": "Our window probe reads the fp window knee (depth 2, miss delay, masked chain) as 404 instructions on an M1 Firestorm core (median of 2 runs)",
+      "loc": "M1 run, set 43, fp-d2-masked",
+      "method": "wong-probe",
+      "filler": "fp",
+      "derivation": "measured",
+      "value": 404,
+      "unit": "registers",
+      "range": [
+        400,
+        408
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "fp_prf.headroom"
+      ],
+      "notes": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 400 to 408. Fine step 1; the delay and loop hold up to 1 more than the knee counts. The knee counts free registers. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-int-d2-miss-masked": {
+      "text": "Our window probe reads the int window knee (depth 2, miss delay, masked chain) as 343 instructions on an M1 Firestorm core (median of 2 runs)",
+      "loc": "M1 run, set 43, int-d2-masked",
+      "method": "wong-probe",
+      "filler": "int",
+      "derivation": "measured",
+      "value": 343,
+      "unit": "registers",
+      "range": [
+        340,
+        347
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "int_prf.headroom"
+      ],
+      "notes": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 340 to 347. Fine step 1; the delay and loop hold up to 2 more than the knee counts. The knee counts free registers. Masked chain, out of the DMP's reach. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-load-d2-miss-masked": {
+      "text": "Our window probe reads the load window knee (depth 2, miss delay, masked chain) as 128 instructions on an M1 Firestorm core (median of 2 runs)",
+      "loc": "M1 run, set 43, load-d2-masked",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 128,
+      "unit": "entries",
+      "range": [
+        127,
+        130
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "lq.entries"
+      ],
+      "notes": "Two runs, agree (sets 31,43; cpus 6,7); range with the resolution 127 to 130. Fine step 1; the delay and loop hold up to 2 more than the knee counts. A5: load 128 with a miss delay vs 324 with an fp delay. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-load-d24-fp": {
+      "text": "Our window probe reads the load window knee (depth 24, fp delay) as 324 instructions on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 43, load-fp24-cpu6",
+      "method": "wong-probe",
+      "filler": "load",
+      "derivation": "measured",
+      "value": 324,
+      "unit": "groups",
+      "range": [
+        323,
+        332
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "retire.groups"
+      ],
+      "notes": "Reproduced (3 runs, sets 26,43; cpus 4,6,7; 2 days); range with the resolution 323 to 332. Fine step 1; the 24-FSQRT delays hold 8 groups the knee does not count. Each load starts a retire group. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
+    "c-us-window-store-d24-fp": {
+      "text": "Our window probe reads the store window knee (depth 24, fp delay) as 325 instructions on an M1 Firestorm core (median of 3 runs)",
+      "loc": "M1 run, set 43, store-fp24-cpu6",
+      "method": "wong-probe",
+      "filler": "store",
+      "derivation": "measured",
+      "value": 325,
+      "unit": "groups",
+      "range": [
+        324,
+        333
+      ],
+      "platform": "asahi-linux",
+      "supports": [
+        "retire.groups"
+      ],
+      "notes": "Reproduced (3 runs, sets 26,43; cpus 4,6,7; 2 days); range with the resolution 324 to 333. Fine step 1; the 24-FSQRT delays hold 8 groups the knee does not count. Each store starts a retire group. 2.988 GHz.",
+      "source": "uarch-re-m1",
+      "chip": "m1",
+      "entered": "uarch-re-m1-4c804f8"
+    },
     "c-xnu-a8-loop-buffer": {
       "text": "Typhoon has a loop buffer, and XNU turns it off (HID0 LoopBuffDisb) to avoid an LSP bug that could wedge the core when CONTEXTIDR is written",
       "loc": "p003",
@@ -31795,6 +33080,15 @@
         "handley-vol4:p048"
       ],
       "notes": "Year is the filing year Handley gives"
+    },
+    "uarch-re-m1": {
+      "type": "repo",
+      "title": "uarch-re M1 measurements",
+      "author": "Hagedorn, Isaac",
+      "year": 2026,
+      "url": "https://github.com/ihagedo/uarch-map",
+      "ours": true,
+      "notes": "Our own runs on an M1 Mac mini under Asahi Linux (16 KiB pages, P-cores at 2.988 GHz); never outrank a published measurement."
     }
   },
   "mechanisms": {
@@ -33729,7 +35023,9 @@
         "c-jia-btb-l1i-plateau",
         "c-kc-m2-btb-third-run",
         "c-kc-m2-btb-two-level",
-        "c-kc-m2-btb-prefetch"
+        "c-kc-m2-btb-prefetch",
+        "c-us-p3-3-frontend-btb-levels-1-entries",
+        "c-us-p3-3s-frontend-btb-spacing-l1i"
       ],
       "name": "Branch targets tied to the L1I",
       "block": "btb",
