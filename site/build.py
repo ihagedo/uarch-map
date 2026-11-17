@@ -6,6 +6,7 @@ Build the map page from kb/<core>.json and site/layout/<core>.yaml into one self
 
 import json
 import os
+import shutil
 import sys
 
 import yaml
@@ -412,6 +413,11 @@ def main():
         )
     with open(os.path.join(ROOT, "build", "artifact.html"), "w") as fh:
         fh.write(head + body)
+    passages = os.path.join(OUT, "passages")
+    shutil.rmtree(passages, ignore_errors=True)
+    shutil.copytree(
+        os.path.join(ROOT, "site", "passages"), passages, ignore=shutil.ignore_patterns("README.md")
+    )
     size = os.path.getsize(os.path.join(OUT, "index.html"))
     print(
         f"{core}: {len(data['blocks'])} blocks, {len(data['params'])} params, {len(data['claims'])} claims "
