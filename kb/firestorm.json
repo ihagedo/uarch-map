@@ -550,30 +550,9 @@
     "fetch.width": {
       "claims": [
         "c-ox-fetch-8",
-        "c-mh-v4-fetch-16",
-        "c-jia-fetch-16",
         "c-dj-width"
       ],
-      "disputes": [
-        {
-          "claims": [
-            "c-dj-width",
-            "c-mh-v4-fetch-16"
-          ],
-          "note": "Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.",
-          "resolution": null,
-          "resolved_by": null
-        },
-        {
-          "claims": [
-            "c-dj-width",
-            "c-jia-fetch-16"
-          ],
-          "note": "Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.",
-          "resolution": null,
-          "resolved_by": null
-        }
-      ],
+      "disputes": [],
       "block": "fetch",
       "name": "Fetch width",
       "unit": "instr/cycle",
@@ -581,6 +560,20 @@
       "value": 8,
       "status": "measured",
       "confidence": "corroborated"
+    },
+    "fetch.block": {
+      "claims": [
+        "c-mh-v1-fetch-16",
+        "c-mh-v4-fetch-16",
+        "c-jia-fetch-16"
+      ],
+      "disputes": [],
+      "block": "fetch",
+      "name": "Instructions per fetch",
+      "unit": "instr/cycle",
+      "value": 16,
+      "status": "measured",
+      "confidence": "single"
     },
     "decode.width": {
       "claims": [
@@ -11348,7 +11341,9 @@
       "value": 16,
       "unit": "instr/cycle",
       "hedge": "probably",
-      "supports": [],
+      "supports": [
+        "fetch.block"
+      ],
       "contradicts": [],
       "notes": "Forward reference to the Fetch discussion in vol 4 (c-mh-v4-fetch-16), no measurement here. Johnson's 8 is a pipeline width (c-dj-width), so this may be peak versus sustained fetch. The line size in bytes is not stated.",
       "source": "handley-vol1",
@@ -19908,10 +19903,10 @@
       "value": 16,
       "unit": "instr/cycle",
       "hedge": "appear to have been",
-      "supports": [],
-      "contradicts": [
-        "fetch.width"
+      "supports": [
+        "fetch.block"
       ],
+      "contradicts": [],
       "notes": "Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.",
       "source": "handley-vol4",
       "chip": "m1",
@@ -24572,10 +24567,10 @@
       "derivation": "measured",
       "value": 16,
       "unit": "instr/cycle",
-      "supports": [],
-      "contradicts": [
-        "fetch.width"
+      "supports": [
+        "fetch.block"
       ],
+      "contradicts": [],
       "notes": "Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.",
       "source": "jia-m1",
       "chip": "m1",

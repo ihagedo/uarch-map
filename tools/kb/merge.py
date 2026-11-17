@@ -17,6 +17,9 @@ import jsonschema
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 RANK = {"measured": 0, "documented": 1, "derived": 2, "inferred": 3, "reported": 4}
 TOL = 0.05
+# units whose readings depend on the platform (clock, DRAM state, OS); a param can also set
+# platform_sensitive in params.yaml. An ours reading from another platform makes a note, not a dispute.
+PLATFORM_UNITS = {"ns", "GHz", "MHz", "GB/s"}
 
 
 # a plain (unquoted) YAML value with " #" in it is silently cut at the "#"
@@ -66,8 +69,17 @@ def close(a, b):
     return abs(a - b) <= TOL * max(abs(a), abs(b))
 
 
-def agree(a, b):
-    """Close values, or one value inside the other claim's range."""
+def agree(a, b, ours=lambda c: False):
+    """Close values, or one value inside the other claim's range. An ours claim's range is its measured
+    spread: then the data decide (the other value inside it, or the ranges overlapping), no tolerance."""
+    for x, y in ((a, b), (b, a)):
+        r = x.get("range")
+        if ours(x) and r:
+            lo, hi = min(r), max(r)
+            if y.get("range"):
+                return min(y["range"]) <= hi and max(y["range"]) >= lo
+            v = y.get("value")
+            return isinstance(v, (int, float)) and not isinstance(v, bool) and lo <= v <= hi
     if close(a.get("value"), b.get("value")):
         return True
     for x, y in ((a, b), (b, a)):
@@ -174,19 +186,44 @@ def merge(core):
             continue
         p.setdefault("_resolutions", []).append({**r, "ours": True})
 
+    def is_ours(c):
+        return bool(kb["sources"].get(c.get("source"), {}).get("ours"))
+
+    def agrees(a, b):
+        return agree(a, b, is_ours)
+
     for pid, p in kb["params"].items():
+        # a resolution may choose between published sides: value_from names the published claim whose value
+        # the param takes (ours evidence can decide which published value stands, never supply the value)
+        chosen = [r["value_from"] for r in p.get("_resolutions", []) if r.get("value_from")]
+        forced = None
+        if len(set(chosen)) > 1:
+            problems.append(f"{pid}: resolutions choose different values: {sorted(set(chosen))}")
+        elif chosen:
+            fc = kb["claims"].get(chosen[0])
+            if fc is None or chosen[0] not in p["claims"]:
+                problems.append(f"{pid}: value_from {chosen[0]} is not a claim on this param")
+            elif is_ours(fc) or fc.get("value") is None:
+                problems.append(f"{pid}: value_from {chosen[0]} must be a published claim with a value")
+            else:
+                forced = chosen[0]
         supporting = [
             (cid, kb["claims"][cid])
             for cid in p["claims"]
             if cid in kb["claims"]
-            and pid in kb["claims"][cid].get("supports", [])
+            and (pid in kb["claims"][cid].get("supports", []) or cid == forced)
             and kb["claims"][cid].get("chip", "m1") == "m1"
         ]
         contradicting = [
             cid
             for cid in p["claims"]
-            if cid in kb["claims"] and pid in (kb["claims"][cid].get("contradicts") or [])
+            if cid in kb["claims"] and pid in (kb["claims"][cid].get("contradicts") or []) and cid != forced
         ]
+        if forced:
+            # contradictions that carry the chosen value now back it
+            backing = [cid for cid in contradicting if agree(kb["claims"][forced], kb["claims"][cid])]
+            supporting += [(cid, kb["claims"][cid]) for cid in backing]
+            contradicting = [cid for cid in contradicting if cid not in backing]
         if not supporting:
             p["status"] = "open"
             p.setdefault("value", None)
@@ -202,7 +239,11 @@ def merge(core):
         # derived; next to a published value they support it or open a dispute marked ours
         mine = [(cid, c) for cid, c in supporting if kb["sources"].get(c["source"], {}).get("ours")]
         published = [(cid, c) for cid, c in supporting if (cid, c) not in mine]
-        by_us = bool(mine) and not any(RANK[c["derivation"]] <= RANK["derived"] for _, c in published)
+        by_us = (
+            bool(mine)
+            and not any(RANK[c["derivation"]] <= RANK["derived"] for _, c in published)
+            and not forced
+        )
         ranked = (mine if by_us else published) or supporting
 
         def key(item):
@@ -219,6 +260,9 @@ def merge(core):
             )
 
         ranked.sort(key=key)
+        if forced:
+            ranked.sort(key=lambda item: item[0] != forced)
+            p["value_from"] = forced
         best_cid, best = ranked[0]
         p["value"] = best.get("value", p.get("value"))
         if "unit" in best and "unit" not in p:
@@ -229,9 +273,10 @@ def merge(core):
 
         disputes = [d for d in p.get("disputes", []) if not d.get("_auto")]
         top_rank = RANK[best["derivation"]]
-        peers = [(cid, c) for cid, c in ranked if RANK[c["derivation"]] == top_rank]
+        # a chosen value is disputed by every published value it does not agree with, whatever its rank
+        peers = ranked if forced else [(cid, c) for cid, c in ranked if RANK[c["derivation"]] == top_rank]
         for cid, c in peers[1:]:
-            if c.get("value") is not None and not agree(best, c):
+            if c.get("value") is not None and not agrees(best, c):
                 disputes.append(
                     {
                         "claims": [best_cid, cid],
@@ -242,10 +287,17 @@ def merge(core):
                     }
                 )
         against = [(cid, kb["claims"][cid], False) for cid in contradicting]
+        sensitive = p.get("platform_sensitive", p.get("unit") in PLATFORM_UNITS)
         if not by_us:
-            against += [
-                (cid, c, True) for cid, c in mine if c.get("value") is not None and not agree(best, c)
-            ]
+            for cid, c in mine:
+                if c.get("value") is None or agrees(best, c):
+                    continue
+                if sensitive and c.get("platform") and c["platform"] != best.get("platform", "macos"):
+                    p.setdefault("platform_notes", []).append(
+                        {"claim": cid, "value": c["value"], "platform": c["platform"]}
+                    )
+                else:
+                    against.append((cid, c, True))
         for cid, c, ours_run in against:
             d = {
                 "claims": [best_cid, cid],
@@ -275,7 +327,7 @@ def merge(core):
         # each author counts once, at their strongest agreeing claim
         by_author = {}
         for _, c in published:
-            if c.get("value") is None or agree(best, c):
+            if c.get("value") is None or agrees(best, c):
                 a = author_of(kb["sources"].get(c["source"], {}))
                 by_author[a] = min(by_author.get(a, 9), RANK[c["derivation"]])
         measured = {a for a, r in by_author.items() if r <= RANK["documented"]}

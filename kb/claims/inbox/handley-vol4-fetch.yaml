@@ -221,8 +221,8 @@ claims:
     value: 16
     unit: instr/cycle
     hedge: appear to have been
-    supports: []
-    contradicts: [fetch.width]
+    supports: [fetch.block]
+    contradicts: []
     notes: >-
       Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8
       A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.

@@ -316,6 +316,43 @@
                   }
                 }
               }
+            },
+            "platform_sensitive": {
+              "type": "boolean",
+              "description": "readings depend on the platform (clock, DRAM state, OS); default from the unit"
+            },
+            "platform_notes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "claim",
+                  "value",
+                  "platform"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "claim": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": [
+                      "number",
+                      "string",
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "platform": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "ours readings from another platform that differ from the value"
+            },
+            "value_from": {
+              "type": "string",
+              "description": "a resolution chose this published claim's value"
             }
           }
         }
@@ -429,6 +466,10 @@
               "minItems": 2,
               "maxItems": 2,
               "description": "the author's range when the value stands for one (value is then the midpoint or the author's pick)"
+            },
+            "platform": {
+              "type": "string",
+              "description": "where an ours reading was taken (asahi-linux); on a platform-sensitive param a value from another platform is noted, not disputed"
             }
           }
         }

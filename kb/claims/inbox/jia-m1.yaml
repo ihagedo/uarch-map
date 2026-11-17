@@ -26,8 +26,8 @@ claims:
     derivation: measured
     value: 16
     unit: instr/cycle
-    supports: []
-    contradicts: [fetch.width]
+    supports: [fetch.block]
+    contradicts: []
     notes: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.
 
   - id: c-jia-fetch-line

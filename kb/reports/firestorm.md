@@ -1,13 +1,13 @@
 # firestorm knowledge base
 
-blocks 40, links 37, params 158, claims 2133, sources 69, mechanisms 183
+blocks 40, links 37, params 159, claims 2133, sources 69, mechanisms 183
 
 ## By status
 
 - derived: 12
 - documented: 4
 - inferred: 19
-- measured: 119
+- measured: 120
 - open: 3
 - reported: 1
 
@@ -18,7 +18,7 @@ blocks 40, links 37, params 158, claims 2133, sources 69, mechanisms 183
 - corroborated: 31
 - derived: 12
 - inferred: 20
-- single: 66
+- single: 67
 
 ## Holes (3)
 
@@ -26,10 +26,8 @@ blocks 40, links 37, params 158, claims 2133, sources 69, mechanisms 183
 - iq.depth (iq): Fetch-to-decode queue depth
 - mshr.outstanding (mshr): Outstanding L1D misses (MLP)
 
-## Open disputes (14)
+## Open disputes (12)
 
-- fetch.width: Peak per-fetch width; the sustained 8 is c-ox-fetch-8 and c-dj-width. His 2012 patent reading gives 32 bytes, 8 A64 or 16 Thumb instructions (c-mh-v4-a6-fetch-32b), so the 16 may date from Thumb.  [c-dj-width, c-mh-v4-fetch-16]
-- fetch.width: Agrees with c-mh-v4-fetch-16. The same loop kept within one page is limited by the back end instead.  [c-dj-width, c-jia-fetch-16]
 - rename.mov_imm_limit: Eight per cycle on an 8-wide core is 8 per 8 instructions; Johnson gives 2 per 8 handled by renaming (c-dj-mov-imm)  [c-dj-mov-imm, c-ox-mov-imm-8]
 - sched_int.entries_per_queue: Against the 13 of c-mh-v1-sched-int-13; the split of the 50 and the 42 is left open.  [c-mh-v1-sched-int-13, c-jia-sched-int-units]
 - sched_int.entries_per_queue: Against the 13 per multiply queue of c-mh-v1-sched-int-13.  [c-mh-v1-sched-int-13, c-jc-mul-sched-28]

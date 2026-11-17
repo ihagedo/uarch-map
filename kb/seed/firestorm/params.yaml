@@ -7,6 +7,7 @@ params:
   pcluster.clock_max:           {block: pcluster, name: Maximum clock,                   unit: GHz}
 
   fetch.width:                  {block: fetch,    name: Fetch width,                     unit: instr/cycle, sim_key: fetch_width}
+  fetch.block:                  {block: fetch,    name: Instructions per fetch,          unit: instr/cycle}
   decode.width:                 {block: decode,   name: Decode width,                    unit: instr/cycle, sim_key: decode_width}
   fetch.taken_per_cycle:        {block: fetch,    name: Taken branches per cycle,        unit: branches/cycle, sim_key: taken_per_cycle}
   l1i.size:                     {block: l1i,      name: L1I capacity,                    unit: KiB,         sim_key: l1i_kib}

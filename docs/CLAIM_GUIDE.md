@@ -108,8 +108,18 @@ Derivation:
   set a value only where nothing published is measured, documented or derived (confidence "ours", drawn in
   the ours color); next to a published value they support it without counting as an author, or open a
   dispute marked ours. They never outrank a published measurement.
+  - `loc` names the run only, as `M1 run, set 31, window probe`; no quote.
+  - `range` is the measured spread. For an ours claim it decides agreement: a published value inside it (or a
+    range overlapping it) agrees, anything outside disagrees, with no 5% allowance.
+  - `platform` says where the run was taken (`asahi-linux`). On a param whose reading depends on the platform
+    (unit ns, GHz, MHz or GB/s, or `platform_sensitive: true` in params.yaml) a value from another platform is
+    listed under the param's `platform_notes`, not disputed.
 - A dispute we settle goes under `resolutions:` in `kb/seed/firestorm/conjectures.yaml` (same shape as a
   claim file's), with the reason; the map marks it ours. A source's own correction stays in its claim file.
+  A resolution may choose between published sides with `value_from: <claim id>`. The param takes that
+  published claim's value, and contradictions with the same value back it. Every published value it does
+  not agree with stays a dispute, which the resolution names. Our runs can decide the choice, but the value
+  always comes from a published claim.
 
 ## How the merge decides
 

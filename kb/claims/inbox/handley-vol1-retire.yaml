@@ -131,7 +131,7 @@ claims:
     value: 16
     unit: instr/cycle
     hedge: probably
-    supports: []
+    supports: [fetch.block]
     contradicts: []
     notes: >-
       Forward reference to the Fetch discussion in vol 4 (c-mh-v4-fetch-16), no measurement here. Johnson's 8 is a
